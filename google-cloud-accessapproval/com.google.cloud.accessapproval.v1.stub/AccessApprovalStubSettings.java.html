@@ -40,13 +40,16 @@ import com.google.api.gax.rpc.StubSettings;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.api.gax.rpc.UnaryCallSettings;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.accessapproval.v1.AccessApprovalServiceAccount;
 import com.google.cloud.accessapproval.v1.AccessApprovalSettings;
 import com.google.cloud.accessapproval.v1.ApprovalRequest;
 import com.google.cloud.accessapproval.v1.ApproveApprovalRequestMessage;
 import com.google.cloud.accessapproval.v1.DeleteAccessApprovalSettingsMessage;
 import com.google.cloud.accessapproval.v1.DismissApprovalRequestMessage;
+import com.google.cloud.accessapproval.v1.GetAccessApprovalServiceAccountMessage;
 import com.google.cloud.accessapproval.v1.GetAccessApprovalSettingsMessage;
 import com.google.cloud.accessapproval.v1.GetApprovalRequestMessage;
+import com.google.cloud.accessapproval.v1.InvalidateApprovalRequestMessage;
 import com.google.cloud.accessapproval.v1.ListApprovalRequestsMessage;
 import com.google.cloud.accessapproval.v1.ListApprovalRequestsResponse;
 import com.google.cloud.accessapproval.v1.UpdateAccessApprovalSettingsMessage;
@@ -100,7 +103,7 @@ import org.threeten.bp.Duration;
 public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L103">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
+<span class="fc" id="L106">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
 
   private final PagedCallSettings&lt;
           ListApprovalRequestsMessage,
@@ -113,51 +116,56 @@ public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalSt
       approveApprovalRequestSettings;
   private final UnaryCallSettings&lt;DismissApprovalRequestMessage, ApprovalRequest&gt;
       dismissApprovalRequestSettings;
+  private final UnaryCallSettings&lt;InvalidateApprovalRequestMessage, ApprovalRequest&gt;
+      invalidateApprovalRequestSettings;
   private final UnaryCallSettings&lt;GetAccessApprovalSettingsMessage, AccessApprovalSettings&gt;
       getAccessApprovalSettingsSettings;
   private final UnaryCallSettings&lt;UpdateAccessApprovalSettingsMessage, AccessApprovalSettings&gt;
       updateAccessApprovalSettingsSettings;
   private final UnaryCallSettings&lt;DeleteAccessApprovalSettingsMessage, Empty&gt;
       deleteAccessApprovalSettingsSettings;
+  private final UnaryCallSettings&lt;
+          GetAccessApprovalServiceAccountMessage, AccessApprovalServiceAccount&gt;
+      getAccessApprovalServiceAccountSettings;
 
   private static final PagedListDescriptor&lt;
           ListApprovalRequestsMessage, ListApprovalRequestsResponse, ApprovalRequest&gt;
-<span class="fc" id="L125">      LIST_APPROVAL_REQUESTS_PAGE_STR_DESC =</span>
+<span class="fc" id="L133">      LIST_APPROVAL_REQUESTS_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L127">              ListApprovalRequestsMessage, ListApprovalRequestsResponse, ApprovalRequest&gt;() {</span>
+<span class="fc" id="L135">              ListApprovalRequestsMessage, ListApprovalRequestsResponse, ApprovalRequest&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L130">              return &quot;&quot;;</span>
+<span class="fc" id="L138">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListApprovalRequestsMessage injectToken(
                 ListApprovalRequestsMessage payload, String token) {
-<span class="nc" id="L136">              return ListApprovalRequestsMessage.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L144">              return ListApprovalRequestsMessage.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListApprovalRequestsMessage injectPageSize(
                 ListApprovalRequestsMessage payload, int pageSize) {
-<span class="nc" id="L142">              return ListApprovalRequestsMessage.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L150">              return ListApprovalRequestsMessage.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListApprovalRequestsMessage payload) {
-<span class="nc" id="L147">              return payload.getPageSize();</span>
+<span class="nc" id="L155">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListApprovalRequestsResponse payload) {
-<span class="fc" id="L152">              return payload.getNextPageToken();</span>
+<span class="fc" id="L160">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;ApprovalRequest&gt; extractResources(
                 ListApprovalRequestsResponse payload) {
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">              return payload.getApprovalRequestsList() == null</span>
-<span class="nc" id="L159">                  ? ImmutableList.&lt;ApprovalRequest&gt;of()</span>
-<span class="fc" id="L160">                  : payload.getApprovalRequestsList();</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">              return payload.getApprovalRequestsList() == null</span>
+<span class="nc" id="L167">                  ? ImmutableList.&lt;ApprovalRequest&gt;of()</span>
+<span class="fc" id="L168">                  : payload.getApprovalRequestsList();</span>
             }
           };
 
@@ -165,11 +173,11 @@ public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalSt
           ListApprovalRequestsMessage,
           ListApprovalRequestsResponse,
           ListApprovalRequestsPagedResponse&gt;
-<span class="fc" id="L168">      LIST_APPROVAL_REQUESTS_PAGE_STR_FACT =</span>
+<span class="fc" id="L176">      LIST_APPROVAL_REQUESTS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListApprovalRequestsMessage,
               ListApprovalRequestsResponse,
-<span class="fc" id="L172">              ListApprovalRequestsPagedResponse&gt;() {</span>
+<span class="fc" id="L180">              ListApprovalRequestsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListApprovalRequestsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListApprovalRequestsMessage, ListApprovalRequestsResponse&gt; callable,
@@ -178,10 +186,10 @@ public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalSt
                 ApiFuture&lt;ListApprovalRequestsResponse&gt; futureResponse) {
               PageContext&lt;
                       ListApprovalRequestsMessage, ListApprovalRequestsResponse, ApprovalRequest&gt;
-<span class="fc" id="L181">                  pageContext =</span>
-<span class="fc" id="L182">                      PageContext.create(</span>
-<span class="fc" id="L183">                          callable, LIST_APPROVAL_REQUESTS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L184">              return ListApprovalRequestsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L189">                  pageContext =</span>
+<span class="fc" id="L190">                      PageContext.create(</span>
+<span class="fc" id="L191">                          callable, LIST_APPROVAL_REQUESTS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L192">              return ListApprovalRequestsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -191,131 +199,146 @@ public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalSt
           ListApprovalRequestsResponse,
           ListApprovalRequestsPagedResponse&gt;
       listApprovalRequestsSettings() {
-<span class="fc" id="L194">    return listApprovalRequestsSettings;</span>
+<span class="fc" id="L202">    return listApprovalRequestsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getApprovalRequest. */
   public UnaryCallSettings&lt;GetApprovalRequestMessage, ApprovalRequest&gt;
       getApprovalRequestSettings() {
-<span class="fc" id="L200">    return getApprovalRequestSettings;</span>
+<span class="fc" id="L208">    return getApprovalRequestSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to approveApprovalRequest. */
   public UnaryCallSettings&lt;ApproveApprovalRequestMessage, ApprovalRequest&gt;
       approveApprovalRequestSettings() {
-<span class="fc" id="L206">    return approveApprovalRequestSettings;</span>
+<span class="fc" id="L214">    return approveApprovalRequestSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to dismissApprovalRequest. */
   public UnaryCallSettings&lt;DismissApprovalRequestMessage, ApprovalRequest&gt;
       dismissApprovalRequestSettings() {
-<span class="fc" id="L212">    return dismissApprovalRequestSettings;</span>
+<span class="fc" id="L220">    return dismissApprovalRequestSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to invalidateApprovalRequest. */
+  public UnaryCallSettings&lt;InvalidateApprovalRequestMessage, ApprovalRequest&gt;
+      invalidateApprovalRequestSettings() {
+<span class="fc" id="L226">    return invalidateApprovalRequestSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getAccessApprovalSettings. */
   public UnaryCallSettings&lt;GetAccessApprovalSettingsMessage, AccessApprovalSettings&gt;
       getAccessApprovalSettingsSettings() {
-<span class="fc" id="L218">    return getAccessApprovalSettingsSettings;</span>
+<span class="fc" id="L232">    return getAccessApprovalSettingsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateAccessApprovalSettings. */
   public UnaryCallSettings&lt;UpdateAccessApprovalSettingsMessage, AccessApprovalSettings&gt;
       updateAccessApprovalSettingsSettings() {
-<span class="fc" id="L224">    return updateAccessApprovalSettingsSettings;</span>
+<span class="fc" id="L238">    return updateAccessApprovalSettingsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteAccessApprovalSettings. */
   public UnaryCallSettings&lt;DeleteAccessApprovalSettingsMessage, Empty&gt;
       deleteAccessApprovalSettingsSettings() {
-<span class="fc" id="L230">    return deleteAccessApprovalSettingsSettings;</span>
+<span class="fc" id="L244">    return deleteAccessApprovalSettingsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getAccessApprovalServiceAccount. */
+  public UnaryCallSettings&lt;GetAccessApprovalServiceAccountMessage, AccessApprovalServiceAccount&gt;
+      getAccessApprovalServiceAccountSettings() {
+<span class="fc" id="L250">    return getAccessApprovalServiceAccountSettings;</span>
   }
 
   @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public AccessApprovalStub createStub() throws IOException {
-<span class="fc" id="L235">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L236">        .getTransportName()</span>
-<span class="pc bpc" id="L237" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L238">      return GrpcAccessApprovalStub.create(this);</span>
+<span class="fc" id="L255">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L256">        .getTransportName()</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L258">      return GrpcAccessApprovalStub.create(this);</span>
     }
-<span class="nc" id="L240">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L241">        String.format(</span>
-<span class="nc" id="L242">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="nc" id="L260">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L261">        String.format(</span>
+<span class="nc" id="L262">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L247">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L267">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L252">    return &quot;accessapproval.googleapis.com:443&quot;;</span>
+<span class="fc" id="L272">    return &quot;accessapproval.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L257">    return &quot;accessapproval.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L277">    return &quot;accessapproval.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L262">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L282">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L267">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L268">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L269">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L287">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L288">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L289">        .setUseJwtAccessWithScope(true);</span>
   }
 
   /** Returns a builder for the default ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L274">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L275">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L294">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L295">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L279">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L299">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
   public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L284">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L285">        .setGeneratedLibToken(</span>
-<span class="fc" id="L286">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(AccessApprovalStubSettings.class))</span>
-<span class="fc" id="L287">        .setTransportToken(</span>
-<span class="fc" id="L288">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+<span class="fc" id="L304">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L305">        .setGeneratedLibToken(</span>
+<span class="fc" id="L306">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(AccessApprovalStubSettings.class))</span>
+<span class="fc" id="L307">        .setTransportToken(</span>
+<span class="fc" id="L308">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L293">    return Builder.createDefault();</span>
+<span class="fc" id="L313">    return Builder.createDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L298">    return new Builder(clientContext);</span>
+<span class="nc" id="L318">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L303">    return new Builder(this);</span>
+<span class="nc" id="L323">    return new Builder(this);</span>
   }
 
   protected AccessApprovalStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L307">    super(settingsBuilder);</span>
+<span class="fc" id="L327">    super(settingsBuilder);</span>
 
-<span class="fc" id="L309">    listApprovalRequestsSettings = settingsBuilder.listApprovalRequestsSettings().build();</span>
-<span class="fc" id="L310">    getApprovalRequestSettings = settingsBuilder.getApprovalRequestSettings().build();</span>
-<span class="fc" id="L311">    approveApprovalRequestSettings = settingsBuilder.approveApprovalRequestSettings().build();</span>
-<span class="fc" id="L312">    dismissApprovalRequestSettings = settingsBuilder.dismissApprovalRequestSettings().build();</span>
-<span class="fc" id="L313">    getAccessApprovalSettingsSettings = settingsBuilder.getAccessApprovalSettingsSettings().build();</span>
-<span class="fc" id="L314">    updateAccessApprovalSettingsSettings =</span>
-<span class="fc" id="L315">        settingsBuilder.updateAccessApprovalSettingsSettings().build();</span>
-<span class="fc" id="L316">    deleteAccessApprovalSettingsSettings =</span>
-<span class="fc" id="L317">        settingsBuilder.deleteAccessApprovalSettingsSettings().build();</span>
-<span class="fc" id="L318">  }</span>
+<span class="fc" id="L329">    listApprovalRequestsSettings = settingsBuilder.listApprovalRequestsSettings().build();</span>
+<span class="fc" id="L330">    getApprovalRequestSettings = settingsBuilder.getApprovalRequestSettings().build();</span>
+<span class="fc" id="L331">    approveApprovalRequestSettings = settingsBuilder.approveApprovalRequestSettings().build();</span>
+<span class="fc" id="L332">    dismissApprovalRequestSettings = settingsBuilder.dismissApprovalRequestSettings().build();</span>
+<span class="fc" id="L333">    invalidateApprovalRequestSettings = settingsBuilder.invalidateApprovalRequestSettings().build();</span>
+<span class="fc" id="L334">    getAccessApprovalSettingsSettings = settingsBuilder.getAccessApprovalSettingsSettings().build();</span>
+<span class="fc" id="L335">    updateAccessApprovalSettingsSettings =</span>
+<span class="fc" id="L336">        settingsBuilder.updateAccessApprovalSettingsSettings().build();</span>
+<span class="fc" id="L337">    deleteAccessApprovalSettingsSettings =</span>
+<span class="fc" id="L338">        settingsBuilder.deleteAccessApprovalSettingsSettings().build();</span>
+<span class="fc" id="L339">    getAccessApprovalServiceAccountSettings =</span>
+<span class="fc" id="L340">        settingsBuilder.getAccessApprovalServiceAccountSettings().build();</span>
+<span class="fc" id="L341">  }</span>
 
   /** Builder for AccessApprovalStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;AccessApprovalStubSettings, Builder&gt; {
@@ -331,6 +354,8 @@ public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalSt
         approveApprovalRequestSettings;
     private final UnaryCallSettings.Builder&lt;DismissApprovalRequestMessage, ApprovalRequest&gt;
         dismissApprovalRequestSettings;
+    private final UnaryCallSettings.Builder&lt;InvalidateApprovalRequestMessage, ApprovalRequest&gt;
+        invalidateApprovalRequestSettings;
     private final UnaryCallSettings.Builder&lt;
             GetAccessApprovalSettingsMessage, AccessApprovalSettings&gt;
         getAccessApprovalSettingsSettings;
@@ -339,149 +364,174 @@ public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalSt
         updateAccessApprovalSettingsSettings;
     private final UnaryCallSettings.Builder&lt;DeleteAccessApprovalSettingsMessage, Empty&gt;
         deleteAccessApprovalSettingsSettings;
+    private final UnaryCallSettings.Builder&lt;
+            GetAccessApprovalServiceAccountMessage, AccessApprovalServiceAccount&gt;
+        getAccessApprovalServiceAccountSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L347">          ImmutableMap.builder();</span>
-<span class="fc" id="L348">      definitions.put(</span>
+<span class="fc" id="L375">          ImmutableMap.builder();</span>
+<span class="fc" id="L376">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L350">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L351">      definitions.put(</span>
-<span class="fc" id="L352">          &quot;no_retry_1_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L353">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L378">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L379">      definitions.put(</span>
+<span class="fc" id="L380">          &quot;no_retry_1_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L381">      definitions.put(&quot;no_retry_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L382">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L359">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L360">      RetrySettings settings = null;</span>
+<span class="fc" id="L388">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L389">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L362">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L363">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L364">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L365">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L366">              .setInitialRpcTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L367">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L368">              .setMaxRpcTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L369">              .setTotalTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L370">              .build();</span>
-<span class="fc" id="L371">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L391">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L392">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L393">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L394">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L395">              .setInitialRpcTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L396">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L397">              .setMaxRpcTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L398">              .setTotalTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L399">              .build();</span>
+<span class="fc" id="L400">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
       settings =
-<span class="fc" id="L373">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L374">              .setInitialRpcTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L375">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L376">              .setMaxRpcTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L377">              .setTotalTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L378">              .build();</span>
-<span class="fc" id="L379">      definitions.put(&quot;no_retry_1_params&quot;, settings);</span>
-<span class="fc" id="L380">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L381">    }</span>
+<span class="fc" id="L402">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L403">              .setInitialRpcTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L404">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L405">              .setMaxRpcTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L406">              .setTotalTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L407">              .build();</span>
+<span class="fc" id="L408">      definitions.put(&quot;no_retry_1_params&quot;, settings);</span>
+<span class="fc" id="L409">      settings = RetrySettings.newBuilder().setRpcTimeoutMultiplier(1.0).build();</span>
+<span class="fc" id="L410">      definitions.put(&quot;no_retry_params&quot;, settings);</span>
+<span class="fc" id="L411">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L412">    }</span>
 
     protected Builder() {
-<span class="nc" id="L384">      this(((ClientContext) null));</span>
-<span class="nc" id="L385">    }</span>
+<span class="nc" id="L415">      this(((ClientContext) null));</span>
+<span class="nc" id="L416">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L388">      super(clientContext);</span>
+<span class="fc" id="L419">      super(clientContext);</span>
 
-<span class="fc" id="L390">      listApprovalRequestsSettings =</span>
-<span class="fc" id="L391">          PagedCallSettings.newBuilder(LIST_APPROVAL_REQUESTS_PAGE_STR_FACT);</span>
-<span class="fc" id="L392">      getApprovalRequestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L393">      approveApprovalRequestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L394">      dismissApprovalRequestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L395">      getAccessApprovalSettingsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L396">      updateAccessApprovalSettingsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L397">      deleteAccessApprovalSettingsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L421">      listApprovalRequestsSettings =</span>
+<span class="fc" id="L422">          PagedCallSettings.newBuilder(LIST_APPROVAL_REQUESTS_PAGE_STR_FACT);</span>
+<span class="fc" id="L423">      getApprovalRequestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L424">      approveApprovalRequestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L425">      dismissApprovalRequestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L426">      invalidateApprovalRequestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L427">      getAccessApprovalSettingsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L428">      updateAccessApprovalSettingsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L429">      deleteAccessApprovalSettingsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L430">      getAccessApprovalServiceAccountSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L399">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L400">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L432">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L433">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listApprovalRequestsSettings,
               getApprovalRequestSettings,
               approveApprovalRequestSettings,
               dismissApprovalRequestSettings,
+              invalidateApprovalRequestSettings,
               getAccessApprovalSettingsSettings,
               updateAccessApprovalSettingsSettings,
-              deleteAccessApprovalSettingsSettings);
-<span class="fc" id="L408">      initDefaults(this);</span>
-<span class="fc" id="L409">    }</span>
+              deleteAccessApprovalSettingsSettings,
+              getAccessApprovalServiceAccountSettings);
+<span class="fc" id="L443">      initDefaults(this);</span>
+<span class="fc" id="L444">    }</span>
 
     protected Builder(AccessApprovalStubSettings settings) {
-<span class="nc" id="L412">      super(settings);</span>
+<span class="nc" id="L447">      super(settings);</span>
 
-<span class="nc" id="L414">      listApprovalRequestsSettings = settings.listApprovalRequestsSettings.toBuilder();</span>
-<span class="nc" id="L415">      getApprovalRequestSettings = settings.getApprovalRequestSettings.toBuilder();</span>
-<span class="nc" id="L416">      approveApprovalRequestSettings = settings.approveApprovalRequestSettings.toBuilder();</span>
-<span class="nc" id="L417">      dismissApprovalRequestSettings = settings.dismissApprovalRequestSettings.toBuilder();</span>
-<span class="nc" id="L418">      getAccessApprovalSettingsSettings = settings.getAccessApprovalSettingsSettings.toBuilder();</span>
-<span class="nc" id="L419">      updateAccessApprovalSettingsSettings =</span>
-<span class="nc" id="L420">          settings.updateAccessApprovalSettingsSettings.toBuilder();</span>
-<span class="nc" id="L421">      deleteAccessApprovalSettingsSettings =</span>
-<span class="nc" id="L422">          settings.deleteAccessApprovalSettingsSettings.toBuilder();</span>
+<span class="nc" id="L449">      listApprovalRequestsSettings = settings.listApprovalRequestsSettings.toBuilder();</span>
+<span class="nc" id="L450">      getApprovalRequestSettings = settings.getApprovalRequestSettings.toBuilder();</span>
+<span class="nc" id="L451">      approveApprovalRequestSettings = settings.approveApprovalRequestSettings.toBuilder();</span>
+<span class="nc" id="L452">      dismissApprovalRequestSettings = settings.dismissApprovalRequestSettings.toBuilder();</span>
+<span class="nc" id="L453">      invalidateApprovalRequestSettings = settings.invalidateApprovalRequestSettings.toBuilder();</span>
+<span class="nc" id="L454">      getAccessApprovalSettingsSettings = settings.getAccessApprovalSettingsSettings.toBuilder();</span>
+<span class="nc" id="L455">      updateAccessApprovalSettingsSettings =</span>
+<span class="nc" id="L456">          settings.updateAccessApprovalSettingsSettings.toBuilder();</span>
+<span class="nc" id="L457">      deleteAccessApprovalSettingsSettings =</span>
+<span class="nc" id="L458">          settings.deleteAccessApprovalSettingsSettings.toBuilder();</span>
+<span class="nc" id="L459">      getAccessApprovalServiceAccountSettings =</span>
+<span class="nc" id="L460">          settings.getAccessApprovalServiceAccountSettings.toBuilder();</span>
 
-<span class="nc" id="L424">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L425">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L462">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L463">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listApprovalRequestsSettings,
               getApprovalRequestSettings,
               approveApprovalRequestSettings,
               dismissApprovalRequestSettings,
+              invalidateApprovalRequestSettings,
               getAccessApprovalSettingsSettings,
               updateAccessApprovalSettingsSettings,
-              deleteAccessApprovalSettingsSettings);
-<span class="nc" id="L433">    }</span>
+              deleteAccessApprovalSettingsSettings,
+              getAccessApprovalServiceAccountSettings);
+<span class="nc" id="L473">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L436">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L476">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L438">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L439">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L440">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L441">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L442">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L443">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L478">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L479">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L480">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L481">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L482">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L483">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L445">      return initDefaults(builder);</span>
+<span class="fc" id="L485">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L449">      builder</span>
-<span class="fc" id="L450">          .listApprovalRequestsSettings()</span>
-<span class="fc" id="L451">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L452">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L489">      builder</span>
+<span class="fc" id="L490">          .listApprovalRequestsSettings()</span>
+<span class="fc" id="L491">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L492">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L454">      builder</span>
-<span class="fc" id="L455">          .getApprovalRequestSettings()</span>
-<span class="fc" id="L456">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L457">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L494">      builder</span>
+<span class="fc" id="L495">          .getApprovalRequestSettings()</span>
+<span class="fc" id="L496">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L497">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L459">      builder</span>
-<span class="fc" id="L460">          .approveApprovalRequestSettings()</span>
-<span class="fc" id="L461">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L462">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L499">      builder</span>
+<span class="fc" id="L500">          .approveApprovalRequestSettings()</span>
+<span class="fc" id="L501">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L502">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
 
-<span class="fc" id="L464">      builder</span>
-<span class="fc" id="L465">          .dismissApprovalRequestSettings()</span>
-<span class="fc" id="L466">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L467">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L504">      builder</span>
+<span class="fc" id="L505">          .dismissApprovalRequestSettings()</span>
+<span class="fc" id="L506">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L507">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
 
-<span class="fc" id="L469">      builder</span>
-<span class="fc" id="L470">          .getAccessApprovalSettingsSettings()</span>
-<span class="fc" id="L471">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L472">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L509">      builder</span>
+<span class="fc" id="L510">          .invalidateApprovalRequestSettings()</span>
+<span class="fc" id="L511">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L512">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
 
-<span class="fc" id="L474">      builder</span>
-<span class="fc" id="L475">          .updateAccessApprovalSettingsSettings()</span>
-<span class="fc" id="L476">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L477">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L514">      builder</span>
+<span class="fc" id="L515">          .getAccessApprovalSettingsSettings()</span>
+<span class="fc" id="L516">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L517">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L479">      builder</span>
-<span class="fc" id="L480">          .deleteAccessApprovalSettingsSettings()</span>
-<span class="fc" id="L481">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L482">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L519">      builder</span>
+<span class="fc" id="L520">          .updateAccessApprovalSettingsSettings()</span>
+<span class="fc" id="L521">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L522">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
 
-<span class="fc" id="L484">      return builder;</span>
+<span class="fc" id="L524">      builder</span>
+<span class="fc" id="L525">          .deleteAccessApprovalSettingsSettings()</span>
+<span class="fc" id="L526">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L527">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+
+<span class="fc" id="L529">      builder</span>
+<span class="fc" id="L530">          .getAccessApprovalServiceAccountSettings()</span>
+<span class="fc" id="L531">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L532">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L534">      return builder;</span>
     }
 
     /**
@@ -491,12 +541,12 @@ public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalSt
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L494">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L495">      return this;</span>
+<span class="nc" id="L544">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L545">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L499">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L549">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listApprovalRequests. */
@@ -505,48 +555,61 @@ public class AccessApprovalStubSettings extends StubSettings&lt;AccessApprovalSt
             ListApprovalRequestsResponse,
             ListApprovalRequestsPagedResponse&gt;
         listApprovalRequestsSettings() {
-<span class="fc" id="L508">      return listApprovalRequestsSettings;</span>
+<span class="fc" id="L558">      return listApprovalRequestsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getApprovalRequest. */
     public UnaryCallSettings.Builder&lt;GetApprovalRequestMessage, ApprovalRequest&gt;
         getApprovalRequestSettings() {
-<span class="fc" id="L514">      return getApprovalRequestSettings;</span>
+<span class="fc" id="L564">      return getApprovalRequestSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to approveApprovalRequest. */
     public UnaryCallSettings.Builder&lt;ApproveApprovalRequestMessage, ApprovalRequest&gt;
         approveApprovalRequestSettings() {
-<span class="fc" id="L520">      return approveApprovalRequestSettings;</span>
+<span class="fc" id="L570">      return approveApprovalRequestSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to dismissApprovalRequest. */
     public UnaryCallSettings.Builder&lt;DismissApprovalRequestMessage, ApprovalRequest&gt;
         dismissApprovalRequestSettings() {
-<span class="fc" id="L526">      return dismissApprovalRequestSettings;</span>
+<span class="fc" id="L576">      return dismissApprovalRequestSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to invalidateApprovalRequest. */
+    public UnaryCallSettings.Builder&lt;InvalidateApprovalRequestMessage, ApprovalRequest&gt;
+        invalidateApprovalRequestSettings() {
+<span class="fc" id="L582">      return invalidateApprovalRequestSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getAccessApprovalSettings. */
     public UnaryCallSettings.Builder&lt;GetAccessApprovalSettingsMessage, AccessApprovalSettings&gt;
         getAccessApprovalSettingsSettings() {
-<span class="fc" id="L532">      return getAccessApprovalSettingsSettings;</span>
+<span class="fc" id="L588">      return getAccessApprovalSettingsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateAccessApprovalSettings. */
     public UnaryCallSettings.Builder&lt;UpdateAccessApprovalSettingsMessage, AccessApprovalSettings&gt;
         updateAccessApprovalSettingsSettings() {
-<span class="fc" id="L538">      return updateAccessApprovalSettingsSettings;</span>
+<span class="fc" id="L594">      return updateAccessApprovalSettingsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteAccessApprovalSettings. */
     public UnaryCallSettings.Builder&lt;DeleteAccessApprovalSettingsMessage, Empty&gt;
         deleteAccessApprovalSettingsSettings() {
-<span class="fc" id="L544">      return deleteAccessApprovalSettingsSettings;</span>
+<span class="fc" id="L600">      return deleteAccessApprovalSettingsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getAccessApprovalServiceAccount. */
+    public UnaryCallSettings.Builder&lt;
+            GetAccessApprovalServiceAccountMessage, AccessApprovalServiceAccount&gt;
+        getAccessApprovalServiceAccountSettings() {
+<span class="fc" id="L607">      return getAccessApprovalServiceAccountSettings;</span>
     }
 
     @Override
     public AccessApprovalStubSettings build() throws IOException {
-<span class="fc" id="L549">      return new AccessApprovalStubSettings(this);</span>
+<span class="fc" id="L612">      return new AccessApprovalStubSettings(this);</span>
     }
   }
 }
