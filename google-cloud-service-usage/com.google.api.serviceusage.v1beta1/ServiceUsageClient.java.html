@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.api.serviceusage.v1beta1.stub.ServiceUsageStub;
 import com.google.api.serviceusage.v1beta1.stub.ServiceUsageStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import java.io.IOException;
 import java.util.List;
@@ -102,6 +102,20 @@ import javax.annotation.Generated;
  * ServiceUsageClient serviceUsageClient = ServiceUsageClient.create(serviceUsageSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ServiceUsageSettings serviceUsageSettings =
+ *     ServiceUsageSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ServiceUsageSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ServiceUsageClient serviceUsageClient = ServiceUsageClient.create(serviceUsageSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -109,11 +123,12 @@ import javax.annotation.Generated;
 public class ServiceUsageClient implements BackgroundResource {
   private final ServiceUsageSettings settings;
   private final ServiceUsageStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ServiceUsageClient with default settings. */
   public static final ServiceUsageClient create() throws IOException {
-<span class="nc" id="L116">    return create(ServiceUsageSettings.newBuilder().build());</span>
+<span class="nc" id="L131">    return create(ServiceUsageSettings.newBuilder().build());</span>
   }
 
   /**
@@ -121,7 +136,7 @@ public class ServiceUsageClient implements BackgroundResource {
    * created based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final ServiceUsageClient create(ServiceUsageSettings settings) throws IOException {
-<span class="fc" id="L124">    return new ServiceUsageClient(settings);</span>
+<span class="fc" id="L139">    return new ServiceUsageClient(settings);</span>
   }
 
   /**
@@ -129,7 +144,7 @@ public class ServiceUsageClient implements BackgroundResource {
    * for advanced usage - prefer using create(ServiceUsageSettings).
    */
   public static final ServiceUsageClient create(ServiceUsageStub stub) {
-<span class="nc" id="L132">    return new ServiceUsageClient(stub);</span>
+<span class="nc" id="L147">    return new ServiceUsageClient(stub);</span>
   }
 
   /**
@@ -137,32 +152,44 @@ public class ServiceUsageClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L140">  protected ServiceUsageClient(ServiceUsageSettings settings) throws IOException {</span>
-<span class="fc" id="L141">    this.settings = settings;</span>
-<span class="fc" id="L142">    this.stub = ((ServiceUsageStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L143">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L144">  }</span>
+<span class="fc" id="L155">  protected ServiceUsageClient(ServiceUsageSettings settings) throws IOException {</span>
+<span class="fc" id="L156">    this.settings = settings;</span>
+<span class="fc" id="L157">    this.stub = ((ServiceUsageStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L158">    this.operationsClient =</span>
+<span class="fc" id="L159">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L160">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L161">  }</span>
 
-<span class="nc" id="L146">  protected ServiceUsageClient(ServiceUsageStub stub) {</span>
-<span class="nc" id="L147">    this.settings = null;</span>
-<span class="nc" id="L148">    this.stub = stub;</span>
-<span class="nc" id="L149">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L150">  }</span>
+<span class="nc" id="L163">  protected ServiceUsageClient(ServiceUsageStub stub) {</span>
+<span class="nc" id="L164">    this.settings = null;</span>
+<span class="nc" id="L165">    this.stub = stub;</span>
+<span class="nc" id="L166">    this.operationsClient =</span>
+<span class="nc" id="L167">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L168">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L169">  }</span>
 
   public final ServiceUsageSettings getSettings() {
-<span class="nc" id="L153">    return settings;</span>
+<span class="nc" id="L172">    return settings;</span>
   }
 
   public ServiceUsageStub getStub() {
-<span class="nc" id="L157">    return stub;</span>
+<span class="nc" id="L176">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L165">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L184">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L192">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -190,7 +217,7 @@ public class ServiceUsageClient implements BackgroundResource {
   @Deprecated
   public final OperationFuture&lt;Empty, OperationMetadata&gt; enableServiceAsync(
       EnableServiceRequest request) {
-<span class="fc" id="L193">    return enableServiceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L220">    return enableServiceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -219,7 +246,7 @@ public class ServiceUsageClient implements BackgroundResource {
   @Deprecated
   public final OperationCallable&lt;EnableServiceRequest, Empty, OperationMetadata&gt;
       enableServiceOperationCallable() {
-<span class="fc" id="L222">    return stub.enableServiceOperationCallable();</span>
+<span class="fc" id="L249">    return stub.enableServiceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -246,7 +273,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   @Deprecated
   public final UnaryCallable&lt;EnableServiceRequest, Operation&gt; enableServiceCallable() {
-<span class="nc" id="L249">    return stub.enableServiceCallable();</span>
+<span class="nc" id="L276">    return stub.enableServiceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -279,7 +306,7 @@ public class ServiceUsageClient implements BackgroundResource {
   @Deprecated
   public final OperationFuture&lt;Empty, OperationMetadata&gt; disableServiceAsync(
       DisableServiceRequest request) {
-<span class="fc" id="L282">    return disableServiceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L309">    return disableServiceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -313,7 +340,7 @@ public class ServiceUsageClient implements BackgroundResource {
   @Deprecated
   public final OperationCallable&lt;DisableServiceRequest, Empty, OperationMetadata&gt;
       disableServiceOperationCallable() {
-<span class="fc" id="L316">    return stub.disableServiceOperationCallable();</span>
+<span class="fc" id="L343">    return stub.disableServiceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -345,7 +372,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   @Deprecated
   public final UnaryCallable&lt;DisableServiceRequest, Operation&gt; disableServiceCallable() {
-<span class="nc" id="L348">    return stub.disableServiceCallable();</span>
+<span class="nc" id="L375">    return stub.disableServiceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -369,7 +396,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   @Deprecated
   public final Service getService(GetServiceRequest request) {
-<span class="fc" id="L372">    return getServiceCallable().call(request);</span>
+<span class="fc" id="L399">    return getServiceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -393,7 +420,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   @Deprecated
   public final UnaryCallable&lt;GetServiceRequest, Service&gt; getServiceCallable() {
-<span class="fc" id="L396">    return stub.getServiceCallable();</span>
+<span class="fc" id="L423">    return stub.getServiceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -429,7 +456,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   @Deprecated
   public final ListServicesPagedResponse listServices(ListServicesRequest request) {
-<span class="fc" id="L432">    return listServicesPagedCallable().call(request);</span>
+<span class="fc" id="L459">    return listServicesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -467,7 +494,7 @@ public class ServiceUsageClient implements BackgroundResource {
   @Deprecated
   public final UnaryCallable&lt;ListServicesRequest, ListServicesPagedResponse&gt;
       listServicesPagedCallable() {
-<span class="fc" id="L470">    return stub.listServicesPagedCallable();</span>
+<span class="fc" id="L497">    return stub.listServicesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -493,7 +520,7 @@ public class ServiceUsageClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListServicesResponse response = serviceUsageClient.listServicesCallable().call(request);
-   *     for (Service element : response.getResponsesList()) {
+   *     for (Service element : response.getServicesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -510,7 +537,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   @Deprecated
   public final UnaryCallable&lt;ListServicesRequest, ListServicesResponse&gt; listServicesCallable() {
-<span class="nc" id="L513">    return stub.listServicesCallable();</span>
+<span class="nc" id="L540">    return stub.listServicesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -542,7 +569,7 @@ public class ServiceUsageClient implements BackgroundResource {
   @Deprecated
   public final OperationFuture&lt;Empty, OperationMetadata&gt; batchEnableServicesAsync(
       BatchEnableServicesRequest request) {
-<span class="fc" id="L545">    return batchEnableServicesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L572">    return batchEnableServicesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -575,7 +602,7 @@ public class ServiceUsageClient implements BackgroundResource {
   @Deprecated
   public final OperationCallable&lt;BatchEnableServicesRequest, Empty, OperationMetadata&gt;
       batchEnableServicesOperationCallable() {
-<span class="fc" id="L578">    return stub.batchEnableServicesOperationCallable();</span>
+<span class="fc" id="L605">    return stub.batchEnableServicesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -607,7 +634,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   @Deprecated
   public final UnaryCallable&lt;BatchEnableServicesRequest, Operation&gt; batchEnableServicesCallable() {
-<span class="nc" id="L610">    return stub.batchEnableServicesCallable();</span>
+<span class="nc" id="L637">    return stub.batchEnableServicesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -642,7 +669,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final ListConsumerQuotaMetricsPagedResponse listConsumerQuotaMetrics(
       ListConsumerQuotaMetricsRequest request) {
-<span class="fc" id="L645">    return listConsumerQuotaMetricsPagedCallable().call(request);</span>
+<span class="fc" id="L672">    return listConsumerQuotaMetricsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -676,7 +703,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConsumerQuotaMetricsRequest, ListConsumerQuotaMetricsPagedResponse&gt;
       listConsumerQuotaMetricsPagedCallable() {
-<span class="fc" id="L679">    return stub.listConsumerQuotaMetricsPagedCallable();</span>
+<span class="fc" id="L706">    return stub.listConsumerQuotaMetricsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -702,7 +729,7 @@ public class ServiceUsageClient implements BackgroundResource {
    *   while (true) {
    *     ListConsumerQuotaMetricsResponse response =
    *         serviceUsageClient.listConsumerQuotaMetricsCallable().call(request);
-   *     for (ConsumerQuotaMetric element : response.getResponsesList()) {
+   *     for (ConsumerQuotaMetric element : response.getMetricsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -717,7 +744,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConsumerQuotaMetricsRequest, ListConsumerQuotaMetricsResponse&gt;
       listConsumerQuotaMetricsCallable() {
-<span class="nc" id="L720">    return stub.listConsumerQuotaMetricsCallable();</span>
+<span class="nc" id="L747">    return stub.listConsumerQuotaMetricsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -743,7 +770,7 @@ public class ServiceUsageClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ConsumerQuotaMetric getConsumerQuotaMetric(GetConsumerQuotaMetricRequest request) {
-<span class="fc" id="L746">    return getConsumerQuotaMetricCallable().call(request);</span>
+<span class="fc" id="L773">    return getConsumerQuotaMetricCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -770,7 +797,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetConsumerQuotaMetricRequest, ConsumerQuotaMetric&gt;
       getConsumerQuotaMetricCallable() {
-<span class="fc" id="L773">    return stub.getConsumerQuotaMetricCallable();</span>
+<span class="fc" id="L800">    return stub.getConsumerQuotaMetricCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -796,7 +823,7 @@ public class ServiceUsageClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ConsumerQuotaLimit getConsumerQuotaLimit(GetConsumerQuotaLimitRequest request) {
-<span class="fc" id="L799">    return getConsumerQuotaLimitCallable().call(request);</span>
+<span class="fc" id="L826">    return getConsumerQuotaLimitCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -823,7 +850,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetConsumerQuotaLimitRequest, ConsumerQuotaLimit&gt;
       getConsumerQuotaLimitCallable() {
-<span class="fc" id="L826">    return stub.getConsumerQuotaLimitCallable();</span>
+<span class="fc" id="L853">    return stub.getConsumerQuotaLimitCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -855,7 +882,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;QuotaOverride, OperationMetadata&gt; createAdminOverrideAsync(
       CreateAdminOverrideRequest request) {
-<span class="fc" id="L858">    return createAdminOverrideOperationCallable().futureCall(request);</span>
+<span class="fc" id="L885">    return createAdminOverrideOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -887,7 +914,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateAdminOverrideRequest, QuotaOverride, OperationMetadata&gt;
       createAdminOverrideOperationCallable() {
-<span class="fc" id="L890">    return stub.createAdminOverrideOperationCallable();</span>
+<span class="fc" id="L917">    return stub.createAdminOverrideOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -918,7 +945,7 @@ public class ServiceUsageClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateAdminOverrideRequest, Operation&gt; createAdminOverrideCallable() {
-<span class="nc" id="L921">    return stub.createAdminOverrideCallable();</span>
+<span class="nc" id="L948">    return stub.createAdminOverrideCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -948,7 +975,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;QuotaOverride, OperationMetadata&gt; updateAdminOverrideAsync(
       UpdateAdminOverrideRequest request) {
-<span class="fc" id="L951">    return updateAdminOverrideOperationCallable().futureCall(request);</span>
+<span class="fc" id="L978">    return updateAdminOverrideOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -978,7 +1005,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateAdminOverrideRequest, QuotaOverride, OperationMetadata&gt;
       updateAdminOverrideOperationCallable() {
-<span class="fc" id="L981">    return stub.updateAdminOverrideOperationCallable();</span>
+<span class="fc" id="L1008">    return stub.updateAdminOverrideOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1007,7 +1034,7 @@ public class ServiceUsageClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateAdminOverrideRequest, Operation&gt; updateAdminOverrideCallable() {
-<span class="nc" id="L1010">    return stub.updateAdminOverrideCallable();</span>
+<span class="nc" id="L1037">    return stub.updateAdminOverrideCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1035,7 +1062,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteAdminOverrideAsync(
       DeleteAdminOverrideRequest request) {
-<span class="fc" id="L1038">    return deleteAdminOverrideOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1065">    return deleteAdminOverrideOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1063,7 +1090,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteAdminOverrideRequest, Empty, OperationMetadata&gt;
       deleteAdminOverrideOperationCallable() {
-<span class="fc" id="L1066">    return stub.deleteAdminOverrideOperationCallable();</span>
+<span class="fc" id="L1093">    return stub.deleteAdminOverrideOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1090,7 +1117,7 @@ public class ServiceUsageClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteAdminOverrideRequest, Operation&gt; deleteAdminOverrideCallable() {
-<span class="nc" id="L1093">    return stub.deleteAdminOverrideCallable();</span>
+<span class="nc" id="L1120">    return stub.deleteAdminOverrideCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1120,7 +1147,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final ListAdminOverridesPagedResponse listAdminOverrides(
       ListAdminOverridesRequest request) {
-<span class="fc" id="L1123">    return listAdminOverridesPagedCallable().call(request);</span>
+<span class="fc" id="L1150">    return listAdminOverridesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1150,7 +1177,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListAdminOverridesRequest, ListAdminOverridesPagedResponse&gt;
       listAdminOverridesPagedCallable() {
-<span class="fc" id="L1153">    return stub.listAdminOverridesPagedCallable();</span>
+<span class="fc" id="L1180">    return stub.listAdminOverridesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1172,7 +1199,7 @@ public class ServiceUsageClient implements BackgroundResource {
    *   while (true) {
    *     ListAdminOverridesResponse response =
    *         serviceUsageClient.listAdminOverridesCallable().call(request);
-   *     for (QuotaOverride element : response.getResponsesList()) {
+   *     for (QuotaOverride element : response.getOverridesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1187,7 +1214,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListAdminOverridesRequest, ListAdminOverridesResponse&gt;
       listAdminOverridesCallable() {
-<span class="nc" id="L1190">    return stub.listAdminOverridesCallable();</span>
+<span class="nc" id="L1217">    return stub.listAdminOverridesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1217,7 +1244,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ImportAdminOverridesResponse, ImportAdminOverridesMetadata&gt;
       importAdminOverridesAsync(ImportAdminOverridesRequest request) {
-<span class="fc" id="L1220">    return importAdminOverridesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1247">    return importAdminOverridesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1247,7 +1274,7 @@ public class ServiceUsageClient implements BackgroundResource {
   public final OperationCallable&lt;
           ImportAdminOverridesRequest, ImportAdminOverridesResponse, ImportAdminOverridesMetadata&gt;
       importAdminOverridesOperationCallable() {
-<span class="fc" id="L1250">    return stub.importAdminOverridesOperationCallable();</span>
+<span class="fc" id="L1277">    return stub.importAdminOverridesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1276,7 +1303,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ImportAdminOverridesRequest, Operation&gt;
       importAdminOverridesCallable() {
-<span class="nc" id="L1279">    return stub.importAdminOverridesCallable();</span>
+<span class="nc" id="L1306">    return stub.importAdminOverridesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1308,7 +1335,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;QuotaOverride, OperationMetadata&gt; createConsumerOverrideAsync(
       CreateConsumerOverrideRequest request) {
-<span class="fc" id="L1311">    return createConsumerOverrideOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1338">    return createConsumerOverrideOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1340,7 +1367,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateConsumerOverrideRequest, QuotaOverride, OperationMetadata&gt;
       createConsumerOverrideOperationCallable() {
-<span class="fc" id="L1343">    return stub.createConsumerOverrideOperationCallable();</span>
+<span class="fc" id="L1370">    return stub.createConsumerOverrideOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1372,7 +1399,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateConsumerOverrideRequest, Operation&gt;
       createConsumerOverrideCallable() {
-<span class="nc" id="L1375">    return stub.createConsumerOverrideCallable();</span>
+<span class="nc" id="L1402">    return stub.createConsumerOverrideCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1402,7 +1429,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;QuotaOverride, OperationMetadata&gt; updateConsumerOverrideAsync(
       UpdateConsumerOverrideRequest request) {
-<span class="fc" id="L1405">    return updateConsumerOverrideOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1432">    return updateConsumerOverrideOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1432,7 +1459,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateConsumerOverrideRequest, QuotaOverride, OperationMetadata&gt;
       updateConsumerOverrideOperationCallable() {
-<span class="fc" id="L1435">    return stub.updateConsumerOverrideOperationCallable();</span>
+<span class="fc" id="L1462">    return stub.updateConsumerOverrideOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1462,7 +1489,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateConsumerOverrideRequest, Operation&gt;
       updateConsumerOverrideCallable() {
-<span class="nc" id="L1465">    return stub.updateConsumerOverrideCallable();</span>
+<span class="nc" id="L1492">    return stub.updateConsumerOverrideCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1490,7 +1517,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteConsumerOverrideAsync(
       DeleteConsumerOverrideRequest request) {
-<span class="fc" id="L1493">    return deleteConsumerOverrideOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1520">    return deleteConsumerOverrideOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1518,7 +1545,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteConsumerOverrideRequest, Empty, OperationMetadata&gt;
       deleteConsumerOverrideOperationCallable() {
-<span class="fc" id="L1521">    return stub.deleteConsumerOverrideOperationCallable();</span>
+<span class="fc" id="L1548">    return stub.deleteConsumerOverrideOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1546,7 +1573,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteConsumerOverrideRequest, Operation&gt;
       deleteConsumerOverrideCallable() {
-<span class="nc" id="L1549">    return stub.deleteConsumerOverrideCallable();</span>
+<span class="nc" id="L1576">    return stub.deleteConsumerOverrideCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1576,7 +1603,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final ListConsumerOverridesPagedResponse listConsumerOverrides(
       ListConsumerOverridesRequest request) {
-<span class="fc" id="L1579">    return listConsumerOverridesPagedCallable().call(request);</span>
+<span class="fc" id="L1606">    return listConsumerOverridesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1606,7 +1633,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConsumerOverridesRequest, ListConsumerOverridesPagedResponse&gt;
       listConsumerOverridesPagedCallable() {
-<span class="fc" id="L1609">    return stub.listConsumerOverridesPagedCallable();</span>
+<span class="fc" id="L1636">    return stub.listConsumerOverridesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1628,7 +1655,7 @@ public class ServiceUsageClient implements BackgroundResource {
    *   while (true) {
    *     ListConsumerOverridesResponse response =
    *         serviceUsageClient.listConsumerOverridesCallable().call(request);
-   *     for (QuotaOverride element : response.getResponsesList()) {
+   *     for (QuotaOverride element : response.getOverridesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1643,7 +1670,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConsumerOverridesRequest, ListConsumerOverridesResponse&gt;
       listConsumerOverridesCallable() {
-<span class="nc" id="L1646">    return stub.listConsumerOverridesCallable();</span>
+<span class="nc" id="L1673">    return stub.listConsumerOverridesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1674,7 +1701,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ImportConsumerOverridesResponse, ImportConsumerOverridesMetadata&gt;
       importConsumerOverridesAsync(ImportConsumerOverridesRequest request) {
-<span class="fc" id="L1677">    return importConsumerOverridesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1704">    return importConsumerOverridesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1707,7 +1734,7 @@ public class ServiceUsageClient implements BackgroundResource {
           ImportConsumerOverridesResponse,
           ImportConsumerOverridesMetadata&gt;
       importConsumerOverridesOperationCallable() {
-<span class="fc" id="L1710">    return stub.importConsumerOverridesOperationCallable();</span>
+<span class="fc" id="L1737">    return stub.importConsumerOverridesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1737,7 +1764,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ImportConsumerOverridesRequest, Operation&gt;
       importConsumerOverridesCallable() {
-<span class="nc" id="L1740">    return stub.importConsumerOverridesCallable();</span>
+<span class="nc" id="L1767">    return stub.importConsumerOverridesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1761,7 +1788,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ServiceIdentity, Empty&gt; generateServiceIdentityAsync(
       GenerateServiceIdentityRequest request) {
-<span class="fc" id="L1764">    return generateServiceIdentityOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1791">    return generateServiceIdentityOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1785,7 +1812,7 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final OperationCallable&lt;GenerateServiceIdentityRequest, ServiceIdentity, Empty&gt;
       generateServiceIdentityOperationCallable() {
-<span class="fc" id="L1788">    return stub.generateServiceIdentityOperationCallable();</span>
+<span class="fc" id="L1815">    return stub.generateServiceIdentityOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1809,37 +1836,37 @@ public class ServiceUsageClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GenerateServiceIdentityRequest, Operation&gt;
       generateServiceIdentityCallable() {
-<span class="nc" id="L1812">    return stub.generateServiceIdentityCallable();</span>
+<span class="nc" id="L1839">    return stub.generateServiceIdentityCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1817">    stub.close();</span>
-<span class="fc" id="L1818">  }</span>
+<span class="fc" id="L1844">    stub.close();</span>
+<span class="fc" id="L1845">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1822">    stub.shutdown();</span>
-<span class="nc" id="L1823">  }</span>
+<span class="nc" id="L1849">    stub.shutdown();</span>
+<span class="nc" id="L1850">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1827">    return stub.isShutdown();</span>
+<span class="nc" id="L1854">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1832">    return stub.isTerminated();</span>
+<span class="nc" id="L1859">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1837">    stub.shutdownNow();</span>
-<span class="nc" id="L1838">  }</span>
+<span class="nc" id="L1864">    stub.shutdownNow();</span>
+<span class="nc" id="L1865">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1842">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1869">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListServicesPagedResponse
@@ -1854,16 +1881,16 @@ public class ServiceUsageClient implements BackgroundResource {
         PageContext&lt;ListServicesRequest, ListServicesResponse, Service&gt; context,
         ApiFuture&lt;ListServicesResponse&gt; futureResponse) {
       ApiFuture&lt;ListServicesPage&gt; futurePage =
-<span class="fc" id="L1857">          ListServicesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1858">      return ApiFutures.transform(</span>
+<span class="fc" id="L1884">          ListServicesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1885">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1860">          input -&gt; new ListServicesPagedResponse(input),</span>
-<span class="fc" id="L1861">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1887">          input -&gt; new ListServicesPagedResponse(input),</span>
+<span class="fc" id="L1888">          MoreExecutors.directExecutor());</span>
     }
 
     private ListServicesPagedResponse(ListServicesPage page) {
-<span class="fc" id="L1865">      super(page, ListServicesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1866">    }</span>
+<span class="fc" id="L1892">      super(page, ListServicesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1893">    }</span>
   }
 
   public static class ListServicesPage
@@ -1872,25 +1899,25 @@ public class ServiceUsageClient implements BackgroundResource {
     private ListServicesPage(
         PageContext&lt;ListServicesRequest, ListServicesResponse, Service&gt; context,
         ListServicesResponse response) {
-<span class="fc" id="L1875">      super(context, response);</span>
-<span class="fc" id="L1876">    }</span>
+<span class="fc" id="L1902">      super(context, response);</span>
+<span class="fc" id="L1903">    }</span>
 
     private static ListServicesPage createEmptyPage() {
-<span class="fc" id="L1879">      return new ListServicesPage(null, null);</span>
+<span class="fc" id="L1906">      return new ListServicesPage(null, null);</span>
     }
 
     @Override
     protected ListServicesPage createPage(
         PageContext&lt;ListServicesRequest, ListServicesResponse, Service&gt; context,
         ListServicesResponse response) {
-<span class="fc" id="L1886">      return new ListServicesPage(context, response);</span>
+<span class="fc" id="L1913">      return new ListServicesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListServicesPage&gt; createPageAsync(
         PageContext&lt;ListServicesRequest, ListServicesResponse, Service&gt; context,
         ApiFuture&lt;ListServicesResponse&gt; futureResponse) {
-<span class="fc" id="L1893">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1920">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1903,17 +1930,17 @@ public class ServiceUsageClient implements BackgroundResource {
           ListServicesFixedSizeCollection&gt; {
 
     private ListServicesFixedSizeCollection(List&lt;ListServicesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1906">      super(pages, collectionSize);</span>
-<span class="fc" id="L1907">    }</span>
+<span class="fc" id="L1933">      super(pages, collectionSize);</span>
+<span class="fc" id="L1934">    }</span>
 
     private static ListServicesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1910">      return new ListServicesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1937">      return new ListServicesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListServicesFixedSizeCollection createCollection(
         List&lt;ListServicesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1916">      return new ListServicesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1943">      return new ListServicesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -1933,16 +1960,16 @@ public class ServiceUsageClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListConsumerQuotaMetricsResponse&gt; futureResponse) {
       ApiFuture&lt;ListConsumerQuotaMetricsPage&gt; futurePage =
-<span class="fc" id="L1936">          ListConsumerQuotaMetricsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1937">      return ApiFutures.transform(</span>
+<span class="fc" id="L1963">          ListConsumerQuotaMetricsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1964">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1939">          input -&gt; new ListConsumerQuotaMetricsPagedResponse(input),</span>
-<span class="fc" id="L1940">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1966">          input -&gt; new ListConsumerQuotaMetricsPagedResponse(input),</span>
+<span class="fc" id="L1967">          MoreExecutors.directExecutor());</span>
     }
 
     private ListConsumerQuotaMetricsPagedResponse(ListConsumerQuotaMetricsPage page) {
-<span class="fc" id="L1944">      super(page, ListConsumerQuotaMetricsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1945">    }</span>
+<span class="fc" id="L1971">      super(page, ListConsumerQuotaMetricsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1972">    }</span>
   }
 
   public static class ListConsumerQuotaMetricsPage
@@ -1959,11 +1986,11 @@ public class ServiceUsageClient implements BackgroundResource {
                 ConsumerQuotaMetric&gt;
             context,
         ListConsumerQuotaMetricsResponse response) {
-<span class="fc" id="L1962">      super(context, response);</span>
-<span class="fc" id="L1963">    }</span>
+<span class="fc" id="L1989">      super(context, response);</span>
+<span class="fc" id="L1990">    }</span>
 
     private static ListConsumerQuotaMetricsPage createEmptyPage() {
-<span class="fc" id="L1966">      return new ListConsumerQuotaMetricsPage(null, null);</span>
+<span class="fc" id="L1993">      return new ListConsumerQuotaMetricsPage(null, null);</span>
     }
 
     @Override
@@ -1974,7 +2001,7 @@ public class ServiceUsageClient implements BackgroundResource {
                 ConsumerQuotaMetric&gt;
             context,
         ListConsumerQuotaMetricsResponse response) {
-<span class="fc" id="L1977">      return new ListConsumerQuotaMetricsPage(context, response);</span>
+<span class="fc" id="L2004">      return new ListConsumerQuotaMetricsPage(context, response);</span>
     }
 
     @Override
@@ -1985,7 +2012,7 @@ public class ServiceUsageClient implements BackgroundResource {
                 ConsumerQuotaMetric&gt;
             context,
         ApiFuture&lt;ListConsumerQuotaMetricsResponse&gt; futureResponse) {
-<span class="fc" id="L1988">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2015">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1999,17 +2026,17 @@ public class ServiceUsageClient implements BackgroundResource {
 
     private ListConsumerQuotaMetricsFixedSizeCollection(
         List&lt;ListConsumerQuotaMetricsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2002">      super(pages, collectionSize);</span>
-<span class="fc" id="L2003">    }</span>
+<span class="fc" id="L2029">      super(pages, collectionSize);</span>
+<span class="fc" id="L2030">    }</span>
 
     private static ListConsumerQuotaMetricsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2006">      return new ListConsumerQuotaMetricsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2033">      return new ListConsumerQuotaMetricsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListConsumerQuotaMetricsFixedSizeCollection createCollection(
         List&lt;ListConsumerQuotaMetricsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2012">      return new ListConsumerQuotaMetricsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2039">      return new ListConsumerQuotaMetricsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2025,16 +2052,16 @@ public class ServiceUsageClient implements BackgroundResource {
         PageContext&lt;ListAdminOverridesRequest, ListAdminOverridesResponse, QuotaOverride&gt; context,
         ApiFuture&lt;ListAdminOverridesResponse&gt; futureResponse) {
       ApiFuture&lt;ListAdminOverridesPage&gt; futurePage =
-<span class="fc" id="L2028">          ListAdminOverridesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2029">      return ApiFutures.transform(</span>
+<span class="fc" id="L2055">          ListAdminOverridesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2056">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2031">          input -&gt; new ListAdminOverridesPagedResponse(input),</span>
-<span class="fc" id="L2032">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2058">          input -&gt; new ListAdminOverridesPagedResponse(input),</span>
+<span class="fc" id="L2059">          MoreExecutors.directExecutor());</span>
     }
 
     private ListAdminOverridesPagedResponse(ListAdminOverridesPage page) {
-<span class="fc" id="L2036">      super(page, ListAdminOverridesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2037">    }</span>
+<span class="fc" id="L2063">      super(page, ListAdminOverridesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2064">    }</span>
   }
 
   public static class ListAdminOverridesPage
@@ -2047,25 +2074,25 @@ public class ServiceUsageClient implements BackgroundResource {
     private ListAdminOverridesPage(
         PageContext&lt;ListAdminOverridesRequest, ListAdminOverridesResponse, QuotaOverride&gt; context,
         ListAdminOverridesResponse response) {
-<span class="fc" id="L2050">      super(context, response);</span>
-<span class="fc" id="L2051">    }</span>
+<span class="fc" id="L2077">      super(context, response);</span>
+<span class="fc" id="L2078">    }</span>
 
     private static ListAdminOverridesPage createEmptyPage() {
-<span class="fc" id="L2054">      return new ListAdminOverridesPage(null, null);</span>
+<span class="fc" id="L2081">      return new ListAdminOverridesPage(null, null);</span>
     }
 
     @Override
     protected ListAdminOverridesPage createPage(
         PageContext&lt;ListAdminOverridesRequest, ListAdminOverridesResponse, QuotaOverride&gt; context,
         ListAdminOverridesResponse response) {
-<span class="fc" id="L2061">      return new ListAdminOverridesPage(context, response);</span>
+<span class="fc" id="L2088">      return new ListAdminOverridesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListAdminOverridesPage&gt; createPageAsync(
         PageContext&lt;ListAdminOverridesRequest, ListAdminOverridesResponse, QuotaOverride&gt; context,
         ApiFuture&lt;ListAdminOverridesResponse&gt; futureResponse) {
-<span class="fc" id="L2068">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2095">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2079,17 +2106,17 @@ public class ServiceUsageClient implements BackgroundResource {
 
     private ListAdminOverridesFixedSizeCollection(
         List&lt;ListAdminOverridesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2082">      super(pages, collectionSize);</span>
-<span class="fc" id="L2083">    }</span>
+<span class="fc" id="L2109">      super(pages, collectionSize);</span>
+<span class="fc" id="L2110">    }</span>
 
     private static ListAdminOverridesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2086">      return new ListAdminOverridesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2113">      return new ListAdminOverridesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListAdminOverridesFixedSizeCollection createCollection(
         List&lt;ListAdminOverridesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2092">      return new ListAdminOverridesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2119">      return new ListAdminOverridesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2106,16 +2133,16 @@ public class ServiceUsageClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListConsumerOverridesResponse&gt; futureResponse) {
       ApiFuture&lt;ListConsumerOverridesPage&gt; futurePage =
-<span class="fc" id="L2109">          ListConsumerOverridesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2110">      return ApiFutures.transform(</span>
+<span class="fc" id="L2136">          ListConsumerOverridesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2137">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2112">          input -&gt; new ListConsumerOverridesPagedResponse(input),</span>
-<span class="fc" id="L2113">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2139">          input -&gt; new ListConsumerOverridesPagedResponse(input),</span>
+<span class="fc" id="L2140">          MoreExecutors.directExecutor());</span>
     }
 
     private ListConsumerOverridesPagedResponse(ListConsumerOverridesPage page) {
-<span class="fc" id="L2117">      super(page, ListConsumerOverridesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2118">    }</span>
+<span class="fc" id="L2144">      super(page, ListConsumerOverridesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2145">    }</span>
   }
 
   public static class ListConsumerOverridesPage
@@ -2129,11 +2156,11 @@ public class ServiceUsageClient implements BackgroundResource {
         PageContext&lt;ListConsumerOverridesRequest, ListConsumerOverridesResponse, QuotaOverride&gt;
             context,
         ListConsumerOverridesResponse response) {
-<span class="fc" id="L2132">      super(context, response);</span>
-<span class="fc" id="L2133">    }</span>
+<span class="fc" id="L2159">      super(context, response);</span>
+<span class="fc" id="L2160">    }</span>
 
     private static ListConsumerOverridesPage createEmptyPage() {
-<span class="fc" id="L2136">      return new ListConsumerOverridesPage(null, null);</span>
+<span class="fc" id="L2163">      return new ListConsumerOverridesPage(null, null);</span>
     }
 
     @Override
@@ -2141,7 +2168,7 @@ public class ServiceUsageClient implements BackgroundResource {
         PageContext&lt;ListConsumerOverridesRequest, ListConsumerOverridesResponse, QuotaOverride&gt;
             context,
         ListConsumerOverridesResponse response) {
-<span class="fc" id="L2144">      return new ListConsumerOverridesPage(context, response);</span>
+<span class="fc" id="L2171">      return new ListConsumerOverridesPage(context, response);</span>
     }
 
     @Override
@@ -2149,7 +2176,7 @@ public class ServiceUsageClient implements BackgroundResource {
         PageContext&lt;ListConsumerOverridesRequest, ListConsumerOverridesResponse, QuotaOverride&gt;
             context,
         ApiFuture&lt;ListConsumerOverridesResponse&gt; futureResponse) {
-<span class="fc" id="L2152">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2179">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2163,17 +2190,17 @@ public class ServiceUsageClient implements BackgroundResource {
 
     private ListConsumerOverridesFixedSizeCollection(
         List&lt;ListConsumerOverridesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2166">      super(pages, collectionSize);</span>
-<span class="fc" id="L2167">    }</span>
+<span class="fc" id="L2193">      super(pages, collectionSize);</span>
+<span class="fc" id="L2194">    }</span>
 
     private static ListConsumerOverridesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2170">      return new ListConsumerOverridesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2197">      return new ListConsumerOverridesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListConsumerOverridesFixedSizeCollection createCollection(
         List&lt;ListConsumerOverridesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2176">      return new ListConsumerOverridesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2203">      return new ListConsumerOverridesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
