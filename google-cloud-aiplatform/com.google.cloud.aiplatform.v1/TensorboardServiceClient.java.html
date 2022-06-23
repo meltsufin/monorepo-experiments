@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>TensorboardServiceClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-aiplatform</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.aiplatform.v1</a> &gt; <span class="el_source">TensorboardServiceClient.java</span></div><h1>TensorboardServiceClient.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.google.cloud.aiplatform.v1;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
@@ -30,7 +29,16 @@ import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.aiplatform.v1.stub.TensorboardServiceStub;
 import com.google.cloud.aiplatform.v1.stub.TensorboardServiceStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
 import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
@@ -48,6 +56,8 @@ import javax.annotation.Generated;
  * calls that map to API methods. Sample code to get started:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
  *   TensorboardName name = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;);
  *   Tensorboard response = tensorboardServiceClient.getTensorboard(name);
@@ -84,6 +94,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize credentials:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * TensorboardServiceSettings tensorboardServiceSettings =
  *     TensorboardServiceSettings.newBuilder()
  *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
@@ -95,6 +107,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize the endpoint:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * TensorboardServiceSettings tensorboardServiceSettings =
  *     TensorboardServiceSettings.newBuilder().setEndpoint(myEndpoint).build();
  * TensorboardServiceClient tensorboardServiceClient =
@@ -111,7 +125,7 @@ public class TensorboardServiceClient implements BackgroundResource {
 
   /** Constructs an instance of TensorboardServiceClient with default settings. */
   public static final TensorboardServiceClient create() throws IOException {
-<span class="nc" id="L114">    return create(TensorboardServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L128">    return create(TensorboardServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -120,16 +134,15 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public static final TensorboardServiceClient create(TensorboardServiceSettings settings)
       throws IOException {
-<span class="fc" id="L123">    return new TensorboardServiceClient(settings);</span>
+<span class="fc" id="L137">    return new TensorboardServiceClient(settings);</span>
   }
 
   /**
    * Constructs an instance of TensorboardServiceClient, using the given stub for making calls. This
    * is for advanced usage - prefer using create(TensorboardServiceSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final TensorboardServiceClient create(TensorboardServiceStub stub) {
-<span class="nc" id="L132">    return new TensorboardServiceClient(stub);</span>
+<span class="nc" id="L145">    return new TensorboardServiceClient(stub);</span>
   }
 
   /**
@@ -137,26 +150,24 @@ public class TensorboardServiceClient implements BackgroundResource {
    * so that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L140">  protected TensorboardServiceClient(TensorboardServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L141">    this.settings = settings;</span>
-<span class="fc" id="L142">    this.stub = ((TensorboardServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L143">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L144">  }</span>
+<span class="fc" id="L153">  protected TensorboardServiceClient(TensorboardServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L154">    this.settings = settings;</span>
+<span class="fc" id="L155">    this.stub = ((TensorboardServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L156">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L157">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L147">  protected TensorboardServiceClient(TensorboardServiceStub stub) {</span>
-<span class="nc" id="L148">    this.settings = null;</span>
-<span class="nc" id="L149">    this.stub = stub;</span>
-<span class="nc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L151">  }</span>
+<span class="nc" id="L159">  protected TensorboardServiceClient(TensorboardServiceStub stub) {</span>
+<span class="nc" id="L160">    this.settings = null;</span>
+<span class="nc" id="L161">    this.stub = stub;</span>
+<span class="nc" id="L162">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L163">  }</span>
 
   public final TensorboardServiceSettings getSettings() {
-<span class="nc" id="L154">    return settings;</span>
+<span class="nc" id="L166">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public TensorboardServiceStub getStub() {
-<span class="nc" id="L159">    return stub;</span>
+<span class="nc" id="L170">    return stub;</span>
   }
 
   /**
@@ -164,7 +175,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * returned by another API method call.
    */
   public final OperationsClient getOperationsClient() {
-<span class="nc" id="L167">    return operationsClient;</span>
+<span class="nc" id="L178">    return operationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -174,6 +185,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardName parent = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;);
    *   Tensorboard tensorboard = Tensorboard.newBuilder().build();
@@ -190,11 +203,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Tensorboard, CreateTensorboardOperationMetadata&gt;
       createTensorboardAsync(TensorboardName parent, Tensorboard tensorboard) {
     CreateTensorboardRequest request =
-<span class="fc" id="L193">        CreateTensorboardRequest.newBuilder()</span>
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L195">            .setTensorboard(tensorboard)</span>
-<span class="fc" id="L196">            .build();</span>
-<span class="fc" id="L197">    return createTensorboardAsync(request);</span>
+<span class="fc" id="L206">        CreateTensorboardRequest.newBuilder()</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L208">            .setTensorboard(tensorboard)</span>
+<span class="fc" id="L209">            .build();</span>
+<span class="fc" id="L210">    return createTensorboardAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -204,6 +217,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;).toString();
    *   Tensorboard tensorboard = Tensorboard.newBuilder().build();
@@ -220,8 +235,8 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Tensorboard, CreateTensorboardOperationMetadata&gt;
       createTensorboardAsync(String parent, Tensorboard tensorboard) {
     CreateTensorboardRequest request =
-<span class="fc" id="L223">        CreateTensorboardRequest.newBuilder().setParent(parent).setTensorboard(tensorboard).build();</span>
-<span class="fc" id="L224">    return createTensorboardAsync(request);</span>
+<span class="fc" id="L238">        CreateTensorboardRequest.newBuilder().setParent(parent).setTensorboard(tensorboard).build();</span>
+<span class="fc" id="L239">    return createTensorboardAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -231,6 +246,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardRequest request =
    *       CreateTensorboardRequest.newBuilder()
@@ -246,7 +263,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Tensorboard, CreateTensorboardOperationMetadata&gt;
       createTensorboardAsync(CreateTensorboardRequest request) {
-<span class="fc" id="L249">    return createTensorboardOperationCallable().futureCall(request);</span>
+<span class="fc" id="L266">    return createTensorboardOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -256,6 +273,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardRequest request =
    *       CreateTensorboardRequest.newBuilder()
@@ -272,7 +291,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateTensorboardRequest, Tensorboard, CreateTensorboardOperationMetadata&gt;
       createTensorboardOperationCallable() {
-<span class="fc" id="L275">    return stub.createTensorboardOperationCallable();</span>
+<span class="fc" id="L294">    return stub.createTensorboardOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -282,6 +301,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardRequest request =
    *       CreateTensorboardRequest.newBuilder()
@@ -296,7 +317,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateTensorboardRequest, Operation&gt; createTensorboardCallable() {
-<span class="nc" id="L299">    return stub.createTensorboardCallable();</span>
+<span class="nc" id="L320">    return stub.createTensorboardCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -306,6 +327,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardName name = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;);
    *   Tensorboard response = tensorboardServiceClient.getTensorboard(name);
@@ -318,8 +341,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final Tensorboard getTensorboard(TensorboardName name) {
     GetTensorboardRequest request =
-<span class="pc bpc" id="L321" title="1 of 2 branches missed.">        GetTensorboardRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L322">    return getTensorboard(request);</span>
+<span class="pc bpc" id="L344" title="1 of 2 branches missed.">        GetTensorboardRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L345">    return getTensorboard(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -329,6 +352,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String name = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;).toString();
    *   Tensorboard response = tensorboardServiceClient.getTensorboard(name);
@@ -340,8 +365,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Tensorboard getTensorboard(String name) {
-<span class="fc" id="L343">    GetTensorboardRequest request = GetTensorboardRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L344">    return getTensorboard(request);</span>
+<span class="fc" id="L368">    GetTensorboardRequest request = GetTensorboardRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L369">    return getTensorboard(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -351,6 +376,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   GetTensorboardRequest request =
    *       GetTensorboardRequest.newBuilder()
@@ -364,7 +391,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Tensorboard getTensorboard(GetTensorboardRequest request) {
-<span class="fc" id="L367">    return getTensorboardCallable().call(request);</span>
+<span class="fc" id="L394">    return getTensorboardCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -374,6 +401,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   GetTensorboardRequest request =
    *       GetTensorboardRequest.newBuilder()
@@ -387,7 +416,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTensorboardRequest, Tensorboard&gt; getTensorboardCallable() {
-<span class="fc" id="L390">    return stub.getTensorboardCallable();</span>
+<span class="fc" id="L419">    return stub.getTensorboardCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -397,6 +426,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   Tensorboard tensorboard = Tensorboard.newBuilder().build();
    *   FieldMask updateMask = FieldMask.newBuilder().build();
@@ -417,11 +448,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Tensorboard, UpdateTensorboardOperationMetadata&gt;
       updateTensorboardAsync(Tensorboard tensorboard, FieldMask updateMask) {
     UpdateTensorboardRequest request =
-<span class="fc" id="L420">        UpdateTensorboardRequest.newBuilder()</span>
-<span class="fc" id="L421">            .setTensorboard(tensorboard)</span>
-<span class="fc" id="L422">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L423">            .build();</span>
-<span class="fc" id="L424">    return updateTensorboardAsync(request);</span>
+<span class="fc" id="L451">        UpdateTensorboardRequest.newBuilder()</span>
+<span class="fc" id="L452">            .setTensorboard(tensorboard)</span>
+<span class="fc" id="L453">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L454">            .build();</span>
+<span class="fc" id="L455">    return updateTensorboardAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -431,6 +462,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardRequest request =
    *       UpdateTensorboardRequest.newBuilder()
@@ -446,7 +479,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Tensorboard, UpdateTensorboardOperationMetadata&gt;
       updateTensorboardAsync(UpdateTensorboardRequest request) {
-<span class="fc" id="L449">    return updateTensorboardOperationCallable().futureCall(request);</span>
+<span class="fc" id="L482">    return updateTensorboardOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -456,6 +489,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardRequest request =
    *       UpdateTensorboardRequest.newBuilder()
@@ -472,7 +507,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateTensorboardRequest, Tensorboard, UpdateTensorboardOperationMetadata&gt;
       updateTensorboardOperationCallable() {
-<span class="fc" id="L475">    return stub.updateTensorboardOperationCallable();</span>
+<span class="fc" id="L510">    return stub.updateTensorboardOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -482,6 +517,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardRequest request =
    *       UpdateTensorboardRequest.newBuilder()
@@ -496,7 +533,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateTensorboardRequest, Operation&gt; updateTensorboardCallable() {
-<span class="nc" id="L499">    return stub.updateTensorboardCallable();</span>
+<span class="nc" id="L536">    return stub.updateTensorboardCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -506,6 +543,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   for (Tensorboard element : tensorboardServiceClient.listTensorboards(parent).iterateAll()) {
@@ -520,10 +559,10 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ListTensorboardsPagedResponse listTensorboards(LocationName parent) {
     ListTensorboardsRequest request =
-<span class="fc" id="L523">        ListTensorboardsRequest.newBuilder()</span>
-<span class="pc bpc" id="L524" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L525">            .build();</span>
-<span class="fc" id="L526">    return listTensorboards(request);</span>
+<span class="fc" id="L562">        ListTensorboardsRequest.newBuilder()</span>
+<span class="pc bpc" id="L563" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L564">            .build();</span>
+<span class="fc" id="L565">    return listTensorboards(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -533,6 +572,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   for (Tensorboard element : tensorboardServiceClient.listTensorboards(parent).iterateAll()) {
@@ -547,8 +588,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ListTensorboardsPagedResponse listTensorboards(String parent) {
     ListTensorboardsRequest request =
-<span class="fc" id="L550">        ListTensorboardsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L551">    return listTensorboards(request);</span>
+<span class="fc" id="L591">        ListTensorboardsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L592">    return listTensorboards(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -558,6 +599,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardsRequest request =
    *       ListTensorboardsRequest.newBuilder()
@@ -578,7 +621,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTensorboardsPagedResponse listTensorboards(ListTensorboardsRequest request) {
-<span class="fc" id="L581">    return listTensorboardsPagedCallable().call(request);</span>
+<span class="fc" id="L624">    return listTensorboardsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -588,6 +631,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardsRequest request =
    *       ListTensorboardsRequest.newBuilder()
@@ -609,7 +654,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTensorboardsRequest, ListTensorboardsPagedResponse&gt;
       listTensorboardsPagedCallable() {
-<span class="fc" id="L612">    return stub.listTensorboardsPagedCallable();</span>
+<span class="fc" id="L657">    return stub.listTensorboardsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -619,6 +664,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardsRequest request =
    *       ListTensorboardsRequest.newBuilder()
@@ -632,7 +679,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    *   while (true) {
    *     ListTensorboardsResponse response =
    *         tensorboardServiceClient.listTensorboardsCallable().call(request);
-   *     for (Tensorboard element : response.getResponsesList()) {
+   *     for (Tensorboard element : response.getTensorboardsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -647,7 +694,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTensorboardsRequest, ListTensorboardsResponse&gt;
       listTensorboardsCallable() {
-<span class="nc" id="L650">    return stub.listTensorboardsCallable();</span>
+<span class="nc" id="L697">    return stub.listTensorboardsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -657,6 +704,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardName name = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;);
    *   tensorboardServiceClient.deleteTensorboardAsync(name).get();
@@ -670,10 +719,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardAsync(
       TensorboardName name) {
     DeleteTensorboardRequest request =
-<span class="fc" id="L673">        DeleteTensorboardRequest.newBuilder()</span>
-<span class="pc bpc" id="L674" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L675">            .build();</span>
-<span class="fc" id="L676">    return deleteTensorboardAsync(request);</span>
+<span class="fc" id="L722">        DeleteTensorboardRequest.newBuilder()</span>
+<span class="pc bpc" id="L723" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L724">            .build();</span>
+<span class="fc" id="L725">    return deleteTensorboardAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -683,6 +732,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String name = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;).toString();
    *   tensorboardServiceClient.deleteTensorboardAsync(name).get();
@@ -694,8 +745,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardAsync(String name) {
-<span class="fc" id="L697">    DeleteTensorboardRequest request = DeleteTensorboardRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L698">    return deleteTensorboardAsync(request);</span>
+<span class="fc" id="L748">    DeleteTensorboardRequest request = DeleteTensorboardRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L749">    return deleteTensorboardAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -705,6 +756,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardRequest request =
    *       DeleteTensorboardRequest.newBuilder()
@@ -719,7 +772,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardAsync(
       DeleteTensorboardRequest request) {
-<span class="fc" id="L722">    return deleteTensorboardOperationCallable().futureCall(request);</span>
+<span class="fc" id="L775">    return deleteTensorboardOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -729,6 +782,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardRequest request =
    *       DeleteTensorboardRequest.newBuilder()
@@ -743,7 +798,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTensorboardRequest, Empty, DeleteOperationMetadata&gt;
       deleteTensorboardOperationCallable() {
-<span class="fc" id="L746">    return stub.deleteTensorboardOperationCallable();</span>
+<span class="fc" id="L801">    return stub.deleteTensorboardOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -753,6 +808,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardRequest request =
    *       DeleteTensorboardRequest.newBuilder()
@@ -766,7 +823,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteTensorboardRequest, Operation&gt; deleteTensorboardCallable() {
-<span class="nc" id="L769">    return stub.deleteTensorboardCallable();</span>
+<span class="nc" id="L826">    return stub.deleteTensorboardCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -776,6 +833,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardExperimentName parent =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;);
@@ -801,12 +860,12 @@ public class TensorboardServiceClient implements BackgroundResource {
       TensorboardExperiment tensorboardExperiment,
       String tensorboardExperimentId) {
     CreateTensorboardExperimentRequest request =
-<span class="fc" id="L804">        CreateTensorboardExperimentRequest.newBuilder()</span>
-<span class="pc bpc" id="L805" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L806">            .setTensorboardExperiment(tensorboardExperiment)</span>
-<span class="fc" id="L807">            .setTensorboardExperimentId(tensorboardExperimentId)</span>
-<span class="fc" id="L808">            .build();</span>
-<span class="fc" id="L809">    return createTensorboardExperiment(request);</span>
+<span class="fc" id="L863">        CreateTensorboardExperimentRequest.newBuilder()</span>
+<span class="pc bpc" id="L864" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L865">            .setTensorboardExperiment(tensorboardExperiment)</span>
+<span class="fc" id="L866">            .setTensorboardExperimentId(tensorboardExperimentId)</span>
+<span class="fc" id="L867">            .build();</span>
+<span class="fc" id="L868">    return createTensorboardExperiment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -816,6 +875,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;)
@@ -840,12 +901,12 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final TensorboardExperiment createTensorboardExperiment(
       String parent, TensorboardExperiment tensorboardExperiment, String tensorboardExperimentId) {
     CreateTensorboardExperimentRequest request =
-<span class="fc" id="L843">        CreateTensorboardExperimentRequest.newBuilder()</span>
-<span class="fc" id="L844">            .setParent(parent)</span>
-<span class="fc" id="L845">            .setTensorboardExperiment(tensorboardExperiment)</span>
-<span class="fc" id="L846">            .setTensorboardExperimentId(tensorboardExperimentId)</span>
-<span class="fc" id="L847">            .build();</span>
-<span class="fc" id="L848">    return createTensorboardExperiment(request);</span>
+<span class="fc" id="L904">        CreateTensorboardExperimentRequest.newBuilder()</span>
+<span class="fc" id="L905">            .setParent(parent)</span>
+<span class="fc" id="L906">            .setTensorboardExperiment(tensorboardExperiment)</span>
+<span class="fc" id="L907">            .setTensorboardExperimentId(tensorboardExperimentId)</span>
+<span class="fc" id="L908">            .build();</span>
+<span class="fc" id="L909">    return createTensorboardExperiment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -855,6 +916,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardExperimentRequest request =
    *       CreateTensorboardExperimentRequest.newBuilder()
@@ -875,7 +938,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardExperiment createTensorboardExperiment(
       CreateTensorboardExperimentRequest request) {
-<span class="fc" id="L878">    return createTensorboardExperimentCallable().call(request);</span>
+<span class="fc" id="L941">    return createTensorboardExperimentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -885,6 +948,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardExperimentRequest request =
    *       CreateTensorboardExperimentRequest.newBuilder()
@@ -904,7 +969,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateTensorboardExperimentRequest, TensorboardExperiment&gt;
       createTensorboardExperimentCallable() {
-<span class="fc" id="L907">    return stub.createTensorboardExperimentCallable();</span>
+<span class="fc" id="L972">    return stub.createTensorboardExperimentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -914,6 +979,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardExperimentName name =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;);
@@ -927,10 +994,10 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardExperiment getTensorboardExperiment(TensorboardExperimentName name) {
     GetTensorboardExperimentRequest request =
-<span class="fc" id="L930">        GetTensorboardExperimentRequest.newBuilder()</span>
-<span class="pc bpc" id="L931" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L932">            .build();</span>
-<span class="fc" id="L933">    return getTensorboardExperiment(request);</span>
+<span class="fc" id="L997">        GetTensorboardExperimentRequest.newBuilder()</span>
+<span class="pc bpc" id="L998" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L999">            .build();</span>
+<span class="fc" id="L1000">    return getTensorboardExperiment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -940,6 +1007,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String name =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;)
@@ -954,8 +1023,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardExperiment getTensorboardExperiment(String name) {
     GetTensorboardExperimentRequest request =
-<span class="fc" id="L957">        GetTensorboardExperimentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L958">    return getTensorboardExperiment(request);</span>
+<span class="fc" id="L1026">        GetTensorboardExperimentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1027">    return getTensorboardExperiment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -965,6 +1034,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   GetTensorboardExperimentRequest request =
    *       GetTensorboardExperimentRequest.newBuilder()
@@ -982,7 +1053,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardExperiment getTensorboardExperiment(
       GetTensorboardExperimentRequest request) {
-<span class="fc" id="L985">    return getTensorboardExperimentCallable().call(request);</span>
+<span class="fc" id="L1056">    return getTensorboardExperimentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -992,6 +1063,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   GetTensorboardExperimentRequest request =
    *       GetTensorboardExperimentRequest.newBuilder()
@@ -1009,7 +1082,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetTensorboardExperimentRequest, TensorboardExperiment&gt;
       getTensorboardExperimentCallable() {
-<span class="fc" id="L1012">    return stub.getTensorboardExperimentCallable();</span>
+<span class="fc" id="L1085">    return stub.getTensorboardExperimentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1019,6 +1092,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardExperiment tensorboardExperiment = TensorboardExperiment.newBuilder().build();
    *   FieldMask updateMask = FieldMask.newBuilder().build();
@@ -1040,11 +1115,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final TensorboardExperiment updateTensorboardExperiment(
       TensorboardExperiment tensorboardExperiment, FieldMask updateMask) {
     UpdateTensorboardExperimentRequest request =
-<span class="fc" id="L1043">        UpdateTensorboardExperimentRequest.newBuilder()</span>
-<span class="fc" id="L1044">            .setTensorboardExperiment(tensorboardExperiment)</span>
-<span class="fc" id="L1045">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1046">            .build();</span>
-<span class="fc" id="L1047">    return updateTensorboardExperiment(request);</span>
+<span class="fc" id="L1118">        UpdateTensorboardExperimentRequest.newBuilder()</span>
+<span class="fc" id="L1119">            .setTensorboardExperiment(tensorboardExperiment)</span>
+<span class="fc" id="L1120">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1121">            .build();</span>
+<span class="fc" id="L1122">    return updateTensorboardExperiment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1054,6 +1129,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardExperimentRequest request =
    *       UpdateTensorboardExperimentRequest.newBuilder()
@@ -1070,7 +1147,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardExperiment updateTensorboardExperiment(
       UpdateTensorboardExperimentRequest request) {
-<span class="fc" id="L1073">    return updateTensorboardExperimentCallable().call(request);</span>
+<span class="fc" id="L1150">    return updateTensorboardExperimentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1080,6 +1157,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardExperimentRequest request =
    *       UpdateTensorboardExperimentRequest.newBuilder()
@@ -1095,7 +1174,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateTensorboardExperimentRequest, TensorboardExperiment&gt;
       updateTensorboardExperimentCallable() {
-<span class="fc" id="L1098">    return stub.updateTensorboardExperimentCallable();</span>
+<span class="fc" id="L1177">    return stub.updateTensorboardExperimentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1105,6 +1184,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardName parent = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;);
    *   for (TensorboardExperiment element :
@@ -1121,10 +1202,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final ListTensorboardExperimentsPagedResponse listTensorboardExperiments(
       TensorboardName parent) {
     ListTensorboardExperimentsRequest request =
-<span class="fc" id="L1124">        ListTensorboardExperimentsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1125" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1126">            .build();</span>
-<span class="fc" id="L1127">    return listTensorboardExperiments(request);</span>
+<span class="fc" id="L1205">        ListTensorboardExperimentsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1206" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1207">            .build();</span>
+<span class="fc" id="L1208">    return listTensorboardExperiments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1134,6 +1215,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;).toString();
    *   for (TensorboardExperiment element :
@@ -1149,8 +1232,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ListTensorboardExperimentsPagedResponse listTensorboardExperiments(String parent) {
     ListTensorboardExperimentsRequest request =
-<span class="fc" id="L1152">        ListTensorboardExperimentsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1153">    return listTensorboardExperiments(request);</span>
+<span class="fc" id="L1235">        ListTensorboardExperimentsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1236">    return listTensorboardExperiments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1160,6 +1243,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardExperimentsRequest request =
    *       ListTensorboardExperimentsRequest.newBuilder()
@@ -1182,7 +1267,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ListTensorboardExperimentsPagedResponse listTensorboardExperiments(
       ListTensorboardExperimentsRequest request) {
-<span class="fc" id="L1185">    return listTensorboardExperimentsPagedCallable().call(request);</span>
+<span class="fc" id="L1270">    return listTensorboardExperimentsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1192,6 +1277,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardExperimentsRequest request =
    *       ListTensorboardExperimentsRequest.newBuilder()
@@ -1214,7 +1301,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListTensorboardExperimentsRequest, ListTensorboardExperimentsPagedResponse&gt;
       listTensorboardExperimentsPagedCallable() {
-<span class="fc" id="L1217">    return stub.listTensorboardExperimentsPagedCallable();</span>
+<span class="fc" id="L1304">    return stub.listTensorboardExperimentsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1224,6 +1311,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardExperimentsRequest request =
    *       ListTensorboardExperimentsRequest.newBuilder()
@@ -1237,7 +1326,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    *   while (true) {
    *     ListTensorboardExperimentsResponse response =
    *         tensorboardServiceClient.listTensorboardExperimentsCallable().call(request);
-   *     for (TensorboardExperiment element : response.getResponsesList()) {
+   *     for (TensorboardExperiment element : response.getTensorboardExperimentsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1252,7 +1341,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTensorboardExperimentsRequest, ListTensorboardExperimentsResponse&gt;
       listTensorboardExperimentsCallable() {
-<span class="nc" id="L1255">    return stub.listTensorboardExperimentsCallable();</span>
+<span class="nc" id="L1344">    return stub.listTensorboardExperimentsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1262,6 +1351,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardExperimentName name =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;);
@@ -1276,10 +1367,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardExperimentAsync(
       TensorboardExperimentName name) {
     DeleteTensorboardExperimentRequest request =
-<span class="fc" id="L1279">        DeleteTensorboardExperimentRequest.newBuilder()</span>
-<span class="pc bpc" id="L1280" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1281">            .build();</span>
-<span class="fc" id="L1282">    return deleteTensorboardExperimentAsync(request);</span>
+<span class="fc" id="L1370">        DeleteTensorboardExperimentRequest.newBuilder()</span>
+<span class="pc bpc" id="L1371" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1372">            .build();</span>
+<span class="fc" id="L1373">    return deleteTensorboardExperimentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1289,6 +1380,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String name =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;)
@@ -1304,8 +1397,8 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardExperimentAsync(
       String name) {
     DeleteTensorboardExperimentRequest request =
-<span class="fc" id="L1307">        DeleteTensorboardExperimentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1308">    return deleteTensorboardExperimentAsync(request);</span>
+<span class="fc" id="L1400">        DeleteTensorboardExperimentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1401">    return deleteTensorboardExperimentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1315,6 +1408,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardExperimentRequest request =
    *       DeleteTensorboardExperimentRequest.newBuilder()
@@ -1332,7 +1427,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardExperimentAsync(
       DeleteTensorboardExperimentRequest request) {
-<span class="fc" id="L1335">    return deleteTensorboardExperimentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1430">    return deleteTensorboardExperimentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1342,6 +1437,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardExperimentRequest request =
    *       DeleteTensorboardExperimentRequest.newBuilder()
@@ -1361,7 +1458,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTensorboardExperimentRequest, Empty, DeleteOperationMetadata&gt;
       deleteTensorboardExperimentOperationCallable() {
-<span class="fc" id="L1364">    return stub.deleteTensorboardExperimentOperationCallable();</span>
+<span class="fc" id="L1461">    return stub.deleteTensorboardExperimentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1371,6 +1468,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardExperimentRequest request =
    *       DeleteTensorboardExperimentRequest.newBuilder()
@@ -1388,7 +1487,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteTensorboardExperimentRequest, Operation&gt;
       deleteTensorboardExperimentCallable() {
-<span class="nc" id="L1391">    return stub.deleteTensorboardExperimentCallable();</span>
+<span class="nc" id="L1490">    return stub.deleteTensorboardExperimentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1398,6 +1497,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardRunName parent =
    *       TensorboardRunName.of(
@@ -1421,12 +1522,12 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final TensorboardRun createTensorboardRun(
       TensorboardRunName parent, TensorboardRun tensorboardRun, String tensorboardRunId) {
     CreateTensorboardRunRequest request =
-<span class="fc" id="L1424">        CreateTensorboardRunRequest.newBuilder()</span>
-<span class="pc bpc" id="L1425" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1426">            .setTensorboardRun(tensorboardRun)</span>
-<span class="fc" id="L1427">            .setTensorboardRunId(tensorboardRunId)</span>
-<span class="fc" id="L1428">            .build();</span>
-<span class="fc" id="L1429">    return createTensorboardRun(request);</span>
+<span class="fc" id="L1525">        CreateTensorboardRunRequest.newBuilder()</span>
+<span class="pc bpc" id="L1526" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1527">            .setTensorboardRun(tensorboardRun)</span>
+<span class="fc" id="L1528">            .setTensorboardRunId(tensorboardRunId)</span>
+<span class="fc" id="L1529">            .build();</span>
+<span class="fc" id="L1530">    return createTensorboardRun(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1436,6 +1537,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent =
    *       TensorboardRunName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;, &quot;[RUN]&quot;)
@@ -1459,12 +1562,12 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final TensorboardRun createTensorboardRun(
       String parent, TensorboardRun tensorboardRun, String tensorboardRunId) {
     CreateTensorboardRunRequest request =
-<span class="fc" id="L1462">        CreateTensorboardRunRequest.newBuilder()</span>
-<span class="fc" id="L1463">            .setParent(parent)</span>
-<span class="fc" id="L1464">            .setTensorboardRun(tensorboardRun)</span>
-<span class="fc" id="L1465">            .setTensorboardRunId(tensorboardRunId)</span>
-<span class="fc" id="L1466">            .build();</span>
-<span class="fc" id="L1467">    return createTensorboardRun(request);</span>
+<span class="fc" id="L1565">        CreateTensorboardRunRequest.newBuilder()</span>
+<span class="fc" id="L1566">            .setParent(parent)</span>
+<span class="fc" id="L1567">            .setTensorboardRun(tensorboardRun)</span>
+<span class="fc" id="L1568">            .setTensorboardRunId(tensorboardRunId)</span>
+<span class="fc" id="L1569">            .build();</span>
+<span class="fc" id="L1570">    return createTensorboardRun(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1474,6 +1577,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardRunRequest request =
    *       CreateTensorboardRunRequest.newBuilder()
@@ -1492,7 +1597,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TensorboardRun createTensorboardRun(CreateTensorboardRunRequest request) {
-<span class="fc" id="L1495">    return createTensorboardRunCallable().call(request);</span>
+<span class="fc" id="L1600">    return createTensorboardRunCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1502,6 +1607,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardRunRequest request =
    *       CreateTensorboardRunRequest.newBuilder()
@@ -1521,7 +1628,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateTensorboardRunRequest, TensorboardRun&gt;
       createTensorboardRunCallable() {
-<span class="fc" id="L1524">    return stub.createTensorboardRunCallable();</span>
+<span class="fc" id="L1631">    return stub.createTensorboardRunCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1531,6 +1638,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardExperimentName parent =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;);
@@ -1551,11 +1660,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final BatchCreateTensorboardRunsResponse batchCreateTensorboardRuns(
       TensorboardExperimentName parent, List&lt;CreateTensorboardRunRequest&gt; requests) {
     BatchCreateTensorboardRunsRequest request =
-<span class="fc" id="L1554">        BatchCreateTensorboardRunsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1555" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1556">            .addAllRequests(requests)</span>
-<span class="fc" id="L1557">            .build();</span>
-<span class="fc" id="L1558">    return batchCreateTensorboardRuns(request);</span>
+<span class="fc" id="L1663">        BatchCreateTensorboardRunsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1664" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1665">            .addAllRequests(requests)</span>
+<span class="fc" id="L1666">            .build();</span>
+<span class="fc" id="L1667">    return batchCreateTensorboardRuns(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1565,6 +1674,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;)
@@ -1586,11 +1697,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final BatchCreateTensorboardRunsResponse batchCreateTensorboardRuns(
       String parent, List&lt;CreateTensorboardRunRequest&gt; requests) {
     BatchCreateTensorboardRunsRequest request =
-<span class="fc" id="L1589">        BatchCreateTensorboardRunsRequest.newBuilder()</span>
-<span class="fc" id="L1590">            .setParent(parent)</span>
-<span class="fc" id="L1591">            .addAllRequests(requests)</span>
-<span class="fc" id="L1592">            .build();</span>
-<span class="fc" id="L1593">    return batchCreateTensorboardRuns(request);</span>
+<span class="fc" id="L1700">        BatchCreateTensorboardRunsRequest.newBuilder()</span>
+<span class="fc" id="L1701">            .setParent(parent)</span>
+<span class="fc" id="L1702">            .addAllRequests(requests)</span>
+<span class="fc" id="L1703">            .build();</span>
+<span class="fc" id="L1704">    return batchCreateTensorboardRuns(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1600,6 +1711,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   BatchCreateTensorboardRunsRequest request =
    *       BatchCreateTensorboardRunsRequest.newBuilder()
@@ -1619,7 +1732,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final BatchCreateTensorboardRunsResponse batchCreateTensorboardRuns(
       BatchCreateTensorboardRunsRequest request) {
-<span class="fc" id="L1622">    return batchCreateTensorboardRunsCallable().call(request);</span>
+<span class="fc" id="L1735">    return batchCreateTensorboardRunsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1629,6 +1742,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   BatchCreateTensorboardRunsRequest request =
    *       BatchCreateTensorboardRunsRequest.newBuilder()
@@ -1647,7 +1762,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;BatchCreateTensorboardRunsRequest, BatchCreateTensorboardRunsResponse&gt;
       batchCreateTensorboardRunsCallable() {
-<span class="fc" id="L1650">    return stub.batchCreateTensorboardRunsCallable();</span>
+<span class="fc" id="L1765">    return stub.batchCreateTensorboardRunsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1657,6 +1772,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardRunName name =
    *       TensorboardRunName.of(
@@ -1671,10 +1788,10 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardRun getTensorboardRun(TensorboardRunName name) {
     GetTensorboardRunRequest request =
-<span class="fc" id="L1674">        GetTensorboardRunRequest.newBuilder()</span>
-<span class="pc bpc" id="L1675" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1676">            .build();</span>
-<span class="fc" id="L1677">    return getTensorboardRun(request);</span>
+<span class="fc" id="L1791">        GetTensorboardRunRequest.newBuilder()</span>
+<span class="pc bpc" id="L1792" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1793">            .build();</span>
+<span class="fc" id="L1794">    return getTensorboardRun(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1684,6 +1801,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String name =
    *       TensorboardRunName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;, &quot;[RUN]&quot;)
@@ -1697,8 +1816,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TensorboardRun getTensorboardRun(String name) {
-<span class="fc" id="L1700">    GetTensorboardRunRequest request = GetTensorboardRunRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1701">    return getTensorboardRun(request);</span>
+<span class="fc" id="L1819">    GetTensorboardRunRequest request = GetTensorboardRunRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1820">    return getTensorboardRun(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1708,6 +1827,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   GetTensorboardRunRequest request =
    *       GetTensorboardRunRequest.newBuilder()
@@ -1724,7 +1845,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TensorboardRun getTensorboardRun(GetTensorboardRunRequest request) {
-<span class="fc" id="L1727">    return getTensorboardRunCallable().call(request);</span>
+<span class="fc" id="L1848">    return getTensorboardRunCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1734,6 +1855,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   GetTensorboardRunRequest request =
    *       GetTensorboardRunRequest.newBuilder()
@@ -1750,7 +1873,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTensorboardRunRequest, TensorboardRun&gt; getTensorboardRunCallable() {
-<span class="fc" id="L1753">    return stub.getTensorboardRunCallable();</span>
+<span class="fc" id="L1876">    return stub.getTensorboardRunCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1760,6 +1883,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardRun tensorboardRun = TensorboardRun.newBuilder().build();
    *   FieldMask updateMask = FieldMask.newBuilder().build();
@@ -1781,11 +1906,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final TensorboardRun updateTensorboardRun(
       TensorboardRun tensorboardRun, FieldMask updateMask) {
     UpdateTensorboardRunRequest request =
-<span class="fc" id="L1784">        UpdateTensorboardRunRequest.newBuilder()</span>
-<span class="fc" id="L1785">            .setTensorboardRun(tensorboardRun)</span>
-<span class="fc" id="L1786">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1787">            .build();</span>
-<span class="fc" id="L1788">    return updateTensorboardRun(request);</span>
+<span class="fc" id="L1909">        UpdateTensorboardRunRequest.newBuilder()</span>
+<span class="fc" id="L1910">            .setTensorboardRun(tensorboardRun)</span>
+<span class="fc" id="L1911">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1912">            .build();</span>
+<span class="fc" id="L1913">    return updateTensorboardRun(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1795,6 +1920,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardRunRequest request =
    *       UpdateTensorboardRunRequest.newBuilder()
@@ -1809,7 +1936,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TensorboardRun updateTensorboardRun(UpdateTensorboardRunRequest request) {
-<span class="fc" id="L1812">    return updateTensorboardRunCallable().call(request);</span>
+<span class="fc" id="L1939">    return updateTensorboardRunCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1819,6 +1946,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardRunRequest request =
    *       UpdateTensorboardRunRequest.newBuilder()
@@ -1834,7 +1963,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateTensorboardRunRequest, TensorboardRun&gt;
       updateTensorboardRunCallable() {
-<span class="fc" id="L1837">    return stub.updateTensorboardRunCallable();</span>
+<span class="fc" id="L1966">    return stub.updateTensorboardRunCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1844,6 +1973,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardExperimentName parent =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;);
@@ -1862,10 +1993,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final ListTensorboardRunsPagedResponse listTensorboardRuns(
       TensorboardExperimentName parent) {
     ListTensorboardRunsRequest request =
-<span class="fc" id="L1865">        ListTensorboardRunsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1866" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1867">            .build();</span>
-<span class="fc" id="L1868">    return listTensorboardRuns(request);</span>
+<span class="fc" id="L1996">        ListTensorboardRunsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1997" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1998">            .build();</span>
+<span class="fc" id="L1999">    return listTensorboardRuns(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1875,6 +2006,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;)
@@ -1893,8 +2026,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ListTensorboardRunsPagedResponse listTensorboardRuns(String parent) {
     ListTensorboardRunsRequest request =
-<span class="fc" id="L1896">        ListTensorboardRunsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1897">    return listTensorboardRuns(request);</span>
+<span class="fc" id="L2029">        ListTensorboardRunsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2030">    return listTensorboardRuns(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1904,6 +2037,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardRunsRequest request =
    *       ListTensorboardRunsRequest.newBuilder()
@@ -1929,7 +2064,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ListTensorboardRunsPagedResponse listTensorboardRuns(
       ListTensorboardRunsRequest request) {
-<span class="fc" id="L1932">    return listTensorboardRunsPagedCallable().call(request);</span>
+<span class="fc" id="L2067">    return listTensorboardRunsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1939,6 +2074,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardRunsRequest request =
    *       ListTensorboardRunsRequest.newBuilder()
@@ -1963,7 +2100,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTensorboardRunsRequest, ListTensorboardRunsPagedResponse&gt;
       listTensorboardRunsPagedCallable() {
-<span class="fc" id="L1966">    return stub.listTensorboardRunsPagedCallable();</span>
+<span class="fc" id="L2103">    return stub.listTensorboardRunsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1973,6 +2110,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardRunsRequest request =
    *       ListTensorboardRunsRequest.newBuilder()
@@ -1989,7 +2128,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    *   while (true) {
    *     ListTensorboardRunsResponse response =
    *         tensorboardServiceClient.listTensorboardRunsCallable().call(request);
-   *     for (TensorboardRun element : response.getResponsesList()) {
+   *     for (TensorboardRun element : response.getTensorboardRunsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -2004,7 +2143,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTensorboardRunsRequest, ListTensorboardRunsResponse&gt;
       listTensorboardRunsCallable() {
-<span class="nc" id="L2007">    return stub.listTensorboardRunsCallable();</span>
+<span class="nc" id="L2146">    return stub.listTensorboardRunsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2014,6 +2153,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardRunName name =
    *       TensorboardRunName.of(
@@ -2029,10 +2170,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardRunAsync(
       TensorboardRunName name) {
     DeleteTensorboardRunRequest request =
-<span class="fc" id="L2032">        DeleteTensorboardRunRequest.newBuilder()</span>
-<span class="pc bpc" id="L2033" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2034">            .build();</span>
-<span class="fc" id="L2035">    return deleteTensorboardRunAsync(request);</span>
+<span class="fc" id="L2173">        DeleteTensorboardRunRequest.newBuilder()</span>
+<span class="pc bpc" id="L2174" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2175">            .build();</span>
+<span class="fc" id="L2176">    return deleteTensorboardRunAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2042,6 +2183,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String name =
    *       TensorboardRunName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;, &quot;[RUN]&quot;)
@@ -2057,8 +2200,8 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardRunAsync(
       String name) {
     DeleteTensorboardRunRequest request =
-<span class="fc" id="L2060">        DeleteTensorboardRunRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2061">    return deleteTensorboardRunAsync(request);</span>
+<span class="fc" id="L2203">        DeleteTensorboardRunRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2204">    return deleteTensorboardRunAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2068,6 +2211,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardRunRequest request =
    *       DeleteTensorboardRunRequest.newBuilder()
@@ -2085,7 +2230,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardRunAsync(
       DeleteTensorboardRunRequest request) {
-<span class="fc" id="L2088">    return deleteTensorboardRunOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2233">    return deleteTensorboardRunOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2095,6 +2240,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardRunRequest request =
    *       DeleteTensorboardRunRequest.newBuilder()
@@ -2112,7 +2259,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTensorboardRunRequest, Empty, DeleteOperationMetadata&gt;
       deleteTensorboardRunOperationCallable() {
-<span class="fc" id="L2115">    return stub.deleteTensorboardRunOperationCallable();</span>
+<span class="fc" id="L2262">    return stub.deleteTensorboardRunOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2122,6 +2269,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardRunRequest request =
    *       DeleteTensorboardRunRequest.newBuilder()
@@ -2139,7 +2288,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteTensorboardRunRequest, Operation&gt;
       deleteTensorboardRunCallable() {
-<span class="nc" id="L2142">    return stub.deleteTensorboardRunCallable();</span>
+<span class="nc" id="L2291">    return stub.deleteTensorboardRunCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2149,6 +2298,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardExperimentName parent =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;);
@@ -2171,11 +2322,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final BatchCreateTensorboardTimeSeriesResponse batchCreateTensorboardTimeSeries(
       TensorboardExperimentName parent, List&lt;CreateTensorboardTimeSeriesRequest&gt; requests) {
     BatchCreateTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2174">        BatchCreateTensorboardTimeSeriesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2175" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2176">            .addAllRequests(requests)</span>
-<span class="fc" id="L2177">            .build();</span>
-<span class="fc" id="L2178">    return batchCreateTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2325">        BatchCreateTensorboardTimeSeriesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2326" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2327">            .addAllRequests(requests)</span>
+<span class="fc" id="L2328">            .build();</span>
+<span class="fc" id="L2329">    return batchCreateTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2185,6 +2336,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;)
@@ -2208,11 +2361,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final BatchCreateTensorboardTimeSeriesResponse batchCreateTensorboardTimeSeries(
       String parent, List&lt;CreateTensorboardTimeSeriesRequest&gt; requests) {
     BatchCreateTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2211">        BatchCreateTensorboardTimeSeriesRequest.newBuilder()</span>
-<span class="fc" id="L2212">            .setParent(parent)</span>
-<span class="fc" id="L2213">            .addAllRequests(requests)</span>
-<span class="fc" id="L2214">            .build();</span>
-<span class="fc" id="L2215">    return batchCreateTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2364">        BatchCreateTensorboardTimeSeriesRequest.newBuilder()</span>
+<span class="fc" id="L2365">            .setParent(parent)</span>
+<span class="fc" id="L2366">            .addAllRequests(requests)</span>
+<span class="fc" id="L2367">            .build();</span>
+<span class="fc" id="L2368">    return batchCreateTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2222,6 +2375,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   BatchCreateTensorboardTimeSeriesRequest request =
    *       BatchCreateTensorboardTimeSeriesRequest.newBuilder()
@@ -2241,7 +2396,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final BatchCreateTensorboardTimeSeriesResponse batchCreateTensorboardTimeSeries(
       BatchCreateTensorboardTimeSeriesRequest request) {
-<span class="fc" id="L2244">    return batchCreateTensorboardTimeSeriesCallable().call(request);</span>
+<span class="fc" id="L2399">    return batchCreateTensorboardTimeSeriesCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2251,6 +2406,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   BatchCreateTensorboardTimeSeriesRequest request =
    *       BatchCreateTensorboardTimeSeriesRequest.newBuilder()
@@ -2270,7 +2427,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           BatchCreateTensorboardTimeSeriesRequest, BatchCreateTensorboardTimeSeriesResponse&gt;
       batchCreateTensorboardTimeSeriesCallable() {
-<span class="fc" id="L2273">    return stub.batchCreateTensorboardTimeSeriesCallable();</span>
+<span class="fc" id="L2430">    return stub.batchCreateTensorboardTimeSeriesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2280,6 +2437,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardTimeSeriesName parent =
    *       TensorboardTimeSeriesName.of(
@@ -2299,11 +2458,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final TensorboardTimeSeries createTensorboardTimeSeries(
       TensorboardTimeSeriesName parent, TensorboardTimeSeries tensorboardTimeSeries) {
     CreateTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2302">        CreateTensorboardTimeSeriesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2303" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2304">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
-<span class="fc" id="L2305">            .build();</span>
-<span class="fc" id="L2306">    return createTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2461">        CreateTensorboardTimeSeriesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2462" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2463">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
+<span class="fc" id="L2464">            .build();</span>
+<span class="fc" id="L2465">    return createTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2313,6 +2472,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent =
    *       TensorboardTimeSeriesName.of(
@@ -2338,11 +2499,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final TensorboardTimeSeries createTensorboardTimeSeries(
       String parent, TensorboardTimeSeries tensorboardTimeSeries) {
     CreateTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2341">        CreateTensorboardTimeSeriesRequest.newBuilder()</span>
-<span class="fc" id="L2342">            .setParent(parent)</span>
-<span class="fc" id="L2343">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
-<span class="fc" id="L2344">            .build();</span>
-<span class="fc" id="L2345">    return createTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2502">        CreateTensorboardTimeSeriesRequest.newBuilder()</span>
+<span class="fc" id="L2503">            .setParent(parent)</span>
+<span class="fc" id="L2504">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
+<span class="fc" id="L2505">            .build();</span>
+<span class="fc" id="L2506">    return createTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2352,6 +2513,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardTimeSeriesRequest request =
    *       CreateTensorboardTimeSeriesRequest.newBuilder()
@@ -2377,7 +2540,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardTimeSeries createTensorboardTimeSeries(
       CreateTensorboardTimeSeriesRequest request) {
-<span class="fc" id="L2380">    return createTensorboardTimeSeriesCallable().call(request);</span>
+<span class="fc" id="L2543">    return createTensorboardTimeSeriesCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2387,6 +2550,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   CreateTensorboardTimeSeriesRequest request =
    *       CreateTensorboardTimeSeriesRequest.newBuilder()
@@ -2411,7 +2576,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateTensorboardTimeSeriesRequest, TensorboardTimeSeries&gt;
       createTensorboardTimeSeriesCallable() {
-<span class="fc" id="L2414">    return stub.createTensorboardTimeSeriesCallable();</span>
+<span class="fc" id="L2579">    return stub.createTensorboardTimeSeriesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2421,6 +2586,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardTimeSeriesName name =
    *       TensorboardTimeSeriesName.of(
@@ -2435,10 +2602,10 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardTimeSeries getTensorboardTimeSeries(TensorboardTimeSeriesName name) {
     GetTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2438">        GetTensorboardTimeSeriesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2439" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2440">            .build();</span>
-<span class="fc" id="L2441">    return getTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2605">        GetTensorboardTimeSeriesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2606" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2607">            .build();</span>
+<span class="fc" id="L2608">    return getTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2448,6 +2615,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String name =
    *       TensorboardTimeSeriesName.of(
@@ -2468,8 +2637,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardTimeSeries getTensorboardTimeSeries(String name) {
     GetTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2471">        GetTensorboardTimeSeriesRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2472">    return getTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2640">        GetTensorboardTimeSeriesRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2641">    return getTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2479,6 +2648,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   GetTensorboardTimeSeriesRequest request =
    *       GetTensorboardTimeSeriesRequest.newBuilder()
@@ -2501,7 +2672,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardTimeSeries getTensorboardTimeSeries(
       GetTensorboardTimeSeriesRequest request) {
-<span class="fc" id="L2504">    return getTensorboardTimeSeriesCallable().call(request);</span>
+<span class="fc" id="L2675">    return getTensorboardTimeSeriesCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2511,6 +2682,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   GetTensorboardTimeSeriesRequest request =
    *       GetTensorboardTimeSeriesRequest.newBuilder()
@@ -2533,7 +2706,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetTensorboardTimeSeriesRequest, TensorboardTimeSeries&gt;
       getTensorboardTimeSeriesCallable() {
-<span class="fc" id="L2536">    return stub.getTensorboardTimeSeriesCallable();</span>
+<span class="fc" id="L2709">    return stub.getTensorboardTimeSeriesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2543,6 +2716,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardTimeSeries tensorboardTimeSeries = TensorboardTimeSeries.newBuilder().build();
    *   FieldMask updateMask = FieldMask.newBuilder().build();
@@ -2564,11 +2739,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final TensorboardTimeSeries updateTensorboardTimeSeries(
       TensorboardTimeSeries tensorboardTimeSeries, FieldMask updateMask) {
     UpdateTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2567">        UpdateTensorboardTimeSeriesRequest.newBuilder()</span>
-<span class="fc" id="L2568">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
-<span class="fc" id="L2569">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L2570">            .build();</span>
-<span class="fc" id="L2571">    return updateTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2742">        UpdateTensorboardTimeSeriesRequest.newBuilder()</span>
+<span class="fc" id="L2743">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
+<span class="fc" id="L2744">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L2745">            .build();</span>
+<span class="fc" id="L2746">    return updateTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2578,6 +2753,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardTimeSeriesRequest request =
    *       UpdateTensorboardTimeSeriesRequest.newBuilder()
@@ -2594,7 +2771,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final TensorboardTimeSeries updateTensorboardTimeSeries(
       UpdateTensorboardTimeSeriesRequest request) {
-<span class="fc" id="L2597">    return updateTensorboardTimeSeriesCallable().call(request);</span>
+<span class="fc" id="L2774">    return updateTensorboardTimeSeriesCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2604,6 +2781,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   UpdateTensorboardTimeSeriesRequest request =
    *       UpdateTensorboardTimeSeriesRequest.newBuilder()
@@ -2619,7 +2798,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateTensorboardTimeSeriesRequest, TensorboardTimeSeries&gt;
       updateTensorboardTimeSeriesCallable() {
-<span class="fc" id="L2622">    return stub.updateTensorboardTimeSeriesCallable();</span>
+<span class="fc" id="L2801">    return stub.updateTensorboardTimeSeriesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2629,6 +2808,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardRunName parent =
    *       TensorboardRunName.of(
@@ -2648,10 +2829,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final ListTensorboardTimeSeriesPagedResponse listTensorboardTimeSeries(
       TensorboardRunName parent) {
     ListTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2651">        ListTensorboardTimeSeriesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2652" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2653">            .build();</span>
-<span class="fc" id="L2654">    return listTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2832">        ListTensorboardTimeSeriesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2833" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2834">            .build();</span>
+<span class="fc" id="L2835">    return listTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2661,6 +2842,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String parent =
    *       TensorboardRunName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;, &quot;[RUN]&quot;)
@@ -2679,8 +2862,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ListTensorboardTimeSeriesPagedResponse listTensorboardTimeSeries(String parent) {
     ListTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2682">        ListTensorboardTimeSeriesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2683">    return listTensorboardTimeSeries(request);</span>
+<span class="fc" id="L2865">        ListTensorboardTimeSeriesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2866">    return listTensorboardTimeSeries(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2690,6 +2873,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardTimeSeriesRequest request =
    *       ListTensorboardTimeSeriesRequest.newBuilder()
@@ -2715,7 +2900,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ListTensorboardTimeSeriesPagedResponse listTensorboardTimeSeries(
       ListTensorboardTimeSeriesRequest request) {
-<span class="fc" id="L2718">    return listTensorboardTimeSeriesPagedCallable().call(request);</span>
+<span class="fc" id="L2903">    return listTensorboardTimeSeriesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2725,6 +2910,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardTimeSeriesRequest request =
    *       ListTensorboardTimeSeriesRequest.newBuilder()
@@ -2750,7 +2937,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListTensorboardTimeSeriesRequest, ListTensorboardTimeSeriesPagedResponse&gt;
       listTensorboardTimeSeriesPagedCallable() {
-<span class="fc" id="L2753">    return stub.listTensorboardTimeSeriesPagedCallable();</span>
+<span class="fc" id="L2940">    return stub.listTensorboardTimeSeriesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2760,6 +2947,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ListTensorboardTimeSeriesRequest request =
    *       ListTensorboardTimeSeriesRequest.newBuilder()
@@ -2776,7 +2965,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    *   while (true) {
    *     ListTensorboardTimeSeriesResponse response =
    *         tensorboardServiceClient.listTensorboardTimeSeriesCallable().call(request);
-   *     for (TensorboardTimeSeries element : response.getResponsesList()) {
+   *     for (TensorboardTimeSeries element : response.getTensorboardTimeSeriesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -2791,7 +2980,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTensorboardTimeSeriesRequest, ListTensorboardTimeSeriesResponse&gt;
       listTensorboardTimeSeriesCallable() {
-<span class="nc" id="L2794">    return stub.listTensorboardTimeSeriesCallable();</span>
+<span class="nc" id="L2983">    return stub.listTensorboardTimeSeriesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2801,6 +2990,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardTimeSeriesName name =
    *       TensorboardTimeSeriesName.of(
@@ -2816,10 +3007,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardTimeSeriesAsync(
       TensorboardTimeSeriesName name) {
     DeleteTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2819">        DeleteTensorboardTimeSeriesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2820" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2821">            .build();</span>
-<span class="fc" id="L2822">    return deleteTensorboardTimeSeriesAsync(request);</span>
+<span class="fc" id="L3010">        DeleteTensorboardTimeSeriesRequest.newBuilder()</span>
+<span class="pc bpc" id="L3011" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L3012">            .build();</span>
+<span class="fc" id="L3013">    return deleteTensorboardTimeSeriesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2829,6 +3020,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String name =
    *       TensorboardTimeSeriesName.of(
@@ -2850,8 +3043,8 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardTimeSeriesAsync(
       String name) {
     DeleteTensorboardTimeSeriesRequest request =
-<span class="fc" id="L2853">        DeleteTensorboardTimeSeriesRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2854">    return deleteTensorboardTimeSeriesAsync(request);</span>
+<span class="fc" id="L3046">        DeleteTensorboardTimeSeriesRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3047">    return deleteTensorboardTimeSeriesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2861,6 +3054,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardTimeSeriesRequest request =
    *       DeleteTensorboardTimeSeriesRequest.newBuilder()
@@ -2883,7 +3078,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteTensorboardTimeSeriesAsync(
       DeleteTensorboardTimeSeriesRequest request) {
-<span class="fc" id="L2886">    return deleteTensorboardTimeSeriesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3081">    return deleteTensorboardTimeSeriesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2893,6 +3088,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardTimeSeriesRequest request =
    *       DeleteTensorboardTimeSeriesRequest.newBuilder()
@@ -2917,7 +3114,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTensorboardTimeSeriesRequest, Empty, DeleteOperationMetadata&gt;
       deleteTensorboardTimeSeriesOperationCallable() {
-<span class="fc" id="L2920">    return stub.deleteTensorboardTimeSeriesOperationCallable();</span>
+<span class="fc" id="L3117">    return stub.deleteTensorboardTimeSeriesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2927,6 +3124,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   DeleteTensorboardTimeSeriesRequest request =
    *       DeleteTensorboardTimeSeriesRequest.newBuilder()
@@ -2949,7 +3148,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteTensorboardTimeSeriesRequest, Operation&gt;
       deleteTensorboardTimeSeriesCallable() {
-<span class="nc" id="L2952">    return stub.deleteTensorboardTimeSeriesCallable();</span>
+<span class="nc" id="L3151">    return stub.deleteTensorboardTimeSeriesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2962,6 +3161,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardName tensorboard = TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;);
    *   BatchReadTensorboardTimeSeriesDataResponse response =
@@ -2980,10 +3181,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final BatchReadTensorboardTimeSeriesDataResponse batchReadTensorboardTimeSeriesData(
       TensorboardName tensorboard) {
     BatchReadTensorboardTimeSeriesDataRequest request =
-<span class="fc" id="L2983">        BatchReadTensorboardTimeSeriesDataRequest.newBuilder()</span>
-<span class="pc bpc" id="L2984" title="1 of 2 branches missed.">            .setTensorboard(tensorboard == null ? null : tensorboard.toString())</span>
-<span class="fc" id="L2985">            .build();</span>
-<span class="fc" id="L2986">    return batchReadTensorboardTimeSeriesData(request);</span>
+<span class="fc" id="L3184">        BatchReadTensorboardTimeSeriesDataRequest.newBuilder()</span>
+<span class="pc bpc" id="L3185" title="1 of 2 branches missed.">            .setTensorboard(tensorboard == null ? null : tensorboard.toString())</span>
+<span class="fc" id="L3186">            .build();</span>
+<span class="fc" id="L3187">    return batchReadTensorboardTimeSeriesData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2996,6 +3197,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String tensorboard =
    *       TensorboardName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;).toString();
@@ -3015,8 +3218,8 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final BatchReadTensorboardTimeSeriesDataResponse batchReadTensorboardTimeSeriesData(
       String tensorboard) {
     BatchReadTensorboardTimeSeriesDataRequest request =
-<span class="fc" id="L3018">        BatchReadTensorboardTimeSeriesDataRequest.newBuilder().setTensorboard(tensorboard).build();</span>
-<span class="fc" id="L3019">    return batchReadTensorboardTimeSeriesData(request);</span>
+<span class="fc" id="L3221">        BatchReadTensorboardTimeSeriesDataRequest.newBuilder().setTensorboard(tensorboard).build();</span>
+<span class="fc" id="L3222">    return batchReadTensorboardTimeSeriesData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3029,6 +3232,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   BatchReadTensorboardTimeSeriesDataRequest request =
    *       BatchReadTensorboardTimeSeriesDataRequest.newBuilder()
@@ -3046,7 +3251,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final BatchReadTensorboardTimeSeriesDataResponse batchReadTensorboardTimeSeriesData(
       BatchReadTensorboardTimeSeriesDataRequest request) {
-<span class="fc" id="L3049">    return batchReadTensorboardTimeSeriesDataCallable().call(request);</span>
+<span class="fc" id="L3254">    return batchReadTensorboardTimeSeriesDataCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3059,6 +3264,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   BatchReadTensorboardTimeSeriesDataRequest request =
    *       BatchReadTensorboardTimeSeriesDataRequest.newBuilder()
@@ -3076,7 +3283,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           BatchReadTensorboardTimeSeriesDataRequest, BatchReadTensorboardTimeSeriesDataResponse&gt;
       batchReadTensorboardTimeSeriesDataCallable() {
-<span class="fc" id="L3079">    return stub.batchReadTensorboardTimeSeriesDataCallable();</span>
+<span class="fc" id="L3286">    return stub.batchReadTensorboardTimeSeriesDataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3089,6 +3296,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardTimeSeriesName tensorboardTimeSeries =
    *       TensorboardTimeSeriesName.of(
@@ -3106,11 +3315,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final ReadTensorboardTimeSeriesDataResponse readTensorboardTimeSeriesData(
       TensorboardTimeSeriesName tensorboardTimeSeries) {
     ReadTensorboardTimeSeriesDataRequest request =
-<span class="fc" id="L3109">        ReadTensorboardTimeSeriesDataRequest.newBuilder()</span>
-<span class="fc" id="L3110">            .setTensorboardTimeSeries(</span>
-<span class="pc bpc" id="L3111" title="1 of 2 branches missed.">                tensorboardTimeSeries == null ? null : tensorboardTimeSeries.toString())</span>
-<span class="fc" id="L3112">            .build();</span>
-<span class="fc" id="L3113">    return readTensorboardTimeSeriesData(request);</span>
+<span class="fc" id="L3318">        ReadTensorboardTimeSeriesDataRequest.newBuilder()</span>
+<span class="fc" id="L3319">            .setTensorboardTimeSeries(</span>
+<span class="pc bpc" id="L3320" title="1 of 2 branches missed.">                tensorboardTimeSeries == null ? null : tensorboardTimeSeries.toString())</span>
+<span class="fc" id="L3321">            .build();</span>
+<span class="fc" id="L3322">    return readTensorboardTimeSeriesData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3123,6 +3332,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String tensorboardTimeSeries =
    *       TensorboardTimeSeriesName.of(
@@ -3146,10 +3357,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final ReadTensorboardTimeSeriesDataResponse readTensorboardTimeSeriesData(
       String tensorboardTimeSeries) {
     ReadTensorboardTimeSeriesDataRequest request =
-<span class="fc" id="L3149">        ReadTensorboardTimeSeriesDataRequest.newBuilder()</span>
-<span class="fc" id="L3150">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
-<span class="fc" id="L3151">            .build();</span>
-<span class="fc" id="L3152">    return readTensorboardTimeSeriesData(request);</span>
+<span class="fc" id="L3360">        ReadTensorboardTimeSeriesDataRequest.newBuilder()</span>
+<span class="fc" id="L3361">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
+<span class="fc" id="L3362">            .build();</span>
+<span class="fc" id="L3363">    return readTensorboardTimeSeriesData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3162,6 +3373,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ReadTensorboardTimeSeriesDataRequest request =
    *       ReadTensorboardTimeSeriesDataRequest.newBuilder()
@@ -3187,7 +3400,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ReadTensorboardTimeSeriesDataResponse readTensorboardTimeSeriesData(
       ReadTensorboardTimeSeriesDataRequest request) {
-<span class="fc" id="L3190">    return readTensorboardTimeSeriesDataCallable().call(request);</span>
+<span class="fc" id="L3403">    return readTensorboardTimeSeriesDataCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3200,6 +3413,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ReadTensorboardTimeSeriesDataRequest request =
    *       ReadTensorboardTimeSeriesDataRequest.newBuilder()
@@ -3225,7 +3440,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ReadTensorboardTimeSeriesDataRequest, ReadTensorboardTimeSeriesDataResponse&gt;
       readTensorboardTimeSeriesDataCallable() {
-<span class="fc" id="L3228">    return stub.readTensorboardTimeSeriesDataCallable();</span>
+<span class="fc" id="L3443">    return stub.readTensorboardTimeSeriesDataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3236,6 +3451,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ReadTensorboardBlobDataRequest request =
    *       ReadTensorboardBlobDataRequest.newBuilder()
@@ -3261,7 +3478,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final ServerStreamingCallable&lt;
           ReadTensorboardBlobDataRequest, ReadTensorboardBlobDataResponse&gt;
       readTensorboardBlobDataCallable() {
-<span class="fc" id="L3264">    return stub.readTensorboardBlobDataCallable();</span>
+<span class="fc" id="L3481">    return stub.readTensorboardBlobDataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3272,6 +3489,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardExperimentName tensorboardExperiment =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;);
@@ -3293,12 +3512,12 @@ public class TensorboardServiceClient implements BackgroundResource {
       TensorboardExperimentName tensorboardExperiment,
       List&lt;WriteTensorboardRunDataRequest&gt; writeRunDataRequests) {
     WriteTensorboardExperimentDataRequest request =
-<span class="fc" id="L3296">        WriteTensorboardExperimentDataRequest.newBuilder()</span>
-<span class="fc" id="L3297">            .setTensorboardExperiment(</span>
-<span class="pc bpc" id="L3298" title="1 of 2 branches missed.">                tensorboardExperiment == null ? null : tensorboardExperiment.toString())</span>
-<span class="fc" id="L3299">            .addAllWriteRunDataRequests(writeRunDataRequests)</span>
-<span class="fc" id="L3300">            .build();</span>
-<span class="fc" id="L3301">    return writeTensorboardExperimentData(request);</span>
+<span class="fc" id="L3515">        WriteTensorboardExperimentDataRequest.newBuilder()</span>
+<span class="fc" id="L3516">            .setTensorboardExperiment(</span>
+<span class="pc bpc" id="L3517" title="1 of 2 branches missed.">                tensorboardExperiment == null ? null : tensorboardExperiment.toString())</span>
+<span class="fc" id="L3518">            .addAllWriteRunDataRequests(writeRunDataRequests)</span>
+<span class="fc" id="L3519">            .build();</span>
+<span class="fc" id="L3520">    return writeTensorboardExperimentData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3309,6 +3528,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String tensorboardExperiment =
    *       TensorboardExperimentName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;)
@@ -3330,11 +3551,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final WriteTensorboardExperimentDataResponse writeTensorboardExperimentData(
       String tensorboardExperiment, List&lt;WriteTensorboardRunDataRequest&gt; writeRunDataRequests) {
     WriteTensorboardExperimentDataRequest request =
-<span class="fc" id="L3333">        WriteTensorboardExperimentDataRequest.newBuilder()</span>
-<span class="fc" id="L3334">            .setTensorboardExperiment(tensorboardExperiment)</span>
-<span class="fc" id="L3335">            .addAllWriteRunDataRequests(writeRunDataRequests)</span>
-<span class="fc" id="L3336">            .build();</span>
-<span class="fc" id="L3337">    return writeTensorboardExperimentData(request);</span>
+<span class="fc" id="L3554">        WriteTensorboardExperimentDataRequest.newBuilder()</span>
+<span class="fc" id="L3555">            .setTensorboardExperiment(tensorboardExperiment)</span>
+<span class="fc" id="L3556">            .addAllWriteRunDataRequests(writeRunDataRequests)</span>
+<span class="fc" id="L3557">            .build();</span>
+<span class="fc" id="L3558">    return writeTensorboardExperimentData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3345,6 +3566,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   WriteTensorboardExperimentDataRequest request =
    *       WriteTensorboardExperimentDataRequest.newBuilder()
@@ -3364,7 +3587,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final WriteTensorboardExperimentDataResponse writeTensorboardExperimentData(
       WriteTensorboardExperimentDataRequest request) {
-<span class="fc" id="L3367">    return writeTensorboardExperimentDataCallable().call(request);</span>
+<span class="fc" id="L3590">    return writeTensorboardExperimentDataCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3375,6 +3598,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   WriteTensorboardExperimentDataRequest request =
    *       WriteTensorboardExperimentDataRequest.newBuilder()
@@ -3394,7 +3619,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           WriteTensorboardExperimentDataRequest, WriteTensorboardExperimentDataResponse&gt;
       writeTensorboardExperimentDataCallable() {
-<span class="fc" id="L3397">    return stub.writeTensorboardExperimentDataCallable();</span>
+<span class="fc" id="L3622">    return stub.writeTensorboardExperimentDataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3405,6 +3630,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardRunName tensorboardRun =
    *       TensorboardRunName.of(
@@ -3426,11 +3653,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final WriteTensorboardRunDataResponse writeTensorboardRunData(
       TensorboardRunName tensorboardRun, List&lt;TimeSeriesData&gt; timeSeriesData) {
     WriteTensorboardRunDataRequest request =
-<span class="fc" id="L3429">        WriteTensorboardRunDataRequest.newBuilder()</span>
-<span class="pc bpc" id="L3430" title="1 of 2 branches missed.">            .setTensorboardRun(tensorboardRun == null ? null : tensorboardRun.toString())</span>
-<span class="fc" id="L3431">            .addAllTimeSeriesData(timeSeriesData)</span>
-<span class="fc" id="L3432">            .build();</span>
-<span class="fc" id="L3433">    return writeTensorboardRunData(request);</span>
+<span class="fc" id="L3656">        WriteTensorboardRunDataRequest.newBuilder()</span>
+<span class="pc bpc" id="L3657" title="1 of 2 branches missed.">            .setTensorboardRun(tensorboardRun == null ? null : tensorboardRun.toString())</span>
+<span class="fc" id="L3658">            .addAllTimeSeriesData(timeSeriesData)</span>
+<span class="fc" id="L3659">            .build();</span>
+<span class="fc" id="L3660">    return writeTensorboardRunData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3441,6 +3668,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String tensorboardRun =
    *       TensorboardRunName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[TENSORBOARD]&quot;, &quot;[EXPERIMENT]&quot;, &quot;[RUN]&quot;)
@@ -3462,11 +3691,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final WriteTensorboardRunDataResponse writeTensorboardRunData(
       String tensorboardRun, List&lt;TimeSeriesData&gt; timeSeriesData) {
     WriteTensorboardRunDataRequest request =
-<span class="fc" id="L3465">        WriteTensorboardRunDataRequest.newBuilder()</span>
-<span class="fc" id="L3466">            .setTensorboardRun(tensorboardRun)</span>
-<span class="fc" id="L3467">            .addAllTimeSeriesData(timeSeriesData)</span>
-<span class="fc" id="L3468">            .build();</span>
-<span class="fc" id="L3469">    return writeTensorboardRunData(request);</span>
+<span class="fc" id="L3694">        WriteTensorboardRunDataRequest.newBuilder()</span>
+<span class="fc" id="L3695">            .setTensorboardRun(tensorboardRun)</span>
+<span class="fc" id="L3696">            .addAllTimeSeriesData(timeSeriesData)</span>
+<span class="fc" id="L3697">            .build();</span>
+<span class="fc" id="L3698">    return writeTensorboardRunData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3477,6 +3706,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   WriteTensorboardRunDataRequest request =
    *       WriteTensorboardRunDataRequest.newBuilder()
@@ -3496,7 +3727,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final WriteTensorboardRunDataResponse writeTensorboardRunData(
       WriteTensorboardRunDataRequest request) {
-<span class="fc" id="L3499">    return writeTensorboardRunDataCallable().call(request);</span>
+<span class="fc" id="L3730">    return writeTensorboardRunDataCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3507,6 +3738,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   WriteTensorboardRunDataRequest request =
    *       WriteTensorboardRunDataRequest.newBuilder()
@@ -3525,7 +3758,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;WriteTensorboardRunDataRequest, WriteTensorboardRunDataResponse&gt;
       writeTensorboardRunDataCallable() {
-<span class="fc" id="L3528">    return stub.writeTensorboardRunDataCallable();</span>
+<span class="fc" id="L3761">    return stub.writeTensorboardRunDataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3535,6 +3768,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   TensorboardTimeSeriesName tensorboardTimeSeries =
    *       TensorboardTimeSeriesName.of(
@@ -3556,11 +3791,11 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final ExportTensorboardTimeSeriesDataPagedResponse exportTensorboardTimeSeriesData(
       TensorboardTimeSeriesName tensorboardTimeSeries) {
     ExportTensorboardTimeSeriesDataRequest request =
-<span class="fc" id="L3559">        ExportTensorboardTimeSeriesDataRequest.newBuilder()</span>
-<span class="fc" id="L3560">            .setTensorboardTimeSeries(</span>
-<span class="pc bpc" id="L3561" title="1 of 2 branches missed.">                tensorboardTimeSeries == null ? null : tensorboardTimeSeries.toString())</span>
-<span class="fc" id="L3562">            .build();</span>
-<span class="fc" id="L3563">    return exportTensorboardTimeSeriesData(request);</span>
+<span class="fc" id="L3794">        ExportTensorboardTimeSeriesDataRequest.newBuilder()</span>
+<span class="fc" id="L3795">            .setTensorboardTimeSeries(</span>
+<span class="pc bpc" id="L3796" title="1 of 2 branches missed.">                tensorboardTimeSeries == null ? null : tensorboardTimeSeries.toString())</span>
+<span class="fc" id="L3797">            .build();</span>
+<span class="fc" id="L3798">    return exportTensorboardTimeSeriesData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3570,6 +3805,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   String tensorboardTimeSeries =
    *       TensorboardTimeSeriesName.of(
@@ -3597,10 +3834,10 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final ExportTensorboardTimeSeriesDataPagedResponse exportTensorboardTimeSeriesData(
       String tensorboardTimeSeries) {
     ExportTensorboardTimeSeriesDataRequest request =
-<span class="fc" id="L3600">        ExportTensorboardTimeSeriesDataRequest.newBuilder()</span>
-<span class="fc" id="L3601">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
-<span class="fc" id="L3602">            .build();</span>
-<span class="fc" id="L3603">    return exportTensorboardTimeSeriesData(request);</span>
+<span class="fc" id="L3837">        ExportTensorboardTimeSeriesDataRequest.newBuilder()</span>
+<span class="fc" id="L3838">            .setTensorboardTimeSeries(tensorboardTimeSeries)</span>
+<span class="fc" id="L3839">            .build();</span>
+<span class="fc" id="L3840">    return exportTensorboardTimeSeriesData(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3610,6 +3847,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ExportTensorboardTimeSeriesDataRequest request =
    *       ExportTensorboardTimeSeriesDataRequest.newBuilder()
@@ -3639,7 +3878,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    */
   public final ExportTensorboardTimeSeriesDataPagedResponse exportTensorboardTimeSeriesData(
       ExportTensorboardTimeSeriesDataRequest request) {
-<span class="fc" id="L3642">    return exportTensorboardTimeSeriesDataPagedCallable().call(request);</span>
+<span class="fc" id="L3881">    return exportTensorboardTimeSeriesDataPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3649,6 +3888,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ExportTensorboardTimeSeriesDataRequest request =
    *       ExportTensorboardTimeSeriesDataRequest.newBuilder()
@@ -3680,7 +3921,7 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ExportTensorboardTimeSeriesDataRequest, ExportTensorboardTimeSeriesDataPagedResponse&gt;
       exportTensorboardTimeSeriesDataPagedCallable() {
-<span class="fc" id="L3683">    return stub.exportTensorboardTimeSeriesDataPagedCallable();</span>
+<span class="fc" id="L3924">    return stub.exportTensorboardTimeSeriesDataPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3690,6 +3931,8 @@ public class TensorboardServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
    *   ExportTensorboardTimeSeriesDataRequest request =
    *       ExportTensorboardTimeSeriesDataRequest.newBuilder()
@@ -3710,7 +3953,7 @@ public class TensorboardServiceClient implements BackgroundResource {
    *   while (true) {
    *     ExportTensorboardTimeSeriesDataResponse response =
    *         tensorboardServiceClient.exportTensorboardTimeSeriesDataCallable().call(request);
-   *     for (TimeSeriesDataPoint element : response.getResponsesList()) {
+   *     for (TimeSeriesDataPoint element : response.getTimeSeriesDataPointsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -3726,37 +3969,366 @@ public class TensorboardServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ExportTensorboardTimeSeriesDataRequest, ExportTensorboardTimeSeriesDataResponse&gt;
       exportTensorboardTimeSeriesDataCallable() {
-<span class="nc" id="L3729">    return stub.exportTensorboardTimeSeriesDataCallable();</span>
+<span class="nc" id="L3972">    return stub.exportTensorboardTimeSeriesDataCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : tensorboardServiceClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L4002">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       tensorboardServiceClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L4033">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response =
+   *         tensorboardServiceClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L4070">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = tensorboardServiceClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L4092">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       tensorboardServiceClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L4114">    return stub.getLocationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Policy response = tensorboardServiceClient.setIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(SetIamPolicyRequest request) {
+<span class="fc" id="L4145">    return setIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future =
+   *       tensorboardServiceClient.setIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
+<span class="fc" id="L4176">    return stub.setIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   Policy response = tensorboardServiceClient.getIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(GetIamPolicyRequest request) {
+<span class="fc" id="L4205">    return getIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future =
+   *       tensorboardServiceClient.getIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
+<span class="fc" id="L4234">    return stub.getIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   TestIamPermissionsResponse response = tensorboardServiceClient.testIamPermissions(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
+<span class="fc" id="L4267">    return testIamPermissionsCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TensorboardServiceClient tensorboardServiceClient = TensorboardServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   ApiFuture&lt;TestIamPermissionsResponse&gt; future =
+   *       tensorboardServiceClient.testIamPermissionsCallable().futureCall(request);
+   *   // Do something.
+   *   TestIamPermissionsResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable() {
+<span class="fc" id="L4301">    return stub.testIamPermissionsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L3734">    stub.close();</span>
-<span class="fc" id="L3735">  }</span>
+<span class="fc" id="L4306">    stub.close();</span>
+<span class="fc" id="L4307">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L3739">    stub.shutdown();</span>
-<span class="nc" id="L3740">  }</span>
+<span class="nc" id="L4311">    stub.shutdown();</span>
+<span class="nc" id="L4312">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L3744">    return stub.isShutdown();</span>
+<span class="nc" id="L4316">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L3749">    return stub.isTerminated();</span>
+<span class="nc" id="L4321">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L3754">    stub.shutdownNow();</span>
-<span class="nc" id="L3755">  }</span>
+<span class="nc" id="L4326">    stub.shutdownNow();</span>
+<span class="nc" id="L4327">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L3759">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L4331">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListTensorboardsPagedResponse
@@ -3771,16 +4343,16 @@ public class TensorboardServiceClient implements BackgroundResource {
         PageContext&lt;ListTensorboardsRequest, ListTensorboardsResponse, Tensorboard&gt; context,
         ApiFuture&lt;ListTensorboardsResponse&gt; futureResponse) {
       ApiFuture&lt;ListTensorboardsPage&gt; futurePage =
-<span class="fc" id="L3774">          ListTensorboardsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3775">      return ApiFutures.transform(</span>
+<span class="fc" id="L4346">          ListTensorboardsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4347">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3777">          input -&gt; new ListTensorboardsPagedResponse(input),</span>
-<span class="fc" id="L3778">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4349">          input -&gt; new ListTensorboardsPagedResponse(input),</span>
+<span class="fc" id="L4350">          MoreExecutors.directExecutor());</span>
     }
 
     private ListTensorboardsPagedResponse(ListTensorboardsPage page) {
-<span class="fc" id="L3782">      super(page, ListTensorboardsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3783">    }</span>
+<span class="fc" id="L4354">      super(page, ListTensorboardsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4355">    }</span>
   }
 
   public static class ListTensorboardsPage
@@ -3790,25 +4362,25 @@ public class TensorboardServiceClient implements BackgroundResource {
     private ListTensorboardsPage(
         PageContext&lt;ListTensorboardsRequest, ListTensorboardsResponse, Tensorboard&gt; context,
         ListTensorboardsResponse response) {
-<span class="fc" id="L3793">      super(context, response);</span>
-<span class="fc" id="L3794">    }</span>
+<span class="fc" id="L4365">      super(context, response);</span>
+<span class="fc" id="L4366">    }</span>
 
     private static ListTensorboardsPage createEmptyPage() {
-<span class="fc" id="L3797">      return new ListTensorboardsPage(null, null);</span>
+<span class="fc" id="L4369">      return new ListTensorboardsPage(null, null);</span>
     }
 
     @Override
     protected ListTensorboardsPage createPage(
         PageContext&lt;ListTensorboardsRequest, ListTensorboardsResponse, Tensorboard&gt; context,
         ListTensorboardsResponse response) {
-<span class="fc" id="L3804">      return new ListTensorboardsPage(context, response);</span>
+<span class="fc" id="L4376">      return new ListTensorboardsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListTensorboardsPage&gt; createPageAsync(
         PageContext&lt;ListTensorboardsRequest, ListTensorboardsResponse, Tensorboard&gt; context,
         ApiFuture&lt;ListTensorboardsResponse&gt; futureResponse) {
-<span class="fc" id="L3811">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4383">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3822,17 +4394,17 @@ public class TensorboardServiceClient implements BackgroundResource {
 
     private ListTensorboardsFixedSizeCollection(
         List&lt;ListTensorboardsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3825">      super(pages, collectionSize);</span>
-<span class="fc" id="L3826">    }</span>
+<span class="fc" id="L4397">      super(pages, collectionSize);</span>
+<span class="fc" id="L4398">    }</span>
 
     private static ListTensorboardsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3829">      return new ListTensorboardsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4401">      return new ListTensorboardsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTensorboardsFixedSizeCollection createCollection(
         List&lt;ListTensorboardsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3835">      return new ListTensorboardsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4407">      return new ListTensorboardsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3852,16 +4424,16 @@ public class TensorboardServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListTensorboardExperimentsResponse&gt; futureResponse) {
       ApiFuture&lt;ListTensorboardExperimentsPage&gt; futurePage =
-<span class="fc" id="L3855">          ListTensorboardExperimentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3856">      return ApiFutures.transform(</span>
+<span class="fc" id="L4427">          ListTensorboardExperimentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4428">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3858">          input -&gt; new ListTensorboardExperimentsPagedResponse(input),</span>
-<span class="fc" id="L3859">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4430">          input -&gt; new ListTensorboardExperimentsPagedResponse(input),</span>
+<span class="fc" id="L4431">          MoreExecutors.directExecutor());</span>
     }
 
     private ListTensorboardExperimentsPagedResponse(ListTensorboardExperimentsPage page) {
-<span class="fc" id="L3863">      super(page, ListTensorboardExperimentsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3864">    }</span>
+<span class="fc" id="L4435">      super(page, ListTensorboardExperimentsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4436">    }</span>
   }
 
   public static class ListTensorboardExperimentsPage
@@ -3878,11 +4450,11 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TensorboardExperiment&gt;
             context,
         ListTensorboardExperimentsResponse response) {
-<span class="fc" id="L3881">      super(context, response);</span>
-<span class="fc" id="L3882">    }</span>
+<span class="fc" id="L4453">      super(context, response);</span>
+<span class="fc" id="L4454">    }</span>
 
     private static ListTensorboardExperimentsPage createEmptyPage() {
-<span class="fc" id="L3885">      return new ListTensorboardExperimentsPage(null, null);</span>
+<span class="fc" id="L4457">      return new ListTensorboardExperimentsPage(null, null);</span>
     }
 
     @Override
@@ -3893,7 +4465,7 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TensorboardExperiment&gt;
             context,
         ListTensorboardExperimentsResponse response) {
-<span class="fc" id="L3896">      return new ListTensorboardExperimentsPage(context, response);</span>
+<span class="fc" id="L4468">      return new ListTensorboardExperimentsPage(context, response);</span>
     }
 
     @Override
@@ -3904,7 +4476,7 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TensorboardExperiment&gt;
             context,
         ApiFuture&lt;ListTensorboardExperimentsResponse&gt; futureResponse) {
-<span class="fc" id="L3907">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4479">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3918,17 +4490,17 @@ public class TensorboardServiceClient implements BackgroundResource {
 
     private ListTensorboardExperimentsFixedSizeCollection(
         List&lt;ListTensorboardExperimentsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3921">      super(pages, collectionSize);</span>
-<span class="fc" id="L3922">    }</span>
+<span class="fc" id="L4493">      super(pages, collectionSize);</span>
+<span class="fc" id="L4494">    }</span>
 
     private static ListTensorboardExperimentsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3925">      return new ListTensorboardExperimentsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4497">      return new ListTensorboardExperimentsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTensorboardExperimentsFixedSizeCollection createCollection(
         List&lt;ListTensorboardExperimentsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3931">      return new ListTensorboardExperimentsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4503">      return new ListTensorboardExperimentsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3945,16 +4517,16 @@ public class TensorboardServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListTensorboardRunsResponse&gt; futureResponse) {
       ApiFuture&lt;ListTensorboardRunsPage&gt; futurePage =
-<span class="fc" id="L3948">          ListTensorboardRunsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3949">      return ApiFutures.transform(</span>
+<span class="fc" id="L4520">          ListTensorboardRunsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4521">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3951">          input -&gt; new ListTensorboardRunsPagedResponse(input),</span>
-<span class="fc" id="L3952">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4523">          input -&gt; new ListTensorboardRunsPagedResponse(input),</span>
+<span class="fc" id="L4524">          MoreExecutors.directExecutor());</span>
     }
 
     private ListTensorboardRunsPagedResponse(ListTensorboardRunsPage page) {
-<span class="fc" id="L3956">      super(page, ListTensorboardRunsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3957">    }</span>
+<span class="fc" id="L4528">      super(page, ListTensorboardRunsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4529">    }</span>
   }
 
   public static class ListTensorboardRunsPage
@@ -3968,11 +4540,11 @@ public class TensorboardServiceClient implements BackgroundResource {
         PageContext&lt;ListTensorboardRunsRequest, ListTensorboardRunsResponse, TensorboardRun&gt;
             context,
         ListTensorboardRunsResponse response) {
-<span class="fc" id="L3971">      super(context, response);</span>
-<span class="fc" id="L3972">    }</span>
+<span class="fc" id="L4543">      super(context, response);</span>
+<span class="fc" id="L4544">    }</span>
 
     private static ListTensorboardRunsPage createEmptyPage() {
-<span class="fc" id="L3975">      return new ListTensorboardRunsPage(null, null);</span>
+<span class="fc" id="L4547">      return new ListTensorboardRunsPage(null, null);</span>
     }
 
     @Override
@@ -3980,7 +4552,7 @@ public class TensorboardServiceClient implements BackgroundResource {
         PageContext&lt;ListTensorboardRunsRequest, ListTensorboardRunsResponse, TensorboardRun&gt;
             context,
         ListTensorboardRunsResponse response) {
-<span class="fc" id="L3983">      return new ListTensorboardRunsPage(context, response);</span>
+<span class="fc" id="L4555">      return new ListTensorboardRunsPage(context, response);</span>
     }
 
     @Override
@@ -3988,7 +4560,7 @@ public class TensorboardServiceClient implements BackgroundResource {
         PageContext&lt;ListTensorboardRunsRequest, ListTensorboardRunsResponse, TensorboardRun&gt;
             context,
         ApiFuture&lt;ListTensorboardRunsResponse&gt; futureResponse) {
-<span class="fc" id="L3991">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4563">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4002,17 +4574,17 @@ public class TensorboardServiceClient implements BackgroundResource {
 
     private ListTensorboardRunsFixedSizeCollection(
         List&lt;ListTensorboardRunsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4005">      super(pages, collectionSize);</span>
-<span class="fc" id="L4006">    }</span>
+<span class="fc" id="L4577">      super(pages, collectionSize);</span>
+<span class="fc" id="L4578">    }</span>
 
     private static ListTensorboardRunsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4009">      return new ListTensorboardRunsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4581">      return new ListTensorboardRunsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTensorboardRunsFixedSizeCollection createCollection(
         List&lt;ListTensorboardRunsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4015">      return new ListTensorboardRunsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4587">      return new ListTensorboardRunsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4032,16 +4604,16 @@ public class TensorboardServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListTensorboardTimeSeriesResponse&gt; futureResponse) {
       ApiFuture&lt;ListTensorboardTimeSeriesPage&gt; futurePage =
-<span class="fc" id="L4035">          ListTensorboardTimeSeriesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4036">      return ApiFutures.transform(</span>
+<span class="fc" id="L4607">          ListTensorboardTimeSeriesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4608">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L4038">          input -&gt; new ListTensorboardTimeSeriesPagedResponse(input),</span>
-<span class="fc" id="L4039">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4610">          input -&gt; new ListTensorboardTimeSeriesPagedResponse(input),</span>
+<span class="fc" id="L4611">          MoreExecutors.directExecutor());</span>
     }
 
     private ListTensorboardTimeSeriesPagedResponse(ListTensorboardTimeSeriesPage page) {
-<span class="fc" id="L4043">      super(page, ListTensorboardTimeSeriesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4044">    }</span>
+<span class="fc" id="L4615">      super(page, ListTensorboardTimeSeriesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4616">    }</span>
   }
 
   public static class ListTensorboardTimeSeriesPage
@@ -4058,11 +4630,11 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TensorboardTimeSeries&gt;
             context,
         ListTensorboardTimeSeriesResponse response) {
-<span class="fc" id="L4061">      super(context, response);</span>
-<span class="fc" id="L4062">    }</span>
+<span class="fc" id="L4633">      super(context, response);</span>
+<span class="fc" id="L4634">    }</span>
 
     private static ListTensorboardTimeSeriesPage createEmptyPage() {
-<span class="fc" id="L4065">      return new ListTensorboardTimeSeriesPage(null, null);</span>
+<span class="fc" id="L4637">      return new ListTensorboardTimeSeriesPage(null, null);</span>
     }
 
     @Override
@@ -4073,7 +4645,7 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TensorboardTimeSeries&gt;
             context,
         ListTensorboardTimeSeriesResponse response) {
-<span class="fc" id="L4076">      return new ListTensorboardTimeSeriesPage(context, response);</span>
+<span class="fc" id="L4648">      return new ListTensorboardTimeSeriesPage(context, response);</span>
     }
 
     @Override
@@ -4084,7 +4656,7 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TensorboardTimeSeries&gt;
             context,
         ApiFuture&lt;ListTensorboardTimeSeriesResponse&gt; futureResponse) {
-<span class="fc" id="L4087">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4659">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4098,17 +4670,17 @@ public class TensorboardServiceClient implements BackgroundResource {
 
     private ListTensorboardTimeSeriesFixedSizeCollection(
         List&lt;ListTensorboardTimeSeriesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4101">      super(pages, collectionSize);</span>
-<span class="fc" id="L4102">    }</span>
+<span class="fc" id="L4673">      super(pages, collectionSize);</span>
+<span class="fc" id="L4674">    }</span>
 
     private static ListTensorboardTimeSeriesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4105">      return new ListTensorboardTimeSeriesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4677">      return new ListTensorboardTimeSeriesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTensorboardTimeSeriesFixedSizeCollection createCollection(
         List&lt;ListTensorboardTimeSeriesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4111">      return new ListTensorboardTimeSeriesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4683">      return new ListTensorboardTimeSeriesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4128,17 +4700,17 @@ public class TensorboardServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ExportTensorboardTimeSeriesDataResponse&gt; futureResponse) {
       ApiFuture&lt;ExportTensorboardTimeSeriesDataPage&gt; futurePage =
-<span class="fc" id="L4131">          ExportTensorboardTimeSeriesDataPage.createEmptyPage()</span>
-<span class="fc" id="L4132">              .createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4133">      return ApiFutures.transform(</span>
+<span class="fc" id="L4703">          ExportTensorboardTimeSeriesDataPage.createEmptyPage()</span>
+<span class="fc" id="L4704">              .createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4705">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L4135">          input -&gt; new ExportTensorboardTimeSeriesDataPagedResponse(input),</span>
-<span class="fc" id="L4136">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4707">          input -&gt; new ExportTensorboardTimeSeriesDataPagedResponse(input),</span>
+<span class="fc" id="L4708">          MoreExecutors.directExecutor());</span>
     }
 
     private ExportTensorboardTimeSeriesDataPagedResponse(ExportTensorboardTimeSeriesDataPage page) {
-<span class="fc" id="L4140">      super(page, ExportTensorboardTimeSeriesDataFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4141">    }</span>
+<span class="fc" id="L4712">      super(page, ExportTensorboardTimeSeriesDataFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4713">    }</span>
   }
 
   public static class ExportTensorboardTimeSeriesDataPage
@@ -4155,11 +4727,11 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TimeSeriesDataPoint&gt;
             context,
         ExportTensorboardTimeSeriesDataResponse response) {
-<span class="fc" id="L4158">      super(context, response);</span>
-<span class="fc" id="L4159">    }</span>
+<span class="fc" id="L4730">      super(context, response);</span>
+<span class="fc" id="L4731">    }</span>
 
     private static ExportTensorboardTimeSeriesDataPage createEmptyPage() {
-<span class="fc" id="L4162">      return new ExportTensorboardTimeSeriesDataPage(null, null);</span>
+<span class="fc" id="L4734">      return new ExportTensorboardTimeSeriesDataPage(null, null);</span>
     }
 
     @Override
@@ -4170,7 +4742,7 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TimeSeriesDataPoint&gt;
             context,
         ExportTensorboardTimeSeriesDataResponse response) {
-<span class="fc" id="L4173">      return new ExportTensorboardTimeSeriesDataPage(context, response);</span>
+<span class="fc" id="L4745">      return new ExportTensorboardTimeSeriesDataPage(context, response);</span>
     }
 
     @Override
@@ -4181,7 +4753,7 @@ public class TensorboardServiceClient implements BackgroundResource {
                 TimeSeriesDataPoint&gt;
             context,
         ApiFuture&lt;ExportTensorboardTimeSeriesDataResponse&gt; futureResponse) {
-<span class="fc" id="L4184">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4756">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4195,17 +4767,93 @@ public class TensorboardServiceClient implements BackgroundResource {
 
     private ExportTensorboardTimeSeriesDataFixedSizeCollection(
         List&lt;ExportTensorboardTimeSeriesDataPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4198">      super(pages, collectionSize);</span>
-<span class="fc" id="L4199">    }</span>
+<span class="fc" id="L4770">      super(pages, collectionSize);</span>
+<span class="fc" id="L4771">    }</span>
 
     private static ExportTensorboardTimeSeriesDataFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4202">      return new ExportTensorboardTimeSeriesDataFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4774">      return new ExportTensorboardTimeSeriesDataFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ExportTensorboardTimeSeriesDataFixedSizeCollection createCollection(
         List&lt;ExportTensorboardTimeSeriesDataPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4208">      return new ExportTensorboardTimeSeriesDataFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4780">      return new ExportTensorboardTimeSeriesDataFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L4796">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4797">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L4799">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L4800">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L4804">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4805">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L4815">      super(context, response);</span>
+<span class="fc" id="L4816">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L4819">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L4826">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L4833">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L4846">      super(pages, collectionSize);</span>
+<span class="fc" id="L4847">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L4850">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L4856">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

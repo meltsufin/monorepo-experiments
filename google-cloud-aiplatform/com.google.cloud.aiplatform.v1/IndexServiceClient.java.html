@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>IndexServiceClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-aiplatform</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.aiplatform.v1</a> &gt; <span class="el_source">IndexServiceClient.java</span></div><h1>IndexServiceClient.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.google.cloud.aiplatform.v1;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
@@ -29,7 +28,16 @@ import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.aiplatform.v1.stub.IndexServiceStub;
 import com.google.cloud.aiplatform.v1.stub.IndexServiceStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
 import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
@@ -47,6 +55,8 @@ import javax.annotation.Generated;
  * calls that map to API methods. Sample code to get started:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
  *   IndexName name = IndexName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[INDEX]&quot;);
  *   Index response = indexServiceClient.getIndex(name);
@@ -82,6 +92,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize credentials:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * IndexServiceSettings indexServiceSettings =
  *     IndexServiceSettings.newBuilder()
  *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
@@ -92,6 +104,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize the endpoint:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * IndexServiceSettings indexServiceSettings =
  *     IndexServiceSettings.newBuilder().setEndpoint(myEndpoint).build();
  * IndexServiceClient indexServiceClient = IndexServiceClient.create(indexServiceSettings);
@@ -107,7 +121,7 @@ public class IndexServiceClient implements BackgroundResource {
 
   /** Constructs an instance of IndexServiceClient with default settings. */
   public static final IndexServiceClient create() throws IOException {
-<span class="nc" id="L110">    return create(IndexServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L124">    return create(IndexServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -115,16 +129,15 @@ public class IndexServiceClient implements BackgroundResource {
    * created based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final IndexServiceClient create(IndexServiceSettings settings) throws IOException {
-<span class="fc" id="L118">    return new IndexServiceClient(settings);</span>
+<span class="fc" id="L132">    return new IndexServiceClient(settings);</span>
   }
 
   /**
    * Constructs an instance of IndexServiceClient, using the given stub for making calls. This is
    * for advanced usage - prefer using create(IndexServiceSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final IndexServiceClient create(IndexServiceStub stub) {
-<span class="nc" id="L127">    return new IndexServiceClient(stub);</span>
+<span class="nc" id="L140">    return new IndexServiceClient(stub);</span>
   }
 
   /**
@@ -132,26 +145,24 @@ public class IndexServiceClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L135">  protected IndexServiceClient(IndexServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L136">    this.settings = settings;</span>
-<span class="fc" id="L137">    this.stub = ((IndexServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L138">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L139">  }</span>
+<span class="fc" id="L148">  protected IndexServiceClient(IndexServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L149">    this.settings = settings;</span>
+<span class="fc" id="L150">    this.stub = ((IndexServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L151">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L152">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L142">  protected IndexServiceClient(IndexServiceStub stub) {</span>
-<span class="nc" id="L143">    this.settings = null;</span>
-<span class="nc" id="L144">    this.stub = stub;</span>
-<span class="nc" id="L145">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L146">  }</span>
+<span class="nc" id="L154">  protected IndexServiceClient(IndexServiceStub stub) {</span>
+<span class="nc" id="L155">    this.settings = null;</span>
+<span class="nc" id="L156">    this.stub = stub;</span>
+<span class="nc" id="L157">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L158">  }</span>
 
   public final IndexServiceSettings getSettings() {
-<span class="nc" id="L149">    return settings;</span>
+<span class="nc" id="L161">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public IndexServiceStub getStub() {
-<span class="nc" id="L154">    return stub;</span>
+<span class="nc" id="L165">    return stub;</span>
   }
 
   /**
@@ -159,7 +170,7 @@ public class IndexServiceClient implements BackgroundResource {
    * returned by another API method call.
    */
   public final OperationsClient getOperationsClient() {
-<span class="nc" id="L162">    return operationsClient;</span>
+<span class="nc" id="L173">    return operationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -169,6 +180,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   Index index = Index.newBuilder().build();
@@ -184,11 +197,11 @@ public class IndexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Index, CreateIndexOperationMetadata&gt; createIndexAsync(
       LocationName parent, Index index) {
     CreateIndexRequest request =
-<span class="fc" id="L187">        CreateIndexRequest.newBuilder()</span>
-<span class="pc bpc" id="L188" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L189">            .setIndex(index)</span>
-<span class="fc" id="L190">            .build();</span>
-<span class="fc" id="L191">    return createIndexAsync(request);</span>
+<span class="fc" id="L200">        CreateIndexRequest.newBuilder()</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L202">            .setIndex(index)</span>
+<span class="fc" id="L203">            .build();</span>
+<span class="fc" id="L204">    return createIndexAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -198,6 +211,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   Index index = Index.newBuilder().build();
@@ -213,8 +228,8 @@ public class IndexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Index, CreateIndexOperationMetadata&gt; createIndexAsync(
       String parent, Index index) {
     CreateIndexRequest request =
-<span class="fc" id="L216">        CreateIndexRequest.newBuilder().setParent(parent).setIndex(index).build();</span>
-<span class="fc" id="L217">    return createIndexAsync(request);</span>
+<span class="fc" id="L231">        CreateIndexRequest.newBuilder().setParent(parent).setIndex(index).build();</span>
+<span class="fc" id="L232">    return createIndexAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -224,6 +239,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   CreateIndexRequest request =
    *       CreateIndexRequest.newBuilder()
@@ -239,7 +256,7 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Index, CreateIndexOperationMetadata&gt; createIndexAsync(
       CreateIndexRequest request) {
-<span class="fc" id="L242">    return createIndexOperationCallable().futureCall(request);</span>
+<span class="fc" id="L259">    return createIndexOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -249,6 +266,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   CreateIndexRequest request =
    *       CreateIndexRequest.newBuilder()
@@ -264,7 +283,7 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateIndexRequest, Index, CreateIndexOperationMetadata&gt;
       createIndexOperationCallable() {
-<span class="fc" id="L267">    return stub.createIndexOperationCallable();</span>
+<span class="fc" id="L286">    return stub.createIndexOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -274,6 +293,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   CreateIndexRequest request =
    *       CreateIndexRequest.newBuilder()
@@ -287,7 +308,7 @@ public class IndexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateIndexRequest, Operation&gt; createIndexCallable() {
-<span class="nc" id="L290">    return stub.createIndexCallable();</span>
+<span class="nc" id="L311">    return stub.createIndexCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -297,6 +318,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   IndexName name = IndexName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[INDEX]&quot;);
    *   Index response = indexServiceClient.getIndex(name);
@@ -309,8 +332,8 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final Index getIndex(IndexName name) {
     GetIndexRequest request =
-<span class="pc bpc" id="L312" title="1 of 2 branches missed.">        GetIndexRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L313">    return getIndex(request);</span>
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">        GetIndexRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L336">    return getIndex(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -320,6 +343,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   String name = IndexName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[INDEX]&quot;).toString();
    *   Index response = indexServiceClient.getIndex(name);
@@ -331,8 +356,8 @@ public class IndexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Index getIndex(String name) {
-<span class="fc" id="L334">    GetIndexRequest request = GetIndexRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L335">    return getIndex(request);</span>
+<span class="fc" id="L359">    GetIndexRequest request = GetIndexRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L360">    return getIndex(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -342,6 +367,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   GetIndexRequest request =
    *       GetIndexRequest.newBuilder()
@@ -355,7 +382,7 @@ public class IndexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Index getIndex(GetIndexRequest request) {
-<span class="fc" id="L358">    return getIndexCallable().call(request);</span>
+<span class="fc" id="L385">    return getIndexCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -365,6 +392,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   GetIndexRequest request =
    *       GetIndexRequest.newBuilder()
@@ -377,7 +406,7 @@ public class IndexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetIndexRequest, Index&gt; getIndexCallable() {
-<span class="fc" id="L380">    return stub.getIndexCallable();</span>
+<span class="fc" id="L409">    return stub.getIndexCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -387,6 +416,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   for (Index element : indexServiceClient.listIndexes(parent).iterateAll()) {
@@ -401,10 +432,10 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final ListIndexesPagedResponse listIndexes(LocationName parent) {
     ListIndexesRequest request =
-<span class="fc" id="L404">        ListIndexesRequest.newBuilder()</span>
-<span class="pc bpc" id="L405" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L406">            .build();</span>
-<span class="fc" id="L407">    return listIndexes(request);</span>
+<span class="fc" id="L435">        ListIndexesRequest.newBuilder()</span>
+<span class="pc bpc" id="L436" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L437">            .build();</span>
+<span class="fc" id="L438">    return listIndexes(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -414,6 +445,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   for (Index element : indexServiceClient.listIndexes(parent).iterateAll()) {
@@ -427,8 +460,8 @@ public class IndexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListIndexesPagedResponse listIndexes(String parent) {
-<span class="fc" id="L430">    ListIndexesRequest request = ListIndexesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L431">    return listIndexes(request);</span>
+<span class="fc" id="L463">    ListIndexesRequest request = ListIndexesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L464">    return listIndexes(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -438,6 +471,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   ListIndexesRequest request =
    *       ListIndexesRequest.newBuilder()
@@ -457,7 +492,7 @@ public class IndexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListIndexesPagedResponse listIndexes(ListIndexesRequest request) {
-<span class="fc" id="L460">    return listIndexesPagedCallable().call(request);</span>
+<span class="fc" id="L495">    return listIndexesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -467,6 +502,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   ListIndexesRequest request =
    *       ListIndexesRequest.newBuilder()
@@ -486,7 +523,7 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListIndexesRequest, ListIndexesPagedResponse&gt;
       listIndexesPagedCallable() {
-<span class="fc" id="L489">    return stub.listIndexesPagedCallable();</span>
+<span class="fc" id="L526">    return stub.listIndexesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -496,6 +533,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   ListIndexesRequest request =
    *       ListIndexesRequest.newBuilder()
@@ -507,7 +546,7 @@ public class IndexServiceClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListIndexesResponse response = indexServiceClient.listIndexesCallable().call(request);
-   *     for (Index element : response.getResponsesList()) {
+   *     for (Index element : response.getIndexesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -521,7 +560,7 @@ public class IndexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListIndexesRequest, ListIndexesResponse&gt; listIndexesCallable() {
-<span class="nc" id="L524">    return stub.listIndexesCallable();</span>
+<span class="nc" id="L563">    return stub.listIndexesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -531,6 +570,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   Index index = Index.newBuilder().build();
    *   FieldMask updateMask = FieldMask.newBuilder().build();
@@ -546,8 +587,8 @@ public class IndexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Index, UpdateIndexOperationMetadata&gt; updateIndexAsync(
       Index index, FieldMask updateMask) {
     UpdateIndexRequest request =
-<span class="fc" id="L549">        UpdateIndexRequest.newBuilder().setIndex(index).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L550">    return updateIndexAsync(request);</span>
+<span class="fc" id="L590">        UpdateIndexRequest.newBuilder().setIndex(index).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L591">    return updateIndexAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -557,6 +598,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   UpdateIndexRequest request =
    *       UpdateIndexRequest.newBuilder()
@@ -572,7 +615,7 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Index, UpdateIndexOperationMetadata&gt; updateIndexAsync(
       UpdateIndexRequest request) {
-<span class="fc" id="L575">    return updateIndexOperationCallable().futureCall(request);</span>
+<span class="fc" id="L618">    return updateIndexOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -582,6 +625,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   UpdateIndexRequest request =
    *       UpdateIndexRequest.newBuilder()
@@ -597,7 +642,7 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateIndexRequest, Index, UpdateIndexOperationMetadata&gt;
       updateIndexOperationCallable() {
-<span class="fc" id="L600">    return stub.updateIndexOperationCallable();</span>
+<span class="fc" id="L645">    return stub.updateIndexOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -607,6 +652,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   UpdateIndexRequest request =
    *       UpdateIndexRequest.newBuilder()
@@ -620,7 +667,7 @@ public class IndexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateIndexRequest, Operation&gt; updateIndexCallable() {
-<span class="nc" id="L623">    return stub.updateIndexCallable();</span>
+<span class="nc" id="L670">    return stub.updateIndexCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -631,6 +678,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   IndexName name = IndexName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[INDEX]&quot;);
    *   indexServiceClient.deleteIndexAsync(name).get();
@@ -643,8 +692,8 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteIndexAsync(IndexName name) {
     DeleteIndexRequest request =
-<span class="pc bpc" id="L646" title="1 of 2 branches missed.">        DeleteIndexRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L647">    return deleteIndexAsync(request);</span>
+<span class="pc bpc" id="L695" title="1 of 2 branches missed.">        DeleteIndexRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L696">    return deleteIndexAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -655,6 +704,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   String name = IndexName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[INDEX]&quot;).toString();
    *   indexServiceClient.deleteIndexAsync(name).get();
@@ -666,8 +717,8 @@ public class IndexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteIndexAsync(String name) {
-<span class="fc" id="L669">    DeleteIndexRequest request = DeleteIndexRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L670">    return deleteIndexAsync(request);</span>
+<span class="fc" id="L720">    DeleteIndexRequest request = DeleteIndexRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L721">    return deleteIndexAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -678,6 +729,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   DeleteIndexRequest request =
    *       DeleteIndexRequest.newBuilder()
@@ -692,7 +745,7 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteIndexAsync(
       DeleteIndexRequest request) {
-<span class="fc" id="L695">    return deleteIndexOperationCallable().futureCall(request);</span>
+<span class="fc" id="L748">    return deleteIndexOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -703,6 +756,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   DeleteIndexRequest request =
    *       DeleteIndexRequest.newBuilder()
@@ -717,7 +772,7 @@ public class IndexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteIndexRequest, Empty, DeleteOperationMetadata&gt;
       deleteIndexOperationCallable() {
-<span class="fc" id="L720">    return stub.deleteIndexOperationCallable();</span>
+<span class="fc" id="L775">    return stub.deleteIndexOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -728,6 +783,8 @@ public class IndexServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
    *   DeleteIndexRequest request =
    *       DeleteIndexRequest.newBuilder()
@@ -740,37 +797,362 @@ public class IndexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteIndexRequest, Operation&gt; deleteIndexCallable() {
-<span class="nc" id="L743">    return stub.deleteIndexCallable();</span>
+<span class="nc" id="L800">    return stub.deleteIndexCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : indexServiceClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L830">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       indexServiceClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L861">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response = indexServiceClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L897">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = indexServiceClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L919">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = indexServiceClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L940">    return stub.getLocationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Policy response = indexServiceClient.setIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(SetIamPolicyRequest request) {
+<span class="fc" id="L971">    return setIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = indexServiceClient.setIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
+<span class="fc" id="L1001">    return stub.setIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   Policy response = indexServiceClient.getIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(GetIamPolicyRequest request) {
+<span class="fc" id="L1030">    return getIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = indexServiceClient.getIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
+<span class="fc" id="L1058">    return stub.getIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   TestIamPermissionsResponse response = indexServiceClient.testIamPermissions(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
+<span class="fc" id="L1091">    return testIamPermissionsCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (IndexServiceClient indexServiceClient = IndexServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   ApiFuture&lt;TestIamPermissionsResponse&gt; future =
+   *       indexServiceClient.testIamPermissionsCallable().futureCall(request);
+   *   // Do something.
+   *   TestIamPermissionsResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable() {
+<span class="fc" id="L1125">    return stub.testIamPermissionsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L748">    stub.close();</span>
-<span class="fc" id="L749">  }</span>
+<span class="fc" id="L1130">    stub.close();</span>
+<span class="fc" id="L1131">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L753">    stub.shutdown();</span>
-<span class="nc" id="L754">  }</span>
+<span class="nc" id="L1135">    stub.shutdown();</span>
+<span class="nc" id="L1136">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L758">    return stub.isShutdown();</span>
+<span class="nc" id="L1140">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L763">    return stub.isTerminated();</span>
+<span class="nc" id="L1145">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L768">    stub.shutdownNow();</span>
-<span class="nc" id="L769">  }</span>
+<span class="nc" id="L1150">    stub.shutdownNow();</span>
+<span class="nc" id="L1151">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L773">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1155">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListIndexesPagedResponse
@@ -785,14 +1167,14 @@ public class IndexServiceClient implements BackgroundResource {
         PageContext&lt;ListIndexesRequest, ListIndexesResponse, Index&gt; context,
         ApiFuture&lt;ListIndexesResponse&gt; futureResponse) {
       ApiFuture&lt;ListIndexesPage&gt; futurePage =
-<span class="fc" id="L788">          ListIndexesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L789">      return ApiFutures.transform(</span>
-<span class="fc" id="L790">          futurePage, input -&gt; new ListIndexesPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1170">          ListIndexesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1171">      return ApiFutures.transform(</span>
+<span class="fc" id="L1172">          futurePage, input -&gt; new ListIndexesPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListIndexesPagedResponse(ListIndexesPage page) {
-<span class="fc" id="L794">      super(page, ListIndexesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L795">    }</span>
+<span class="fc" id="L1176">      super(page, ListIndexesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1177">    }</span>
   }
 
   public static class ListIndexesPage
@@ -801,25 +1183,25 @@ public class IndexServiceClient implements BackgroundResource {
     private ListIndexesPage(
         PageContext&lt;ListIndexesRequest, ListIndexesResponse, Index&gt; context,
         ListIndexesResponse response) {
-<span class="fc" id="L804">      super(context, response);</span>
-<span class="fc" id="L805">    }</span>
+<span class="fc" id="L1186">      super(context, response);</span>
+<span class="fc" id="L1187">    }</span>
 
     private static ListIndexesPage createEmptyPage() {
-<span class="fc" id="L808">      return new ListIndexesPage(null, null);</span>
+<span class="fc" id="L1190">      return new ListIndexesPage(null, null);</span>
     }
 
     @Override
     protected ListIndexesPage createPage(
         PageContext&lt;ListIndexesRequest, ListIndexesResponse, Index&gt; context,
         ListIndexesResponse response) {
-<span class="fc" id="L815">      return new ListIndexesPage(context, response);</span>
+<span class="fc" id="L1197">      return new ListIndexesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListIndexesPage&gt; createPageAsync(
         PageContext&lt;ListIndexesRequest, ListIndexesResponse, Index&gt; context,
         ApiFuture&lt;ListIndexesResponse&gt; futureResponse) {
-<span class="fc" id="L822">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1204">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -832,17 +1214,93 @@ public class IndexServiceClient implements BackgroundResource {
           ListIndexesFixedSizeCollection&gt; {
 
     private ListIndexesFixedSizeCollection(List&lt;ListIndexesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L835">      super(pages, collectionSize);</span>
-<span class="fc" id="L836">    }</span>
+<span class="fc" id="L1217">      super(pages, collectionSize);</span>
+<span class="fc" id="L1218">    }</span>
 
     private static ListIndexesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L839">      return new ListIndexesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1221">      return new ListIndexesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListIndexesFixedSizeCollection createCollection(
         List&lt;ListIndexesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L845">      return new ListIndexesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1227">      return new ListIndexesFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L1243">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1244">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1246">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L1247">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L1251">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1252">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1262">      super(context, response);</span>
+<span class="fc" id="L1263">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L1266">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1273">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L1280">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1293">      super(pages, collectionSize);</span>
+<span class="fc" id="L1294">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1297">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1303">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

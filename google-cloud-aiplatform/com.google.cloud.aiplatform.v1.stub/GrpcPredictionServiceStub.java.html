@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>GrpcPredictionServiceStub.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-aiplatform</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.aiplatform.v1.stub</a> &gt; <span class="el_source">GrpcPredictionServiceStub.java</span></div><h1>GrpcPredictionServiceStub.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.google.cloud.aiplatform.v1.stub;
 
+import static com.google.cloud.aiplatform.v1.PredictionServiceClient.ListLocationsPagedResponse;
+
 import com.google.api.HttpBody;
 import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.core.BackgroundResourceAggregation;
@@ -28,7 +30,16 @@ import com.google.cloud.aiplatform.v1.ExplainResponse;
 import com.google.cloud.aiplatform.v1.PredictRequest;
 import com.google.cloud.aiplatform.v1.PredictResponse;
 import com.google.cloud.aiplatform.v1.RawPredictRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableMap;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.stub.GrpcOperationsStub;
 import io.grpc.MethodDescriptor;
 import io.grpc.protobuf.ProtoUtils;
@@ -45,32 +56,86 @@ import javax.annotation.Generated;
 @Generated(&quot;by gapic-generator-java&quot;)
 public class GrpcPredictionServiceStub extends PredictionServiceStub {
   private static final MethodDescriptor&lt;PredictRequest, PredictResponse&gt; predictMethodDescriptor =
-<span class="fc" id="L48">      MethodDescriptor.&lt;PredictRequest, PredictResponse&gt;newBuilder()</span>
-<span class="fc" id="L49">          .setType(MethodDescriptor.MethodType.UNARY)</span>
-<span class="fc" id="L50">          .setFullMethodName(&quot;google.cloud.aiplatform.v1.PredictionService/Predict&quot;)</span>
-<span class="fc" id="L51">          .setRequestMarshaller(ProtoUtils.marshaller(PredictRequest.getDefaultInstance()))</span>
-<span class="fc" id="L52">          .setResponseMarshaller(ProtoUtils.marshaller(PredictResponse.getDefaultInstance()))</span>
-<span class="fc" id="L53">          .build();</span>
+<span class="fc" id="L59">      MethodDescriptor.&lt;PredictRequest, PredictResponse&gt;newBuilder()</span>
+<span class="fc" id="L60">          .setType(MethodDescriptor.MethodType.UNARY)</span>
+<span class="fc" id="L61">          .setFullMethodName(&quot;google.cloud.aiplatform.v1.PredictionService/Predict&quot;)</span>
+<span class="fc" id="L62">          .setRequestMarshaller(ProtoUtils.marshaller(PredictRequest.getDefaultInstance()))</span>
+<span class="fc" id="L63">          .setResponseMarshaller(ProtoUtils.marshaller(PredictResponse.getDefaultInstance()))</span>
+<span class="fc" id="L64">          .build();</span>
 
   private static final MethodDescriptor&lt;RawPredictRequest, HttpBody&gt; rawPredictMethodDescriptor =
-<span class="fc" id="L56">      MethodDescriptor.&lt;RawPredictRequest, HttpBody&gt;newBuilder()</span>
-<span class="fc" id="L57">          .setType(MethodDescriptor.MethodType.UNARY)</span>
-<span class="fc" id="L58">          .setFullMethodName(&quot;google.cloud.aiplatform.v1.PredictionService/RawPredict&quot;)</span>
-<span class="fc" id="L59">          .setRequestMarshaller(ProtoUtils.marshaller(RawPredictRequest.getDefaultInstance()))</span>
-<span class="fc" id="L60">          .setResponseMarshaller(ProtoUtils.marshaller(HttpBody.getDefaultInstance()))</span>
-<span class="fc" id="L61">          .build();</span>
+<span class="fc" id="L67">      MethodDescriptor.&lt;RawPredictRequest, HttpBody&gt;newBuilder()</span>
+<span class="fc" id="L68">          .setType(MethodDescriptor.MethodType.UNARY)</span>
+<span class="fc" id="L69">          .setFullMethodName(&quot;google.cloud.aiplatform.v1.PredictionService/RawPredict&quot;)</span>
+<span class="fc" id="L70">          .setRequestMarshaller(ProtoUtils.marshaller(RawPredictRequest.getDefaultInstance()))</span>
+<span class="fc" id="L71">          .setResponseMarshaller(ProtoUtils.marshaller(HttpBody.getDefaultInstance()))</span>
+<span class="fc" id="L72">          .build();</span>
 
-<span class="fc" id="L63">  private static final MethodDescriptor&lt;ExplainRequest, ExplainResponse&gt; explainMethodDescriptor =</span>
-<span class="fc" id="L64">      MethodDescriptor.&lt;ExplainRequest, ExplainResponse&gt;newBuilder()</span>
-<span class="fc" id="L65">          .setType(MethodDescriptor.MethodType.UNARY)</span>
-<span class="fc" id="L66">          .setFullMethodName(&quot;google.cloud.aiplatform.v1.PredictionService/Explain&quot;)</span>
-<span class="fc" id="L67">          .setRequestMarshaller(ProtoUtils.marshaller(ExplainRequest.getDefaultInstance()))</span>
-<span class="fc" id="L68">          .setResponseMarshaller(ProtoUtils.marshaller(ExplainResponse.getDefaultInstance()))</span>
-<span class="fc" id="L69">          .build();</span>
+  private static final MethodDescriptor&lt;ExplainRequest, ExplainResponse&gt; explainMethodDescriptor =
+<span class="fc" id="L75">      MethodDescriptor.&lt;ExplainRequest, ExplainResponse&gt;newBuilder()</span>
+<span class="fc" id="L76">          .setType(MethodDescriptor.MethodType.UNARY)</span>
+<span class="fc" id="L77">          .setFullMethodName(&quot;google.cloud.aiplatform.v1.PredictionService/Explain&quot;)</span>
+<span class="fc" id="L78">          .setRequestMarshaller(ProtoUtils.marshaller(ExplainRequest.getDefaultInstance()))</span>
+<span class="fc" id="L79">          .setResponseMarshaller(ProtoUtils.marshaller(ExplainResponse.getDefaultInstance()))</span>
+<span class="fc" id="L80">          .build();</span>
+
+  private static final MethodDescriptor&lt;ListLocationsRequest, ListLocationsResponse&gt;
+      listLocationsMethodDescriptor =
+<span class="fc" id="L84">          MethodDescriptor.&lt;ListLocationsRequest, ListLocationsResponse&gt;newBuilder()</span>
+<span class="fc" id="L85">              .setType(MethodDescriptor.MethodType.UNARY)</span>
+<span class="fc" id="L86">              .setFullMethodName(&quot;google.cloud.location.Locations/ListLocations&quot;)</span>
+<span class="fc" id="L87">              .setRequestMarshaller(</span>
+<span class="fc" id="L88">                  ProtoUtils.marshaller(ListLocationsRequest.getDefaultInstance()))</span>
+<span class="fc" id="L89">              .setResponseMarshaller(</span>
+<span class="fc" id="L90">                  ProtoUtils.marshaller(ListLocationsResponse.getDefaultInstance()))</span>
+<span class="fc" id="L91">              .build();</span>
+
+  private static final MethodDescriptor&lt;GetLocationRequest, Location&gt; getLocationMethodDescriptor =
+<span class="fc" id="L94">      MethodDescriptor.&lt;GetLocationRequest, Location&gt;newBuilder()</span>
+<span class="fc" id="L95">          .setType(MethodDescriptor.MethodType.UNARY)</span>
+<span class="fc" id="L96">          .setFullMethodName(&quot;google.cloud.location.Locations/GetLocation&quot;)</span>
+<span class="fc" id="L97">          .setRequestMarshaller(ProtoUtils.marshaller(GetLocationRequest.getDefaultInstance()))</span>
+<span class="fc" id="L98">          .setResponseMarshaller(ProtoUtils.marshaller(Location.getDefaultInstance()))</span>
+<span class="fc" id="L99">          .build();</span>
+
+  private static final MethodDescriptor&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyMethodDescriptor =
+<span class="fc" id="L102">      MethodDescriptor.&lt;SetIamPolicyRequest, Policy&gt;newBuilder()</span>
+<span class="fc" id="L103">          .setType(MethodDescriptor.MethodType.UNARY)</span>
+<span class="fc" id="L104">          .setFullMethodName(&quot;google.iam.v1.IAMPolicy/SetIamPolicy&quot;)</span>
+<span class="fc" id="L105">          .setRequestMarshaller(ProtoUtils.marshaller(SetIamPolicyRequest.getDefaultInstance()))</span>
+<span class="fc" id="L106">          .setResponseMarshaller(ProtoUtils.marshaller(Policy.getDefaultInstance()))</span>
+<span class="fc" id="L107">          .build();</span>
+
+  private static final MethodDescriptor&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyMethodDescriptor =
+<span class="fc" id="L110">      MethodDescriptor.&lt;GetIamPolicyRequest, Policy&gt;newBuilder()</span>
+<span class="fc" id="L111">          .setType(MethodDescriptor.MethodType.UNARY)</span>
+<span class="fc" id="L112">          .setFullMethodName(&quot;google.iam.v1.IAMPolicy/GetIamPolicy&quot;)</span>
+<span class="fc" id="L113">          .setRequestMarshaller(ProtoUtils.marshaller(GetIamPolicyRequest.getDefaultInstance()))</span>
+<span class="fc" id="L114">          .setResponseMarshaller(ProtoUtils.marshaller(Policy.getDefaultInstance()))</span>
+<span class="fc" id="L115">          .build();</span>
+
+  private static final MethodDescriptor&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+<span class="fc" id="L118">      testIamPermissionsMethodDescriptor =</span>
+<span class="fc" id="L119">          MethodDescriptor.&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;newBuilder()</span>
+<span class="fc" id="L120">              .setType(MethodDescriptor.MethodType.UNARY)</span>
+<span class="fc" id="L121">              .setFullMethodName(&quot;google.iam.v1.IAMPolicy/TestIamPermissions&quot;)</span>
+<span class="fc" id="L122">              .setRequestMarshaller(</span>
+<span class="fc" id="L123">                  ProtoUtils.marshaller(TestIamPermissionsRequest.getDefaultInstance()))</span>
+<span class="fc" id="L124">              .setResponseMarshaller(</span>
+<span class="fc" id="L125">                  ProtoUtils.marshaller(TestIamPermissionsResponse.getDefaultInstance()))</span>
+<span class="fc" id="L126">              .build();</span>
 
   private final UnaryCallable&lt;PredictRequest, PredictResponse&gt; predictCallable;
   private final UnaryCallable&lt;RawPredictRequest, HttpBody&gt; rawPredictCallable;
   private final UnaryCallable&lt;ExplainRequest, ExplainResponse&gt; explainCallable;
+  private final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable;
+  private final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable;
+  private final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable;
+  private final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable;
+  private final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable;
+  private final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable;
 
   private final BackgroundResource backgroundResources;
   private final GrpcOperationsStub operationsStub;
@@ -78,19 +143,19 @@ public class GrpcPredictionServiceStub extends PredictionServiceStub {
 
   public static final GrpcPredictionServiceStub create(PredictionServiceStubSettings settings)
       throws IOException {
-<span class="fc" id="L81">    return new GrpcPredictionServiceStub(settings, ClientContext.create(settings));</span>
+<span class="fc" id="L146">    return new GrpcPredictionServiceStub(settings, ClientContext.create(settings));</span>
   }
 
   public static final GrpcPredictionServiceStub create(ClientContext clientContext)
       throws IOException {
-<span class="nc" id="L86">    return new GrpcPredictionServiceStub(</span>
-<span class="nc" id="L87">        PredictionServiceStubSettings.newBuilder().build(), clientContext);</span>
+<span class="nc" id="L151">    return new GrpcPredictionServiceStub(</span>
+<span class="nc" id="L152">        PredictionServiceStubSettings.newBuilder().build(), clientContext);</span>
   }
 
   public static final GrpcPredictionServiceStub create(
       ClientContext clientContext, GrpcStubCallableFactory callableFactory) throws IOException {
-<span class="nc" id="L92">    return new GrpcPredictionServiceStub(</span>
-<span class="nc" id="L93">        PredictionServiceStubSettings.newBuilder().build(), clientContext, callableFactory);</span>
+<span class="nc" id="L157">    return new GrpcPredictionServiceStub(</span>
+<span class="nc" id="L158">        PredictionServiceStubSettings.newBuilder().build(), clientContext, callableFactory);</span>
   }
 
   /**
@@ -100,8 +165,8 @@ public class GrpcPredictionServiceStub extends PredictionServiceStub {
    */
   protected GrpcPredictionServiceStub(
       PredictionServiceStubSettings settings, ClientContext clientContext) throws IOException {
-<span class="fc" id="L103">    this(settings, clientContext, new GrpcPredictionServiceCallableFactory());</span>
-<span class="fc" id="L104">  }</span>
+<span class="fc" id="L168">    this(settings, clientContext, new GrpcPredictionServiceCallableFactory());</span>
+<span class="fc" id="L169">  }</span>
 
   /**
    * Constructs an instance of GrpcPredictionServiceStub, using the given settings. This is
@@ -112,108 +177,211 @@ public class GrpcPredictionServiceStub extends PredictionServiceStub {
       PredictionServiceStubSettings settings,
       ClientContext clientContext,
       GrpcStubCallableFactory callableFactory)
-<span class="fc" id="L115">      throws IOException {</span>
-<span class="fc" id="L116">    this.callableFactory = callableFactory;</span>
-<span class="fc" id="L117">    this.operationsStub = GrpcOperationsStub.create(clientContext, callableFactory);</span>
+<span class="fc" id="L180">      throws IOException {</span>
+<span class="fc" id="L181">    this.callableFactory = callableFactory;</span>
+<span class="fc" id="L182">    this.operationsStub = GrpcOperationsStub.create(clientContext, callableFactory);</span>
 
     GrpcCallSettings&lt;PredictRequest, PredictResponse&gt; predictTransportSettings =
-<span class="fc" id="L120">        GrpcCallSettings.&lt;PredictRequest, PredictResponse&gt;newBuilder()</span>
-<span class="fc" id="L121">            .setMethodDescriptor(predictMethodDescriptor)</span>
-<span class="fc" id="L122">            .setParamsExtractor(</span>
+<span class="fc" id="L185">        GrpcCallSettings.&lt;PredictRequest, PredictResponse&gt;newBuilder()</span>
+<span class="fc" id="L186">            .setMethodDescriptor(predictMethodDescriptor)</span>
+<span class="fc" id="L187">            .setParamsExtractor(</span>
                 request -&gt; {
-<span class="fc" id="L124">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
-<span class="fc" id="L125">                  params.put(&quot;endpoint&quot;, String.valueOf(request.getEndpoint()));</span>
-<span class="fc" id="L126">                  return params.build();</span>
+<span class="fc" id="L189">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
+<span class="fc" id="L190">                  params.put(&quot;endpoint&quot;, String.valueOf(request.getEndpoint()));</span>
+<span class="fc" id="L191">                  return params.build();</span>
                 })
-<span class="fc" id="L128">            .build();</span>
+<span class="fc" id="L193">            .build();</span>
     GrpcCallSettings&lt;RawPredictRequest, HttpBody&gt; rawPredictTransportSettings =
-<span class="fc" id="L130">        GrpcCallSettings.&lt;RawPredictRequest, HttpBody&gt;newBuilder()</span>
-<span class="fc" id="L131">            .setMethodDescriptor(rawPredictMethodDescriptor)</span>
-<span class="fc" id="L132">            .setParamsExtractor(</span>
+<span class="fc" id="L195">        GrpcCallSettings.&lt;RawPredictRequest, HttpBody&gt;newBuilder()</span>
+<span class="fc" id="L196">            .setMethodDescriptor(rawPredictMethodDescriptor)</span>
+<span class="fc" id="L197">            .setParamsExtractor(</span>
                 request -&gt; {
-<span class="fc" id="L134">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
-<span class="fc" id="L135">                  params.put(&quot;endpoint&quot;, String.valueOf(request.getEndpoint()));</span>
-<span class="fc" id="L136">                  return params.build();</span>
+<span class="fc" id="L199">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
+<span class="fc" id="L200">                  params.put(&quot;endpoint&quot;, String.valueOf(request.getEndpoint()));</span>
+<span class="fc" id="L201">                  return params.build();</span>
                 })
-<span class="fc" id="L138">            .build();</span>
+<span class="fc" id="L203">            .build();</span>
     GrpcCallSettings&lt;ExplainRequest, ExplainResponse&gt; explainTransportSettings =
-<span class="fc" id="L140">        GrpcCallSettings.&lt;ExplainRequest, ExplainResponse&gt;newBuilder()</span>
-<span class="fc" id="L141">            .setMethodDescriptor(explainMethodDescriptor)</span>
-<span class="fc" id="L142">            .setParamsExtractor(</span>
+<span class="fc" id="L205">        GrpcCallSettings.&lt;ExplainRequest, ExplainResponse&gt;newBuilder()</span>
+<span class="fc" id="L206">            .setMethodDescriptor(explainMethodDescriptor)</span>
+<span class="fc" id="L207">            .setParamsExtractor(</span>
                 request -&gt; {
-<span class="fc" id="L144">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
-<span class="fc" id="L145">                  params.put(&quot;endpoint&quot;, String.valueOf(request.getEndpoint()));</span>
-<span class="fc" id="L146">                  return params.build();</span>
+<span class="fc" id="L209">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
+<span class="fc" id="L210">                  params.put(&quot;endpoint&quot;, String.valueOf(request.getEndpoint()));</span>
+<span class="fc" id="L211">                  return params.build();</span>
                 })
-<span class="fc" id="L148">            .build();</span>
+<span class="fc" id="L213">            .build();</span>
+    GrpcCallSettings&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsTransportSettings =
+<span class="fc" id="L215">        GrpcCallSettings.&lt;ListLocationsRequest, ListLocationsResponse&gt;newBuilder()</span>
+<span class="fc" id="L216">            .setMethodDescriptor(listLocationsMethodDescriptor)</span>
+<span class="fc" id="L217">            .setParamsExtractor(</span>
+                request -&gt; {
+<span class="fc" id="L219">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
+<span class="fc" id="L220">                  params.put(&quot;name&quot;, String.valueOf(request.getName()));</span>
+<span class="fc" id="L221">                  return params.build();</span>
+                })
+<span class="fc" id="L223">            .build();</span>
+    GrpcCallSettings&lt;GetLocationRequest, Location&gt; getLocationTransportSettings =
+<span class="fc" id="L225">        GrpcCallSettings.&lt;GetLocationRequest, Location&gt;newBuilder()</span>
+<span class="fc" id="L226">            .setMethodDescriptor(getLocationMethodDescriptor)</span>
+<span class="fc" id="L227">            .setParamsExtractor(</span>
+                request -&gt; {
+<span class="fc" id="L229">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
+<span class="fc" id="L230">                  params.put(&quot;name&quot;, String.valueOf(request.getName()));</span>
+<span class="fc" id="L231">                  return params.build();</span>
+                })
+<span class="fc" id="L233">            .build();</span>
+    GrpcCallSettings&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyTransportSettings =
+<span class="fc" id="L235">        GrpcCallSettings.&lt;SetIamPolicyRequest, Policy&gt;newBuilder()</span>
+<span class="fc" id="L236">            .setMethodDescriptor(setIamPolicyMethodDescriptor)</span>
+<span class="fc" id="L237">            .setParamsExtractor(</span>
+                request -&gt; {
+<span class="fc" id="L239">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
+<span class="fc" id="L240">                  params.put(&quot;resource&quot;, String.valueOf(request.getResource()));</span>
+<span class="fc" id="L241">                  return params.build();</span>
+                })
+<span class="fc" id="L243">            .build();</span>
+    GrpcCallSettings&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyTransportSettings =
+<span class="fc" id="L245">        GrpcCallSettings.&lt;GetIamPolicyRequest, Policy&gt;newBuilder()</span>
+<span class="fc" id="L246">            .setMethodDescriptor(getIamPolicyMethodDescriptor)</span>
+<span class="fc" id="L247">            .setParamsExtractor(</span>
+                request -&gt; {
+<span class="fc" id="L249">                  ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
+<span class="fc" id="L250">                  params.put(&quot;resource&quot;, String.valueOf(request.getResource()));</span>
+<span class="fc" id="L251">                  return params.build();</span>
+                })
+<span class="fc" id="L253">            .build();</span>
+    GrpcCallSettings&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+        testIamPermissionsTransportSettings =
+<span class="fc" id="L256">            GrpcCallSettings.&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;newBuilder()</span>
+<span class="fc" id="L257">                .setMethodDescriptor(testIamPermissionsMethodDescriptor)</span>
+<span class="fc" id="L258">                .setParamsExtractor(</span>
+                    request -&gt; {
+<span class="fc" id="L260">                      ImmutableMap.Builder&lt;String, String&gt; params = ImmutableMap.builder();</span>
+<span class="fc" id="L261">                      params.put(&quot;resource&quot;, String.valueOf(request.getResource()));</span>
+<span class="fc" id="L262">                      return params.build();</span>
+                    })
+<span class="fc" id="L264">                .build();</span>
 
-<span class="fc" id="L150">    this.predictCallable =</span>
-<span class="fc" id="L151">        callableFactory.createUnaryCallable(</span>
-<span class="fc" id="L152">            predictTransportSettings, settings.predictSettings(), clientContext);</span>
-<span class="fc" id="L153">    this.rawPredictCallable =</span>
-<span class="fc" id="L154">        callableFactory.createUnaryCallable(</span>
-<span class="fc" id="L155">            rawPredictTransportSettings, settings.rawPredictSettings(), clientContext);</span>
-<span class="fc" id="L156">    this.explainCallable =</span>
-<span class="fc" id="L157">        callableFactory.createUnaryCallable(</span>
-<span class="fc" id="L158">            explainTransportSettings, settings.explainSettings(), clientContext);</span>
+<span class="fc" id="L266">    this.predictCallable =</span>
+<span class="fc" id="L267">        callableFactory.createUnaryCallable(</span>
+<span class="fc" id="L268">            predictTransportSettings, settings.predictSettings(), clientContext);</span>
+<span class="fc" id="L269">    this.rawPredictCallable =</span>
+<span class="fc" id="L270">        callableFactory.createUnaryCallable(</span>
+<span class="fc" id="L271">            rawPredictTransportSettings, settings.rawPredictSettings(), clientContext);</span>
+<span class="fc" id="L272">    this.explainCallable =</span>
+<span class="fc" id="L273">        callableFactory.createUnaryCallable(</span>
+<span class="fc" id="L274">            explainTransportSettings, settings.explainSettings(), clientContext);</span>
+<span class="fc" id="L275">    this.listLocationsCallable =</span>
+<span class="fc" id="L276">        callableFactory.createUnaryCallable(</span>
+<span class="fc" id="L277">            listLocationsTransportSettings, settings.listLocationsSettings(), clientContext);</span>
+<span class="fc" id="L278">    this.listLocationsPagedCallable =</span>
+<span class="fc" id="L279">        callableFactory.createPagedCallable(</span>
+<span class="fc" id="L280">            listLocationsTransportSettings, settings.listLocationsSettings(), clientContext);</span>
+<span class="fc" id="L281">    this.getLocationCallable =</span>
+<span class="fc" id="L282">        callableFactory.createUnaryCallable(</span>
+<span class="fc" id="L283">            getLocationTransportSettings, settings.getLocationSettings(), clientContext);</span>
+<span class="fc" id="L284">    this.setIamPolicyCallable =</span>
+<span class="fc" id="L285">        callableFactory.createUnaryCallable(</span>
+<span class="fc" id="L286">            setIamPolicyTransportSettings, settings.setIamPolicySettings(), clientContext);</span>
+<span class="fc" id="L287">    this.getIamPolicyCallable =</span>
+<span class="fc" id="L288">        callableFactory.createUnaryCallable(</span>
+<span class="fc" id="L289">            getIamPolicyTransportSettings, settings.getIamPolicySettings(), clientContext);</span>
+<span class="fc" id="L290">    this.testIamPermissionsCallable =</span>
+<span class="fc" id="L291">        callableFactory.createUnaryCallable(</span>
+            testIamPermissionsTransportSettings,
+<span class="fc" id="L293">            settings.testIamPermissionsSettings(),</span>
+            clientContext);
 
-<span class="fc" id="L160">    this.backgroundResources =</span>
-<span class="fc" id="L161">        new BackgroundResourceAggregation(clientContext.getBackgroundResources());</span>
-<span class="fc" id="L162">  }</span>
+<span class="fc" id="L296">    this.backgroundResources =</span>
+<span class="fc" id="L297">        new BackgroundResourceAggregation(clientContext.getBackgroundResources());</span>
+<span class="fc" id="L298">  }</span>
 
   public GrpcOperationsStub getOperationsStub() {
-<span class="nc" id="L165">    return operationsStub;</span>
+<span class="nc" id="L301">    return operationsStub;</span>
   }
 
   @Override
   public UnaryCallable&lt;PredictRequest, PredictResponse&gt; predictCallable() {
-<span class="fc" id="L170">    return predictCallable;</span>
+<span class="fc" id="L306">    return predictCallable;</span>
   }
 
   @Override
   public UnaryCallable&lt;RawPredictRequest, HttpBody&gt; rawPredictCallable() {
-<span class="fc" id="L175">    return rawPredictCallable;</span>
+<span class="fc" id="L311">    return rawPredictCallable;</span>
   }
 
   @Override
   public UnaryCallable&lt;ExplainRequest, ExplainResponse&gt; explainCallable() {
-<span class="fc" id="L180">    return explainCallable;</span>
+<span class="fc" id="L316">    return explainCallable;</span>
+  }
+
+  @Override
+  public UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L321">    return listLocationsCallable;</span>
+  }
+
+  @Override
+  public UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L327">    return listLocationsPagedCallable;</span>
+  }
+
+  @Override
+  public UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L332">    return getLocationCallable;</span>
+  }
+
+  @Override
+  public UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
+<span class="fc" id="L337">    return setIamPolicyCallable;</span>
+  }
+
+  @Override
+  public UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
+<span class="fc" id="L342">    return getIamPolicyCallable;</span>
+  }
+
+  @Override
+  public UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable() {
+<span class="fc" id="L348">    return testIamPermissionsCallable;</span>
   }
 
   @Override
   public final void close() {
     try {
-<span class="fc" id="L186">      backgroundResources.close();</span>
-<span class="nc" id="L187">    } catch (RuntimeException e) {</span>
-<span class="nc" id="L188">      throw e;</span>
-<span class="nc" id="L189">    } catch (Exception e) {</span>
-<span class="nc" id="L190">      throw new IllegalStateException(&quot;Failed to close resource&quot;, e);</span>
-<span class="fc" id="L191">    }</span>
-<span class="fc" id="L192">  }</span>
+<span class="fc" id="L354">      backgroundResources.close();</span>
+<span class="nc" id="L355">    } catch (RuntimeException e) {</span>
+<span class="nc" id="L356">      throw e;</span>
+<span class="nc" id="L357">    } catch (Exception e) {</span>
+<span class="nc" id="L358">      throw new IllegalStateException(&quot;Failed to close resource&quot;, e);</span>
+<span class="fc" id="L359">    }</span>
+<span class="fc" id="L360">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L196">    backgroundResources.shutdown();</span>
-<span class="nc" id="L197">  }</span>
+<span class="nc" id="L364">    backgroundResources.shutdown();</span>
+<span class="nc" id="L365">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L201">    return backgroundResources.isShutdown();</span>
+<span class="nc" id="L369">    return backgroundResources.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L206">    return backgroundResources.isTerminated();</span>
+<span class="nc" id="L374">    return backgroundResources.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L211">    backgroundResources.shutdownNow();</span>
-<span class="nc" id="L212">  }</span>
+<span class="nc" id="L379">    backgroundResources.shutdownNow();</span>
+<span class="nc" id="L380">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L216">    return backgroundResources.awaitTermination(duration, unit);</span>
+<span class="nc" id="L384">    return backgroundResources.awaitTermination(duration, unit);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

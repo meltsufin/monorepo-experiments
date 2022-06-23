@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>PredictionServiceClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-aiplatform</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.aiplatform.v1beta1</a> &gt; <span class="el_source">PredictionServiceClient.java</span></div><h1>PredictionServiceClient.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,27 @@
 package com.google.cloud.aiplatform.v1beta1;
 
 import com.google.api.HttpBody;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.paging.AbstractFixedSizeCollection;
+import com.google.api.gax.paging.AbstractPage;
+import com.google.api.gax.paging.AbstractPagedListResponse;
+import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.aiplatform.v1beta1.stub.PredictionServiceStub;
 import com.google.cloud.aiplatform.v1beta1.stub.PredictionServiceStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.protobuf.Value;
 import java.io.IOException;
 import java.util.List;
@@ -36,10 +52,12 @@ import javax.annotation.Generated;
  * calls that map to API methods. Sample code to get started:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
  *   EndpointName endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
  *   List&lt;Value&gt; instances = new ArrayList&lt;&gt;();
- *   Value parameters = Value.newBuilder().build();
+ *   Value parameters = Value.newBuilder().setBoolValue(true).build();
  *   PredictResponse response = predictionServiceClient.predict(endpoint, instances, parameters);
  * }
  * }&lt;/pre&gt;
@@ -74,6 +92,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize credentials:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * PredictionServiceSettings predictionServiceSettings =
  *     PredictionServiceSettings.newBuilder()
  *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
@@ -85,6 +105,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize the endpoint:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * PredictionServiceSettings predictionServiceSettings =
  *     PredictionServiceSettings.newBuilder().setEndpoint(myEndpoint).build();
  * PredictionServiceClient predictionServiceClient =
@@ -101,7 +123,7 @@ public class PredictionServiceClient implements BackgroundResource {
 
   /** Constructs an instance of PredictionServiceClient with default settings. */
   public static final PredictionServiceClient create() throws IOException {
-<span class="nc" id="L104">    return create(PredictionServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L126">    return create(PredictionServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -110,16 +132,15 @@ public class PredictionServiceClient implements BackgroundResource {
    */
   public static final PredictionServiceClient create(PredictionServiceSettings settings)
       throws IOException {
-<span class="fc" id="L113">    return new PredictionServiceClient(settings);</span>
+<span class="fc" id="L135">    return new PredictionServiceClient(settings);</span>
   }
 
   /**
    * Constructs an instance of PredictionServiceClient, using the given stub for making calls. This
    * is for advanced usage - prefer using create(PredictionServiceSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final PredictionServiceClient create(PredictionServiceStub stub) {
-<span class="nc" id="L122">    return new PredictionServiceClient(stub);</span>
+<span class="nc" id="L143">    return new PredictionServiceClient(stub);</span>
   }
 
   /**
@@ -127,24 +148,22 @@ public class PredictionServiceClient implements BackgroundResource {
    * so that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L130">  protected PredictionServiceClient(PredictionServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L131">    this.settings = settings;</span>
-<span class="fc" id="L132">    this.stub = ((PredictionServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L133">  }</span>
+<span class="fc" id="L151">  protected PredictionServiceClient(PredictionServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L152">    this.settings = settings;</span>
+<span class="fc" id="L153">    this.stub = ((PredictionServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L154">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L136">  protected PredictionServiceClient(PredictionServiceStub stub) {</span>
-<span class="nc" id="L137">    this.settings = null;</span>
-<span class="nc" id="L138">    this.stub = stub;</span>
-<span class="nc" id="L139">  }</span>
+<span class="nc" id="L156">  protected PredictionServiceClient(PredictionServiceStub stub) {</span>
+<span class="nc" id="L157">    this.settings = null;</span>
+<span class="nc" id="L158">    this.stub = stub;</span>
+<span class="nc" id="L159">  }</span>
 
   public final PredictionServiceSettings getSettings() {
-<span class="nc" id="L142">    return settings;</span>
+<span class="nc" id="L162">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public PredictionServiceStub getStub() {
-<span class="nc" id="L147">    return stub;</span>
+<span class="nc" id="L166">    return stub;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -154,10 +173,12 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   EndpointName endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
    *   List&lt;Value&gt; instances = new ArrayList&lt;&gt;();
-   *   Value parameters = Value.newBuilder().build();
+   *   Value parameters = Value.newBuilder().setBoolValue(true).build();
    *   PredictResponse response = predictionServiceClient.predict(endpoint, instances, parameters);
    * }
    * }&lt;/pre&gt;
@@ -182,12 +203,12 @@ public class PredictionServiceClient implements BackgroundResource {
   public final PredictResponse predict(
       EndpointName endpoint, List&lt;Value&gt; instances, Value parameters) {
     PredictRequest request =
-<span class="fc" id="L185">        PredictRequest.newBuilder()</span>
-<span class="pc bpc" id="L186" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
-<span class="fc" id="L187">            .addAllInstances(instances)</span>
-<span class="fc" id="L188">            .setParameters(parameters)</span>
-<span class="fc" id="L189">            .build();</span>
-<span class="fc" id="L190">    return predict(request);</span>
+<span class="fc" id="L206">        PredictRequest.newBuilder()</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
+<span class="fc" id="L208">            .addAllInstances(instances)</span>
+<span class="fc" id="L209">            .setParameters(parameters)</span>
+<span class="fc" id="L210">            .build();</span>
+<span class="fc" id="L211">    return predict(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -197,10 +218,12 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   String endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString();
    *   List&lt;Value&gt; instances = new ArrayList&lt;&gt;();
-   *   Value parameters = Value.newBuilder().build();
+   *   Value parameters = Value.newBuilder().setBoolValue(true).build();
    *   PredictResponse response = predictionServiceClient.predict(endpoint, instances, parameters);
    * }
    * }&lt;/pre&gt;
@@ -224,12 +247,12 @@ public class PredictionServiceClient implements BackgroundResource {
    */
   public final PredictResponse predict(String endpoint, List&lt;Value&gt; instances, Value parameters) {
     PredictRequest request =
-<span class="fc" id="L227">        PredictRequest.newBuilder()</span>
-<span class="fc" id="L228">            .setEndpoint(endpoint)</span>
-<span class="fc" id="L229">            .addAllInstances(instances)</span>
-<span class="fc" id="L230">            .setParameters(parameters)</span>
-<span class="fc" id="L231">            .build();</span>
-<span class="fc" id="L232">    return predict(request);</span>
+<span class="fc" id="L250">        PredictRequest.newBuilder()</span>
+<span class="fc" id="L251">            .setEndpoint(endpoint)</span>
+<span class="fc" id="L252">            .addAllInstances(instances)</span>
+<span class="fc" id="L253">            .setParameters(parameters)</span>
+<span class="fc" id="L254">            .build();</span>
+<span class="fc" id="L255">    return predict(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -239,12 +262,14 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   PredictRequest request =
    *       PredictRequest.newBuilder()
    *           .setEndpoint(EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString())
    *           .addAllInstances(new ArrayList&lt;Value&gt;())
-   *           .setParameters(Value.newBuilder().build())
+   *           .setParameters(Value.newBuilder().setBoolValue(true).build())
    *           .build();
    *   PredictResponse response = predictionServiceClient.predict(request);
    * }
@@ -254,7 +279,7 @@ public class PredictionServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final PredictResponse predict(PredictRequest request) {
-<span class="fc" id="L257">    return predictCallable().call(request);</span>
+<span class="fc" id="L282">    return predictCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -264,12 +289,14 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   PredictRequest request =
    *       PredictRequest.newBuilder()
    *           .setEndpoint(EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString())
    *           .addAllInstances(new ArrayList&lt;Value&gt;())
-   *           .setParameters(Value.newBuilder().build())
+   *           .setParameters(Value.newBuilder().setBoolValue(true).build())
    *           .build();
    *   ApiFuture&lt;PredictResponse&gt; future =
    *       predictionServiceClient.predictCallable().futureCall(request);
@@ -279,7 +306,7 @@ public class PredictionServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;PredictRequest, PredictResponse&gt; predictCallable() {
-<span class="fc" id="L282">    return stub.predictCallable();</span>
+<span class="fc" id="L309">    return stub.predictCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -302,6 +329,8 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   EndpointName endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
    *   HttpBody httpBody = HttpBody.newBuilder().build();
@@ -327,11 +356,11 @@ public class PredictionServiceClient implements BackgroundResource {
    */
   public final HttpBody rawPredict(EndpointName endpoint, HttpBody httpBody) {
     RawPredictRequest request =
-<span class="fc" id="L330">        RawPredictRequest.newBuilder()</span>
-<span class="pc bpc" id="L331" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
-<span class="fc" id="L332">            .setHttpBody(httpBody)</span>
-<span class="fc" id="L333">            .build();</span>
-<span class="fc" id="L334">    return rawPredict(request);</span>
+<span class="fc" id="L359">        RawPredictRequest.newBuilder()</span>
+<span class="pc bpc" id="L360" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
+<span class="fc" id="L361">            .setHttpBody(httpBody)</span>
+<span class="fc" id="L362">            .build();</span>
+<span class="fc" id="L363">    return rawPredict(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -354,6 +383,8 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   String endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString();
    *   HttpBody httpBody = HttpBody.newBuilder().build();
@@ -379,8 +410,8 @@ public class PredictionServiceClient implements BackgroundResource {
    */
   public final HttpBody rawPredict(String endpoint, HttpBody httpBody) {
     RawPredictRequest request =
-<span class="fc" id="L382">        RawPredictRequest.newBuilder().setEndpoint(endpoint).setHttpBody(httpBody).build();</span>
-<span class="fc" id="L383">    return rawPredict(request);</span>
+<span class="fc" id="L413">        RawPredictRequest.newBuilder().setEndpoint(endpoint).setHttpBody(httpBody).build();</span>
+<span class="fc" id="L414">    return rawPredict(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -403,6 +434,8 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   RawPredictRequest request =
    *       RawPredictRequest.newBuilder()
@@ -417,7 +450,7 @@ public class PredictionServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final HttpBody rawPredict(RawPredictRequest request) {
-<span class="fc" id="L420">    return rawPredictCallable().call(request);</span>
+<span class="fc" id="L453">    return rawPredictCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -440,6 +473,8 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   RawPredictRequest request =
    *       RawPredictRequest.newBuilder()
@@ -453,7 +488,7 @@ public class PredictionServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RawPredictRequest, HttpBody&gt; rawPredictCallable() {
-<span class="fc" id="L456">    return stub.rawPredictCallable();</span>
+<span class="fc" id="L491">    return stub.rawPredictCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -471,10 +506,12 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   EndpointName endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
    *   List&lt;Value&gt; instances = new ArrayList&lt;&gt;();
-   *   Value parameters = Value.newBuilder().build();
+   *   Value parameters = Value.newBuilder().setBoolValue(true).build();
    *   String deployedModelId = &quot;deployedModelId-1817547906&quot;;
    *   ExplainResponse response =
    *       predictionServiceClient.explain(endpoint, instances, parameters, deployedModelId);
@@ -504,13 +541,13 @@ public class PredictionServiceClient implements BackgroundResource {
   public final ExplainResponse explain(
       EndpointName endpoint, List&lt;Value&gt; instances, Value parameters, String deployedModelId) {
     ExplainRequest request =
-<span class="fc" id="L507">        ExplainRequest.newBuilder()</span>
-<span class="pc bpc" id="L508" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
-<span class="fc" id="L509">            .addAllInstances(instances)</span>
-<span class="fc" id="L510">            .setParameters(parameters)</span>
-<span class="fc" id="L511">            .setDeployedModelId(deployedModelId)</span>
-<span class="fc" id="L512">            .build();</span>
-<span class="fc" id="L513">    return explain(request);</span>
+<span class="fc" id="L544">        ExplainRequest.newBuilder()</span>
+<span class="pc bpc" id="L545" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
+<span class="fc" id="L546">            .addAllInstances(instances)</span>
+<span class="fc" id="L547">            .setParameters(parameters)</span>
+<span class="fc" id="L548">            .setDeployedModelId(deployedModelId)</span>
+<span class="fc" id="L549">            .build();</span>
+<span class="fc" id="L550">    return explain(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -528,10 +565,12 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   String endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString();
    *   List&lt;Value&gt; instances = new ArrayList&lt;&gt;();
-   *   Value parameters = Value.newBuilder().build();
+   *   Value parameters = Value.newBuilder().setBoolValue(true).build();
    *   String deployedModelId = &quot;deployedModelId-1817547906&quot;;
    *   ExplainResponse response =
    *       predictionServiceClient.explain(endpoint, instances, parameters, deployedModelId);
@@ -561,13 +600,13 @@ public class PredictionServiceClient implements BackgroundResource {
   public final ExplainResponse explain(
       String endpoint, List&lt;Value&gt; instances, Value parameters, String deployedModelId) {
     ExplainRequest request =
-<span class="fc" id="L564">        ExplainRequest.newBuilder()</span>
-<span class="fc" id="L565">            .setEndpoint(endpoint)</span>
-<span class="fc" id="L566">            .addAllInstances(instances)</span>
-<span class="fc" id="L567">            .setParameters(parameters)</span>
-<span class="fc" id="L568">            .setDeployedModelId(deployedModelId)</span>
-<span class="fc" id="L569">            .build();</span>
-<span class="fc" id="L570">    return explain(request);</span>
+<span class="fc" id="L603">        ExplainRequest.newBuilder()</span>
+<span class="fc" id="L604">            .setEndpoint(endpoint)</span>
+<span class="fc" id="L605">            .addAllInstances(instances)</span>
+<span class="fc" id="L606">            .setParameters(parameters)</span>
+<span class="fc" id="L607">            .setDeployedModelId(deployedModelId)</span>
+<span class="fc" id="L608">            .build();</span>
+<span class="fc" id="L609">    return explain(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -585,12 +624,14 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   ExplainRequest request =
    *       ExplainRequest.newBuilder()
    *           .setEndpoint(EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString())
    *           .addAllInstances(new ArrayList&lt;Value&gt;())
-   *           .setParameters(Value.newBuilder().build())
+   *           .setParameters(Value.newBuilder().setBoolValue(true).build())
    *           .setExplanationSpecOverride(ExplanationSpecOverride.newBuilder().build())
    *           .setDeployedModelId(&quot;deployedModelId-1817547906&quot;)
    *           .build();
@@ -602,7 +643,7 @@ public class PredictionServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ExplainResponse explain(ExplainRequest request) {
-<span class="fc" id="L605">    return explainCallable().call(request);</span>
+<span class="fc" id="L646">    return explainCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -620,12 +661,14 @@ public class PredictionServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
    *   ExplainRequest request =
    *       ExplainRequest.newBuilder()
    *           .setEndpoint(EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString())
    *           .addAllInstances(new ArrayList&lt;Value&gt;())
-   *           .setParameters(Value.newBuilder().build())
+   *           .setParameters(Value.newBuilder().setBoolValue(true).build())
    *           .setExplanationSpecOverride(ExplanationSpecOverride.newBuilder().build())
    *           .setDeployedModelId(&quot;deployedModelId-1817547906&quot;)
    *           .build();
@@ -637,37 +680,440 @@ public class PredictionServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExplainRequest, ExplainResponse&gt; explainCallable() {
-<span class="fc" id="L640">    return stub.explainCallable();</span>
+<span class="fc" id="L683">    return stub.explainCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : predictionServiceClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L713">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       predictionServiceClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L744">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response =
+   *         predictionServiceClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L781">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = predictionServiceClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L803">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       predictionServiceClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L825">    return stub.getLocationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Policy response = predictionServiceClient.setIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(SetIamPolicyRequest request) {
+<span class="fc" id="L856">    return setIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = predictionServiceClient.setIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
+<span class="fc" id="L886">    return stub.setIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   Policy response = predictionServiceClient.getIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(GetIamPolicyRequest request) {
+<span class="fc" id="L915">    return getIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = predictionServiceClient.getIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
+<span class="fc" id="L943">    return stub.getIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   TestIamPermissionsResponse response = predictionServiceClient.testIamPermissions(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
+<span class="fc" id="L976">    return testIamPermissionsCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (PredictionServiceClient predictionServiceClient = PredictionServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   ApiFuture&lt;TestIamPermissionsResponse&gt; future =
+   *       predictionServiceClient.testIamPermissionsCallable().futureCall(request);
+   *   // Do something.
+   *   TestIamPermissionsResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable() {
+<span class="fc" id="L1010">    return stub.testIamPermissionsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L645">    stub.close();</span>
-<span class="fc" id="L646">  }</span>
+<span class="fc" id="L1015">    stub.close();</span>
+<span class="fc" id="L1016">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L650">    stub.shutdown();</span>
-<span class="nc" id="L651">  }</span>
+<span class="nc" id="L1020">    stub.shutdown();</span>
+<span class="nc" id="L1021">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L655">    return stub.isShutdown();</span>
+<span class="nc" id="L1025">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L660">    return stub.isTerminated();</span>
+<span class="nc" id="L1030">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L665">    stub.shutdownNow();</span>
-<span class="nc" id="L666">  }</span>
+<span class="nc" id="L1035">    stub.shutdownNow();</span>
+<span class="nc" id="L1036">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L670">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1040">    return stub.awaitTermination(duration, unit);</span>
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L1055">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1056">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1058">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L1059">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L1063">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1064">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1074">      super(context, response);</span>
+<span class="fc" id="L1075">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L1078">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1085">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L1092">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1105">      super(pages, collectionSize);</span>
+<span class="fc" id="L1106">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1109">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1115">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
+    }
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>EndpointServiceClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-aiplatform</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.aiplatform.v1</a> &gt; <span class="el_source">EndpointServiceClient.java</span></div><h1>EndpointServiceClient.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.google.cloud.aiplatform.v1;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
@@ -29,7 +28,16 @@ import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.aiplatform.v1.stub.EndpointServiceStub;
 import com.google.cloud.aiplatform.v1.stub.EndpointServiceStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
 import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
@@ -48,6 +56,8 @@ import javax.annotation.Generated;
  * calls that map to API methods. Sample code to get started:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
  *   EndpointName name = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
  *   Endpoint response = endpointServiceClient.getEndpoint(name);
@@ -84,6 +94,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize credentials:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * EndpointServiceSettings endpointServiceSettings =
  *     EndpointServiceSettings.newBuilder()
  *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
@@ -95,6 +107,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize the endpoint:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * EndpointServiceSettings endpointServiceSettings =
  *     EndpointServiceSettings.newBuilder().setEndpoint(myEndpoint).build();
  * EndpointServiceClient endpointServiceClient =
@@ -111,7 +125,7 @@ public class EndpointServiceClient implements BackgroundResource {
 
   /** Constructs an instance of EndpointServiceClient with default settings. */
   public static final EndpointServiceClient create() throws IOException {
-<span class="nc" id="L114">    return create(EndpointServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L128">    return create(EndpointServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -120,16 +134,15 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public static final EndpointServiceClient create(EndpointServiceSettings settings)
       throws IOException {
-<span class="fc" id="L123">    return new EndpointServiceClient(settings);</span>
+<span class="fc" id="L137">    return new EndpointServiceClient(settings);</span>
   }
 
   /**
    * Constructs an instance of EndpointServiceClient, using the given stub for making calls. This is
    * for advanced usage - prefer using create(EndpointServiceSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final EndpointServiceClient create(EndpointServiceStub stub) {
-<span class="nc" id="L132">    return new EndpointServiceClient(stub);</span>
+<span class="nc" id="L145">    return new EndpointServiceClient(stub);</span>
   }
 
   /**
@@ -137,26 +150,24 @@ public class EndpointServiceClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L140">  protected EndpointServiceClient(EndpointServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L141">    this.settings = settings;</span>
-<span class="fc" id="L142">    this.stub = ((EndpointServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L143">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L144">  }</span>
+<span class="fc" id="L153">  protected EndpointServiceClient(EndpointServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L154">    this.settings = settings;</span>
+<span class="fc" id="L155">    this.stub = ((EndpointServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L156">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L157">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L147">  protected EndpointServiceClient(EndpointServiceStub stub) {</span>
-<span class="nc" id="L148">    this.settings = null;</span>
-<span class="nc" id="L149">    this.stub = stub;</span>
-<span class="nc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L151">  }</span>
+<span class="nc" id="L159">  protected EndpointServiceClient(EndpointServiceStub stub) {</span>
+<span class="nc" id="L160">    this.settings = null;</span>
+<span class="nc" id="L161">    this.stub = stub;</span>
+<span class="nc" id="L162">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L163">  }</span>
 
   public final EndpointServiceSettings getSettings() {
-<span class="nc" id="L154">    return settings;</span>
+<span class="nc" id="L166">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public EndpointServiceStub getStub() {
-<span class="nc" id="L159">    return stub;</span>
+<span class="nc" id="L170">    return stub;</span>
   }
 
   /**
@@ -164,7 +175,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * returned by another API method call.
    */
   public final OperationsClient getOperationsClient() {
-<span class="nc" id="L167">    return operationsClient;</span>
+<span class="nc" id="L178">    return operationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -174,6 +185,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   Endpoint endpoint = Endpoint.newBuilder().build();
@@ -189,11 +202,11 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Endpoint, CreateEndpointOperationMetadata&gt; createEndpointAsync(
       LocationName parent, Endpoint endpoint) {
     CreateEndpointRequest request =
-<span class="fc" id="L192">        CreateEndpointRequest.newBuilder()</span>
-<span class="pc bpc" id="L193" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L194">            .setEndpoint(endpoint)</span>
-<span class="fc" id="L195">            .build();</span>
-<span class="fc" id="L196">    return createEndpointAsync(request);</span>
+<span class="fc" id="L205">        CreateEndpointRequest.newBuilder()</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L207">            .setEndpoint(endpoint)</span>
+<span class="fc" id="L208">            .build();</span>
+<span class="fc" id="L209">    return createEndpointAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -203,6 +216,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   Endpoint endpoint = Endpoint.newBuilder().build();
@@ -218,8 +233,8 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Endpoint, CreateEndpointOperationMetadata&gt; createEndpointAsync(
       String parent, Endpoint endpoint) {
     CreateEndpointRequest request =
-<span class="fc" id="L221">        CreateEndpointRequest.newBuilder().setParent(parent).setEndpoint(endpoint).build();</span>
-<span class="fc" id="L222">    return createEndpointAsync(request);</span>
+<span class="fc" id="L236">        CreateEndpointRequest.newBuilder().setParent(parent).setEndpoint(endpoint).build();</span>
+<span class="fc" id="L237">    return createEndpointAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -229,6 +244,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   Endpoint endpoint = Endpoint.newBuilder().build();
@@ -253,12 +270,12 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Endpoint, CreateEndpointOperationMetadata&gt; createEndpointAsync(
       LocationName parent, Endpoint endpoint, String endpointId) {
     CreateEndpointRequest request =
-<span class="fc" id="L256">        CreateEndpointRequest.newBuilder()</span>
-<span class="pc bpc" id="L257" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L258">            .setEndpoint(endpoint)</span>
-<span class="fc" id="L259">            .setEndpointId(endpointId)</span>
-<span class="fc" id="L260">            .build();</span>
-<span class="fc" id="L261">    return createEndpointAsync(request);</span>
+<span class="fc" id="L273">        CreateEndpointRequest.newBuilder()</span>
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L275">            .setEndpoint(endpoint)</span>
+<span class="fc" id="L276">            .setEndpointId(endpointId)</span>
+<span class="fc" id="L277">            .build();</span>
+<span class="fc" id="L278">    return createEndpointAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -268,6 +285,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   Endpoint endpoint = Endpoint.newBuilder().build();
@@ -292,12 +311,12 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Endpoint, CreateEndpointOperationMetadata&gt; createEndpointAsync(
       String parent, Endpoint endpoint, String endpointId) {
     CreateEndpointRequest request =
-<span class="fc" id="L295">        CreateEndpointRequest.newBuilder()</span>
-<span class="fc" id="L296">            .setParent(parent)</span>
-<span class="fc" id="L297">            .setEndpoint(endpoint)</span>
-<span class="fc" id="L298">            .setEndpointId(endpointId)</span>
-<span class="fc" id="L299">            .build();</span>
-<span class="fc" id="L300">    return createEndpointAsync(request);</span>
+<span class="fc" id="L314">        CreateEndpointRequest.newBuilder()</span>
+<span class="fc" id="L315">            .setParent(parent)</span>
+<span class="fc" id="L316">            .setEndpoint(endpoint)</span>
+<span class="fc" id="L317">            .setEndpointId(endpointId)</span>
+<span class="fc" id="L318">            .build();</span>
+<span class="fc" id="L319">    return createEndpointAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -307,6 +326,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   CreateEndpointRequest request =
    *       CreateEndpointRequest.newBuilder()
@@ -323,7 +344,7 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Endpoint, CreateEndpointOperationMetadata&gt; createEndpointAsync(
       CreateEndpointRequest request) {
-<span class="fc" id="L326">    return createEndpointOperationCallable().futureCall(request);</span>
+<span class="fc" id="L347">    return createEndpointOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -333,6 +354,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   CreateEndpointRequest request =
    *       CreateEndpointRequest.newBuilder()
@@ -349,7 +372,7 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateEndpointRequest, Endpoint, CreateEndpointOperationMetadata&gt;
       createEndpointOperationCallable() {
-<span class="fc" id="L352">    return stub.createEndpointOperationCallable();</span>
+<span class="fc" id="L375">    return stub.createEndpointOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -359,6 +382,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   CreateEndpointRequest request =
    *       CreateEndpointRequest.newBuilder()
@@ -374,7 +399,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateEndpointRequest, Operation&gt; createEndpointCallable() {
-<span class="nc" id="L377">    return stub.createEndpointCallable();</span>
+<span class="nc" id="L402">    return stub.createEndpointCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -384,6 +409,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   EndpointName name = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
    *   Endpoint response = endpointServiceClient.getEndpoint(name);
@@ -396,8 +423,8 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final Endpoint getEndpoint(EndpointName name) {
     GetEndpointRequest request =
-<span class="pc bpc" id="L399" title="1 of 2 branches missed.">        GetEndpointRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L400">    return getEndpoint(request);</span>
+<span class="pc bpc" id="L426" title="1 of 2 branches missed.">        GetEndpointRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L427">    return getEndpoint(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -407,6 +434,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   String name = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString();
    *   Endpoint response = endpointServiceClient.getEndpoint(name);
@@ -418,8 +447,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Endpoint getEndpoint(String name) {
-<span class="fc" id="L421">    GetEndpointRequest request = GetEndpointRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L422">    return getEndpoint(request);</span>
+<span class="fc" id="L450">    GetEndpointRequest request = GetEndpointRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L451">    return getEndpoint(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -429,6 +458,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   GetEndpointRequest request =
    *       GetEndpointRequest.newBuilder()
@@ -442,7 +473,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Endpoint getEndpoint(GetEndpointRequest request) {
-<span class="fc" id="L445">    return getEndpointCallable().call(request);</span>
+<span class="fc" id="L476">    return getEndpointCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -452,6 +483,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   GetEndpointRequest request =
    *       GetEndpointRequest.newBuilder()
@@ -464,7 +497,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetEndpointRequest, Endpoint&gt; getEndpointCallable() {
-<span class="fc" id="L467">    return stub.getEndpointCallable();</span>
+<span class="fc" id="L500">    return stub.getEndpointCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -474,6 +507,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   for (Endpoint element : endpointServiceClient.listEndpoints(parent).iterateAll()) {
@@ -488,10 +523,10 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final ListEndpointsPagedResponse listEndpoints(LocationName parent) {
     ListEndpointsRequest request =
-<span class="fc" id="L491">        ListEndpointsRequest.newBuilder()</span>
-<span class="pc bpc" id="L492" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L493">            .build();</span>
-<span class="fc" id="L494">    return listEndpoints(request);</span>
+<span class="fc" id="L526">        ListEndpointsRequest.newBuilder()</span>
+<span class="pc bpc" id="L527" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L528">            .build();</span>
+<span class="fc" id="L529">    return listEndpoints(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -501,6 +536,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   for (Endpoint element : endpointServiceClient.listEndpoints(parent).iterateAll()) {
@@ -514,8 +551,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListEndpointsPagedResponse listEndpoints(String parent) {
-<span class="fc" id="L517">    ListEndpointsRequest request = ListEndpointsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L518">    return listEndpoints(request);</span>
+<span class="fc" id="L554">    ListEndpointsRequest request = ListEndpointsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L555">    return listEndpoints(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -525,6 +562,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   ListEndpointsRequest request =
    *       ListEndpointsRequest.newBuilder()
@@ -545,7 +584,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListEndpointsPagedResponse listEndpoints(ListEndpointsRequest request) {
-<span class="fc" id="L548">    return listEndpointsPagedCallable().call(request);</span>
+<span class="fc" id="L587">    return listEndpointsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -555,6 +594,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   ListEndpointsRequest request =
    *       ListEndpointsRequest.newBuilder()
@@ -576,7 +617,7 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListEndpointsRequest, ListEndpointsPagedResponse&gt;
       listEndpointsPagedCallable() {
-<span class="fc" id="L579">    return stub.listEndpointsPagedCallable();</span>
+<span class="fc" id="L620">    return stub.listEndpointsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -586,6 +627,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   ListEndpointsRequest request =
    *       ListEndpointsRequest.newBuilder()
@@ -599,7 +642,7 @@ public class EndpointServiceClient implements BackgroundResource {
    *   while (true) {
    *     ListEndpointsResponse response =
    *         endpointServiceClient.listEndpointsCallable().call(request);
-   *     for (Endpoint element : response.getResponsesList()) {
+   *     for (Endpoint element : response.getEndpointsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -613,7 +656,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListEndpointsRequest, ListEndpointsResponse&gt; listEndpointsCallable() {
-<span class="nc" id="L616">    return stub.listEndpointsCallable();</span>
+<span class="nc" id="L659">    return stub.listEndpointsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -623,6 +666,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   Endpoint endpoint = Endpoint.newBuilder().build();
    *   FieldMask updateMask = FieldMask.newBuilder().build();
@@ -637,8 +682,8 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final Endpoint updateEndpoint(Endpoint endpoint, FieldMask updateMask) {
     UpdateEndpointRequest request =
-<span class="fc" id="L640">        UpdateEndpointRequest.newBuilder().setEndpoint(endpoint).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L641">    return updateEndpoint(request);</span>
+<span class="fc" id="L685">        UpdateEndpointRequest.newBuilder().setEndpoint(endpoint).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L686">    return updateEndpoint(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -648,6 +693,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   UpdateEndpointRequest request =
    *       UpdateEndpointRequest.newBuilder()
@@ -662,7 +709,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Endpoint updateEndpoint(UpdateEndpointRequest request) {
-<span class="fc" id="L665">    return updateEndpointCallable().call(request);</span>
+<span class="fc" id="L712">    return updateEndpointCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -672,6 +719,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   UpdateEndpointRequest request =
    *       UpdateEndpointRequest.newBuilder()
@@ -686,7 +735,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateEndpointRequest, Endpoint&gt; updateEndpointCallable() {
-<span class="fc" id="L689">    return stub.updateEndpointCallable();</span>
+<span class="fc" id="L738">    return stub.updateEndpointCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -696,6 +745,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   EndpointName name = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
    *   endpointServiceClient.deleteEndpointAsync(name).get();
@@ -709,8 +760,8 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteEndpointAsync(
       EndpointName name) {
     DeleteEndpointRequest request =
-<span class="pc bpc" id="L712" title="1 of 2 branches missed.">        DeleteEndpointRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L713">    return deleteEndpointAsync(request);</span>
+<span class="pc bpc" id="L763" title="1 of 2 branches missed.">        DeleteEndpointRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L764">    return deleteEndpointAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -720,6 +771,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   String name = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString();
    *   endpointServiceClient.deleteEndpointAsync(name).get();
@@ -731,8 +784,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteEndpointAsync(String name) {
-<span class="fc" id="L734">    DeleteEndpointRequest request = DeleteEndpointRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L735">    return deleteEndpointAsync(request);</span>
+<span class="fc" id="L787">    DeleteEndpointRequest request = DeleteEndpointRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L788">    return deleteEndpointAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -742,6 +795,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   DeleteEndpointRequest request =
    *       DeleteEndpointRequest.newBuilder()
@@ -756,7 +811,7 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteOperationMetadata&gt; deleteEndpointAsync(
       DeleteEndpointRequest request) {
-<span class="fc" id="L759">    return deleteEndpointOperationCallable().futureCall(request);</span>
+<span class="fc" id="L814">    return deleteEndpointOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -766,6 +821,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   DeleteEndpointRequest request =
    *       DeleteEndpointRequest.newBuilder()
@@ -780,7 +837,7 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteEndpointRequest, Empty, DeleteOperationMetadata&gt;
       deleteEndpointOperationCallable() {
-<span class="fc" id="L783">    return stub.deleteEndpointOperationCallable();</span>
+<span class="fc" id="L840">    return stub.deleteEndpointOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -790,6 +847,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   DeleteEndpointRequest request =
    *       DeleteEndpointRequest.newBuilder()
@@ -803,7 +862,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteEndpointRequest, Operation&gt; deleteEndpointCallable() {
-<span class="nc" id="L806">    return stub.deleteEndpointCallable();</span>
+<span class="nc" id="L865">    return stub.deleteEndpointCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -813,6 +872,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   EndpointName endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
    *   DeployedModel deployedModel = DeployedModel.newBuilder().build();
@@ -842,12 +903,12 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationFuture&lt;DeployModelResponse, DeployModelOperationMetadata&gt; deployModelAsync(
       EndpointName endpoint, DeployedModel deployedModel, Map&lt;String, Integer&gt; trafficSplit) {
     DeployModelRequest request =
-<span class="fc" id="L845">        DeployModelRequest.newBuilder()</span>
-<span class="pc bpc" id="L846" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
-<span class="fc" id="L847">            .setDeployedModel(deployedModel)</span>
-<span class="fc" id="L848">            .putAllTrafficSplit(trafficSplit)</span>
-<span class="fc" id="L849">            .build();</span>
-<span class="fc" id="L850">    return deployModelAsync(request);</span>
+<span class="fc" id="L906">        DeployModelRequest.newBuilder()</span>
+<span class="pc bpc" id="L907" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
+<span class="fc" id="L908">            .setDeployedModel(deployedModel)</span>
+<span class="fc" id="L909">            .putAllTrafficSplit(trafficSplit)</span>
+<span class="fc" id="L910">            .build();</span>
+<span class="fc" id="L911">    return deployModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -857,6 +918,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   String endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString();
    *   DeployedModel deployedModel = DeployedModel.newBuilder().build();
@@ -886,12 +949,12 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationFuture&lt;DeployModelResponse, DeployModelOperationMetadata&gt; deployModelAsync(
       String endpoint, DeployedModel deployedModel, Map&lt;String, Integer&gt; trafficSplit) {
     DeployModelRequest request =
-<span class="fc" id="L889">        DeployModelRequest.newBuilder()</span>
-<span class="fc" id="L890">            .setEndpoint(endpoint)</span>
-<span class="fc" id="L891">            .setDeployedModel(deployedModel)</span>
-<span class="fc" id="L892">            .putAllTrafficSplit(trafficSplit)</span>
-<span class="fc" id="L893">            .build();</span>
-<span class="fc" id="L894">    return deployModelAsync(request);</span>
+<span class="fc" id="L952">        DeployModelRequest.newBuilder()</span>
+<span class="fc" id="L953">            .setEndpoint(endpoint)</span>
+<span class="fc" id="L954">            .setDeployedModel(deployedModel)</span>
+<span class="fc" id="L955">            .putAllTrafficSplit(trafficSplit)</span>
+<span class="fc" id="L956">            .build();</span>
+<span class="fc" id="L957">    return deployModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -901,6 +964,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   DeployModelRequest request =
    *       DeployModelRequest.newBuilder()
@@ -917,7 +982,7 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DeployModelResponse, DeployModelOperationMetadata&gt; deployModelAsync(
       DeployModelRequest request) {
-<span class="fc" id="L920">    return deployModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L985">    return deployModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -927,6 +992,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   DeployModelRequest request =
    *       DeployModelRequest.newBuilder()
@@ -944,7 +1011,7 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           DeployModelRequest, DeployModelResponse, DeployModelOperationMetadata&gt;
       deployModelOperationCallable() {
-<span class="fc" id="L947">    return stub.deployModelOperationCallable();</span>
+<span class="fc" id="L1014">    return stub.deployModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -954,6 +1021,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   DeployModelRequest request =
    *       DeployModelRequest.newBuilder()
@@ -968,7 +1037,7 @@ public class EndpointServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeployModelRequest, Operation&gt; deployModelCallable() {
-<span class="nc" id="L971">    return stub.deployModelCallable();</span>
+<span class="nc" id="L1040">    return stub.deployModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -979,6 +1048,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   EndpointName endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;);
    *   String deployedModelId = &quot;deployedModelId-1817547906&quot;;
@@ -1004,12 +1075,12 @@ public class EndpointServiceClient implements BackgroundResource {
       undeployModelAsync(
           EndpointName endpoint, String deployedModelId, Map&lt;String, Integer&gt; trafficSplit) {
     UndeployModelRequest request =
-<span class="fc" id="L1007">        UndeployModelRequest.newBuilder()</span>
-<span class="pc bpc" id="L1008" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
-<span class="fc" id="L1009">            .setDeployedModelId(deployedModelId)</span>
-<span class="fc" id="L1010">            .putAllTrafficSplit(trafficSplit)</span>
-<span class="fc" id="L1011">            .build();</span>
-<span class="fc" id="L1012">    return undeployModelAsync(request);</span>
+<span class="fc" id="L1078">        UndeployModelRequest.newBuilder()</span>
+<span class="pc bpc" id="L1079" title="1 of 2 branches missed.">            .setEndpoint(endpoint == null ? null : endpoint.toString())</span>
+<span class="fc" id="L1080">            .setDeployedModelId(deployedModelId)</span>
+<span class="fc" id="L1081">            .putAllTrafficSplit(trafficSplit)</span>
+<span class="fc" id="L1082">            .build();</span>
+<span class="fc" id="L1083">    return undeployModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1020,6 +1091,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   String endpoint = EndpointName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[ENDPOINT]&quot;).toString();
    *   String deployedModelId = &quot;deployedModelId-1817547906&quot;;
@@ -1045,12 +1118,12 @@ public class EndpointServiceClient implements BackgroundResource {
       undeployModelAsync(
           String endpoint, String deployedModelId, Map&lt;String, Integer&gt; trafficSplit) {
     UndeployModelRequest request =
-<span class="fc" id="L1048">        UndeployModelRequest.newBuilder()</span>
-<span class="fc" id="L1049">            .setEndpoint(endpoint)</span>
-<span class="fc" id="L1050">            .setDeployedModelId(deployedModelId)</span>
-<span class="fc" id="L1051">            .putAllTrafficSplit(trafficSplit)</span>
-<span class="fc" id="L1052">            .build();</span>
-<span class="fc" id="L1053">    return undeployModelAsync(request);</span>
+<span class="fc" id="L1121">        UndeployModelRequest.newBuilder()</span>
+<span class="fc" id="L1122">            .setEndpoint(endpoint)</span>
+<span class="fc" id="L1123">            .setDeployedModelId(deployedModelId)</span>
+<span class="fc" id="L1124">            .putAllTrafficSplit(trafficSplit)</span>
+<span class="fc" id="L1125">            .build();</span>
+<span class="fc" id="L1126">    return undeployModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1061,6 +1134,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   UndeployModelRequest request =
    *       UndeployModelRequest.newBuilder()
@@ -1077,7 +1152,7 @@ public class EndpointServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;UndeployModelResponse, UndeployModelOperationMetadata&gt;
       undeployModelAsync(UndeployModelRequest request) {
-<span class="fc" id="L1080">    return undeployModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1155">    return undeployModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1088,6 +1163,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   UndeployModelRequest request =
    *       UndeployModelRequest.newBuilder()
@@ -1105,7 +1182,7 @@ public class EndpointServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           UndeployModelRequest, UndeployModelResponse, UndeployModelOperationMetadata&gt;
       undeployModelOperationCallable() {
-<span class="fc" id="L1108">    return stub.undeployModelOperationCallable();</span>
+<span class="fc" id="L1185">    return stub.undeployModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1116,6 +1193,8 @@ public class EndpointServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
    *   UndeployModelRequest request =
    *       UndeployModelRequest.newBuilder()
@@ -1131,37 +1210,363 @@ public class EndpointServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UndeployModelRequest, Operation&gt; undeployModelCallable() {
-<span class="nc" id="L1134">    return stub.undeployModelCallable();</span>
+<span class="nc" id="L1213">    return stub.undeployModelCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : endpointServiceClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L1243">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       endpointServiceClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L1274">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response =
+   *         endpointServiceClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L1311">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = endpointServiceClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L1333">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = endpointServiceClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L1354">    return stub.getLocationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Policy response = endpointServiceClient.setIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(SetIamPolicyRequest request) {
+<span class="fc" id="L1385">    return setIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = endpointServiceClient.setIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
+<span class="fc" id="L1415">    return stub.setIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   Policy response = endpointServiceClient.getIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(GetIamPolicyRequest request) {
+<span class="fc" id="L1444">    return getIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = endpointServiceClient.getIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
+<span class="fc" id="L1472">    return stub.getIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   TestIamPermissionsResponse response = endpointServiceClient.testIamPermissions(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
+<span class="fc" id="L1505">    return testIamPermissionsCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EndpointServiceClient endpointServiceClient = EndpointServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               EntityTypeName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FEATURESTORE]&quot;, &quot;[ENTITY_TYPE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   ApiFuture&lt;TestIamPermissionsResponse&gt; future =
+   *       endpointServiceClient.testIamPermissionsCallable().futureCall(request);
+   *   // Do something.
+   *   TestIamPermissionsResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable() {
+<span class="fc" id="L1539">    return stub.testIamPermissionsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1139">    stub.close();</span>
-<span class="fc" id="L1140">  }</span>
+<span class="fc" id="L1544">    stub.close();</span>
+<span class="fc" id="L1545">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1144">    stub.shutdown();</span>
-<span class="nc" id="L1145">  }</span>
+<span class="nc" id="L1549">    stub.shutdown();</span>
+<span class="nc" id="L1550">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1149">    return stub.isShutdown();</span>
+<span class="nc" id="L1554">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1154">    return stub.isTerminated();</span>
+<span class="nc" id="L1559">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1159">    stub.shutdownNow();</span>
-<span class="nc" id="L1160">  }</span>
+<span class="nc" id="L1564">    stub.shutdownNow();</span>
+<span class="nc" id="L1565">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1164">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1569">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListEndpointsPagedResponse
@@ -1176,16 +1581,16 @@ public class EndpointServiceClient implements BackgroundResource {
         PageContext&lt;ListEndpointsRequest, ListEndpointsResponse, Endpoint&gt; context,
         ApiFuture&lt;ListEndpointsResponse&gt; futureResponse) {
       ApiFuture&lt;ListEndpointsPage&gt; futurePage =
-<span class="fc" id="L1179">          ListEndpointsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1180">      return ApiFutures.transform(</span>
+<span class="fc" id="L1584">          ListEndpointsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1585">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1182">          input -&gt; new ListEndpointsPagedResponse(input),</span>
-<span class="fc" id="L1183">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1587">          input -&gt; new ListEndpointsPagedResponse(input),</span>
+<span class="fc" id="L1588">          MoreExecutors.directExecutor());</span>
     }
 
     private ListEndpointsPagedResponse(ListEndpointsPage page) {
-<span class="fc" id="L1187">      super(page, ListEndpointsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1188">    }</span>
+<span class="fc" id="L1592">      super(page, ListEndpointsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1593">    }</span>
   }
 
   public static class ListEndpointsPage
@@ -1195,25 +1600,25 @@ public class EndpointServiceClient implements BackgroundResource {
     private ListEndpointsPage(
         PageContext&lt;ListEndpointsRequest, ListEndpointsResponse, Endpoint&gt; context,
         ListEndpointsResponse response) {
-<span class="fc" id="L1198">      super(context, response);</span>
-<span class="fc" id="L1199">    }</span>
+<span class="fc" id="L1603">      super(context, response);</span>
+<span class="fc" id="L1604">    }</span>
 
     private static ListEndpointsPage createEmptyPage() {
-<span class="fc" id="L1202">      return new ListEndpointsPage(null, null);</span>
+<span class="fc" id="L1607">      return new ListEndpointsPage(null, null);</span>
     }
 
     @Override
     protected ListEndpointsPage createPage(
         PageContext&lt;ListEndpointsRequest, ListEndpointsResponse, Endpoint&gt; context,
         ListEndpointsResponse response) {
-<span class="fc" id="L1209">      return new ListEndpointsPage(context, response);</span>
+<span class="fc" id="L1614">      return new ListEndpointsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListEndpointsPage&gt; createPageAsync(
         PageContext&lt;ListEndpointsRequest, ListEndpointsResponse, Endpoint&gt; context,
         ApiFuture&lt;ListEndpointsResponse&gt; futureResponse) {
-<span class="fc" id="L1216">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1621">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1226,17 +1631,93 @@ public class EndpointServiceClient implements BackgroundResource {
           ListEndpointsFixedSizeCollection&gt; {
 
     private ListEndpointsFixedSizeCollection(List&lt;ListEndpointsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1229">      super(pages, collectionSize);</span>
-<span class="fc" id="L1230">    }</span>
+<span class="fc" id="L1634">      super(pages, collectionSize);</span>
+<span class="fc" id="L1635">    }</span>
 
     private static ListEndpointsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1233">      return new ListEndpointsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1638">      return new ListEndpointsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListEndpointsFixedSizeCollection createCollection(
         List&lt;ListEndpointsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1239">      return new ListEndpointsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1644">      return new ListEndpointsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L1660">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1661">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1663">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L1664">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L1668">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1669">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1679">      super(context, response);</span>
+<span class="fc" id="L1680">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L1683">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1690">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L1697">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1710">      super(pages, collectionSize);</span>
+<span class="fc" id="L1711">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1714">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1720">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
