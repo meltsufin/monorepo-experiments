@@ -27,6 +27,9 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
@@ -102,10 +105,10 @@ import org.threeten.bp.Duration;
 public class ConnectionServiceStubSettings extends StubSettings&lt;ConnectionServiceStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L105">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L106">          .add(&quot;https://www.googleapis.com/auth/bigquery&quot;)</span>
-<span class="fc" id="L107">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L108">          .build();</span>
+<span class="fc" id="L108">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L109">          .add(&quot;https://www.googleapis.com/auth/bigquery&quot;)</span>
+<span class="fc" id="L110">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L111">          .build();</span>
 
   private final UnaryCallSettings&lt;CreateConnectionRequest, Connection&gt; createConnectionSettings;
   private final UnaryCallSettings&lt;GetConnectionRequest, Connection&gt; getConnectionSettings;
@@ -121,187 +124,218 @@ public class ConnectionServiceStubSettings extends StubSettings&lt;ConnectionSer
 
   private static final PagedListDescriptor&lt;
           ListConnectionsRequest, ListConnectionsResponse, Connection&gt;
-<span class="fc" id="L124">      LIST_CONNECTIONS_PAGE_STR_DESC =</span>
-<span class="fc" id="L125">          new PagedListDescriptor&lt;ListConnectionsRequest, ListConnectionsResponse, Connection&gt;() {</span>
+<span class="fc" id="L127">      LIST_CONNECTIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L128">          new PagedListDescriptor&lt;ListConnectionsRequest, ListConnectionsResponse, Connection&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L128">              return &quot;&quot;;</span>
+<span class="fc" id="L131">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListConnectionsRequest injectToken(
                 ListConnectionsRequest payload, String token) {
-<span class="nc" id="L134">              return ListConnectionsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L137">              return ListConnectionsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListConnectionsRequest injectPageSize(
                 ListConnectionsRequest payload, int pageSize) {
-<span class="nc" id="L140">              return ListConnectionsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L143">              return ListConnectionsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListConnectionsRequest payload) {
-<span class="nc" id="L145">              return payload.getPageSize();</span>
+<span class="nc" id="L148">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListConnectionsResponse payload) {
-<span class="fc" id="L150">              return payload.getNextPageToken();</span>
+<span class="fc" id="L153">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Connection&gt; extractResources(ListConnectionsResponse payload) {
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">              return payload.getConnectionsList() == null</span>
-<span class="nc" id="L156">                  ? ImmutableList.&lt;Connection&gt;of()</span>
-<span class="fc" id="L157">                  : payload.getConnectionsList();</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">              return payload.getConnectionsList() == null</span>
+<span class="nc" id="L159">                  ? ImmutableList.&lt;Connection&gt;of()</span>
+<span class="fc" id="L160">                  : payload.getConnectionsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListConnectionsRequest, ListConnectionsResponse, ListConnectionsPagedResponse&gt;
-<span class="fc" id="L163">      LIST_CONNECTIONS_PAGE_STR_FACT =</span>
+<span class="fc" id="L166">      LIST_CONNECTIONS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L165">              ListConnectionsRequest, ListConnectionsResponse, ListConnectionsPagedResponse&gt;() {</span>
+<span class="fc" id="L168">              ListConnectionsRequest, ListConnectionsResponse, ListConnectionsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListConnectionsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListConnectionsRequest, ListConnectionsResponse&gt; callable,
                 ListConnectionsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListConnectionsResponse&gt; futureResponse) {
-<span class="fc" id="L172">              PageContext&lt;ListConnectionsRequest, ListConnectionsResponse, Connection&gt; pageContext =</span>
-<span class="fc" id="L173">                  PageContext.create(callable, LIST_CONNECTIONS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L174">              return ListConnectionsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L175">              PageContext&lt;ListConnectionsRequest, ListConnectionsResponse, Connection&gt; pageContext =</span>
+<span class="fc" id="L176">                  PageContext.create(callable, LIST_CONNECTIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L177">              return ListConnectionsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to createConnection. */
   public UnaryCallSettings&lt;CreateConnectionRequest, Connection&gt; createConnectionSettings() {
-<span class="fc" id="L180">    return createConnectionSettings;</span>
+<span class="fc" id="L183">    return createConnectionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getConnection. */
   public UnaryCallSettings&lt;GetConnectionRequest, Connection&gt; getConnectionSettings() {
-<span class="fc" id="L185">    return getConnectionSettings;</span>
+<span class="fc" id="L188">    return getConnectionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listConnections. */
   public PagedCallSettings&lt;
           ListConnectionsRequest, ListConnectionsResponse, ListConnectionsPagedResponse&gt;
       listConnectionsSettings() {
-<span class="fc" id="L192">    return listConnectionsSettings;</span>
+<span class="fc" id="L195">    return listConnectionsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateConnection. */
   public UnaryCallSettings&lt;UpdateConnectionRequest, Connection&gt; updateConnectionSettings() {
-<span class="fc" id="L197">    return updateConnectionSettings;</span>
+<span class="fc" id="L200">    return updateConnectionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteConnection. */
   public UnaryCallSettings&lt;DeleteConnectionRequest, Empty&gt; deleteConnectionSettings() {
-<span class="fc" id="L202">    return deleteConnectionSettings;</span>
+<span class="fc" id="L205">    return deleteConnectionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getIamPolicy. */
   public UnaryCallSettings&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings() {
-<span class="fc" id="L207">    return getIamPolicySettings;</span>
+<span class="fc" id="L210">    return getIamPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to setIamPolicy. */
   public UnaryCallSettings&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings() {
-<span class="fc" id="L212">    return setIamPolicySettings;</span>
+<span class="fc" id="L215">    return setIamPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to testIamPermissions. */
   public UnaryCallSettings&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
       testIamPermissionsSettings() {
-<span class="fc" id="L218">    return testIamPermissionsSettings;</span>
+<span class="fc" id="L221">    return testIamPermissionsSettings;</span>
   }
 
   public ConnectionServiceStub createStub() throws IOException {
-<span class="fc" id="L222">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L223">        .getTransportName()</span>
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L225">      return GrpcConnectionServiceStub.create(this);</span>
+<span class="fc" id="L225">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L226">        .getTransportName()</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L228">      return GrpcConnectionServiceStub.create(this);</span>
     }
-<span class="nc" id="L227">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L228">        String.format(</span>
-<span class="nc" id="L229">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L230">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L231">        .getTransportName()</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L233">      return HttpJsonConnectionServiceStub.create(this);</span>
+    }
+<span class="nc" id="L235">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L236">        String.format(</span>
+<span class="nc" id="L237">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L234">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L242">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L239">    return &quot;bigqueryconnection.googleapis.com:443&quot;;</span>
+<span class="fc" id="L247">    return &quot;bigqueryconnection.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L244">    return &quot;bigqueryconnection.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L252">    return &quot;bigqueryconnection.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L249">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L257">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L254">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L255">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L256">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L262">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L263">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L264">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L261">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L262">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L269">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L270">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L277">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L266">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L281">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L271">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L272">        .setGeneratedLibToken(</span>
-<span class="fc" id="L273">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(ConnectionServiceStubSettings.class))</span>
-<span class="fc" id="L274">        .setTransportToken(</span>
-<span class="fc" id="L275">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L286">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L287">        .setGeneratedLibToken(</span>
+<span class="fc" id="L288">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(ConnectionServiceStubSettings.class))</span>
+<span class="fc" id="L289">        .setTransportToken(</span>
+<span class="fc" id="L290">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L295">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L296">        .setGeneratedLibToken(</span>
+<span class="fc" id="L297">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(ConnectionServiceStubSettings.class))</span>
+<span class="fc" id="L298">        .setTransportToken(</span>
+<span class="fc" id="L299">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L300">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L304">    return ConnectionServiceStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L280">    return Builder.createDefault();</span>
+<span class="fc" id="L309">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L314">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L285">    return new Builder(clientContext);</span>
+<span class="nc" id="L319">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L290">    return new Builder(this);</span>
+<span class="nc" id="L324">    return new Builder(this);</span>
   }
 
   protected ConnectionServiceStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L294">    super(settingsBuilder);</span>
+<span class="fc" id="L328">    super(settingsBuilder);</span>
 
-<span class="fc" id="L296">    createConnectionSettings = settingsBuilder.createConnectionSettings().build();</span>
-<span class="fc" id="L297">    getConnectionSettings = settingsBuilder.getConnectionSettings().build();</span>
-<span class="fc" id="L298">    listConnectionsSettings = settingsBuilder.listConnectionsSettings().build();</span>
-<span class="fc" id="L299">    updateConnectionSettings = settingsBuilder.updateConnectionSettings().build();</span>
-<span class="fc" id="L300">    deleteConnectionSettings = settingsBuilder.deleteConnectionSettings().build();</span>
-<span class="fc" id="L301">    getIamPolicySettings = settingsBuilder.getIamPolicySettings().build();</span>
-<span class="fc" id="L302">    setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();</span>
-<span class="fc" id="L303">    testIamPermissionsSettings = settingsBuilder.testIamPermissionsSettings().build();</span>
-<span class="fc" id="L304">  }</span>
+<span class="fc" id="L330">    createConnectionSettings = settingsBuilder.createConnectionSettings().build();</span>
+<span class="fc" id="L331">    getConnectionSettings = settingsBuilder.getConnectionSettings().build();</span>
+<span class="fc" id="L332">    listConnectionsSettings = settingsBuilder.listConnectionsSettings().build();</span>
+<span class="fc" id="L333">    updateConnectionSettings = settingsBuilder.updateConnectionSettings().build();</span>
+<span class="fc" id="L334">    deleteConnectionSettings = settingsBuilder.deleteConnectionSettings().build();</span>
+<span class="fc" id="L335">    getIamPolicySettings = settingsBuilder.getIamPolicySettings().build();</span>
+<span class="fc" id="L336">    setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();</span>
+<span class="fc" id="L337">    testIamPermissionsSettings = settingsBuilder.testIamPermissionsSettings().build();</span>
+<span class="fc" id="L338">  }</span>
 
   /** Builder for ConnectionServiceStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;ConnectionServiceStubSettings, Builder&gt; {
@@ -325,62 +359,62 @@ public class ConnectionServiceStubSettings extends StubSettings&lt;ConnectionSer
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L328">          ImmutableMap.builder();</span>
-<span class="fc" id="L329">      definitions.put(</span>
-<span class="fc" id="L330">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L331">      definitions.put(</span>
+<span class="fc" id="L362">          ImmutableMap.builder();</span>
+<span class="fc" id="L363">      definitions.put(</span>
+<span class="fc" id="L364">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L365">      definitions.put(</span>
           &quot;retry_policy_1_codes&quot;,
-<span class="fc" id="L333">          ImmutableSet.copyOf(</span>
-<span class="fc" id="L334">              Lists.&lt;StatusCode.Code&gt;newArrayList(</span>
+<span class="fc" id="L367">          ImmutableSet.copyOf(</span>
+<span class="fc" id="L368">              Lists.&lt;StatusCode.Code&gt;newArrayList(</span>
                   StatusCode.Code.DEADLINE_EXCEEDED, StatusCode.Code.UNAVAILABLE)));
-<span class="fc" id="L336">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L370">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L342">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L343">      RetrySettings settings = null;</span>
+<span class="fc" id="L376">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L377">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L345">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L346">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L347">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L348">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L349">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L350">              .build();</span>
-<span class="fc" id="L351">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
+<span class="fc" id="L379">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L380">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L381">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L382">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L383">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L384">              .build();</span>
+<span class="fc" id="L385">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
       settings =
-<span class="fc" id="L353">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L354">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L355">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L356">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L357">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L358">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L359">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L360">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L361">              .build();</span>
-<span class="fc" id="L362">      definitions.put(&quot;retry_policy_1_params&quot;, settings);</span>
-<span class="fc" id="L363">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L364">    }</span>
+<span class="fc" id="L387">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L388">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L389">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L390">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L391">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L392">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L393">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L394">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L395">              .build();</span>
+<span class="fc" id="L396">      definitions.put(&quot;retry_policy_1_params&quot;, settings);</span>
+<span class="fc" id="L397">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L398">    }</span>
 
     protected Builder() {
-<span class="nc" id="L367">      this(((ClientContext) null));</span>
-<span class="nc" id="L368">    }</span>
+<span class="nc" id="L401">      this(((ClientContext) null));</span>
+<span class="nc" id="L402">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L371">      super(clientContext);</span>
+<span class="fc" id="L405">      super(clientContext);</span>
 
-<span class="fc" id="L373">      createConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L374">      getConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L375">      listConnectionsSettings = PagedCallSettings.newBuilder(LIST_CONNECTIONS_PAGE_STR_FACT);</span>
-<span class="fc" id="L376">      updateConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L377">      deleteConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L378">      getIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L379">      setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L380">      testIamPermissionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L407">      createConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L408">      getConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L409">      listConnectionsSettings = PagedCallSettings.newBuilder(LIST_CONNECTIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L410">      updateConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L411">      deleteConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L412">      getIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L413">      setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L414">      testIamPermissionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L382">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L383">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L416">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L417">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createConnectionSettings,
               getConnectionSettings,
               listConnectionsSettings,
@@ -389,23 +423,23 @@ public class ConnectionServiceStubSettings extends StubSettings&lt;ConnectionSer
               getIamPolicySettings,
               setIamPolicySettings,
               testIamPermissionsSettings);
-<span class="fc" id="L392">      initDefaults(this);</span>
-<span class="fc" id="L393">    }</span>
+<span class="fc" id="L426">      initDefaults(this);</span>
+<span class="fc" id="L427">    }</span>
 
     protected Builder(ConnectionServiceStubSettings settings) {
-<span class="nc" id="L396">      super(settings);</span>
+<span class="nc" id="L430">      super(settings);</span>
 
-<span class="nc" id="L398">      createConnectionSettings = settings.createConnectionSettings.toBuilder();</span>
-<span class="nc" id="L399">      getConnectionSettings = settings.getConnectionSettings.toBuilder();</span>
-<span class="nc" id="L400">      listConnectionsSettings = settings.listConnectionsSettings.toBuilder();</span>
-<span class="nc" id="L401">      updateConnectionSettings = settings.updateConnectionSettings.toBuilder();</span>
-<span class="nc" id="L402">      deleteConnectionSettings = settings.deleteConnectionSettings.toBuilder();</span>
-<span class="nc" id="L403">      getIamPolicySettings = settings.getIamPolicySettings.toBuilder();</span>
-<span class="nc" id="L404">      setIamPolicySettings = settings.setIamPolicySettings.toBuilder();</span>
-<span class="nc" id="L405">      testIamPermissionsSettings = settings.testIamPermissionsSettings.toBuilder();</span>
+<span class="nc" id="L432">      createConnectionSettings = settings.createConnectionSettings.toBuilder();</span>
+<span class="nc" id="L433">      getConnectionSettings = settings.getConnectionSettings.toBuilder();</span>
+<span class="nc" id="L434">      listConnectionsSettings = settings.listConnectionsSettings.toBuilder();</span>
+<span class="nc" id="L435">      updateConnectionSettings = settings.updateConnectionSettings.toBuilder();</span>
+<span class="nc" id="L436">      deleteConnectionSettings = settings.deleteConnectionSettings.toBuilder();</span>
+<span class="nc" id="L437">      getIamPolicySettings = settings.getIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L438">      setIamPolicySettings = settings.setIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L439">      testIamPermissionsSettings = settings.testIamPermissionsSettings.toBuilder();</span>
 
-<span class="nc" id="L407">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L408">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L441">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L442">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createConnectionSettings,
               getConnectionSettings,
               listConnectionsSettings,
@@ -414,63 +448,76 @@ public class ConnectionServiceStubSettings extends StubSettings&lt;ConnectionSer
               getIamPolicySettings,
               setIamPolicySettings,
               testIamPermissionsSettings);
-<span class="nc" id="L417">    }</span>
+<span class="nc" id="L451">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L420">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L454">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L422">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L423">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L424">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L425">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L426">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L427">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L456">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L457">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L458">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L459">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L460">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L461">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L429">      return initDefaults(builder);</span>
+<span class="fc" id="L463">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L467">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L469">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L470">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L471">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L472">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L473">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L474">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L476">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L433">      builder</span>
-<span class="fc" id="L434">          .createConnectionSettings()</span>
-<span class="fc" id="L435">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L436">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L480">      builder</span>
+<span class="fc" id="L481">          .createConnectionSettings()</span>
+<span class="fc" id="L482">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L483">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L438">      builder</span>
-<span class="fc" id="L439">          .getConnectionSettings()</span>
-<span class="fc" id="L440">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
-<span class="fc" id="L441">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
+<span class="fc" id="L485">      builder</span>
+<span class="fc" id="L486">          .getConnectionSettings()</span>
+<span class="fc" id="L487">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
+<span class="fc" id="L488">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
 
-<span class="fc" id="L443">      builder</span>
-<span class="fc" id="L444">          .listConnectionsSettings()</span>
-<span class="fc" id="L445">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
-<span class="fc" id="L446">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
+<span class="fc" id="L490">      builder</span>
+<span class="fc" id="L491">          .listConnectionsSettings()</span>
+<span class="fc" id="L492">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
+<span class="fc" id="L493">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
 
-<span class="fc" id="L448">      builder</span>
-<span class="fc" id="L449">          .updateConnectionSettings()</span>
-<span class="fc" id="L450">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L451">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L495">      builder</span>
+<span class="fc" id="L496">          .updateConnectionSettings()</span>
+<span class="fc" id="L497">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L498">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L453">      builder</span>
-<span class="fc" id="L454">          .deleteConnectionSettings()</span>
-<span class="fc" id="L455">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
-<span class="fc" id="L456">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
+<span class="fc" id="L500">      builder</span>
+<span class="fc" id="L501">          .deleteConnectionSettings()</span>
+<span class="fc" id="L502">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
+<span class="fc" id="L503">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
 
-<span class="fc" id="L458">      builder</span>
-<span class="fc" id="L459">          .getIamPolicySettings()</span>
-<span class="fc" id="L460">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L461">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L505">      builder</span>
+<span class="fc" id="L506">          .getIamPolicySettings()</span>
+<span class="fc" id="L507">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L508">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L463">      builder</span>
-<span class="fc" id="L464">          .setIamPolicySettings()</span>
-<span class="fc" id="L465">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L466">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L510">      builder</span>
+<span class="fc" id="L511">          .setIamPolicySettings()</span>
+<span class="fc" id="L512">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L513">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L468">      builder</span>
-<span class="fc" id="L469">          .testIamPermissionsSettings()</span>
-<span class="fc" id="L470">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L471">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L515">      builder</span>
+<span class="fc" id="L516">          .testIamPermissionsSettings()</span>
+<span class="fc" id="L517">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L518">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L473">      return builder;</span>
+<span class="fc" id="L520">      return builder;</span>
     }
 
     /**
@@ -480,62 +527,62 @@ public class ConnectionServiceStubSettings extends StubSettings&lt;ConnectionSer
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L483">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L484">      return this;</span>
+<span class="nc" id="L530">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L531">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L488">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L535">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to createConnection. */
     public UnaryCallSettings.Builder&lt;CreateConnectionRequest, Connection&gt;
         createConnectionSettings() {
-<span class="fc" id="L494">      return createConnectionSettings;</span>
+<span class="fc" id="L541">      return createConnectionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getConnection. */
     public UnaryCallSettings.Builder&lt;GetConnectionRequest, Connection&gt; getConnectionSettings() {
-<span class="fc" id="L499">      return getConnectionSettings;</span>
+<span class="fc" id="L546">      return getConnectionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listConnections. */
     public PagedCallSettings.Builder&lt;
             ListConnectionsRequest, ListConnectionsResponse, ListConnectionsPagedResponse&gt;
         listConnectionsSettings() {
-<span class="fc" id="L506">      return listConnectionsSettings;</span>
+<span class="fc" id="L553">      return listConnectionsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateConnection. */
     public UnaryCallSettings.Builder&lt;UpdateConnectionRequest, Connection&gt;
         updateConnectionSettings() {
-<span class="fc" id="L512">      return updateConnectionSettings;</span>
+<span class="fc" id="L559">      return updateConnectionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteConnection. */
     public UnaryCallSettings.Builder&lt;DeleteConnectionRequest, Empty&gt; deleteConnectionSettings() {
-<span class="fc" id="L517">      return deleteConnectionSettings;</span>
+<span class="fc" id="L564">      return deleteConnectionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getIamPolicy. */
     public UnaryCallSettings.Builder&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings() {
-<span class="fc" id="L522">      return getIamPolicySettings;</span>
+<span class="fc" id="L569">      return getIamPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to setIamPolicy. */
     public UnaryCallSettings.Builder&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings() {
-<span class="fc" id="L527">      return setIamPolicySettings;</span>
+<span class="fc" id="L574">      return setIamPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to testIamPermissions. */
     public UnaryCallSettings.Builder&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
         testIamPermissionsSettings() {
-<span class="fc" id="L533">      return testIamPermissionsSettings;</span>
+<span class="fc" id="L580">      return testIamPermissionsSettings;</span>
     }
 
     @Override
     public ConnectionServiceStubSettings build() throws IOException {
-<span class="fc" id="L538">      return new ConnectionServiceStubSettings(this);</span>
+<span class="fc" id="L585">      return new ConnectionServiceStubSettings(this);</span>
     }
   }
 }

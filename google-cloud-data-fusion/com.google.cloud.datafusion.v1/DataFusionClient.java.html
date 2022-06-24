@@ -19,6 +19,7 @@ package com.google.cloud.datafusion.v1;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.datafusion.v1.stub.DataFusionStub;
 import com.google.cloud.datafusion.v1.stub.DataFusionStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -106,17 +106,32 @@ import javax.annotation.Generated;
  * DataFusionClient dataFusionClient = DataFusionClient.create(dataFusionSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * DataFusionSettings dataFusionSettings =
+ *     DataFusionSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             DataFusionSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * DataFusionClient dataFusionClient = DataFusionClient.create(dataFusionSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class DataFusionClient implements BackgroundResource {
   private final DataFusionSettings settings;
   private final DataFusionStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of DataFusionClient with default settings. */
   public static final DataFusionClient create() throws IOException {
-<span class="nc" id="L119">    return create(DataFusionSettings.newBuilder().build());</span>
+<span class="nc" id="L134">    return create(DataFusionSettings.newBuilder().build());</span>
   }
 
   /**
@@ -124,7 +139,7 @@ public class DataFusionClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final DataFusionClient create(DataFusionSettings settings) throws IOException {
-<span class="fc" id="L127">    return new DataFusionClient(settings);</span>
+<span class="fc" id="L142">    return new DataFusionClient(settings);</span>
   }
 
   /**
@@ -132,39 +147,51 @@ public class DataFusionClient implements BackgroundResource {
    * advanced usage - prefer using create(DataFusionSettings).
    */
   public static final DataFusionClient create(DataFusionStub stub) {
-<span class="nc" id="L135">    return new DataFusionClient(stub);</span>
+<span class="nc" id="L150">    return new DataFusionClient(stub);</span>
   }
 
   /**
    * Constructs an instance of DataFusionClient, using the given settings. This is protected so that
    * it is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L142">  protected DataFusionClient(DataFusionSettings settings) throws IOException {</span>
-<span class="fc" id="L143">    this.settings = settings;</span>
-<span class="fc" id="L144">    this.stub = ((DataFusionStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L145">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L146">  }</span>
+<span class="fc" id="L157">  protected DataFusionClient(DataFusionSettings settings) throws IOException {</span>
+<span class="fc" id="L158">    this.settings = settings;</span>
+<span class="fc" id="L159">    this.stub = ((DataFusionStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L160">    this.operationsClient =</span>
+<span class="fc" id="L161">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L162">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L163">  }</span>
 
-<span class="nc" id="L148">  protected DataFusionClient(DataFusionStub stub) {</span>
-<span class="nc" id="L149">    this.settings = null;</span>
-<span class="nc" id="L150">    this.stub = stub;</span>
-<span class="nc" id="L151">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L152">  }</span>
+<span class="nc" id="L165">  protected DataFusionClient(DataFusionStub stub) {</span>
+<span class="nc" id="L166">    this.settings = null;</span>
+<span class="nc" id="L167">    this.stub = stub;</span>
+<span class="nc" id="L168">    this.operationsClient =</span>
+<span class="nc" id="L169">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L170">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L171">  }</span>
 
   public final DataFusionSettings getSettings() {
-<span class="nc" id="L155">    return settings;</span>
+<span class="nc" id="L174">    return settings;</span>
   }
 
   public DataFusionStub getStub() {
-<span class="nc" id="L159">    return stub;</span>
+<span class="nc" id="L178">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L167">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L186">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L194">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -190,10 +217,10 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final ListAvailableVersionsPagedResponse listAvailableVersions(LocationName parent) {
     ListAvailableVersionsRequest request =
-<span class="fc" id="L193">        ListAvailableVersionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L195">            .build();</span>
-<span class="fc" id="L196">    return listAvailableVersions(request);</span>
+<span class="fc" id="L220">        ListAvailableVersionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L222">            .build();</span>
+<span class="fc" id="L223">    return listAvailableVersions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -219,8 +246,8 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final ListAvailableVersionsPagedResponse listAvailableVersions(String parent) {
     ListAvailableVersionsRequest request =
-<span class="fc" id="L222">        ListAvailableVersionsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L223">    return listAvailableVersions(request);</span>
+<span class="fc" id="L249">        ListAvailableVersionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L250">    return listAvailableVersions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -251,7 +278,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final ListAvailableVersionsPagedResponse listAvailableVersions(
       ListAvailableVersionsRequest request) {
-<span class="fc" id="L254">    return listAvailableVersionsPagedCallable().call(request);</span>
+<span class="fc" id="L281">    return listAvailableVersionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -282,7 +309,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListAvailableVersionsRequest, ListAvailableVersionsPagedResponse&gt;
       listAvailableVersionsPagedCallable() {
-<span class="fc" id="L285">    return stub.listAvailableVersionsPagedCallable();</span>
+<span class="fc" id="L312">    return stub.listAvailableVersionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -320,7 +347,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListAvailableVersionsRequest, ListAvailableVersionsResponse&gt;
       listAvailableVersionsCallable() {
-<span class="nc" id="L323">    return stub.listAvailableVersionsCallable();</span>
+<span class="nc" id="L350">    return stub.listAvailableVersionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -351,7 +378,7 @@ public class DataFusionClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListInstancesPagedResponse listInstances(ListInstancesRequest request) {
-<span class="fc" id="L354">    return listInstancesPagedCallable().call(request);</span>
+<span class="fc" id="L381">    return listInstancesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -383,7 +410,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListInstancesRequest, ListInstancesPagedResponse&gt;
       listInstancesPagedCallable() {
-<span class="fc" id="L386">    return stub.listInstancesPagedCallable();</span>
+<span class="fc" id="L413">    return stub.listInstancesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -420,7 +447,7 @@ public class DataFusionClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListInstancesRequest, ListInstancesResponse&gt; listInstancesCallable() {
-<span class="nc" id="L423">    return stub.listInstancesCallable();</span>
+<span class="nc" id="L450">    return stub.listInstancesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -445,7 +472,7 @@ public class DataFusionClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Instance getInstance(GetInstanceRequest request) {
-<span class="fc" id="L448">    return getInstanceCallable().call(request);</span>
+<span class="fc" id="L475">    return getInstanceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -469,7 +496,7 @@ public class DataFusionClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetInstanceRequest, Instance&gt; getInstanceCallable() {
-<span class="fc" id="L472">    return stub.getInstanceCallable();</span>
+<span class="fc" id="L499">    return stub.getInstanceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -498,12 +525,12 @@ public class DataFusionClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; createInstanceAsync(
       LocationName parent, Instance instance, String instanceId) {
     CreateInstanceRequest request =
-<span class="fc" id="L501">        CreateInstanceRequest.newBuilder()</span>
-<span class="pc bpc" id="L502" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L503">            .setInstance(instance)</span>
-<span class="fc" id="L504">            .setInstanceId(instanceId)</span>
-<span class="fc" id="L505">            .build();</span>
-<span class="fc" id="L506">    return createInstanceAsync(request);</span>
+<span class="fc" id="L528">        CreateInstanceRequest.newBuilder()</span>
+<span class="pc bpc" id="L529" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L530">            .setInstance(instance)</span>
+<span class="fc" id="L531">            .setInstanceId(instanceId)</span>
+<span class="fc" id="L532">            .build();</span>
+<span class="fc" id="L533">    return createInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -532,12 +559,12 @@ public class DataFusionClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; createInstanceAsync(
       String parent, Instance instance, String instanceId) {
     CreateInstanceRequest request =
-<span class="fc" id="L535">        CreateInstanceRequest.newBuilder()</span>
-<span class="fc" id="L536">            .setParent(parent)</span>
-<span class="fc" id="L537">            .setInstance(instance)</span>
-<span class="fc" id="L538">            .setInstanceId(instanceId)</span>
-<span class="fc" id="L539">            .build();</span>
-<span class="fc" id="L540">    return createInstanceAsync(request);</span>
+<span class="fc" id="L562">        CreateInstanceRequest.newBuilder()</span>
+<span class="fc" id="L563">            .setParent(parent)</span>
+<span class="fc" id="L564">            .setInstance(instance)</span>
+<span class="fc" id="L565">            .setInstanceId(instanceId)</span>
+<span class="fc" id="L566">            .build();</span>
+<span class="fc" id="L567">    return createInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -565,7 +592,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Instance, OperationMetadata&gt; createInstanceAsync(
       CreateInstanceRequest request) {
-<span class="fc" id="L568">    return createInstanceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L595">    return createInstanceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -593,7 +620,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateInstanceRequest, Instance, OperationMetadata&gt;
       createInstanceOperationCallable() {
-<span class="fc" id="L596">    return stub.createInstanceOperationCallable();</span>
+<span class="fc" id="L623">    return stub.createInstanceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -619,7 +646,7 @@ public class DataFusionClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateInstanceRequest, Operation&gt; createInstanceCallable() {
-<span class="nc" id="L622">    return stub.createInstanceCallable();</span>
+<span class="nc" id="L649">    return stub.createInstanceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -643,8 +670,8 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteInstanceAsync(InstanceName name) {
     DeleteInstanceRequest request =
-<span class="pc bpc" id="L646" title="1 of 2 branches missed.">        DeleteInstanceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L647">    return deleteInstanceAsync(request);</span>
+<span class="pc bpc" id="L673" title="1 of 2 branches missed.">        DeleteInstanceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L674">    return deleteInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -667,8 +694,8 @@ public class DataFusionClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteInstanceAsync(String name) {
-<span class="fc" id="L670">    DeleteInstanceRequest request = DeleteInstanceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L671">    return deleteInstanceAsync(request);</span>
+<span class="fc" id="L697">    DeleteInstanceRequest request = DeleteInstanceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L698">    return deleteInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -694,7 +721,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteInstanceAsync(
       DeleteInstanceRequest request) {
-<span class="fc" id="L697">    return deleteInstanceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L724">    return deleteInstanceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -720,7 +747,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteInstanceRequest, Empty, OperationMetadata&gt;
       deleteInstanceOperationCallable() {
-<span class="fc" id="L723">    return stub.deleteInstanceOperationCallable();</span>
+<span class="fc" id="L750">    return stub.deleteInstanceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -744,7 +771,7 @@ public class DataFusionClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteInstanceRequest, Operation&gt; deleteInstanceCallable() {
-<span class="nc" id="L747">    return stub.deleteInstanceCallable();</span>
+<span class="nc" id="L774">    return stub.deleteInstanceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -776,8 +803,8 @@ public class DataFusionClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; updateInstanceAsync(
       Instance instance, FieldMask updateMask) {
     UpdateInstanceRequest request =
-<span class="fc" id="L779">        UpdateInstanceRequest.newBuilder().setInstance(instance).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L780">    return updateInstanceAsync(request);</span>
+<span class="fc" id="L806">        UpdateInstanceRequest.newBuilder().setInstance(instance).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L807">    return updateInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -804,7 +831,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Instance, OperationMetadata&gt; updateInstanceAsync(
       UpdateInstanceRequest request) {
-<span class="fc" id="L807">    return updateInstanceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L834">    return updateInstanceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -831,7 +858,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateInstanceRequest, Instance, OperationMetadata&gt;
       updateInstanceOperationCallable() {
-<span class="fc" id="L834">    return stub.updateInstanceOperationCallable();</span>
+<span class="fc" id="L861">    return stub.updateInstanceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -856,7 +883,7 @@ public class DataFusionClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateInstanceRequest, Operation&gt; updateInstanceCallable() {
-<span class="nc" id="L859">    return stub.updateInstanceCallable();</span>
+<span class="nc" id="L886">    return stub.updateInstanceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -882,7 +909,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Instance, OperationMetadata&gt; restartInstanceAsync(
       RestartInstanceRequest request) {
-<span class="fc" id="L885">    return restartInstanceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L912">    return restartInstanceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -908,7 +935,7 @@ public class DataFusionClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RestartInstanceRequest, Instance, OperationMetadata&gt;
       restartInstanceOperationCallable() {
-<span class="fc" id="L911">    return stub.restartInstanceOperationCallable();</span>
+<span class="fc" id="L938">    return stub.restartInstanceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -932,37 +959,37 @@ public class DataFusionClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RestartInstanceRequest, Operation&gt; restartInstanceCallable() {
-<span class="nc" id="L935">    return stub.restartInstanceCallable();</span>
+<span class="nc" id="L962">    return stub.restartInstanceCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L940">    stub.close();</span>
-<span class="fc" id="L941">  }</span>
+<span class="fc" id="L967">    stub.close();</span>
+<span class="fc" id="L968">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L945">    stub.shutdown();</span>
-<span class="nc" id="L946">  }</span>
+<span class="nc" id="L972">    stub.shutdown();</span>
+<span class="nc" id="L973">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L950">    return stub.isShutdown();</span>
+<span class="nc" id="L977">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L955">    return stub.isTerminated();</span>
+<span class="nc" id="L982">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L960">    stub.shutdownNow();</span>
-<span class="nc" id="L961">  }</span>
+<span class="nc" id="L987">    stub.shutdownNow();</span>
+<span class="nc" id="L988">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L965">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L992">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListAvailableVersionsPagedResponse
@@ -977,16 +1004,16 @@ public class DataFusionClient implements BackgroundResource {
         PageContext&lt;ListAvailableVersionsRequest, ListAvailableVersionsResponse, Version&gt; context,
         ApiFuture&lt;ListAvailableVersionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListAvailableVersionsPage&gt; futurePage =
-<span class="fc" id="L980">          ListAvailableVersionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L981">      return ApiFutures.transform(</span>
+<span class="fc" id="L1007">          ListAvailableVersionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1008">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L983">          input -&gt; new ListAvailableVersionsPagedResponse(input),</span>
-<span class="fc" id="L984">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1010">          input -&gt; new ListAvailableVersionsPagedResponse(input),</span>
+<span class="fc" id="L1011">          MoreExecutors.directExecutor());</span>
     }
 
     private ListAvailableVersionsPagedResponse(ListAvailableVersionsPage page) {
-<span class="fc" id="L988">      super(page, ListAvailableVersionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L989">    }</span>
+<span class="fc" id="L1015">      super(page, ListAvailableVersionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1016">    }</span>
   }
 
   public static class ListAvailableVersionsPage
@@ -999,25 +1026,25 @@ public class DataFusionClient implements BackgroundResource {
     private ListAvailableVersionsPage(
         PageContext&lt;ListAvailableVersionsRequest, ListAvailableVersionsResponse, Version&gt; context,
         ListAvailableVersionsResponse response) {
-<span class="fc" id="L1002">      super(context, response);</span>
-<span class="fc" id="L1003">    }</span>
+<span class="fc" id="L1029">      super(context, response);</span>
+<span class="fc" id="L1030">    }</span>
 
     private static ListAvailableVersionsPage createEmptyPage() {
-<span class="fc" id="L1006">      return new ListAvailableVersionsPage(null, null);</span>
+<span class="fc" id="L1033">      return new ListAvailableVersionsPage(null, null);</span>
     }
 
     @Override
     protected ListAvailableVersionsPage createPage(
         PageContext&lt;ListAvailableVersionsRequest, ListAvailableVersionsResponse, Version&gt; context,
         ListAvailableVersionsResponse response) {
-<span class="fc" id="L1013">      return new ListAvailableVersionsPage(context, response);</span>
+<span class="fc" id="L1040">      return new ListAvailableVersionsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListAvailableVersionsPage&gt; createPageAsync(
         PageContext&lt;ListAvailableVersionsRequest, ListAvailableVersionsResponse, Version&gt; context,
         ApiFuture&lt;ListAvailableVersionsResponse&gt; futureResponse) {
-<span class="fc" id="L1020">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1047">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1031,17 +1058,17 @@ public class DataFusionClient implements BackgroundResource {
 
     private ListAvailableVersionsFixedSizeCollection(
         List&lt;ListAvailableVersionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1034">      super(pages, collectionSize);</span>
-<span class="fc" id="L1035">    }</span>
+<span class="fc" id="L1061">      super(pages, collectionSize);</span>
+<span class="fc" id="L1062">    }</span>
 
     private static ListAvailableVersionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1038">      return new ListAvailableVersionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1065">      return new ListAvailableVersionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListAvailableVersionsFixedSizeCollection createCollection(
         List&lt;ListAvailableVersionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1044">      return new ListAvailableVersionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1071">      return new ListAvailableVersionsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -1057,16 +1084,16 @@ public class DataFusionClient implements BackgroundResource {
         PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; context,
         ApiFuture&lt;ListInstancesResponse&gt; futureResponse) {
       ApiFuture&lt;ListInstancesPage&gt; futurePage =
-<span class="fc" id="L1060">          ListInstancesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1061">      return ApiFutures.transform(</span>
+<span class="fc" id="L1087">          ListInstancesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1088">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1063">          input -&gt; new ListInstancesPagedResponse(input),</span>
-<span class="fc" id="L1064">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1090">          input -&gt; new ListInstancesPagedResponse(input),</span>
+<span class="fc" id="L1091">          MoreExecutors.directExecutor());</span>
     }
 
     private ListInstancesPagedResponse(ListInstancesPage page) {
-<span class="fc" id="L1068">      super(page, ListInstancesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1069">    }</span>
+<span class="fc" id="L1095">      super(page, ListInstancesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1096">    }</span>
   }
 
   public static class ListInstancesPage
@@ -1076,25 +1103,25 @@ public class DataFusionClient implements BackgroundResource {
     private ListInstancesPage(
         PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; context,
         ListInstancesResponse response) {
-<span class="fc" id="L1079">      super(context, response);</span>
-<span class="fc" id="L1080">    }</span>
+<span class="fc" id="L1106">      super(context, response);</span>
+<span class="fc" id="L1107">    }</span>
 
     private static ListInstancesPage createEmptyPage() {
-<span class="fc" id="L1083">      return new ListInstancesPage(null, null);</span>
+<span class="fc" id="L1110">      return new ListInstancesPage(null, null);</span>
     }
 
     @Override
     protected ListInstancesPage createPage(
         PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; context,
         ListInstancesResponse response) {
-<span class="fc" id="L1090">      return new ListInstancesPage(context, response);</span>
+<span class="fc" id="L1117">      return new ListInstancesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListInstancesPage&gt; createPageAsync(
         PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; context,
         ApiFuture&lt;ListInstancesResponse&gt; futureResponse) {
-<span class="fc" id="L1097">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1124">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1107,17 +1134,17 @@ public class DataFusionClient implements BackgroundResource {
           ListInstancesFixedSizeCollection&gt; {
 
     private ListInstancesFixedSizeCollection(List&lt;ListInstancesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1110">      super(pages, collectionSize);</span>
-<span class="fc" id="L1111">    }</span>
+<span class="fc" id="L1137">      super(pages, collectionSize);</span>
+<span class="fc" id="L1138">    }</span>
 
     private static ListInstancesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1114">      return new ListInstancesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1141">      return new ListInstancesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListInstancesFixedSizeCollection createCollection(
         List&lt;ListInstancesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1120">      return new ListInstancesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1147">      return new ListInstancesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

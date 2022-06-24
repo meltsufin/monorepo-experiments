@@ -27,6 +27,9 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
@@ -96,10 +99,10 @@ import org.threeten.bp.Duration;
 public class BudgetServiceStubSettings extends StubSettings&lt;BudgetServiceStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L99">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L100">          .add(&quot;https://www.googleapis.com/auth/cloud-billing&quot;)</span>
-<span class="fc" id="L101">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L102">          .build();</span>
+<span class="fc" id="L102">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L103">          .add(&quot;https://www.googleapis.com/auth/cloud-billing&quot;)</span>
+<span class="fc" id="L104">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L105">          .build();</span>
 
   private final UnaryCallSettings&lt;CreateBudgetRequest, Budget&gt; createBudgetSettings;
   private final UnaryCallSettings&lt;UpdateBudgetRequest, Budget&gt; updateBudgetSettings;
@@ -109,165 +112,196 @@ public class BudgetServiceStubSettings extends StubSettings&lt;BudgetServiceStub
   private final UnaryCallSettings&lt;DeleteBudgetRequest, Empty&gt; deleteBudgetSettings;
 
   private static final PagedListDescriptor&lt;ListBudgetsRequest, ListBudgetsResponse, Budget&gt;
-<span class="fc" id="L112">      LIST_BUDGETS_PAGE_STR_DESC =</span>
-<span class="fc" id="L113">          new PagedListDescriptor&lt;ListBudgetsRequest, ListBudgetsResponse, Budget&gt;() {</span>
+<span class="fc" id="L115">      LIST_BUDGETS_PAGE_STR_DESC =</span>
+<span class="fc" id="L116">          new PagedListDescriptor&lt;ListBudgetsRequest, ListBudgetsResponse, Budget&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L116">              return &quot;&quot;;</span>
+<span class="fc" id="L119">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListBudgetsRequest injectToken(ListBudgetsRequest payload, String token) {
-<span class="nc" id="L121">              return ListBudgetsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L124">              return ListBudgetsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListBudgetsRequest injectPageSize(ListBudgetsRequest payload, int pageSize) {
-<span class="nc" id="L126">              return ListBudgetsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L129">              return ListBudgetsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListBudgetsRequest payload) {
-<span class="nc" id="L131">              return payload.getPageSize();</span>
+<span class="nc" id="L134">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListBudgetsResponse payload) {
-<span class="fc" id="L136">              return payload.getNextPageToken();</span>
+<span class="fc" id="L139">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Budget&gt; extractResources(ListBudgetsResponse payload) {
-<span class="pc bpc" id="L141" title="1 of 2 branches missed.">              return payload.getBudgetsList() == null</span>
-<span class="nc" id="L142">                  ? ImmutableList.&lt;Budget&gt;of()</span>
-<span class="fc" id="L143">                  : payload.getBudgetsList();</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">              return payload.getBudgetsList() == null</span>
+<span class="nc" id="L145">                  ? ImmutableList.&lt;Budget&gt;of()</span>
+<span class="fc" id="L146">                  : payload.getBudgetsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListBudgetsRequest, ListBudgetsResponse, ListBudgetsPagedResponse&gt;
-<span class="fc" id="L149">      LIST_BUDGETS_PAGE_STR_FACT =</span>
+<span class="fc" id="L152">      LIST_BUDGETS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L151">              ListBudgetsRequest, ListBudgetsResponse, ListBudgetsPagedResponse&gt;() {</span>
+<span class="fc" id="L154">              ListBudgetsRequest, ListBudgetsResponse, ListBudgetsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListBudgetsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListBudgetsRequest, ListBudgetsResponse&gt; callable,
                 ListBudgetsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListBudgetsResponse&gt; futureResponse) {
-<span class="fc" id="L158">              PageContext&lt;ListBudgetsRequest, ListBudgetsResponse, Budget&gt; pageContext =</span>
-<span class="fc" id="L159">                  PageContext.create(callable, LIST_BUDGETS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L160">              return ListBudgetsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L161">              PageContext&lt;ListBudgetsRequest, ListBudgetsResponse, Budget&gt; pageContext =</span>
+<span class="fc" id="L162">                  PageContext.create(callable, LIST_BUDGETS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L163">              return ListBudgetsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to createBudget. */
   public UnaryCallSettings&lt;CreateBudgetRequest, Budget&gt; createBudgetSettings() {
-<span class="fc" id="L166">    return createBudgetSettings;</span>
+<span class="fc" id="L169">    return createBudgetSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateBudget. */
   public UnaryCallSettings&lt;UpdateBudgetRequest, Budget&gt; updateBudgetSettings() {
-<span class="fc" id="L171">    return updateBudgetSettings;</span>
+<span class="fc" id="L174">    return updateBudgetSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getBudget. */
   public UnaryCallSettings&lt;GetBudgetRequest, Budget&gt; getBudgetSettings() {
-<span class="fc" id="L176">    return getBudgetSettings;</span>
+<span class="fc" id="L179">    return getBudgetSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listBudgets. */
   public PagedCallSettings&lt;ListBudgetsRequest, ListBudgetsResponse, ListBudgetsPagedResponse&gt;
       listBudgetsSettings() {
-<span class="fc" id="L182">    return listBudgetsSettings;</span>
+<span class="fc" id="L185">    return listBudgetsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteBudget. */
   public UnaryCallSettings&lt;DeleteBudgetRequest, Empty&gt; deleteBudgetSettings() {
-<span class="fc" id="L187">    return deleteBudgetSettings;</span>
+<span class="fc" id="L190">    return deleteBudgetSettings;</span>
   }
 
   public BudgetServiceStub createStub() throws IOException {
-<span class="fc" id="L191">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L192">        .getTransportName()</span>
-<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L194">      return GrpcBudgetServiceStub.create(this);</span>
+<span class="fc" id="L194">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L195">        .getTransportName()</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L197">      return GrpcBudgetServiceStub.create(this);</span>
     }
-<span class="nc" id="L196">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L197">        String.format(</span>
-<span class="nc" id="L198">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L199">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L200">        .getTransportName()</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L202">      return HttpJsonBudgetServiceStub.create(this);</span>
+    }
+<span class="nc" id="L204">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L205">        String.format(</span>
+<span class="nc" id="L206">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L203">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L211">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L208">    return &quot;billingbudgets.googleapis.com:443&quot;;</span>
+<span class="fc" id="L216">    return &quot;billingbudgets.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L213">    return &quot;billingbudgets.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L221">    return &quot;billingbudgets.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L218">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L226">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L223">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L224">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L225">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L231">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L232">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L233">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L230">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L231">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L238">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L239">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L246">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L235">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L250">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L240">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L241">        .setGeneratedLibToken(</span>
-<span class="fc" id="L242">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(BudgetServiceStubSettings.class))</span>
-<span class="fc" id="L243">        .setTransportToken(</span>
-<span class="fc" id="L244">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L255">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L256">        .setGeneratedLibToken(</span>
+<span class="fc" id="L257">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(BudgetServiceStubSettings.class))</span>
+<span class="fc" id="L258">        .setTransportToken(</span>
+<span class="fc" id="L259">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L264">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L265">        .setGeneratedLibToken(</span>
+<span class="fc" id="L266">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(BudgetServiceStubSettings.class))</span>
+<span class="fc" id="L267">        .setTransportToken(</span>
+<span class="fc" id="L268">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L269">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L273">    return BudgetServiceStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L249">    return Builder.createDefault();</span>
+<span class="fc" id="L278">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L283">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L254">    return new Builder(clientContext);</span>
+<span class="nc" id="L288">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L259">    return new Builder(this);</span>
+<span class="nc" id="L293">    return new Builder(this);</span>
   }
 
   protected BudgetServiceStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L263">    super(settingsBuilder);</span>
+<span class="fc" id="L297">    super(settingsBuilder);</span>
 
-<span class="fc" id="L265">    createBudgetSettings = settingsBuilder.createBudgetSettings().build();</span>
-<span class="fc" id="L266">    updateBudgetSettings = settingsBuilder.updateBudgetSettings().build();</span>
-<span class="fc" id="L267">    getBudgetSettings = settingsBuilder.getBudgetSettings().build();</span>
-<span class="fc" id="L268">    listBudgetsSettings = settingsBuilder.listBudgetsSettings().build();</span>
-<span class="fc" id="L269">    deleteBudgetSettings = settingsBuilder.deleteBudgetSettings().build();</span>
-<span class="fc" id="L270">  }</span>
+<span class="fc" id="L299">    createBudgetSettings = settingsBuilder.createBudgetSettings().build();</span>
+<span class="fc" id="L300">    updateBudgetSettings = settingsBuilder.updateBudgetSettings().build();</span>
+<span class="fc" id="L301">    getBudgetSettings = settingsBuilder.getBudgetSettings().build();</span>
+<span class="fc" id="L302">    listBudgetsSettings = settingsBuilder.listBudgetsSettings().build();</span>
+<span class="fc" id="L303">    deleteBudgetSettings = settingsBuilder.deleteBudgetSettings().build();</span>
+<span class="fc" id="L304">  }</span>
 
   /** Builder for BudgetServiceStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;BudgetServiceStubSettings, Builder&gt; {
@@ -284,125 +318,138 @@ public class BudgetServiceStubSettings extends StubSettings&lt;BudgetServiceStub
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L287">          ImmutableMap.builder();</span>
-<span class="fc" id="L288">      definitions.put(</span>
-<span class="fc" id="L289">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L290">      definitions.put(</span>
+<span class="fc" id="L321">          ImmutableMap.builder();</span>
+<span class="fc" id="L322">      definitions.put(</span>
+<span class="fc" id="L323">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L324">      definitions.put(</span>
           &quot;retry_policy_1_codes&quot;,
-<span class="fc" id="L292">          ImmutableSet.copyOf(</span>
-<span class="fc" id="L293">              Lists.&lt;StatusCode.Code&gt;newArrayList(</span>
+<span class="fc" id="L326">          ImmutableSet.copyOf(</span>
+<span class="fc" id="L327">              Lists.&lt;StatusCode.Code&gt;newArrayList(</span>
                   StatusCode.Code.DEADLINE_EXCEEDED, StatusCode.Code.UNAVAILABLE)));
-<span class="fc" id="L295">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L329">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L301">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L302">      RetrySettings settings = null;</span>
+<span class="fc" id="L335">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L336">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L304">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L305">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L306">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L307">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L308">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L309">              .build();</span>
-<span class="fc" id="L310">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
+<span class="fc" id="L338">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L339">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L340">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L341">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L342">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L343">              .build();</span>
+<span class="fc" id="L344">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
       settings =
-<span class="fc" id="L312">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L313">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L314">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L315">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L316">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L317">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L318">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L319">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L320">              .build();</span>
-<span class="fc" id="L321">      definitions.put(&quot;retry_policy_1_params&quot;, settings);</span>
-<span class="fc" id="L322">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L323">    }</span>
+<span class="fc" id="L346">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L347">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L348">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L349">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L350">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L351">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L352">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L353">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L354">              .build();</span>
+<span class="fc" id="L355">      definitions.put(&quot;retry_policy_1_params&quot;, settings);</span>
+<span class="fc" id="L356">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L357">    }</span>
 
     protected Builder() {
-<span class="nc" id="L326">      this(((ClientContext) null));</span>
-<span class="nc" id="L327">    }</span>
+<span class="nc" id="L360">      this(((ClientContext) null));</span>
+<span class="nc" id="L361">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L330">      super(clientContext);</span>
+<span class="fc" id="L364">      super(clientContext);</span>
 
-<span class="fc" id="L332">      createBudgetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L333">      updateBudgetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L334">      getBudgetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L335">      listBudgetsSettings = PagedCallSettings.newBuilder(LIST_BUDGETS_PAGE_STR_FACT);</span>
-<span class="fc" id="L336">      deleteBudgetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L366">      createBudgetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L367">      updateBudgetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L368">      getBudgetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L369">      listBudgetsSettings = PagedCallSettings.newBuilder(LIST_BUDGETS_PAGE_STR_FACT);</span>
+<span class="fc" id="L370">      deleteBudgetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L338">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L339">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L372">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L373">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createBudgetSettings,
               updateBudgetSettings,
               getBudgetSettings,
               listBudgetsSettings,
               deleteBudgetSettings);
-<span class="fc" id="L345">      initDefaults(this);</span>
-<span class="fc" id="L346">    }</span>
+<span class="fc" id="L379">      initDefaults(this);</span>
+<span class="fc" id="L380">    }</span>
 
     protected Builder(BudgetServiceStubSettings settings) {
-<span class="nc" id="L349">      super(settings);</span>
+<span class="nc" id="L383">      super(settings);</span>
 
-<span class="nc" id="L351">      createBudgetSettings = settings.createBudgetSettings.toBuilder();</span>
-<span class="nc" id="L352">      updateBudgetSettings = settings.updateBudgetSettings.toBuilder();</span>
-<span class="nc" id="L353">      getBudgetSettings = settings.getBudgetSettings.toBuilder();</span>
-<span class="nc" id="L354">      listBudgetsSettings = settings.listBudgetsSettings.toBuilder();</span>
-<span class="nc" id="L355">      deleteBudgetSettings = settings.deleteBudgetSettings.toBuilder();</span>
+<span class="nc" id="L385">      createBudgetSettings = settings.createBudgetSettings.toBuilder();</span>
+<span class="nc" id="L386">      updateBudgetSettings = settings.updateBudgetSettings.toBuilder();</span>
+<span class="nc" id="L387">      getBudgetSettings = settings.getBudgetSettings.toBuilder();</span>
+<span class="nc" id="L388">      listBudgetsSettings = settings.listBudgetsSettings.toBuilder();</span>
+<span class="nc" id="L389">      deleteBudgetSettings = settings.deleteBudgetSettings.toBuilder();</span>
 
-<span class="nc" id="L357">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L358">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L391">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L392">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createBudgetSettings,
               updateBudgetSettings,
               getBudgetSettings,
               listBudgetsSettings,
               deleteBudgetSettings);
-<span class="nc" id="L364">    }</span>
+<span class="nc" id="L398">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L367">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L401">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L369">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L370">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L371">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L372">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L373">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L374">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L403">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L404">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L405">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L406">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L407">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L408">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L376">      return initDefaults(builder);</span>
+<span class="fc" id="L410">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L414">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L416">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L417">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L418">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L419">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L420">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L421">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L423">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L380">      builder</span>
-<span class="fc" id="L381">          .createBudgetSettings()</span>
-<span class="fc" id="L382">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L383">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L427">      builder</span>
+<span class="fc" id="L428">          .createBudgetSettings()</span>
+<span class="fc" id="L429">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L430">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L385">      builder</span>
-<span class="fc" id="L386">          .updateBudgetSettings()</span>
-<span class="fc" id="L387">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
-<span class="fc" id="L388">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
+<span class="fc" id="L432">      builder</span>
+<span class="fc" id="L433">          .updateBudgetSettings()</span>
+<span class="fc" id="L434">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
+<span class="fc" id="L435">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
 
-<span class="fc" id="L390">      builder</span>
-<span class="fc" id="L391">          .getBudgetSettings()</span>
-<span class="fc" id="L392">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
-<span class="fc" id="L393">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
+<span class="fc" id="L437">      builder</span>
+<span class="fc" id="L438">          .getBudgetSettings()</span>
+<span class="fc" id="L439">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
+<span class="fc" id="L440">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
 
-<span class="fc" id="L395">      builder</span>
-<span class="fc" id="L396">          .listBudgetsSettings()</span>
-<span class="fc" id="L397">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
-<span class="fc" id="L398">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
+<span class="fc" id="L442">      builder</span>
+<span class="fc" id="L443">          .listBudgetsSettings()</span>
+<span class="fc" id="L444">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
+<span class="fc" id="L445">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
 
-<span class="fc" id="L400">      builder</span>
-<span class="fc" id="L401">          .deleteBudgetSettings()</span>
-<span class="fc" id="L402">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
-<span class="fc" id="L403">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
+<span class="fc" id="L447">      builder</span>
+<span class="fc" id="L448">          .deleteBudgetSettings()</span>
+<span class="fc" id="L449">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
+<span class="fc" id="L450">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
 
-<span class="fc" id="L405">      return builder;</span>
+<span class="fc" id="L452">      return builder;</span>
     }
 
     /**
@@ -412,44 +459,44 @@ public class BudgetServiceStubSettings extends StubSettings&lt;BudgetServiceStub
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L415">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L416">      return this;</span>
+<span class="nc" id="L462">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L463">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L420">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L467">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to createBudget. */
     public UnaryCallSettings.Builder&lt;CreateBudgetRequest, Budget&gt; createBudgetSettings() {
-<span class="fc" id="L425">      return createBudgetSettings;</span>
+<span class="fc" id="L472">      return createBudgetSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateBudget. */
     public UnaryCallSettings.Builder&lt;UpdateBudgetRequest, Budget&gt; updateBudgetSettings() {
-<span class="fc" id="L430">      return updateBudgetSettings;</span>
+<span class="fc" id="L477">      return updateBudgetSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getBudget. */
     public UnaryCallSettings.Builder&lt;GetBudgetRequest, Budget&gt; getBudgetSettings() {
-<span class="fc" id="L435">      return getBudgetSettings;</span>
+<span class="fc" id="L482">      return getBudgetSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listBudgets. */
     public PagedCallSettings.Builder&lt;
             ListBudgetsRequest, ListBudgetsResponse, ListBudgetsPagedResponse&gt;
         listBudgetsSettings() {
-<span class="fc" id="L442">      return listBudgetsSettings;</span>
+<span class="fc" id="L489">      return listBudgetsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteBudget. */
     public UnaryCallSettings.Builder&lt;DeleteBudgetRequest, Empty&gt; deleteBudgetSettings() {
-<span class="fc" id="L447">      return deleteBudgetSettings;</span>
+<span class="fc" id="L494">      return deleteBudgetSettings;</span>
     }
 
     @Override
     public BudgetServiceStubSettings build() throws IOException {
-<span class="fc" id="L452">      return new BudgetServiceStubSettings(this);</span>
+<span class="fc" id="L499">      return new BudgetServiceStubSettings(this);</span>
     }
   }
 }

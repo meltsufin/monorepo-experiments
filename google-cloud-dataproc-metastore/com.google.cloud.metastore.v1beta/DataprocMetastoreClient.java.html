@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.metastore.v1beta.stub.DataprocMetastoreStub;
 import com.google.cloud.metastore.v1beta.stub.DataprocMetastoreStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -122,6 +122,21 @@ import javax.annotation.Generated;
  *     DataprocMetastoreClient.create(dataprocMetastoreSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * DataprocMetastoreSettings dataprocMetastoreSettings =
+ *     DataprocMetastoreSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             DataprocMetastoreSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * DataprocMetastoreClient dataprocMetastoreClient =
+ *     DataprocMetastoreClient.create(dataprocMetastoreSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -129,11 +144,12 @@ import javax.annotation.Generated;
 public class DataprocMetastoreClient implements BackgroundResource {
   private final DataprocMetastoreSettings settings;
   private final DataprocMetastoreStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of DataprocMetastoreClient with default settings. */
   public static final DataprocMetastoreClient create() throws IOException {
-<span class="nc" id="L136">    return create(DataprocMetastoreSettings.newBuilder().build());</span>
+<span class="nc" id="L152">    return create(DataprocMetastoreSettings.newBuilder().build());</span>
   }
 
   /**
@@ -142,7 +158,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public static final DataprocMetastoreClient create(DataprocMetastoreSettings settings)
       throws IOException {
-<span class="fc" id="L145">    return new DataprocMetastoreClient(settings);</span>
+<span class="fc" id="L161">    return new DataprocMetastoreClient(settings);</span>
   }
 
   /**
@@ -150,7 +166,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * is for advanced usage - prefer using create(DataprocMetastoreSettings).
    */
   public static final DataprocMetastoreClient create(DataprocMetastoreStub stub) {
-<span class="nc" id="L153">    return new DataprocMetastoreClient(stub);</span>
+<span class="nc" id="L169">    return new DataprocMetastoreClient(stub);</span>
   }
 
   /**
@@ -158,32 +174,44 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * so that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L161">  protected DataprocMetastoreClient(DataprocMetastoreSettings settings) throws IOException {</span>
-<span class="fc" id="L162">    this.settings = settings;</span>
-<span class="fc" id="L163">    this.stub = ((DataprocMetastoreStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L164">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L165">  }</span>
+<span class="fc" id="L177">  protected DataprocMetastoreClient(DataprocMetastoreSettings settings) throws IOException {</span>
+<span class="fc" id="L178">    this.settings = settings;</span>
+<span class="fc" id="L179">    this.stub = ((DataprocMetastoreStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L180">    this.operationsClient =</span>
+<span class="fc" id="L181">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L182">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L183">  }</span>
 
-<span class="nc" id="L167">  protected DataprocMetastoreClient(DataprocMetastoreStub stub) {</span>
-<span class="nc" id="L168">    this.settings = null;</span>
-<span class="nc" id="L169">    this.stub = stub;</span>
-<span class="nc" id="L170">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L171">  }</span>
+<span class="nc" id="L185">  protected DataprocMetastoreClient(DataprocMetastoreStub stub) {</span>
+<span class="nc" id="L186">    this.settings = null;</span>
+<span class="nc" id="L187">    this.stub = stub;</span>
+<span class="nc" id="L188">    this.operationsClient =</span>
+<span class="nc" id="L189">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L190">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L191">  }</span>
 
   public final DataprocMetastoreSettings getSettings() {
-<span class="nc" id="L174">    return settings;</span>
+<span class="nc" id="L194">    return settings;</span>
   }
 
   public DataprocMetastoreStub getStub() {
-<span class="nc" id="L178">    return stub;</span>
+<span class="nc" id="L198">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L186">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L206">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L214">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -210,10 +238,10 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final ListServicesPagedResponse listServices(LocationName parent) {
     ListServicesRequest request =
-<span class="fc" id="L213">        ListServicesRequest.newBuilder()</span>
-<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L215">            .build();</span>
-<span class="fc" id="L216">    return listServices(request);</span>
+<span class="fc" id="L241">        ListServicesRequest.newBuilder()</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L243">            .build();</span>
+<span class="fc" id="L244">    return listServices(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -239,8 +267,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListServicesPagedResponse listServices(String parent) {
-<span class="fc" id="L242">    ListServicesRequest request = ListServicesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L243">    return listServices(request);</span>
+<span class="fc" id="L270">    ListServicesRequest request = ListServicesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L271">    return listServices(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -271,7 +299,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListServicesPagedResponse listServices(ListServicesRequest request) {
-<span class="fc" id="L274">    return listServicesPagedCallable().call(request);</span>
+<span class="fc" id="L302">    return listServicesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -303,7 +331,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListServicesRequest, ListServicesPagedResponse&gt;
       listServicesPagedCallable() {
-<span class="fc" id="L306">    return stub.listServicesPagedCallable();</span>
+<span class="fc" id="L334">    return stub.listServicesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -341,7 +369,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListServicesRequest, ListServicesResponse&gt; listServicesCallable() {
-<span class="nc" id="L344">    return stub.listServicesCallable();</span>
+<span class="nc" id="L372">    return stub.listServicesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -366,8 +394,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final Service getService(ServiceName name) {
     GetServiceRequest request =
-<span class="pc bpc" id="L369" title="1 of 2 branches missed.">        GetServiceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L370">    return getService(request);</span>
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">        GetServiceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L398">    return getService(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -391,8 +419,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Service getService(String name) {
-<span class="fc" id="L394">    GetServiceRequest request = GetServiceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L395">    return getService(request);</span>
+<span class="fc" id="L422">    GetServiceRequest request = GetServiceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L423">    return getService(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -417,7 +445,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Service getService(GetServiceRequest request) {
-<span class="fc" id="L420">    return getServiceCallable().call(request);</span>
+<span class="fc" id="L448">    return getServiceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -441,7 +469,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetServiceRequest, Service&gt; getServiceCallable() {
-<span class="fc" id="L444">    return stub.getServiceCallable();</span>
+<span class="fc" id="L472">    return stub.getServiceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -476,12 +504,12 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Service, OperationMetadata&gt; createServiceAsync(
       LocationName parent, Service service, String serviceId) {
     CreateServiceRequest request =
-<span class="fc" id="L479">        CreateServiceRequest.newBuilder()</span>
-<span class="pc bpc" id="L480" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L481">            .setService(service)</span>
-<span class="fc" id="L482">            .setServiceId(serviceId)</span>
-<span class="fc" id="L483">            .build();</span>
-<span class="fc" id="L484">    return createServiceAsync(request);</span>
+<span class="fc" id="L507">        CreateServiceRequest.newBuilder()</span>
+<span class="pc bpc" id="L508" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L509">            .setService(service)</span>
+<span class="fc" id="L510">            .setServiceId(serviceId)</span>
+<span class="fc" id="L511">            .build();</span>
+<span class="fc" id="L512">    return createServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -516,12 +544,12 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Service, OperationMetadata&gt; createServiceAsync(
       String parent, Service service, String serviceId) {
     CreateServiceRequest request =
-<span class="fc" id="L519">        CreateServiceRequest.newBuilder()</span>
-<span class="fc" id="L520">            .setParent(parent)</span>
-<span class="fc" id="L521">            .setService(service)</span>
-<span class="fc" id="L522">            .setServiceId(serviceId)</span>
-<span class="fc" id="L523">            .build();</span>
-<span class="fc" id="L524">    return createServiceAsync(request);</span>
+<span class="fc" id="L547">        CreateServiceRequest.newBuilder()</span>
+<span class="fc" id="L548">            .setParent(parent)</span>
+<span class="fc" id="L549">            .setService(service)</span>
+<span class="fc" id="L550">            .setServiceId(serviceId)</span>
+<span class="fc" id="L551">            .build();</span>
+<span class="fc" id="L552">    return createServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -550,7 +578,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Service, OperationMetadata&gt; createServiceAsync(
       CreateServiceRequest request) {
-<span class="fc" id="L553">    return createServiceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L581">    return createServiceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -579,7 +607,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateServiceRequest, Service, OperationMetadata&gt;
       createServiceOperationCallable() {
-<span class="fc" id="L582">    return stub.createServiceOperationCallable();</span>
+<span class="fc" id="L610">    return stub.createServiceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -607,7 +635,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateServiceRequest, Operation&gt; createServiceCallable() {
-<span class="nc" id="L610">    return stub.createServiceCallable();</span>
+<span class="nc" id="L638">    return stub.createServiceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -639,8 +667,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Service, OperationMetadata&gt; updateServiceAsync(
       Service service, FieldMask updateMask) {
     UpdateServiceRequest request =
-<span class="fc" id="L642">        UpdateServiceRequest.newBuilder().setService(service).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L643">    return updateServiceAsync(request);</span>
+<span class="fc" id="L670">        UpdateServiceRequest.newBuilder().setService(service).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L671">    return updateServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -668,7 +696,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Service, OperationMetadata&gt; updateServiceAsync(
       UpdateServiceRequest request) {
-<span class="fc" id="L671">    return updateServiceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L699">    return updateServiceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -696,7 +724,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateServiceRequest, Service, OperationMetadata&gt;
       updateServiceOperationCallable() {
-<span class="fc" id="L699">    return stub.updateServiceOperationCallable();</span>
+<span class="fc" id="L727">    return stub.updateServiceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -723,7 +751,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateServiceRequest, Operation&gt; updateServiceCallable() {
-<span class="nc" id="L726">    return stub.updateServiceCallable();</span>
+<span class="nc" id="L754">    return stub.updateServiceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -748,8 +776,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteServiceAsync(ServiceName name) {
     DeleteServiceRequest request =
-<span class="pc bpc" id="L751" title="1 of 2 branches missed.">        DeleteServiceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L752">    return deleteServiceAsync(request);</span>
+<span class="pc bpc" id="L779" title="1 of 2 branches missed.">        DeleteServiceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L780">    return deleteServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -773,8 +801,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteServiceAsync(String name) {
-<span class="fc" id="L776">    DeleteServiceRequest request = DeleteServiceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L777">    return deleteServiceAsync(request);</span>
+<span class="fc" id="L804">    DeleteServiceRequest request = DeleteServiceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L805">    return deleteServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -801,7 +829,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteServiceAsync(
       DeleteServiceRequest request) {
-<span class="fc" id="L804">    return deleteServiceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L832">    return deleteServiceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -828,7 +856,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteServiceRequest, Empty, OperationMetadata&gt;
       deleteServiceOperationCallable() {
-<span class="fc" id="L831">    return stub.deleteServiceOperationCallable();</span>
+<span class="fc" id="L859">    return stub.deleteServiceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -854,7 +882,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteServiceRequest, Operation&gt; deleteServiceCallable() {
-<span class="nc" id="L857">    return stub.deleteServiceCallable();</span>
+<span class="nc" id="L885">    return stub.deleteServiceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -882,10 +910,10 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final ListMetadataImportsPagedResponse listMetadataImports(ServiceName parent) {
     ListMetadataImportsRequest request =
-<span class="fc" id="L885">        ListMetadataImportsRequest.newBuilder()</span>
-<span class="pc bpc" id="L886" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L887">            .build();</span>
-<span class="fc" id="L888">    return listMetadataImports(request);</span>
+<span class="fc" id="L913">        ListMetadataImportsRequest.newBuilder()</span>
+<span class="pc bpc" id="L914" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L915">            .build();</span>
+<span class="fc" id="L916">    return listMetadataImports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -913,8 +941,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final ListMetadataImportsPagedResponse listMetadataImports(String parent) {
     ListMetadataImportsRequest request =
-<span class="fc" id="L916">        ListMetadataImportsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L917">    return listMetadataImports(request);</span>
+<span class="fc" id="L944">        ListMetadataImportsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L945">    return listMetadataImports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -947,7 +975,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final ListMetadataImportsPagedResponse listMetadataImports(
       ListMetadataImportsRequest request) {
-<span class="fc" id="L950">    return listMetadataImportsPagedCallable().call(request);</span>
+<span class="fc" id="L978">    return listMetadataImportsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -979,7 +1007,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListMetadataImportsRequest, ListMetadataImportsPagedResponse&gt;
       listMetadataImportsPagedCallable() {
-<span class="fc" id="L982">    return stub.listMetadataImportsPagedCallable();</span>
+<span class="fc" id="L1010">    return stub.listMetadataImportsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1018,7 +1046,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListMetadataImportsRequest, ListMetadataImportsResponse&gt;
       listMetadataImportsCallable() {
-<span class="nc" id="L1021">    return stub.listMetadataImportsCallable();</span>
+<span class="nc" id="L1049">    return stub.listMetadataImportsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1044,10 +1072,10 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final MetadataImport getMetadataImport(MetadataImportName name) {
     GetMetadataImportRequest request =
-<span class="fc" id="L1047">        GetMetadataImportRequest.newBuilder()</span>
-<span class="pc bpc" id="L1048" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1049">            .build();</span>
-<span class="fc" id="L1050">    return getMetadataImport(request);</span>
+<span class="fc" id="L1075">        GetMetadataImportRequest.newBuilder()</span>
+<span class="pc bpc" id="L1076" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1077">            .build();</span>
+<span class="fc" id="L1078">    return getMetadataImport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1073,8 +1101,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final MetadataImport getMetadataImport(String name) {
-<span class="fc" id="L1076">    GetMetadataImportRequest request = GetMetadataImportRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1077">    return getMetadataImport(request);</span>
+<span class="fc" id="L1104">    GetMetadataImportRequest request = GetMetadataImportRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1105">    return getMetadataImport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1101,7 +1129,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final MetadataImport getMetadataImport(GetMetadataImportRequest request) {
-<span class="fc" id="L1104">    return getMetadataImportCallable().call(request);</span>
+<span class="fc" id="L1132">    return getMetadataImportCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1128,7 +1156,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetMetadataImportRequest, MetadataImport&gt; getMetadataImportCallable() {
-<span class="fc" id="L1131">    return stub.getMetadataImportCallable();</span>
+<span class="fc" id="L1159">    return stub.getMetadataImportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1166,12 +1194,12 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;MetadataImport, OperationMetadata&gt; createMetadataImportAsync(
       ServiceName parent, MetadataImport metadataImport, String metadataImportId) {
     CreateMetadataImportRequest request =
-<span class="fc" id="L1169">        CreateMetadataImportRequest.newBuilder()</span>
-<span class="pc bpc" id="L1170" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1171">            .setMetadataImport(metadataImport)</span>
-<span class="fc" id="L1172">            .setMetadataImportId(metadataImportId)</span>
-<span class="fc" id="L1173">            .build();</span>
-<span class="fc" id="L1174">    return createMetadataImportAsync(request);</span>
+<span class="fc" id="L1197">        CreateMetadataImportRequest.newBuilder()</span>
+<span class="pc bpc" id="L1198" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1199">            .setMetadataImport(metadataImport)</span>
+<span class="fc" id="L1200">            .setMetadataImportId(metadataImportId)</span>
+<span class="fc" id="L1201">            .build();</span>
+<span class="fc" id="L1202">    return createMetadataImportAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1209,12 +1237,12 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;MetadataImport, OperationMetadata&gt; createMetadataImportAsync(
       String parent, MetadataImport metadataImport, String metadataImportId) {
     CreateMetadataImportRequest request =
-<span class="fc" id="L1212">        CreateMetadataImportRequest.newBuilder()</span>
-<span class="fc" id="L1213">            .setParent(parent)</span>
-<span class="fc" id="L1214">            .setMetadataImport(metadataImport)</span>
-<span class="fc" id="L1215">            .setMetadataImportId(metadataImportId)</span>
-<span class="fc" id="L1216">            .build();</span>
-<span class="fc" id="L1217">    return createMetadataImportAsync(request);</span>
+<span class="fc" id="L1240">        CreateMetadataImportRequest.newBuilder()</span>
+<span class="fc" id="L1241">            .setParent(parent)</span>
+<span class="fc" id="L1242">            .setMetadataImport(metadataImport)</span>
+<span class="fc" id="L1243">            .setMetadataImportId(metadataImportId)</span>
+<span class="fc" id="L1244">            .build();</span>
+<span class="fc" id="L1245">    return createMetadataImportAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1243,7 +1271,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;MetadataImport, OperationMetadata&gt; createMetadataImportAsync(
       CreateMetadataImportRequest request) {
-<span class="fc" id="L1246">    return createMetadataImportOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1274">    return createMetadataImportOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1272,7 +1300,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateMetadataImportRequest, MetadataImport, OperationMetadata&gt;
       createMetadataImportOperationCallable() {
-<span class="fc" id="L1275">    return stub.createMetadataImportOperationCallable();</span>
+<span class="fc" id="L1303">    return stub.createMetadataImportOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1301,7 +1329,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateMetadataImportRequest, Operation&gt;
       createMetadataImportCallable() {
-<span class="nc" id="L1304">    return stub.createMetadataImportCallable();</span>
+<span class="nc" id="L1332">    return stub.createMetadataImportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1334,11 +1362,11 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;MetadataImport, OperationMetadata&gt; updateMetadataImportAsync(
       MetadataImport metadataImport, FieldMask updateMask) {
     UpdateMetadataImportRequest request =
-<span class="fc" id="L1337">        UpdateMetadataImportRequest.newBuilder()</span>
-<span class="fc" id="L1338">            .setMetadataImport(metadataImport)</span>
-<span class="fc" id="L1339">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1340">            .build();</span>
-<span class="fc" id="L1341">    return updateMetadataImportAsync(request);</span>
+<span class="fc" id="L1365">        UpdateMetadataImportRequest.newBuilder()</span>
+<span class="fc" id="L1366">            .setMetadataImport(metadataImport)</span>
+<span class="fc" id="L1367">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1368">            .build();</span>
+<span class="fc" id="L1369">    return updateMetadataImportAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1367,7 +1395,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;MetadataImport, OperationMetadata&gt; updateMetadataImportAsync(
       UpdateMetadataImportRequest request) {
-<span class="fc" id="L1370">    return updateMetadataImportOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1398">    return updateMetadataImportOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1396,7 +1424,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateMetadataImportRequest, MetadataImport, OperationMetadata&gt;
       updateMetadataImportOperationCallable() {
-<span class="fc" id="L1399">    return stub.updateMetadataImportOperationCallable();</span>
+<span class="fc" id="L1427">    return stub.updateMetadataImportOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1425,7 +1453,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateMetadataImportRequest, Operation&gt;
       updateMetadataImportCallable() {
-<span class="nc" id="L1428">    return stub.updateMetadataImportCallable();</span>
+<span class="nc" id="L1456">    return stub.updateMetadataImportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1452,7 +1480,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;MetadataExport, OperationMetadata&gt; exportMetadataAsync(
       ExportMetadataRequest request) {
-<span class="fc" id="L1455">    return exportMetadataOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1483">    return exportMetadataOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1479,7 +1507,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ExportMetadataRequest, MetadataExport, OperationMetadata&gt;
       exportMetadataOperationCallable() {
-<span class="fc" id="L1482">    return stub.exportMetadataOperationCallable();</span>
+<span class="fc" id="L1510">    return stub.exportMetadataOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1505,7 +1533,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExportMetadataRequest, Operation&gt; exportMetadataCallable() {
-<span class="nc" id="L1508">    return stub.exportMetadataCallable();</span>
+<span class="nc" id="L1536">    return stub.exportMetadataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1535,11 +1563,11 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Restore, OperationMetadata&gt; restoreServiceAsync(
       ServiceName service, BackupName backup) {
     RestoreServiceRequest request =
-<span class="fc" id="L1538">        RestoreServiceRequest.newBuilder()</span>
-<span class="pc bpc" id="L1539" title="1 of 2 branches missed.">            .setService(service == null ? null : service.toString())</span>
-<span class="pc bpc" id="L1540" title="1 of 2 branches missed.">            .setBackup(backup == null ? null : backup.toString())</span>
-<span class="fc" id="L1541">            .build();</span>
-<span class="fc" id="L1542">    return restoreServiceAsync(request);</span>
+<span class="fc" id="L1566">        RestoreServiceRequest.newBuilder()</span>
+<span class="pc bpc" id="L1567" title="1 of 2 branches missed.">            .setService(service == null ? null : service.toString())</span>
+<span class="pc bpc" id="L1568" title="1 of 2 branches missed.">            .setBackup(backup == null ? null : backup.toString())</span>
+<span class="fc" id="L1569">            .build();</span>
+<span class="fc" id="L1570">    return restoreServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1569,11 +1597,11 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Restore, OperationMetadata&gt; restoreServiceAsync(
       ServiceName service, String backup) {
     RestoreServiceRequest request =
-<span class="fc" id="L1572">        RestoreServiceRequest.newBuilder()</span>
-<span class="pc bpc" id="L1573" title="1 of 2 branches missed.">            .setService(service == null ? null : service.toString())</span>
-<span class="fc" id="L1574">            .setBackup(backup)</span>
-<span class="fc" id="L1575">            .build();</span>
-<span class="fc" id="L1576">    return restoreServiceAsync(request);</span>
+<span class="fc" id="L1600">        RestoreServiceRequest.newBuilder()</span>
+<span class="pc bpc" id="L1601" title="1 of 2 branches missed.">            .setService(service == null ? null : service.toString())</span>
+<span class="fc" id="L1602">            .setBackup(backup)</span>
+<span class="fc" id="L1603">            .build();</span>
+<span class="fc" id="L1604">    return restoreServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1603,11 +1631,11 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Restore, OperationMetadata&gt; restoreServiceAsync(
       String service, BackupName backup) {
     RestoreServiceRequest request =
-<span class="fc" id="L1606">        RestoreServiceRequest.newBuilder()</span>
-<span class="fc" id="L1607">            .setService(service)</span>
-<span class="pc bpc" id="L1608" title="1 of 2 branches missed.">            .setBackup(backup == null ? null : backup.toString())</span>
-<span class="fc" id="L1609">            .build();</span>
-<span class="fc" id="L1610">    return restoreServiceAsync(request);</span>
+<span class="fc" id="L1634">        RestoreServiceRequest.newBuilder()</span>
+<span class="fc" id="L1635">            .setService(service)</span>
+<span class="pc bpc" id="L1636" title="1 of 2 branches missed.">            .setBackup(backup == null ? null : backup.toString())</span>
+<span class="fc" id="L1637">            .build();</span>
+<span class="fc" id="L1638">    return restoreServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1637,8 +1665,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Restore, OperationMetadata&gt; restoreServiceAsync(
       String service, String backup) {
     RestoreServiceRequest request =
-<span class="fc" id="L1640">        RestoreServiceRequest.newBuilder().setService(service).setBackup(backup).build();</span>
-<span class="fc" id="L1641">    return restoreServiceAsync(request);</span>
+<span class="fc" id="L1668">        RestoreServiceRequest.newBuilder().setService(service).setBackup(backup).build();</span>
+<span class="fc" id="L1669">    return restoreServiceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1667,7 +1695,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Restore, OperationMetadata&gt; restoreServiceAsync(
       RestoreServiceRequest request) {
-<span class="fc" id="L1670">    return restoreServiceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1698">    return restoreServiceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1696,7 +1724,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RestoreServiceRequest, Restore, OperationMetadata&gt;
       restoreServiceOperationCallable() {
-<span class="fc" id="L1699">    return stub.restoreServiceOperationCallable();</span>
+<span class="fc" id="L1727">    return stub.restoreServiceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1724,7 +1752,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RestoreServiceRequest, Operation&gt; restoreServiceCallable() {
-<span class="nc" id="L1727">    return stub.restoreServiceCallable();</span>
+<span class="nc" id="L1755">    return stub.restoreServiceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1751,10 +1779,10 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final ListBackupsPagedResponse listBackups(ServiceName parent) {
     ListBackupsRequest request =
-<span class="fc" id="L1754">        ListBackupsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1755" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1756">            .build();</span>
-<span class="fc" id="L1757">    return listBackups(request);</span>
+<span class="fc" id="L1782">        ListBackupsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1783" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1784">            .build();</span>
+<span class="fc" id="L1785">    return listBackups(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1780,8 +1808,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListBackupsPagedResponse listBackups(String parent) {
-<span class="fc" id="L1783">    ListBackupsRequest request = ListBackupsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1784">    return listBackups(request);</span>
+<span class="fc" id="L1811">    ListBackupsRequest request = ListBackupsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1812">    return listBackups(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1812,7 +1840,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListBackupsPagedResponse listBackups(ListBackupsRequest request) {
-<span class="fc" id="L1815">    return listBackupsPagedCallable().call(request);</span>
+<span class="fc" id="L1843">    return listBackupsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1844,7 +1872,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListBackupsRequest, ListBackupsPagedResponse&gt;
       listBackupsPagedCallable() {
-<span class="fc" id="L1847">    return stub.listBackupsPagedCallable();</span>
+<span class="fc" id="L1875">    return stub.listBackupsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1881,7 +1909,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListBackupsRequest, ListBackupsResponse&gt; listBackupsCallable() {
-<span class="nc" id="L1884">    return stub.listBackupsCallable();</span>
+<span class="nc" id="L1912">    return stub.listBackupsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1906,8 +1934,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final Backup getBackup(BackupName name) {
     GetBackupRequest request =
-<span class="pc bpc" id="L1909" title="1 of 2 branches missed.">        GetBackupRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1910">    return getBackup(request);</span>
+<span class="pc bpc" id="L1937" title="1 of 2 branches missed.">        GetBackupRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1938">    return getBackup(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1931,8 +1959,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Backup getBackup(String name) {
-<span class="fc" id="L1934">    GetBackupRequest request = GetBackupRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1935">    return getBackup(request);</span>
+<span class="fc" id="L1962">    GetBackupRequest request = GetBackupRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1963">    return getBackup(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1957,7 +1985,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Backup getBackup(GetBackupRequest request) {
-<span class="fc" id="L1960">    return getBackupCallable().call(request);</span>
+<span class="fc" id="L1988">    return getBackupCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1981,7 +2009,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetBackupRequest, Backup&gt; getBackupCallable() {
-<span class="fc" id="L1984">    return stub.getBackupCallable();</span>
+<span class="fc" id="L2012">    return stub.getBackupCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2015,12 +2043,12 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Backup, OperationMetadata&gt; createBackupAsync(
       ServiceName parent, Backup backup, String backupId) {
     CreateBackupRequest request =
-<span class="fc" id="L2018">        CreateBackupRequest.newBuilder()</span>
-<span class="pc bpc" id="L2019" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2020">            .setBackup(backup)</span>
-<span class="fc" id="L2021">            .setBackupId(backupId)</span>
-<span class="fc" id="L2022">            .build();</span>
-<span class="fc" id="L2023">    return createBackupAsync(request);</span>
+<span class="fc" id="L2046">        CreateBackupRequest.newBuilder()</span>
+<span class="pc bpc" id="L2047" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2048">            .setBackup(backup)</span>
+<span class="fc" id="L2049">            .setBackupId(backupId)</span>
+<span class="fc" id="L2050">            .build();</span>
+<span class="fc" id="L2051">    return createBackupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2054,12 +2082,12 @@ public class DataprocMetastoreClient implements BackgroundResource {
   public final OperationFuture&lt;Backup, OperationMetadata&gt; createBackupAsync(
       String parent, Backup backup, String backupId) {
     CreateBackupRequest request =
-<span class="fc" id="L2057">        CreateBackupRequest.newBuilder()</span>
-<span class="fc" id="L2058">            .setParent(parent)</span>
-<span class="fc" id="L2059">            .setBackup(backup)</span>
-<span class="fc" id="L2060">            .setBackupId(backupId)</span>
-<span class="fc" id="L2061">            .build();</span>
-<span class="fc" id="L2062">    return createBackupAsync(request);</span>
+<span class="fc" id="L2085">        CreateBackupRequest.newBuilder()</span>
+<span class="fc" id="L2086">            .setParent(parent)</span>
+<span class="fc" id="L2087">            .setBackup(backup)</span>
+<span class="fc" id="L2088">            .setBackupId(backupId)</span>
+<span class="fc" id="L2089">            .build();</span>
+<span class="fc" id="L2090">    return createBackupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2088,7 +2116,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Backup, OperationMetadata&gt; createBackupAsync(
       CreateBackupRequest request) {
-<span class="fc" id="L2091">    return createBackupOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2119">    return createBackupOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2117,7 +2145,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateBackupRequest, Backup, OperationMetadata&gt;
       createBackupOperationCallable() {
-<span class="fc" id="L2120">    return stub.createBackupOperationCallable();</span>
+<span class="fc" id="L2148">    return stub.createBackupOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2145,7 +2173,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateBackupRequest, Operation&gt; createBackupCallable() {
-<span class="nc" id="L2148">    return stub.createBackupCallable();</span>
+<span class="nc" id="L2176">    return stub.createBackupCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2170,8 +2198,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteBackupAsync(BackupName name) {
     DeleteBackupRequest request =
-<span class="pc bpc" id="L2173" title="1 of 2 branches missed.">        DeleteBackupRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2174">    return deleteBackupAsync(request);</span>
+<span class="pc bpc" id="L2201" title="1 of 2 branches missed.">        DeleteBackupRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2202">    return deleteBackupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2195,8 +2223,8 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteBackupAsync(String name) {
-<span class="fc" id="L2198">    DeleteBackupRequest request = DeleteBackupRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2199">    return deleteBackupAsync(request);</span>
+<span class="fc" id="L2226">    DeleteBackupRequest request = DeleteBackupRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2227">    return deleteBackupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2223,7 +2251,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteBackupAsync(
       DeleteBackupRequest request) {
-<span class="fc" id="L2226">    return deleteBackupOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2254">    return deleteBackupOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2250,7 +2278,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteBackupRequest, Empty, OperationMetadata&gt;
       deleteBackupOperationCallable() {
-<span class="fc" id="L2253">    return stub.deleteBackupOperationCallable();</span>
+<span class="fc" id="L2281">    return stub.deleteBackupOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2276,37 +2304,37 @@ public class DataprocMetastoreClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteBackupRequest, Operation&gt; deleteBackupCallable() {
-<span class="nc" id="L2279">    return stub.deleteBackupCallable();</span>
+<span class="nc" id="L2307">    return stub.deleteBackupCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2284">    stub.close();</span>
-<span class="fc" id="L2285">  }</span>
+<span class="fc" id="L2312">    stub.close();</span>
+<span class="fc" id="L2313">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2289">    stub.shutdown();</span>
-<span class="nc" id="L2290">  }</span>
+<span class="nc" id="L2317">    stub.shutdown();</span>
+<span class="nc" id="L2318">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2294">    return stub.isShutdown();</span>
+<span class="nc" id="L2322">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2299">    return stub.isTerminated();</span>
+<span class="nc" id="L2327">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2304">    stub.shutdownNow();</span>
-<span class="nc" id="L2305">  }</span>
+<span class="nc" id="L2332">    stub.shutdownNow();</span>
+<span class="nc" id="L2333">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2309">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2337">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListServicesPagedResponse
@@ -2321,16 +2349,16 @@ public class DataprocMetastoreClient implements BackgroundResource {
         PageContext&lt;ListServicesRequest, ListServicesResponse, Service&gt; context,
         ApiFuture&lt;ListServicesResponse&gt; futureResponse) {
       ApiFuture&lt;ListServicesPage&gt; futurePage =
-<span class="fc" id="L2324">          ListServicesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2325">      return ApiFutures.transform(</span>
+<span class="fc" id="L2352">          ListServicesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2353">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2327">          input -&gt; new ListServicesPagedResponse(input),</span>
-<span class="fc" id="L2328">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2355">          input -&gt; new ListServicesPagedResponse(input),</span>
+<span class="fc" id="L2356">          MoreExecutors.directExecutor());</span>
     }
 
     private ListServicesPagedResponse(ListServicesPage page) {
-<span class="fc" id="L2332">      super(page, ListServicesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2333">    }</span>
+<span class="fc" id="L2360">      super(page, ListServicesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2361">    }</span>
   }
 
   public static class ListServicesPage
@@ -2339,25 +2367,25 @@ public class DataprocMetastoreClient implements BackgroundResource {
     private ListServicesPage(
         PageContext&lt;ListServicesRequest, ListServicesResponse, Service&gt; context,
         ListServicesResponse response) {
-<span class="fc" id="L2342">      super(context, response);</span>
-<span class="fc" id="L2343">    }</span>
+<span class="fc" id="L2370">      super(context, response);</span>
+<span class="fc" id="L2371">    }</span>
 
     private static ListServicesPage createEmptyPage() {
-<span class="fc" id="L2346">      return new ListServicesPage(null, null);</span>
+<span class="fc" id="L2374">      return new ListServicesPage(null, null);</span>
     }
 
     @Override
     protected ListServicesPage createPage(
         PageContext&lt;ListServicesRequest, ListServicesResponse, Service&gt; context,
         ListServicesResponse response) {
-<span class="fc" id="L2353">      return new ListServicesPage(context, response);</span>
+<span class="fc" id="L2381">      return new ListServicesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListServicesPage&gt; createPageAsync(
         PageContext&lt;ListServicesRequest, ListServicesResponse, Service&gt; context,
         ApiFuture&lt;ListServicesResponse&gt; futureResponse) {
-<span class="fc" id="L2360">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2388">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2370,17 +2398,17 @@ public class DataprocMetastoreClient implements BackgroundResource {
           ListServicesFixedSizeCollection&gt; {
 
     private ListServicesFixedSizeCollection(List&lt;ListServicesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2373">      super(pages, collectionSize);</span>
-<span class="fc" id="L2374">    }</span>
+<span class="fc" id="L2401">      super(pages, collectionSize);</span>
+<span class="fc" id="L2402">    }</span>
 
     private static ListServicesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2377">      return new ListServicesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2405">      return new ListServicesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListServicesFixedSizeCollection createCollection(
         List&lt;ListServicesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2383">      return new ListServicesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2411">      return new ListServicesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2397,16 +2425,16 @@ public class DataprocMetastoreClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListMetadataImportsResponse&gt; futureResponse) {
       ApiFuture&lt;ListMetadataImportsPage&gt; futurePage =
-<span class="fc" id="L2400">          ListMetadataImportsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2401">      return ApiFutures.transform(</span>
+<span class="fc" id="L2428">          ListMetadataImportsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2429">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2403">          input -&gt; new ListMetadataImportsPagedResponse(input),</span>
-<span class="fc" id="L2404">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2431">          input -&gt; new ListMetadataImportsPagedResponse(input),</span>
+<span class="fc" id="L2432">          MoreExecutors.directExecutor());</span>
     }
 
     private ListMetadataImportsPagedResponse(ListMetadataImportsPage page) {
-<span class="fc" id="L2408">      super(page, ListMetadataImportsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2409">    }</span>
+<span class="fc" id="L2436">      super(page, ListMetadataImportsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2437">    }</span>
   }
 
   public static class ListMetadataImportsPage
@@ -2420,11 +2448,11 @@ public class DataprocMetastoreClient implements BackgroundResource {
         PageContext&lt;ListMetadataImportsRequest, ListMetadataImportsResponse, MetadataImport&gt;
             context,
         ListMetadataImportsResponse response) {
-<span class="fc" id="L2423">      super(context, response);</span>
-<span class="fc" id="L2424">    }</span>
+<span class="fc" id="L2451">      super(context, response);</span>
+<span class="fc" id="L2452">    }</span>
 
     private static ListMetadataImportsPage createEmptyPage() {
-<span class="fc" id="L2427">      return new ListMetadataImportsPage(null, null);</span>
+<span class="fc" id="L2455">      return new ListMetadataImportsPage(null, null);</span>
     }
 
     @Override
@@ -2432,7 +2460,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
         PageContext&lt;ListMetadataImportsRequest, ListMetadataImportsResponse, MetadataImport&gt;
             context,
         ListMetadataImportsResponse response) {
-<span class="fc" id="L2435">      return new ListMetadataImportsPage(context, response);</span>
+<span class="fc" id="L2463">      return new ListMetadataImportsPage(context, response);</span>
     }
 
     @Override
@@ -2440,7 +2468,7 @@ public class DataprocMetastoreClient implements BackgroundResource {
         PageContext&lt;ListMetadataImportsRequest, ListMetadataImportsResponse, MetadataImport&gt;
             context,
         ApiFuture&lt;ListMetadataImportsResponse&gt; futureResponse) {
-<span class="fc" id="L2443">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2471">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2454,17 +2482,17 @@ public class DataprocMetastoreClient implements BackgroundResource {
 
     private ListMetadataImportsFixedSizeCollection(
         List&lt;ListMetadataImportsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2457">      super(pages, collectionSize);</span>
-<span class="fc" id="L2458">    }</span>
+<span class="fc" id="L2485">      super(pages, collectionSize);</span>
+<span class="fc" id="L2486">    }</span>
 
     private static ListMetadataImportsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2461">      return new ListMetadataImportsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2489">      return new ListMetadataImportsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListMetadataImportsFixedSizeCollection createCollection(
         List&lt;ListMetadataImportsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2467">      return new ListMetadataImportsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2495">      return new ListMetadataImportsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2480,14 +2508,14 @@ public class DataprocMetastoreClient implements BackgroundResource {
         PageContext&lt;ListBackupsRequest, ListBackupsResponse, Backup&gt; context,
         ApiFuture&lt;ListBackupsResponse&gt; futureResponse) {
       ApiFuture&lt;ListBackupsPage&gt; futurePage =
-<span class="fc" id="L2483">          ListBackupsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2484">      return ApiFutures.transform(</span>
-<span class="fc" id="L2485">          futurePage, input -&gt; new ListBackupsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2511">          ListBackupsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2512">      return ApiFutures.transform(</span>
+<span class="fc" id="L2513">          futurePage, input -&gt; new ListBackupsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListBackupsPagedResponse(ListBackupsPage page) {
-<span class="fc" id="L2489">      super(page, ListBackupsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2490">    }</span>
+<span class="fc" id="L2517">      super(page, ListBackupsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2518">    }</span>
   }
 
   public static class ListBackupsPage
@@ -2496,25 +2524,25 @@ public class DataprocMetastoreClient implements BackgroundResource {
     private ListBackupsPage(
         PageContext&lt;ListBackupsRequest, ListBackupsResponse, Backup&gt; context,
         ListBackupsResponse response) {
-<span class="fc" id="L2499">      super(context, response);</span>
-<span class="fc" id="L2500">    }</span>
+<span class="fc" id="L2527">      super(context, response);</span>
+<span class="fc" id="L2528">    }</span>
 
     private static ListBackupsPage createEmptyPage() {
-<span class="fc" id="L2503">      return new ListBackupsPage(null, null);</span>
+<span class="fc" id="L2531">      return new ListBackupsPage(null, null);</span>
     }
 
     @Override
     protected ListBackupsPage createPage(
         PageContext&lt;ListBackupsRequest, ListBackupsResponse, Backup&gt; context,
         ListBackupsResponse response) {
-<span class="fc" id="L2510">      return new ListBackupsPage(context, response);</span>
+<span class="fc" id="L2538">      return new ListBackupsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListBackupsPage&gt; createPageAsync(
         PageContext&lt;ListBackupsRequest, ListBackupsResponse, Backup&gt; context,
         ApiFuture&lt;ListBackupsResponse&gt; futureResponse) {
-<span class="fc" id="L2517">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2545">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2527,17 +2555,17 @@ public class DataprocMetastoreClient implements BackgroundResource {
           ListBackupsFixedSizeCollection&gt; {
 
     private ListBackupsFixedSizeCollection(List&lt;ListBackupsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2530">      super(pages, collectionSize);</span>
-<span class="fc" id="L2531">    }</span>
+<span class="fc" id="L2558">      super(pages, collectionSize);</span>
+<span class="fc" id="L2559">    }</span>
 
     private static ListBackupsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2534">      return new ListBackupsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2562">      return new ListBackupsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListBackupsFixedSizeCollection createCollection(
         List&lt;ListBackupsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2540">      return new ListBackupsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2568">      return new ListBackupsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

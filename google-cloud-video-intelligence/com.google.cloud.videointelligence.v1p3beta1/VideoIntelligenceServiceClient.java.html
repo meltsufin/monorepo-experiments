@@ -18,13 +18,13 @@ package com.google.cloud.videointelligence.v1p3beta1;
 
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.rpc.OperationCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.videointelligence.v1p3beta1.stub.VideoIntelligenceServiceStub;
 import com.google.cloud.videointelligence.v1p3beta1.stub.VideoIntelligenceServiceStubSettings;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +100,21 @@ import javax.annotation.Generated;
  *     VideoIntelligenceServiceClient.create(videoIntelligenceServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * VideoIntelligenceServiceSettings videoIntelligenceServiceSettings =
+ *     VideoIntelligenceServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             VideoIntelligenceServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * VideoIntelligenceServiceClient videoIntelligenceServiceClient =
+ *     VideoIntelligenceServiceClient.create(videoIntelligenceServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -107,11 +122,12 @@ import javax.annotation.Generated;
 public class VideoIntelligenceServiceClient implements BackgroundResource {
   private final VideoIntelligenceServiceSettings settings;
   private final VideoIntelligenceServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of VideoIntelligenceServiceClient with default settings. */
   public static final VideoIntelligenceServiceClient create() throws IOException {
-<span class="nc" id="L114">    return create(VideoIntelligenceServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L130">    return create(VideoIntelligenceServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -121,7 +137,7 @@ public class VideoIntelligenceServiceClient implements BackgroundResource {
    */
   public static final VideoIntelligenceServiceClient create(
       VideoIntelligenceServiceSettings settings) throws IOException {
-<span class="fc" id="L124">    return new VideoIntelligenceServiceClient(settings);</span>
+<span class="fc" id="L140">    return new VideoIntelligenceServiceClient(settings);</span>
   }
 
   /**
@@ -129,7 +145,7 @@ public class VideoIntelligenceServiceClient implements BackgroundResource {
    * calls. This is for advanced usage - prefer using create(VideoIntelligenceServiceSettings).
    */
   public static final VideoIntelligenceServiceClient create(VideoIntelligenceServiceStub stub) {
-<span class="nc" id="L132">    return new VideoIntelligenceServiceClient(stub);</span>
+<span class="nc" id="L148">    return new VideoIntelligenceServiceClient(stub);</span>
   }
 
   /**
@@ -138,32 +154,44 @@ public class VideoIntelligenceServiceClient implements BackgroundResource {
    * should be preferred.
    */
   protected VideoIntelligenceServiceClient(VideoIntelligenceServiceSettings settings)
-<span class="fc" id="L141">      throws IOException {</span>
-<span class="fc" id="L142">    this.settings = settings;</span>
-<span class="fc" id="L143">    this.stub = ((VideoIntelligenceServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L144">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L145">  }</span>
+<span class="fc" id="L157">      throws IOException {</span>
+<span class="fc" id="L158">    this.settings = settings;</span>
+<span class="fc" id="L159">    this.stub = ((VideoIntelligenceServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L160">    this.operationsClient =</span>
+<span class="fc" id="L161">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L162">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L163">  }</span>
 
-<span class="nc" id="L147">  protected VideoIntelligenceServiceClient(VideoIntelligenceServiceStub stub) {</span>
-<span class="nc" id="L148">    this.settings = null;</span>
-<span class="nc" id="L149">    this.stub = stub;</span>
-<span class="nc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L151">  }</span>
+<span class="nc" id="L165">  protected VideoIntelligenceServiceClient(VideoIntelligenceServiceStub stub) {</span>
+<span class="nc" id="L166">    this.settings = null;</span>
+<span class="nc" id="L167">    this.stub = stub;</span>
+<span class="nc" id="L168">    this.operationsClient =</span>
+<span class="nc" id="L169">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L170">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L171">  }</span>
 
   public final VideoIntelligenceServiceSettings getSettings() {
-<span class="nc" id="L154">    return settings;</span>
+<span class="nc" id="L174">    return settings;</span>
   }
 
   public VideoIntelligenceServiceStub getStub() {
-<span class="nc" id="L158">    return stub;</span>
+<span class="nc" id="L178">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L166">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L186">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L194">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -202,8 +230,8 @@ public class VideoIntelligenceServiceClient implements BackgroundResource {
   public final OperationFuture&lt;AnnotateVideoResponse, AnnotateVideoProgress&gt; annotateVideoAsync(
       String inputUri, List&lt;Feature&gt; features) {
     AnnotateVideoRequest request =
-<span class="fc" id="L205">        AnnotateVideoRequest.newBuilder().setInputUri(inputUri).addAllFeatures(features).build();</span>
-<span class="fc" id="L206">    return annotateVideoAsync(request);</span>
+<span class="fc" id="L233">        AnnotateVideoRequest.newBuilder().setInputUri(inputUri).addAllFeatures(features).build();</span>
+<span class="fc" id="L234">    return annotateVideoAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -239,7 +267,7 @@ public class VideoIntelligenceServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;AnnotateVideoResponse, AnnotateVideoProgress&gt; annotateVideoAsync(
       AnnotateVideoRequest request) {
-<span class="fc" id="L242">    return annotateVideoOperationCallable().futureCall(request);</span>
+<span class="fc" id="L270">    return annotateVideoOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -274,7 +302,7 @@ public class VideoIntelligenceServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;AnnotateVideoRequest, AnnotateVideoResponse, AnnotateVideoProgress&gt;
       annotateVideoOperationCallable() {
-<span class="fc" id="L277">    return stub.annotateVideoOperationCallable();</span>
+<span class="fc" id="L305">    return stub.annotateVideoOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -308,37 +336,37 @@ public class VideoIntelligenceServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;AnnotateVideoRequest, Operation&gt; annotateVideoCallable() {
-<span class="nc" id="L311">    return stub.annotateVideoCallable();</span>
+<span class="nc" id="L339">    return stub.annotateVideoCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L316">    stub.close();</span>
-<span class="fc" id="L317">  }</span>
+<span class="fc" id="L344">    stub.close();</span>
+<span class="fc" id="L345">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L321">    stub.shutdown();</span>
-<span class="nc" id="L322">  }</span>
+<span class="nc" id="L349">    stub.shutdown();</span>
+<span class="nc" id="L350">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L326">    return stub.isShutdown();</span>
+<span class="nc" id="L354">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L331">    return stub.isTerminated();</span>
+<span class="nc" id="L359">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L336">    stub.shutdownNow();</span>
-<span class="nc" id="L337">  }</span>
+<span class="nc" id="L364">    stub.shutdownNow();</span>
+<span class="nc" id="L365">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L341">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L369">    return stub.awaitTermination(duration, unit);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

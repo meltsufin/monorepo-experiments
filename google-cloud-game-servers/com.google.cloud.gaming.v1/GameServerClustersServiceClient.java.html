@@ -19,6 +19,7 @@ package com.google.cloud.gaming.v1;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.gaming.v1.stub.GameServerClustersServiceStub;
 import com.google.cloud.gaming.v1.stub.GameServerClustersServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -108,17 +108,33 @@ import javax.annotation.Generated;
  *     GameServerClustersServiceClient.create(gameServerClustersServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * GameServerClustersServiceSettings gameServerClustersServiceSettings =
+ *     GameServerClustersServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             GameServerClustersServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * GameServerClustersServiceClient gameServerClustersServiceClient =
+ *     GameServerClustersServiceClient.create(gameServerClustersServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class GameServerClustersServiceClient implements BackgroundResource {
   private final GameServerClustersServiceSettings settings;
   private final GameServerClustersServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of GameServerClustersServiceClient with default settings. */
   public static final GameServerClustersServiceClient create() throws IOException {
-<span class="nc" id="L121">    return create(GameServerClustersServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L137">    return create(GameServerClustersServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -128,7 +144,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public static final GameServerClustersServiceClient create(
       GameServerClustersServiceSettings settings) throws IOException {
-<span class="fc" id="L131">    return new GameServerClustersServiceClient(settings);</span>
+<span class="fc" id="L147">    return new GameServerClustersServiceClient(settings);</span>
   }
 
   /**
@@ -136,7 +152,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    * calls. This is for advanced usage - prefer using create(GameServerClustersServiceSettings).
    */
   public static final GameServerClustersServiceClient create(GameServerClustersServiceStub stub) {
-<span class="nc" id="L139">    return new GameServerClustersServiceClient(stub);</span>
+<span class="nc" id="L155">    return new GameServerClustersServiceClient(stub);</span>
   }
 
   /**
@@ -145,32 +161,44 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    * should be preferred.
    */
   protected GameServerClustersServiceClient(GameServerClustersServiceSettings settings)
-<span class="fc" id="L148">      throws IOException {</span>
-<span class="fc" id="L149">    this.settings = settings;</span>
-<span class="fc" id="L150">    this.stub = ((GameServerClustersServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L151">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L152">  }</span>
+<span class="fc" id="L164">      throws IOException {</span>
+<span class="fc" id="L165">    this.settings = settings;</span>
+<span class="fc" id="L166">    this.stub = ((GameServerClustersServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L167">    this.operationsClient =</span>
+<span class="fc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L170">  }</span>
 
-<span class="nc" id="L154">  protected GameServerClustersServiceClient(GameServerClustersServiceStub stub) {</span>
-<span class="nc" id="L155">    this.settings = null;</span>
-<span class="nc" id="L156">    this.stub = stub;</span>
-<span class="nc" id="L157">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L158">  }</span>
+<span class="nc" id="L172">  protected GameServerClustersServiceClient(GameServerClustersServiceStub stub) {</span>
+<span class="nc" id="L173">    this.settings = null;</span>
+<span class="nc" id="L174">    this.stub = stub;</span>
+<span class="nc" id="L175">    this.operationsClient =</span>
+<span class="nc" id="L176">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L177">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L178">  }</span>
 
   public final GameServerClustersServiceSettings getSettings() {
-<span class="nc" id="L161">    return settings;</span>
+<span class="nc" id="L181">    return settings;</span>
   }
 
   public GameServerClustersServiceStub getStub() {
-<span class="nc" id="L165">    return stub;</span>
+<span class="nc" id="L185">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L173">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L193">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L201">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -198,10 +226,10 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final ListGameServerClustersPagedResponse listGameServerClusters(RealmName parent) {
     ListGameServerClustersRequest request =
-<span class="fc" id="L201">        ListGameServerClustersRequest.newBuilder()</span>
-<span class="pc bpc" id="L202" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L203">            .build();</span>
-<span class="fc" id="L204">    return listGameServerClusters(request);</span>
+<span class="fc" id="L229">        ListGameServerClustersRequest.newBuilder()</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L231">            .build();</span>
+<span class="fc" id="L232">    return listGameServerClusters(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -229,8 +257,8 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final ListGameServerClustersPagedResponse listGameServerClusters(String parent) {
     ListGameServerClustersRequest request =
-<span class="fc" id="L232">        ListGameServerClustersRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L233">    return listGameServerClusters(request);</span>
+<span class="fc" id="L260">        ListGameServerClustersRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L261">    return listGameServerClusters(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -265,7 +293,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final ListGameServerClustersPagedResponse listGameServerClusters(
       ListGameServerClustersRequest request) {
-<span class="fc" id="L268">    return listGameServerClustersPagedCallable().call(request);</span>
+<span class="fc" id="L296">    return listGameServerClustersPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -299,7 +327,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListGameServerClustersRequest, ListGameServerClustersPagedResponse&gt;
       listGameServerClustersPagedCallable() {
-<span class="fc" id="L302">    return stub.listGameServerClustersPagedCallable();</span>
+<span class="fc" id="L330">    return stub.listGameServerClustersPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -340,7 +368,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListGameServerClustersRequest, ListGameServerClustersResponse&gt;
       listGameServerClustersCallable() {
-<span class="nc" id="L343">    return stub.listGameServerClustersCallable();</span>
+<span class="nc" id="L371">    return stub.listGameServerClustersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -366,10 +394,10 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final GameServerCluster getGameServerCluster(GameServerClusterName name) {
     GetGameServerClusterRequest request =
-<span class="fc" id="L369">        GetGameServerClusterRequest.newBuilder()</span>
-<span class="pc bpc" id="L370" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L371">            .build();</span>
-<span class="fc" id="L372">    return getGameServerCluster(request);</span>
+<span class="fc" id="L397">        GetGameServerClusterRequest.newBuilder()</span>
+<span class="pc bpc" id="L398" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L399">            .build();</span>
+<span class="fc" id="L400">    return getGameServerCluster(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -395,8 +423,8 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final GameServerCluster getGameServerCluster(String name) {
     GetGameServerClusterRequest request =
-<span class="fc" id="L398">        GetGameServerClusterRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L399">    return getGameServerCluster(request);</span>
+<span class="fc" id="L426">        GetGameServerClusterRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L427">    return getGameServerCluster(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -425,7 +453,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final GameServerCluster getGameServerCluster(GetGameServerClusterRequest request) {
-<span class="fc" id="L428">    return getGameServerClusterCallable().call(request);</span>
+<span class="fc" id="L456">    return getGameServerClusterCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -455,7 +483,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetGameServerClusterRequest, GameServerCluster&gt;
       getGameServerClusterCallable() {
-<span class="fc" id="L458">    return stub.getGameServerClusterCallable();</span>
+<span class="fc" id="L486">    return stub.getGameServerClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -488,12 +516,12 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final OperationFuture&lt;GameServerCluster, OperationMetadata&gt; createGameServerClusterAsync(
       RealmName parent, GameServerCluster gameServerCluster, String gameServerClusterId) {
     CreateGameServerClusterRequest request =
-<span class="fc" id="L491">        CreateGameServerClusterRequest.newBuilder()</span>
-<span class="pc bpc" id="L492" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L493">            .setGameServerCluster(gameServerCluster)</span>
-<span class="fc" id="L494">            .setGameServerClusterId(gameServerClusterId)</span>
-<span class="fc" id="L495">            .build();</span>
-<span class="fc" id="L496">    return createGameServerClusterAsync(request);</span>
+<span class="fc" id="L519">        CreateGameServerClusterRequest.newBuilder()</span>
+<span class="pc bpc" id="L520" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L521">            .setGameServerCluster(gameServerCluster)</span>
+<span class="fc" id="L522">            .setGameServerClusterId(gameServerClusterId)</span>
+<span class="fc" id="L523">            .build();</span>
+<span class="fc" id="L524">    return createGameServerClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -526,12 +554,12 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final OperationFuture&lt;GameServerCluster, OperationMetadata&gt; createGameServerClusterAsync(
       String parent, GameServerCluster gameServerCluster, String gameServerClusterId) {
     CreateGameServerClusterRequest request =
-<span class="fc" id="L529">        CreateGameServerClusterRequest.newBuilder()</span>
-<span class="fc" id="L530">            .setParent(parent)</span>
-<span class="fc" id="L531">            .setGameServerCluster(gameServerCluster)</span>
-<span class="fc" id="L532">            .setGameServerClusterId(gameServerClusterId)</span>
-<span class="fc" id="L533">            .build();</span>
-<span class="fc" id="L534">    return createGameServerClusterAsync(request);</span>
+<span class="fc" id="L557">        CreateGameServerClusterRequest.newBuilder()</span>
+<span class="fc" id="L558">            .setParent(parent)</span>
+<span class="fc" id="L559">            .setGameServerCluster(gameServerCluster)</span>
+<span class="fc" id="L560">            .setGameServerClusterId(gameServerClusterId)</span>
+<span class="fc" id="L561">            .build();</span>
+<span class="fc" id="L562">    return createGameServerClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -561,7 +589,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;GameServerCluster, OperationMetadata&gt; createGameServerClusterAsync(
       CreateGameServerClusterRequest request) {
-<span class="fc" id="L564">    return createGameServerClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L592">    return createGameServerClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -593,7 +621,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateGameServerClusterRequest, GameServerCluster, OperationMetadata&gt;
       createGameServerClusterOperationCallable() {
-<span class="fc" id="L596">    return stub.createGameServerClusterOperationCallable();</span>
+<span class="fc" id="L624">    return stub.createGameServerClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -622,7 +650,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateGameServerClusterRequest, Operation&gt;
       createGameServerClusterCallable() {
-<span class="nc" id="L625">    return stub.createGameServerClusterCallable();</span>
+<span class="nc" id="L653">    return stub.createGameServerClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -654,7 +682,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final PreviewCreateGameServerClusterResponse previewCreateGameServerCluster(
       PreviewCreateGameServerClusterRequest request) {
-<span class="fc" id="L657">    return previewCreateGameServerClusterCallable().call(request);</span>
+<span class="fc" id="L685">    return previewCreateGameServerClusterCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -688,7 +716,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           PreviewCreateGameServerClusterRequest, PreviewCreateGameServerClusterResponse&gt;
       previewCreateGameServerClusterCallable() {
-<span class="fc" id="L691">    return stub.previewCreateGameServerClusterCallable();</span>
+<span class="fc" id="L719">    return stub.previewCreateGameServerClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -715,10 +743,10 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGameServerClusterAsync(
       GameServerClusterName name) {
     DeleteGameServerClusterRequest request =
-<span class="fc" id="L718">        DeleteGameServerClusterRequest.newBuilder()</span>
-<span class="pc bpc" id="L719" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L720">            .build();</span>
-<span class="fc" id="L721">    return deleteGameServerClusterAsync(request);</span>
+<span class="fc" id="L746">        DeleteGameServerClusterRequest.newBuilder()</span>
+<span class="pc bpc" id="L747" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L748">            .build();</span>
+<span class="fc" id="L749">    return deleteGameServerClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -744,8 +772,8 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGameServerClusterAsync(String name) {
     DeleteGameServerClusterRequest request =
-<span class="fc" id="L747">        DeleteGameServerClusterRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L748">    return deleteGameServerClusterAsync(request);</span>
+<span class="fc" id="L775">        DeleteGameServerClusterRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L776">    return deleteGameServerClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -774,7 +802,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGameServerClusterAsync(
       DeleteGameServerClusterRequest request) {
-<span class="fc" id="L777">    return deleteGameServerClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L805">    return deleteGameServerClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -805,7 +833,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteGameServerClusterRequest, Empty, OperationMetadata&gt;
       deleteGameServerClusterOperationCallable() {
-<span class="fc" id="L808">    return stub.deleteGameServerClusterOperationCallable();</span>
+<span class="fc" id="L836">    return stub.deleteGameServerClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -834,7 +862,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteGameServerClusterRequest, Operation&gt;
       deleteGameServerClusterCallable() {
-<span class="nc" id="L837">    return stub.deleteGameServerClusterCallable();</span>
+<span class="nc" id="L865">    return stub.deleteGameServerClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -865,7 +893,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final PreviewDeleteGameServerClusterResponse previewDeleteGameServerCluster(
       PreviewDeleteGameServerClusterRequest request) {
-<span class="fc" id="L868">    return previewDeleteGameServerClusterCallable().call(request);</span>
+<span class="fc" id="L896">    return previewDeleteGameServerClusterCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -898,7 +926,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           PreviewDeleteGameServerClusterRequest, PreviewDeleteGameServerClusterResponse&gt;
       previewDeleteGameServerClusterCallable() {
-<span class="fc" id="L901">    return stub.previewDeleteGameServerClusterCallable();</span>
+<span class="fc" id="L929">    return stub.previewDeleteGameServerClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -931,11 +959,11 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final OperationFuture&lt;GameServerCluster, OperationMetadata&gt; updateGameServerClusterAsync(
       GameServerCluster gameServerCluster, FieldMask updateMask) {
     UpdateGameServerClusterRequest request =
-<span class="fc" id="L934">        UpdateGameServerClusterRequest.newBuilder()</span>
-<span class="fc" id="L935">            .setGameServerCluster(gameServerCluster)</span>
-<span class="fc" id="L936">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L937">            .build();</span>
-<span class="fc" id="L938">    return updateGameServerClusterAsync(request);</span>
+<span class="fc" id="L962">        UpdateGameServerClusterRequest.newBuilder()</span>
+<span class="fc" id="L963">            .setGameServerCluster(gameServerCluster)</span>
+<span class="fc" id="L964">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L965">            .build();</span>
+<span class="fc" id="L966">    return updateGameServerClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -964,7 +992,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;GameServerCluster, OperationMetadata&gt; updateGameServerClusterAsync(
       UpdateGameServerClusterRequest request) {
-<span class="fc" id="L967">    return updateGameServerClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L995">    return updateGameServerClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -995,7 +1023,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateGameServerClusterRequest, GameServerCluster, OperationMetadata&gt;
       updateGameServerClusterOperationCallable() {
-<span class="fc" id="L998">    return stub.updateGameServerClusterOperationCallable();</span>
+<span class="fc" id="L1026">    return stub.updateGameServerClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1023,7 +1051,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateGameServerClusterRequest, Operation&gt;
       updateGameServerClusterCallable() {
-<span class="nc" id="L1026">    return stub.updateGameServerClusterCallable();</span>
+<span class="nc" id="L1054">    return stub.updateGameServerClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1053,7 +1081,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
    */
   public final PreviewUpdateGameServerClusterResponse previewUpdateGameServerCluster(
       PreviewUpdateGameServerClusterRequest request) {
-<span class="fc" id="L1056">    return previewUpdateGameServerClusterCallable().call(request);</span>
+<span class="fc" id="L1084">    return previewUpdateGameServerClusterCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1085,37 +1113,37 @@ public class GameServerClustersServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           PreviewUpdateGameServerClusterRequest, PreviewUpdateGameServerClusterResponse&gt;
       previewUpdateGameServerClusterCallable() {
-<span class="fc" id="L1088">    return stub.previewUpdateGameServerClusterCallable();</span>
+<span class="fc" id="L1116">    return stub.previewUpdateGameServerClusterCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1093">    stub.close();</span>
-<span class="fc" id="L1094">  }</span>
+<span class="fc" id="L1121">    stub.close();</span>
+<span class="fc" id="L1122">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1098">    stub.shutdown();</span>
-<span class="nc" id="L1099">  }</span>
+<span class="nc" id="L1126">    stub.shutdown();</span>
+<span class="nc" id="L1127">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1103">    return stub.isShutdown();</span>
+<span class="nc" id="L1131">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1108">    return stub.isTerminated();</span>
+<span class="nc" id="L1136">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1113">    stub.shutdownNow();</span>
-<span class="nc" id="L1114">  }</span>
+<span class="nc" id="L1141">    stub.shutdownNow();</span>
+<span class="nc" id="L1142">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1118">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1146">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListGameServerClustersPagedResponse
@@ -1132,16 +1160,16 @@ public class GameServerClustersServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListGameServerClustersResponse&gt; futureResponse) {
       ApiFuture&lt;ListGameServerClustersPage&gt; futurePage =
-<span class="fc" id="L1135">          ListGameServerClustersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1136">      return ApiFutures.transform(</span>
+<span class="fc" id="L1163">          ListGameServerClustersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1164">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1138">          input -&gt; new ListGameServerClustersPagedResponse(input),</span>
-<span class="fc" id="L1139">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1166">          input -&gt; new ListGameServerClustersPagedResponse(input),</span>
+<span class="fc" id="L1167">          MoreExecutors.directExecutor());</span>
     }
 
     private ListGameServerClustersPagedResponse(ListGameServerClustersPage page) {
-<span class="fc" id="L1143">      super(page, ListGameServerClustersFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1144">    }</span>
+<span class="fc" id="L1171">      super(page, ListGameServerClustersFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1172">    }</span>
   }
 
   public static class ListGameServerClustersPage
@@ -1156,11 +1184,11 @@ public class GameServerClustersServiceClient implements BackgroundResource {
                 ListGameServerClustersRequest, ListGameServerClustersResponse, GameServerCluster&gt;
             context,
         ListGameServerClustersResponse response) {
-<span class="fc" id="L1159">      super(context, response);</span>
-<span class="fc" id="L1160">    }</span>
+<span class="fc" id="L1187">      super(context, response);</span>
+<span class="fc" id="L1188">    }</span>
 
     private static ListGameServerClustersPage createEmptyPage() {
-<span class="fc" id="L1163">      return new ListGameServerClustersPage(null, null);</span>
+<span class="fc" id="L1191">      return new ListGameServerClustersPage(null, null);</span>
     }
 
     @Override
@@ -1169,7 +1197,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
                 ListGameServerClustersRequest, ListGameServerClustersResponse, GameServerCluster&gt;
             context,
         ListGameServerClustersResponse response) {
-<span class="fc" id="L1172">      return new ListGameServerClustersPage(context, response);</span>
+<span class="fc" id="L1200">      return new ListGameServerClustersPage(context, response);</span>
     }
 
     @Override
@@ -1178,7 +1206,7 @@ public class GameServerClustersServiceClient implements BackgroundResource {
                 ListGameServerClustersRequest, ListGameServerClustersResponse, GameServerCluster&gt;
             context,
         ApiFuture&lt;ListGameServerClustersResponse&gt; futureResponse) {
-<span class="fc" id="L1181">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1209">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1192,17 +1220,17 @@ public class GameServerClustersServiceClient implements BackgroundResource {
 
     private ListGameServerClustersFixedSizeCollection(
         List&lt;ListGameServerClustersPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1195">      super(pages, collectionSize);</span>
-<span class="fc" id="L1196">    }</span>
+<span class="fc" id="L1223">      super(pages, collectionSize);</span>
+<span class="fc" id="L1224">    }</span>
 
     private static ListGameServerClustersFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1199">      return new ListGameServerClustersFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1227">      return new ListGameServerClustersFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListGameServerClustersFixedSizeCollection createCollection(
         List&lt;ListGameServerClustersPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1205">      return new ListGameServerClustersFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1233">      return new ListGameServerClustersFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

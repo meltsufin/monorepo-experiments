@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.orchestration.airflow.service.v1beta1.stub.EnvironmentsS
 import com.google.cloud.orchestration.airflow.service.v1beta1.stub.EnvironmentsStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -103,6 +103,20 @@ import javax.annotation.Generated;
  * EnvironmentsClient environmentsClient = EnvironmentsClient.create(environmentsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * EnvironmentsSettings environmentsSettings =
+ *     EnvironmentsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             EnvironmentsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * EnvironmentsClient environmentsClient = EnvironmentsClient.create(environmentsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -110,11 +124,12 @@ import javax.annotation.Generated;
 public class EnvironmentsClient implements BackgroundResource {
   private final EnvironmentsSettings settings;
   private final EnvironmentsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of EnvironmentsClient with default settings. */
   public static final EnvironmentsClient create() throws IOException {
-<span class="nc" id="L117">    return create(EnvironmentsSettings.newBuilder().build());</span>
+<span class="nc" id="L132">    return create(EnvironmentsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -122,7 +137,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * created based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final EnvironmentsClient create(EnvironmentsSettings settings) throws IOException {
-<span class="fc" id="L125">    return new EnvironmentsClient(settings);</span>
+<span class="fc" id="L140">    return new EnvironmentsClient(settings);</span>
   }
 
   /**
@@ -130,7 +145,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * for advanced usage - prefer using create(EnvironmentsSettings).
    */
   public static final EnvironmentsClient create(EnvironmentsStub stub) {
-<span class="nc" id="L133">    return new EnvironmentsClient(stub);</span>
+<span class="nc" id="L148">    return new EnvironmentsClient(stub);</span>
   }
 
   /**
@@ -138,32 +153,44 @@ public class EnvironmentsClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L141">  protected EnvironmentsClient(EnvironmentsSettings settings) throws IOException {</span>
-<span class="fc" id="L142">    this.settings = settings;</span>
-<span class="fc" id="L143">    this.stub = ((EnvironmentsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L144">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L145">  }</span>
+<span class="fc" id="L156">  protected EnvironmentsClient(EnvironmentsSettings settings) throws IOException {</span>
+<span class="fc" id="L157">    this.settings = settings;</span>
+<span class="fc" id="L158">    this.stub = ((EnvironmentsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L159">    this.operationsClient =</span>
+<span class="fc" id="L160">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L161">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L162">  }</span>
 
-<span class="nc" id="L147">  protected EnvironmentsClient(EnvironmentsStub stub) {</span>
-<span class="nc" id="L148">    this.settings = null;</span>
-<span class="nc" id="L149">    this.stub = stub;</span>
-<span class="nc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L151">  }</span>
+<span class="nc" id="L164">  protected EnvironmentsClient(EnvironmentsStub stub) {</span>
+<span class="nc" id="L165">    this.settings = null;</span>
+<span class="nc" id="L166">    this.stub = stub;</span>
+<span class="nc" id="L167">    this.operationsClient =</span>
+<span class="nc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L170">  }</span>
 
   public final EnvironmentsSettings getSettings() {
-<span class="nc" id="L154">    return settings;</span>
+<span class="nc" id="L173">    return settings;</span>
   }
 
   public EnvironmentsStub getStub() {
-<span class="nc" id="L158">    return stub;</span>
+<span class="nc" id="L177">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L166">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L185">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L193">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -189,8 +216,8 @@ public class EnvironmentsClient implements BackgroundResource {
   public final OperationFuture&lt;Environment, OperationMetadata&gt; createEnvironmentAsync(
       String parent, Environment environment) {
     CreateEnvironmentRequest request =
-<span class="fc" id="L192">        CreateEnvironmentRequest.newBuilder().setParent(parent).setEnvironment(environment).build();</span>
-<span class="fc" id="L193">    return createEnvironmentAsync(request);</span>
+<span class="fc" id="L219">        CreateEnvironmentRequest.newBuilder().setParent(parent).setEnvironment(environment).build();</span>
+<span class="fc" id="L220">    return createEnvironmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -217,7 +244,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Environment, OperationMetadata&gt; createEnvironmentAsync(
       CreateEnvironmentRequest request) {
-<span class="fc" id="L220">    return createEnvironmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L247">    return createEnvironmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -244,7 +271,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateEnvironmentRequest, Environment, OperationMetadata&gt;
       createEnvironmentOperationCallable() {
-<span class="fc" id="L247">    return stub.createEnvironmentOperationCallable();</span>
+<span class="fc" id="L274">    return stub.createEnvironmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -270,7 +297,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateEnvironmentRequest, Operation&gt; createEnvironmentCallable() {
-<span class="nc" id="L273">    return stub.createEnvironmentCallable();</span>
+<span class="nc" id="L300">    return stub.createEnvironmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -293,8 +320,8 @@ public class EnvironmentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Environment getEnvironment(String name) {
-<span class="fc" id="L296">    GetEnvironmentRequest request = GetEnvironmentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L297">    return getEnvironment(request);</span>
+<span class="fc" id="L323">    GetEnvironmentRequest request = GetEnvironmentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L324">    return getEnvironment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -317,7 +344,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Environment getEnvironment(GetEnvironmentRequest request) {
-<span class="fc" id="L320">    return getEnvironmentCallable().call(request);</span>
+<span class="fc" id="L347">    return getEnvironmentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -340,7 +367,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetEnvironmentRequest, Environment&gt; getEnvironmentCallable() {
-<span class="fc" id="L343">    return stub.getEnvironmentCallable();</span>
+<span class="fc" id="L370">    return stub.getEnvironmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -366,8 +393,8 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final ListEnvironmentsPagedResponse listEnvironments(String parent) {
     ListEnvironmentsRequest request =
-<span class="fc" id="L369">        ListEnvironmentsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L370">    return listEnvironments(request);</span>
+<span class="fc" id="L396">        ListEnvironmentsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L397">    return listEnvironments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -396,7 +423,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListEnvironmentsPagedResponse listEnvironments(ListEnvironmentsRequest request) {
-<span class="fc" id="L399">    return listEnvironmentsPagedCallable().call(request);</span>
+<span class="fc" id="L426">    return listEnvironmentsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -426,7 +453,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListEnvironmentsRequest, ListEnvironmentsPagedResponse&gt;
       listEnvironmentsPagedCallable() {
-<span class="fc" id="L429">    return stub.listEnvironmentsPagedCallable();</span>
+<span class="fc" id="L456">    return stub.listEnvironmentsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -463,7 +490,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListEnvironmentsRequest, ListEnvironmentsResponse&gt;
       listEnvironmentsCallable() {
-<span class="nc" id="L466">    return stub.listEnvironmentsCallable();</span>
+<span class="nc" id="L493">    return stub.listEnvironmentsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -573,12 +600,12 @@ public class EnvironmentsClient implements BackgroundResource {
   public final OperationFuture&lt;Environment, OperationMetadata&gt; updateEnvironmentAsync(
       String name, Environment environment, FieldMask updateMask) {
     UpdateEnvironmentRequest request =
-<span class="fc" id="L576">        UpdateEnvironmentRequest.newBuilder()</span>
-<span class="fc" id="L577">            .setName(name)</span>
-<span class="fc" id="L578">            .setEnvironment(environment)</span>
-<span class="fc" id="L579">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L580">            .build();</span>
-<span class="fc" id="L581">    return updateEnvironmentAsync(request);</span>
+<span class="fc" id="L603">        UpdateEnvironmentRequest.newBuilder()</span>
+<span class="fc" id="L604">            .setName(name)</span>
+<span class="fc" id="L605">            .setEnvironment(environment)</span>
+<span class="fc" id="L606">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L607">            .build();</span>
+<span class="fc" id="L608">    return updateEnvironmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -606,7 +633,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Environment, OperationMetadata&gt; updateEnvironmentAsync(
       UpdateEnvironmentRequest request) {
-<span class="fc" id="L609">    return updateEnvironmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L636">    return updateEnvironmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -634,7 +661,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateEnvironmentRequest, Environment, OperationMetadata&gt;
       updateEnvironmentOperationCallable() {
-<span class="fc" id="L637">    return stub.updateEnvironmentOperationCallable();</span>
+<span class="fc" id="L664">    return stub.updateEnvironmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -661,7 +688,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateEnvironmentRequest, Operation&gt; updateEnvironmentCallable() {
-<span class="nc" id="L664">    return stub.updateEnvironmentCallable();</span>
+<span class="nc" id="L691">    return stub.updateEnvironmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -684,8 +711,8 @@ public class EnvironmentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteEnvironmentAsync(String name) {
-<span class="fc" id="L687">    DeleteEnvironmentRequest request = DeleteEnvironmentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L688">    return deleteEnvironmentAsync(request);</span>
+<span class="fc" id="L714">    DeleteEnvironmentRequest request = DeleteEnvironmentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L715">    return deleteEnvironmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -709,7 +736,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteEnvironmentAsync(
       DeleteEnvironmentRequest request) {
-<span class="fc" id="L712">    return deleteEnvironmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L739">    return deleteEnvironmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -733,7 +760,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteEnvironmentRequest, Empty, OperationMetadata&gt;
       deleteEnvironmentOperationCallable() {
-<span class="fc" id="L736">    return stub.deleteEnvironmentOperationCallable();</span>
+<span class="fc" id="L763">    return stub.deleteEnvironmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -756,7 +783,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteEnvironmentRequest, Operation&gt; deleteEnvironmentCallable() {
-<span class="nc" id="L759">    return stub.deleteEnvironmentCallable();</span>
+<span class="nc" id="L786">    return stub.deleteEnvironmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -780,7 +807,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Environment, OperationMetadata&gt; restartWebServerAsync(
       RestartWebServerRequest request) {
-<span class="fc" id="L783">    return restartWebServerOperationCallable().futureCall(request);</span>
+<span class="fc" id="L810">    return restartWebServerOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -804,7 +831,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RestartWebServerRequest, Environment, OperationMetadata&gt;
       restartWebServerOperationCallable() {
-<span class="fc" id="L807">    return stub.restartWebServerOperationCallable();</span>
+<span class="fc" id="L834">    return stub.restartWebServerOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -827,7 +854,7 @@ public class EnvironmentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RestartWebServerRequest, Operation&gt; restartWebServerCallable() {
-<span class="nc" id="L830">    return stub.restartWebServerCallable();</span>
+<span class="nc" id="L857">    return stub.restartWebServerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -856,7 +883,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CheckUpgradeResponse, OperationMetadata&gt; checkUpgradeAsync(
       CheckUpgradeRequest request) {
-<span class="fc" id="L859">    return checkUpgradeOperationCallable().futureCall(request);</span>
+<span class="fc" id="L886">    return checkUpgradeOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -885,7 +912,7 @@ public class EnvironmentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CheckUpgradeRequest, CheckUpgradeResponse, OperationMetadata&gt;
       checkUpgradeOperationCallable() {
-<span class="fc" id="L888">    return stub.checkUpgradeOperationCallable();</span>
+<span class="fc" id="L915">    return stub.checkUpgradeOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -912,37 +939,37 @@ public class EnvironmentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CheckUpgradeRequest, Operation&gt; checkUpgradeCallable() {
-<span class="nc" id="L915">    return stub.checkUpgradeCallable();</span>
+<span class="nc" id="L942">    return stub.checkUpgradeCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L920">    stub.close();</span>
-<span class="fc" id="L921">  }</span>
+<span class="fc" id="L947">    stub.close();</span>
+<span class="fc" id="L948">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L925">    stub.shutdown();</span>
-<span class="nc" id="L926">  }</span>
+<span class="nc" id="L952">    stub.shutdown();</span>
+<span class="nc" id="L953">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L930">    return stub.isShutdown();</span>
+<span class="nc" id="L957">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L935">    return stub.isTerminated();</span>
+<span class="nc" id="L962">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L940">    stub.shutdownNow();</span>
-<span class="nc" id="L941">  }</span>
+<span class="nc" id="L967">    stub.shutdownNow();</span>
+<span class="nc" id="L968">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L945">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L972">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListEnvironmentsPagedResponse
@@ -957,16 +984,16 @@ public class EnvironmentsClient implements BackgroundResource {
         PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt; context,
         ApiFuture&lt;ListEnvironmentsResponse&gt; futureResponse) {
       ApiFuture&lt;ListEnvironmentsPage&gt; futurePage =
-<span class="fc" id="L960">          ListEnvironmentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L961">      return ApiFutures.transform(</span>
+<span class="fc" id="L987">          ListEnvironmentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L988">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L963">          input -&gt; new ListEnvironmentsPagedResponse(input),</span>
-<span class="fc" id="L964">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L990">          input -&gt; new ListEnvironmentsPagedResponse(input),</span>
+<span class="fc" id="L991">          MoreExecutors.directExecutor());</span>
     }
 
     private ListEnvironmentsPagedResponse(ListEnvironmentsPage page) {
-<span class="fc" id="L968">      super(page, ListEnvironmentsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L969">    }</span>
+<span class="fc" id="L995">      super(page, ListEnvironmentsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L996">    }</span>
   }
 
   public static class ListEnvironmentsPage
@@ -976,25 +1003,25 @@ public class EnvironmentsClient implements BackgroundResource {
     private ListEnvironmentsPage(
         PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt; context,
         ListEnvironmentsResponse response) {
-<span class="fc" id="L979">      super(context, response);</span>
-<span class="fc" id="L980">    }</span>
+<span class="fc" id="L1006">      super(context, response);</span>
+<span class="fc" id="L1007">    }</span>
 
     private static ListEnvironmentsPage createEmptyPage() {
-<span class="fc" id="L983">      return new ListEnvironmentsPage(null, null);</span>
+<span class="fc" id="L1010">      return new ListEnvironmentsPage(null, null);</span>
     }
 
     @Override
     protected ListEnvironmentsPage createPage(
         PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt; context,
         ListEnvironmentsResponse response) {
-<span class="fc" id="L990">      return new ListEnvironmentsPage(context, response);</span>
+<span class="fc" id="L1017">      return new ListEnvironmentsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListEnvironmentsPage&gt; createPageAsync(
         PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt; context,
         ApiFuture&lt;ListEnvironmentsResponse&gt; futureResponse) {
-<span class="fc" id="L997">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1024">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1008,17 +1035,17 @@ public class EnvironmentsClient implements BackgroundResource {
 
     private ListEnvironmentsFixedSizeCollection(
         List&lt;ListEnvironmentsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1011">      super(pages, collectionSize);</span>
-<span class="fc" id="L1012">    }</span>
+<span class="fc" id="L1038">      super(pages, collectionSize);</span>
+<span class="fc" id="L1039">    }</span>
 
     private static ListEnvironmentsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1015">      return new ListEnvironmentsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1042">      return new ListEnvironmentsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListEnvironmentsFixedSizeCollection createCollection(
         List&lt;ListEnvironmentsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1021">      return new ListEnvironmentsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1048">      return new ListEnvironmentsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

@@ -21,6 +21,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -32,7 +33,6 @@ import com.google.cloud.recommendationengine.v1beta1.stub.UserEventServiceStub;
 import com.google.cloud.recommendationengine.v1beta1.stub.UserEventServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -107,6 +107,21 @@ import javax.annotation.Generated;
  *     UserEventServiceClient.create(userEventServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * UserEventServiceSettings userEventServiceSettings =
+ *     UserEventServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             UserEventServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * UserEventServiceClient userEventServiceClient =
+ *     UserEventServiceClient.create(userEventServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -114,11 +129,12 @@ import javax.annotation.Generated;
 public class UserEventServiceClient implements BackgroundResource {
   private final UserEventServiceSettings settings;
   private final UserEventServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of UserEventServiceClient with default settings. */
   public static final UserEventServiceClient create() throws IOException {
-<span class="nc" id="L121">    return create(UserEventServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L137">    return create(UserEventServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -127,7 +143,7 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public static final UserEventServiceClient create(UserEventServiceSettings settings)
       throws IOException {
-<span class="fc" id="L130">    return new UserEventServiceClient(settings);</span>
+<span class="fc" id="L146">    return new UserEventServiceClient(settings);</span>
   }
 
   /**
@@ -135,7 +151,7 @@ public class UserEventServiceClient implements BackgroundResource {
    * is for advanced usage - prefer using create(UserEventServiceSettings).
    */
   public static final UserEventServiceClient create(UserEventServiceStub stub) {
-<span class="nc" id="L138">    return new UserEventServiceClient(stub);</span>
+<span class="nc" id="L154">    return new UserEventServiceClient(stub);</span>
   }
 
   /**
@@ -143,32 +159,44 @@ public class UserEventServiceClient implements BackgroundResource {
    * so that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L146">  protected UserEventServiceClient(UserEventServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L147">    this.settings = settings;</span>
-<span class="fc" id="L148">    this.stub = ((UserEventServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L149">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L150">  }</span>
+<span class="fc" id="L162">  protected UserEventServiceClient(UserEventServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L163">    this.settings = settings;</span>
+<span class="fc" id="L164">    this.stub = ((UserEventServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L165">    this.operationsClient =</span>
+<span class="fc" id="L166">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L167">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L168">  }</span>
 
-<span class="nc" id="L152">  protected UserEventServiceClient(UserEventServiceStub stub) {</span>
-<span class="nc" id="L153">    this.settings = null;</span>
-<span class="nc" id="L154">    this.stub = stub;</span>
-<span class="nc" id="L155">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L156">  }</span>
+<span class="nc" id="L170">  protected UserEventServiceClient(UserEventServiceStub stub) {</span>
+<span class="nc" id="L171">    this.settings = null;</span>
+<span class="nc" id="L172">    this.stub = stub;</span>
+<span class="nc" id="L173">    this.operationsClient =</span>
+<span class="nc" id="L174">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L175">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L176">  }</span>
 
   public final UserEventServiceSettings getSettings() {
-<span class="nc" id="L159">    return settings;</span>
+<span class="nc" id="L179">    return settings;</span>
   }
 
   public UserEventServiceStub getStub() {
-<span class="nc" id="L163">    return stub;</span>
+<span class="nc" id="L183">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L171">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L191">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L199">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -195,11 +223,11 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final UserEvent writeUserEvent(EventStoreName parent, UserEvent userEvent) {
     WriteUserEventRequest request =
-<span class="fc" id="L198">        WriteUserEventRequest.newBuilder()</span>
-<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L200">            .setUserEvent(userEvent)</span>
-<span class="fc" id="L201">            .build();</span>
-<span class="fc" id="L202">    return writeUserEvent(request);</span>
+<span class="fc" id="L226">        WriteUserEventRequest.newBuilder()</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L228">            .setUserEvent(userEvent)</span>
+<span class="fc" id="L229">            .build();</span>
+<span class="fc" id="L230">    return writeUserEvent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -226,8 +254,8 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final UserEvent writeUserEvent(String parent, UserEvent userEvent) {
     WriteUserEventRequest request =
-<span class="fc" id="L229">        WriteUserEventRequest.newBuilder().setParent(parent).setUserEvent(userEvent).build();</span>
-<span class="fc" id="L230">    return writeUserEvent(request);</span>
+<span class="fc" id="L257">        WriteUserEventRequest.newBuilder().setParent(parent).setUserEvent(userEvent).build();</span>
+<span class="fc" id="L258">    return writeUserEvent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -255,7 +283,7 @@ public class UserEventServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final UserEvent writeUserEvent(WriteUserEventRequest request) {
-<span class="fc" id="L258">    return writeUserEventCallable().call(request);</span>
+<span class="fc" id="L286">    return writeUserEventCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -283,7 +311,7 @@ public class UserEventServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;WriteUserEventRequest, UserEvent&gt; writeUserEventCallable() {
-<span class="fc" id="L286">    return stub.writeUserEventCallable();</span>
+<span class="fc" id="L314">    return stub.writeUserEventCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -323,13 +351,13 @@ public class UserEventServiceClient implements BackgroundResource {
   public final HttpBody collectUserEvent(
       EventStoreName parent, String userEvent, String uri, long ets) {
     CollectUserEventRequest request =
-<span class="fc" id="L326">        CollectUserEventRequest.newBuilder()</span>
-<span class="pc bpc" id="L327" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L328">            .setUserEvent(userEvent)</span>
-<span class="fc" id="L329">            .setUri(uri)</span>
-<span class="fc" id="L330">            .setEts(ets)</span>
-<span class="fc" id="L331">            .build();</span>
-<span class="fc" id="L332">    return collectUserEvent(request);</span>
+<span class="fc" id="L354">        CollectUserEventRequest.newBuilder()</span>
+<span class="pc bpc" id="L355" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L356">            .setUserEvent(userEvent)</span>
+<span class="fc" id="L357">            .setUri(uri)</span>
+<span class="fc" id="L358">            .setEts(ets)</span>
+<span class="fc" id="L359">            .build();</span>
+<span class="fc" id="L360">    return collectUserEvent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -368,13 +396,13 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final HttpBody collectUserEvent(String parent, String userEvent, String uri, long ets) {
     CollectUserEventRequest request =
-<span class="fc" id="L371">        CollectUserEventRequest.newBuilder()</span>
-<span class="fc" id="L372">            .setParent(parent)</span>
-<span class="fc" id="L373">            .setUserEvent(userEvent)</span>
-<span class="fc" id="L374">            .setUri(uri)</span>
-<span class="fc" id="L375">            .setEts(ets)</span>
-<span class="fc" id="L376">            .build();</span>
-<span class="fc" id="L377">    return collectUserEvent(request);</span>
+<span class="fc" id="L399">        CollectUserEventRequest.newBuilder()</span>
+<span class="fc" id="L400">            .setParent(parent)</span>
+<span class="fc" id="L401">            .setUserEvent(userEvent)</span>
+<span class="fc" id="L402">            .setUri(uri)</span>
+<span class="fc" id="L403">            .setEts(ets)</span>
+<span class="fc" id="L404">            .build();</span>
+<span class="fc" id="L405">    return collectUserEvent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -408,7 +436,7 @@ public class UserEventServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final HttpBody collectUserEvent(CollectUserEventRequest request) {
-<span class="fc" id="L411">    return collectUserEventCallable().call(request);</span>
+<span class="fc" id="L439">    return collectUserEventCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -442,7 +470,7 @@ public class UserEventServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CollectUserEventRequest, HttpBody&gt; collectUserEventCallable() {
-<span class="fc" id="L445">    return stub.collectUserEventCallable();</span>
+<span class="fc" id="L473">    return stub.collectUserEventCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -490,11 +518,11 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final ListUserEventsPagedResponse listUserEvents(EventStoreName parent, String filter) {
     ListUserEventsRequest request =
-<span class="fc" id="L493">        ListUserEventsRequest.newBuilder()</span>
-<span class="pc bpc" id="L494" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L495">            .setFilter(filter)</span>
-<span class="fc" id="L496">            .build();</span>
-<span class="fc" id="L497">    return listUserEvents(request);</span>
+<span class="fc" id="L521">        ListUserEventsRequest.newBuilder()</span>
+<span class="pc bpc" id="L522" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L523">            .setFilter(filter)</span>
+<span class="fc" id="L524">            .build();</span>
+<span class="fc" id="L525">    return listUserEvents(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -542,8 +570,8 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final ListUserEventsPagedResponse listUserEvents(String parent, String filter) {
     ListUserEventsRequest request =
-<span class="fc" id="L545">        ListUserEventsRequest.newBuilder().setParent(parent).setFilter(filter).build();</span>
-<span class="fc" id="L546">    return listUserEvents(request);</span>
+<span class="fc" id="L573">        ListUserEventsRequest.newBuilder().setParent(parent).setFilter(filter).build();</span>
+<span class="fc" id="L574">    return listUserEvents(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -575,7 +603,7 @@ public class UserEventServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListUserEventsPagedResponse listUserEvents(ListUserEventsRequest request) {
-<span class="fc" id="L578">    return listUserEventsPagedCallable().call(request);</span>
+<span class="fc" id="L606">    return listUserEventsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -608,7 +636,7 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListUserEventsRequest, ListUserEventsPagedResponse&gt;
       listUserEventsPagedCallable() {
-<span class="fc" id="L611">    return stub.listUserEventsPagedCallable();</span>
+<span class="fc" id="L639">    return stub.listUserEventsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -648,7 +676,7 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListUserEventsRequest, ListUserEventsResponse&gt;
       listUserEventsCallable() {
-<span class="nc" id="L651">    return stub.listUserEventsCallable();</span>
+<span class="nc" id="L679">    return stub.listUserEventsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -699,12 +727,12 @@ public class UserEventServiceClient implements BackgroundResource {
   public final OperationFuture&lt;PurgeUserEventsResponse, PurgeUserEventsMetadata&gt;
       purgeUserEventsAsync(EventStoreName parent, String filter, boolean force) {
     PurgeUserEventsRequest request =
-<span class="fc" id="L702">        PurgeUserEventsRequest.newBuilder()</span>
-<span class="pc bpc" id="L703" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L704">            .setFilter(filter)</span>
-<span class="fc" id="L705">            .setForce(force)</span>
-<span class="fc" id="L706">            .build();</span>
-<span class="fc" id="L707">    return purgeUserEventsAsync(request);</span>
+<span class="fc" id="L730">        PurgeUserEventsRequest.newBuilder()</span>
+<span class="pc bpc" id="L731" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L732">            .setFilter(filter)</span>
+<span class="fc" id="L733">            .setForce(force)</span>
+<span class="fc" id="L734">            .build();</span>
+<span class="fc" id="L735">    return purgeUserEventsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -755,12 +783,12 @@ public class UserEventServiceClient implements BackgroundResource {
   public final OperationFuture&lt;PurgeUserEventsResponse, PurgeUserEventsMetadata&gt;
       purgeUserEventsAsync(String parent, String filter, boolean force) {
     PurgeUserEventsRequest request =
-<span class="fc" id="L758">        PurgeUserEventsRequest.newBuilder()</span>
-<span class="fc" id="L759">            .setParent(parent)</span>
-<span class="fc" id="L760">            .setFilter(filter)</span>
-<span class="fc" id="L761">            .setForce(force)</span>
-<span class="fc" id="L762">            .build();</span>
-<span class="fc" id="L763">    return purgeUserEventsAsync(request);</span>
+<span class="fc" id="L786">        PurgeUserEventsRequest.newBuilder()</span>
+<span class="fc" id="L787">            .setParent(parent)</span>
+<span class="fc" id="L788">            .setFilter(filter)</span>
+<span class="fc" id="L789">            .setForce(force)</span>
+<span class="fc" id="L790">            .build();</span>
+<span class="fc" id="L791">    return purgeUserEventsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -792,7 +820,7 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;PurgeUserEventsResponse, PurgeUserEventsMetadata&gt;
       purgeUserEventsAsync(PurgeUserEventsRequest request) {
-<span class="fc" id="L795">    return purgeUserEventsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L823">    return purgeUserEventsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -825,7 +853,7 @@ public class UserEventServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           PurgeUserEventsRequest, PurgeUserEventsResponse, PurgeUserEventsMetadata&gt;
       purgeUserEventsOperationCallable() {
-<span class="fc" id="L828">    return stub.purgeUserEventsOperationCallable();</span>
+<span class="fc" id="L856">    return stub.purgeUserEventsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -856,7 +884,7 @@ public class UserEventServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;PurgeUserEventsRequest, Operation&gt; purgeUserEventsCallable() {
-<span class="nc" id="L859">    return stub.purgeUserEventsCallable();</span>
+<span class="nc" id="L887">    return stub.purgeUserEventsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -902,13 +930,13 @@ public class UserEventServiceClient implements BackgroundResource {
       InputConfig inputConfig,
       ImportErrorsConfig errorsConfig) {
     ImportUserEventsRequest request =
-<span class="fc" id="L905">        ImportUserEventsRequest.newBuilder()</span>
-<span class="pc bpc" id="L906" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L907">            .setRequestId(requestId)</span>
-<span class="fc" id="L908">            .setInputConfig(inputConfig)</span>
-<span class="fc" id="L909">            .setErrorsConfig(errorsConfig)</span>
-<span class="fc" id="L910">            .build();</span>
-<span class="fc" id="L911">    return importUserEventsAsync(request);</span>
+<span class="fc" id="L933">        ImportUserEventsRequest.newBuilder()</span>
+<span class="pc bpc" id="L934" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L935">            .setRequestId(requestId)</span>
+<span class="fc" id="L936">            .setInputConfig(inputConfig)</span>
+<span class="fc" id="L937">            .setErrorsConfig(errorsConfig)</span>
+<span class="fc" id="L938">            .build();</span>
+<span class="fc" id="L939">    return importUserEventsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -951,13 +979,13 @@ public class UserEventServiceClient implements BackgroundResource {
   public final OperationFuture&lt;ImportUserEventsResponse, ImportMetadata&gt; importUserEventsAsync(
       String parent, String requestId, InputConfig inputConfig, ImportErrorsConfig errorsConfig) {
     ImportUserEventsRequest request =
-<span class="fc" id="L954">        ImportUserEventsRequest.newBuilder()</span>
-<span class="fc" id="L955">            .setParent(parent)</span>
-<span class="fc" id="L956">            .setRequestId(requestId)</span>
-<span class="fc" id="L957">            .setInputConfig(inputConfig)</span>
-<span class="fc" id="L958">            .setErrorsConfig(errorsConfig)</span>
-<span class="fc" id="L959">            .build();</span>
-<span class="fc" id="L960">    return importUserEventsAsync(request);</span>
+<span class="fc" id="L982">        ImportUserEventsRequest.newBuilder()</span>
+<span class="fc" id="L983">            .setParent(parent)</span>
+<span class="fc" id="L984">            .setRequestId(requestId)</span>
+<span class="fc" id="L985">            .setInputConfig(inputConfig)</span>
+<span class="fc" id="L986">            .setErrorsConfig(errorsConfig)</span>
+<span class="fc" id="L987">            .build();</span>
+<span class="fc" id="L988">    return importUserEventsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -993,7 +1021,7 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ImportUserEventsResponse, ImportMetadata&gt; importUserEventsAsync(
       ImportUserEventsRequest request) {
-<span class="fc" id="L996">    return importUserEventsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1024">    return importUserEventsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1028,7 +1056,7 @@ public class UserEventServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ImportUserEventsRequest, ImportUserEventsResponse, ImportMetadata&gt;
       importUserEventsOperationCallable() {
-<span class="fc" id="L1031">    return stub.importUserEventsOperationCallable();</span>
+<span class="fc" id="L1059">    return stub.importUserEventsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1062,37 +1090,37 @@ public class UserEventServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ImportUserEventsRequest, Operation&gt; importUserEventsCallable() {
-<span class="nc" id="L1065">    return stub.importUserEventsCallable();</span>
+<span class="nc" id="L1093">    return stub.importUserEventsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1070">    stub.close();</span>
-<span class="fc" id="L1071">  }</span>
+<span class="fc" id="L1098">    stub.close();</span>
+<span class="fc" id="L1099">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1075">    stub.shutdown();</span>
-<span class="nc" id="L1076">  }</span>
+<span class="nc" id="L1103">    stub.shutdown();</span>
+<span class="nc" id="L1104">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1080">    return stub.isShutdown();</span>
+<span class="nc" id="L1108">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1085">    return stub.isTerminated();</span>
+<span class="nc" id="L1113">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1090">    stub.shutdownNow();</span>
-<span class="nc" id="L1091">  }</span>
+<span class="nc" id="L1118">    stub.shutdownNow();</span>
+<span class="nc" id="L1119">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1095">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1123">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListUserEventsPagedResponse
@@ -1107,16 +1135,16 @@ public class UserEventServiceClient implements BackgroundResource {
         PageContext&lt;ListUserEventsRequest, ListUserEventsResponse, UserEvent&gt; context,
         ApiFuture&lt;ListUserEventsResponse&gt; futureResponse) {
       ApiFuture&lt;ListUserEventsPage&gt; futurePage =
-<span class="fc" id="L1110">          ListUserEventsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1111">      return ApiFutures.transform(</span>
+<span class="fc" id="L1138">          ListUserEventsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1139">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1113">          input -&gt; new ListUserEventsPagedResponse(input),</span>
-<span class="fc" id="L1114">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1141">          input -&gt; new ListUserEventsPagedResponse(input),</span>
+<span class="fc" id="L1142">          MoreExecutors.directExecutor());</span>
     }
 
     private ListUserEventsPagedResponse(ListUserEventsPage page) {
-<span class="fc" id="L1118">      super(page, ListUserEventsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1119">    }</span>
+<span class="fc" id="L1146">      super(page, ListUserEventsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1147">    }</span>
   }
 
   public static class ListUserEventsPage
@@ -1126,25 +1154,25 @@ public class UserEventServiceClient implements BackgroundResource {
     private ListUserEventsPage(
         PageContext&lt;ListUserEventsRequest, ListUserEventsResponse, UserEvent&gt; context,
         ListUserEventsResponse response) {
-<span class="fc" id="L1129">      super(context, response);</span>
-<span class="fc" id="L1130">    }</span>
+<span class="fc" id="L1157">      super(context, response);</span>
+<span class="fc" id="L1158">    }</span>
 
     private static ListUserEventsPage createEmptyPage() {
-<span class="fc" id="L1133">      return new ListUserEventsPage(null, null);</span>
+<span class="fc" id="L1161">      return new ListUserEventsPage(null, null);</span>
     }
 
     @Override
     protected ListUserEventsPage createPage(
         PageContext&lt;ListUserEventsRequest, ListUserEventsResponse, UserEvent&gt; context,
         ListUserEventsResponse response) {
-<span class="fc" id="L1140">      return new ListUserEventsPage(context, response);</span>
+<span class="fc" id="L1168">      return new ListUserEventsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListUserEventsPage&gt; createPageAsync(
         PageContext&lt;ListUserEventsRequest, ListUserEventsResponse, UserEvent&gt; context,
         ApiFuture&lt;ListUserEventsResponse&gt; futureResponse) {
-<span class="fc" id="L1147">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1175">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1157,17 +1185,17 @@ public class UserEventServiceClient implements BackgroundResource {
           ListUserEventsFixedSizeCollection&gt; {
 
     private ListUserEventsFixedSizeCollection(List&lt;ListUserEventsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1160">      super(pages, collectionSize);</span>
-<span class="fc" id="L1161">    }</span>
+<span class="fc" id="L1188">      super(pages, collectionSize);</span>
+<span class="fc" id="L1189">    }</span>
 
     private static ListUserEventsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1164">      return new ListUserEventsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1192">      return new ListUserEventsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListUserEventsFixedSizeCollection createCollection(
         List&lt;ListUserEventsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1170">      return new ListUserEventsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1198">      return new ListUserEventsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

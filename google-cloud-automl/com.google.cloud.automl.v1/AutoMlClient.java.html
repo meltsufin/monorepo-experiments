@@ -19,6 +19,7 @@ package com.google.cloud.automl.v1;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.automl.v1.stub.AutoMlStub;
 import com.google.cloud.automl.v1.stub.AutoMlStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -113,17 +113,32 @@ import javax.annotation.Generated;
  * AutoMlClient autoMlClient = AutoMlClient.create(autoMlSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * AutoMlSettings autoMlSettings =
+ *     AutoMlSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             AutoMlSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * AutoMlClient autoMlClient = AutoMlClient.create(autoMlSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class AutoMlClient implements BackgroundResource {
   private final AutoMlSettings settings;
   private final AutoMlStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of AutoMlClient with default settings. */
   public static final AutoMlClient create() throws IOException {
-<span class="nc" id="L126">    return create(AutoMlSettings.newBuilder().build());</span>
+<span class="nc" id="L141">    return create(AutoMlSettings.newBuilder().build());</span>
   }
 
   /**
@@ -131,7 +146,7 @@ public class AutoMlClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final AutoMlClient create(AutoMlSettings settings) throws IOException {
-<span class="fc" id="L134">    return new AutoMlClient(settings);</span>
+<span class="fc" id="L149">    return new AutoMlClient(settings);</span>
   }
 
   /**
@@ -139,39 +154,51 @@ public class AutoMlClient implements BackgroundResource {
    * advanced usage - prefer using create(AutoMlSettings).
    */
   public static final AutoMlClient create(AutoMlStub stub) {
-<span class="nc" id="L142">    return new AutoMlClient(stub);</span>
+<span class="nc" id="L157">    return new AutoMlClient(stub);</span>
   }
 
   /**
    * Constructs an instance of AutoMlClient, using the given settings. This is protected so that it
    * is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L149">  protected AutoMlClient(AutoMlSettings settings) throws IOException {</span>
-<span class="fc" id="L150">    this.settings = settings;</span>
-<span class="fc" id="L151">    this.stub = ((AutoMlStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L152">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L153">  }</span>
+<span class="fc" id="L164">  protected AutoMlClient(AutoMlSettings settings) throws IOException {</span>
+<span class="fc" id="L165">    this.settings = settings;</span>
+<span class="fc" id="L166">    this.stub = ((AutoMlStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L167">    this.operationsClient =</span>
+<span class="fc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L170">  }</span>
 
-<span class="nc" id="L155">  protected AutoMlClient(AutoMlStub stub) {</span>
-<span class="nc" id="L156">    this.settings = null;</span>
-<span class="nc" id="L157">    this.stub = stub;</span>
-<span class="nc" id="L158">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L159">  }</span>
+<span class="nc" id="L172">  protected AutoMlClient(AutoMlStub stub) {</span>
+<span class="nc" id="L173">    this.settings = null;</span>
+<span class="nc" id="L174">    this.stub = stub;</span>
+<span class="nc" id="L175">    this.operationsClient =</span>
+<span class="nc" id="L176">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L177">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L178">  }</span>
 
   public final AutoMlSettings getSettings() {
-<span class="nc" id="L162">    return settings;</span>
+<span class="nc" id="L181">    return settings;</span>
   }
 
   public AutoMlStub getStub() {
-<span class="nc" id="L166">    return stub;</span>
+<span class="nc" id="L185">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L174">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L193">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L201">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -197,11 +224,11 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Dataset, OperationMetadata&gt; createDatasetAsync(
       LocationName parent, Dataset dataset) {
     CreateDatasetRequest request =
-<span class="fc" id="L200">        CreateDatasetRequest.newBuilder()</span>
-<span class="pc bpc" id="L201" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L202">            .setDataset(dataset)</span>
-<span class="fc" id="L203">            .build();</span>
-<span class="fc" id="L204">    return createDatasetAsync(request);</span>
+<span class="fc" id="L227">        CreateDatasetRequest.newBuilder()</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L229">            .setDataset(dataset)</span>
+<span class="fc" id="L230">            .build();</span>
+<span class="fc" id="L231">    return createDatasetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -227,8 +254,8 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Dataset, OperationMetadata&gt; createDatasetAsync(
       String parent, Dataset dataset) {
     CreateDatasetRequest request =
-<span class="fc" id="L230">        CreateDatasetRequest.newBuilder().setParent(parent).setDataset(dataset).build();</span>
-<span class="fc" id="L231">    return createDatasetAsync(request);</span>
+<span class="fc" id="L257">        CreateDatasetRequest.newBuilder().setParent(parent).setDataset(dataset).build();</span>
+<span class="fc" id="L258">    return createDatasetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -255,7 +282,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Dataset, OperationMetadata&gt; createDatasetAsync(
       CreateDatasetRequest request) {
-<span class="fc" id="L258">    return createDatasetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L285">    return createDatasetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -282,7 +309,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateDatasetRequest, Dataset, OperationMetadata&gt;
       createDatasetOperationCallable() {
-<span class="fc" id="L285">    return stub.createDatasetOperationCallable();</span>
+<span class="fc" id="L312">    return stub.createDatasetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -307,7 +334,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateDatasetRequest, Operation&gt; createDatasetCallable() {
-<span class="nc" id="L310">    return stub.createDatasetCallable();</span>
+<span class="nc" id="L337">    return stub.createDatasetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -330,8 +357,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final Dataset getDataset(DatasetName name) {
     GetDatasetRequest request =
-<span class="pc bpc" id="L333" title="1 of 2 branches missed.">        GetDatasetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L334">    return getDataset(request);</span>
+<span class="pc bpc" id="L360" title="1 of 2 branches missed.">        GetDatasetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L361">    return getDataset(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -353,8 +380,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Dataset getDataset(String name) {
-<span class="fc" id="L356">    GetDatasetRequest request = GetDatasetRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L357">    return getDataset(request);</span>
+<span class="fc" id="L383">    GetDatasetRequest request = GetDatasetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L384">    return getDataset(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -379,7 +406,7 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Dataset getDataset(GetDatasetRequest request) {
-<span class="fc" id="L382">    return getDatasetCallable().call(request);</span>
+<span class="fc" id="L409">    return getDatasetCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -403,7 +430,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetDatasetRequest, Dataset&gt; getDatasetCallable() {
-<span class="fc" id="L406">    return stub.getDatasetCallable();</span>
+<span class="fc" id="L433">    return stub.getDatasetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -428,10 +455,10 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final ListDatasetsPagedResponse listDatasets(LocationName parent) {
     ListDatasetsRequest request =
-<span class="fc" id="L431">        ListDatasetsRequest.newBuilder()</span>
-<span class="pc bpc" id="L432" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L433">            .build();</span>
-<span class="fc" id="L434">    return listDatasets(request);</span>
+<span class="fc" id="L458">        ListDatasetsRequest.newBuilder()</span>
+<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L460">            .build();</span>
+<span class="fc" id="L461">    return listDatasets(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -455,8 +482,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListDatasetsPagedResponse listDatasets(String parent) {
-<span class="fc" id="L458">    ListDatasetsRequest request = ListDatasetsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L459">    return listDatasets(request);</span>
+<span class="fc" id="L485">    ListDatasetsRequest request = ListDatasetsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L486">    return listDatasets(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -486,7 +513,7 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListDatasetsPagedResponse listDatasets(ListDatasetsRequest request) {
-<span class="fc" id="L489">    return listDatasetsPagedCallable().call(request);</span>
+<span class="fc" id="L516">    return listDatasetsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -516,7 +543,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDatasetsRequest, ListDatasetsPagedResponse&gt;
       listDatasetsPagedCallable() {
-<span class="fc" id="L519">    return stub.listDatasetsPagedCallable();</span>
+<span class="fc" id="L546">    return stub.listDatasetsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -552,7 +579,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListDatasetsRequest, ListDatasetsResponse&gt; listDatasetsCallable() {
-<span class="nc" id="L555">    return stub.listDatasetsCallable();</span>
+<span class="nc" id="L582">    return stub.listDatasetsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -577,8 +604,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final Dataset updateDataset(Dataset dataset, FieldMask updateMask) {
     UpdateDatasetRequest request =
-<span class="fc" id="L580">        UpdateDatasetRequest.newBuilder().setDataset(dataset).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L581">    return updateDataset(request);</span>
+<span class="fc" id="L607">        UpdateDatasetRequest.newBuilder().setDataset(dataset).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L608">    return updateDataset(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -604,7 +631,7 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Dataset updateDataset(UpdateDatasetRequest request) {
-<span class="fc" id="L607">    return updateDatasetCallable().call(request);</span>
+<span class="fc" id="L634">    return updateDatasetCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -629,7 +656,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateDatasetRequest, Dataset&gt; updateDatasetCallable() {
-<span class="fc" id="L632">    return stub.updateDatasetCallable();</span>
+<span class="fc" id="L659">    return stub.updateDatasetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -654,8 +681,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDatasetAsync(DatasetName name) {
     DeleteDatasetRequest request =
-<span class="pc bpc" id="L657" title="1 of 2 branches missed.">        DeleteDatasetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L658">    return deleteDatasetAsync(request);</span>
+<span class="pc bpc" id="L684" title="1 of 2 branches missed.">        DeleteDatasetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L685">    return deleteDatasetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -679,8 +706,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDatasetAsync(String name) {
-<span class="fc" id="L682">    DeleteDatasetRequest request = DeleteDatasetRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L683">    return deleteDatasetAsync(request);</span>
+<span class="fc" id="L709">    DeleteDatasetRequest request = DeleteDatasetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L710">    return deleteDatasetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -708,7 +735,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDatasetAsync(
       DeleteDatasetRequest request) {
-<span class="fc" id="L711">    return deleteDatasetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L738">    return deleteDatasetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -736,7 +763,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteDatasetRequest, Empty, OperationMetadata&gt;
       deleteDatasetOperationCallable() {
-<span class="fc" id="L739">    return stub.deleteDatasetOperationCallable();</span>
+<span class="fc" id="L766">    return stub.deleteDatasetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -762,7 +789,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteDatasetRequest, Operation&gt; deleteDatasetCallable() {
-<span class="nc" id="L765">    return stub.deleteDatasetCallable();</span>
+<span class="nc" id="L792">    return stub.deleteDatasetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -798,11 +825,11 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; importDataAsync(
       DatasetName name, InputConfig inputConfig) {
     ImportDataRequest request =
-<span class="fc" id="L801">        ImportDataRequest.newBuilder()</span>
-<span class="pc bpc" id="L802" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L803">            .setInputConfig(inputConfig)</span>
-<span class="fc" id="L804">            .build();</span>
-<span class="fc" id="L805">    return importDataAsync(request);</span>
+<span class="fc" id="L828">        ImportDataRequest.newBuilder()</span>
+<span class="pc bpc" id="L829" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L830">            .setInputConfig(inputConfig)</span>
+<span class="fc" id="L831">            .build();</span>
+<span class="fc" id="L832">    return importDataAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -838,8 +865,8 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; importDataAsync(
       String name, InputConfig inputConfig) {
     ImportDataRequest request =
-<span class="fc" id="L841">        ImportDataRequest.newBuilder().setName(name).setInputConfig(inputConfig).build();</span>
-<span class="fc" id="L842">    return importDataAsync(request);</span>
+<span class="fc" id="L868">        ImportDataRequest.newBuilder().setName(name).setInputConfig(inputConfig).build();</span>
+<span class="fc" id="L869">    return importDataAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -874,7 +901,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; importDataAsync(
       ImportDataRequest request) {
-<span class="fc" id="L877">    return importDataOperationCallable().futureCall(request);</span>
+<span class="fc" id="L904">    return importDataOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -909,7 +936,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ImportDataRequest, Empty, OperationMetadata&gt;
       importDataOperationCallable() {
-<span class="fc" id="L912">    return stub.importDataOperationCallable();</span>
+<span class="fc" id="L939">    return stub.importDataOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -942,7 +969,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ImportDataRequest, Operation&gt; importDataCallable() {
-<span class="nc" id="L945">    return stub.importDataCallable();</span>
+<span class="nc" id="L972">    return stub.importDataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -969,11 +996,11 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; exportDataAsync(
       DatasetName name, OutputConfig outputConfig) {
     ExportDataRequest request =
-<span class="fc" id="L972">        ExportDataRequest.newBuilder()</span>
-<span class="pc bpc" id="L973" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L974">            .setOutputConfig(outputConfig)</span>
-<span class="fc" id="L975">            .build();</span>
-<span class="fc" id="L976">    return exportDataAsync(request);</span>
+<span class="fc" id="L999">        ExportDataRequest.newBuilder()</span>
+<span class="pc bpc" id="L1000" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1001">            .setOutputConfig(outputConfig)</span>
+<span class="fc" id="L1002">            .build();</span>
+<span class="fc" id="L1003">    return exportDataAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1000,8 +1027,8 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; exportDataAsync(
       String name, OutputConfig outputConfig) {
     ExportDataRequest request =
-<span class="fc" id="L1003">        ExportDataRequest.newBuilder().setName(name).setOutputConfig(outputConfig).build();</span>
-<span class="fc" id="L1004">    return exportDataAsync(request);</span>
+<span class="fc" id="L1030">        ExportDataRequest.newBuilder().setName(name).setOutputConfig(outputConfig).build();</span>
+<span class="fc" id="L1031">    return exportDataAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1029,7 +1056,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; exportDataAsync(
       ExportDataRequest request) {
-<span class="fc" id="L1032">    return exportDataOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1059">    return exportDataOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1057,7 +1084,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ExportDataRequest, Empty, OperationMetadata&gt;
       exportDataOperationCallable() {
-<span class="fc" id="L1060">    return stub.exportDataOperationCallable();</span>
+<span class="fc" id="L1087">    return stub.exportDataOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1083,7 +1110,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExportDataRequest, Operation&gt; exportDataCallable() {
-<span class="nc" id="L1086">    return stub.exportDataCallable();</span>
+<span class="nc" id="L1113">    return stub.exportDataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1107,10 +1134,10 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final AnnotationSpec getAnnotationSpec(AnnotationSpecName name) {
     GetAnnotationSpecRequest request =
-<span class="fc" id="L1110">        GetAnnotationSpecRequest.newBuilder()</span>
-<span class="pc bpc" id="L1111" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1112">            .build();</span>
-<span class="fc" id="L1113">    return getAnnotationSpec(request);</span>
+<span class="fc" id="L1137">        GetAnnotationSpecRequest.newBuilder()</span>
+<span class="pc bpc" id="L1138" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1139">            .build();</span>
+<span class="fc" id="L1140">    return getAnnotationSpec(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1134,8 +1161,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final AnnotationSpec getAnnotationSpec(String name) {
-<span class="fc" id="L1137">    GetAnnotationSpecRequest request = GetAnnotationSpecRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1138">    return getAnnotationSpec(request);</span>
+<span class="fc" id="L1164">    GetAnnotationSpecRequest request = GetAnnotationSpecRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1165">    return getAnnotationSpec(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1162,7 +1189,7 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final AnnotationSpec getAnnotationSpec(GetAnnotationSpecRequest request) {
-<span class="fc" id="L1165">    return getAnnotationSpecCallable().call(request);</span>
+<span class="fc" id="L1192">    return getAnnotationSpecCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1189,7 +1216,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetAnnotationSpecRequest, AnnotationSpec&gt; getAnnotationSpecCallable() {
-<span class="fc" id="L1192">    return stub.getAnnotationSpecCallable();</span>
+<span class="fc" id="L1219">    return stub.getAnnotationSpecCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1217,11 +1244,11 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Model, OperationMetadata&gt; createModelAsync(
       LocationName parent, Model model) {
     CreateModelRequest request =
-<span class="fc" id="L1220">        CreateModelRequest.newBuilder()</span>
-<span class="pc bpc" id="L1221" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1222">            .setModel(model)</span>
-<span class="fc" id="L1223">            .build();</span>
-<span class="fc" id="L1224">    return createModelAsync(request);</span>
+<span class="fc" id="L1247">        CreateModelRequest.newBuilder()</span>
+<span class="pc bpc" id="L1248" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1249">            .setModel(model)</span>
+<span class="fc" id="L1250">            .build();</span>
+<span class="fc" id="L1251">    return createModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1249,8 +1276,8 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Model, OperationMetadata&gt; createModelAsync(
       String parent, Model model) {
     CreateModelRequest request =
-<span class="fc" id="L1252">        CreateModelRequest.newBuilder().setParent(parent).setModel(model).build();</span>
-<span class="fc" id="L1253">    return createModelAsync(request);</span>
+<span class="fc" id="L1279">        CreateModelRequest.newBuilder().setParent(parent).setModel(model).build();</span>
+<span class="fc" id="L1280">    return createModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1279,7 +1306,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Model, OperationMetadata&gt; createModelAsync(
       CreateModelRequest request) {
-<span class="fc" id="L1282">    return createModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1309">    return createModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1308,7 +1335,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateModelRequest, Model, OperationMetadata&gt;
       createModelOperationCallable() {
-<span class="fc" id="L1311">    return stub.createModelOperationCallable();</span>
+<span class="fc" id="L1338">    return stub.createModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1335,7 +1362,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateModelRequest, Operation&gt; createModelCallable() {
-<span class="nc" id="L1338">    return stub.createModelCallable();</span>
+<span class="nc" id="L1365">    return stub.createModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1358,8 +1385,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final Model getModel(ModelName name) {
     GetModelRequest request =
-<span class="pc bpc" id="L1361" title="1 of 2 branches missed.">        GetModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1362">    return getModel(request);</span>
+<span class="pc bpc" id="L1388" title="1 of 2 branches missed.">        GetModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1389">    return getModel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1381,8 +1408,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Model getModel(String name) {
-<span class="fc" id="L1384">    GetModelRequest request = GetModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1385">    return getModel(request);</span>
+<span class="fc" id="L1411">    GetModelRequest request = GetModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1412">    return getModel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1407,7 +1434,7 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Model getModel(GetModelRequest request) {
-<span class="fc" id="L1410">    return getModelCallable().call(request);</span>
+<span class="fc" id="L1437">    return getModelCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1431,7 +1458,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetModelRequest, Model&gt; getModelCallable() {
-<span class="fc" id="L1434">    return stub.getModelCallable();</span>
+<span class="fc" id="L1461">    return stub.getModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1456,8 +1483,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final ListModelsPagedResponse listModels(LocationName parent) {
     ListModelsRequest request =
-<span class="pc bpc" id="L1459" title="1 of 2 branches missed.">        ListModelsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L1460">    return listModels(request);</span>
+<span class="pc bpc" id="L1486" title="1 of 2 branches missed.">        ListModelsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L1487">    return listModels(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1481,8 +1508,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListModelsPagedResponse listModels(String parent) {
-<span class="fc" id="L1484">    ListModelsRequest request = ListModelsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1485">    return listModels(request);</span>
+<span class="fc" id="L1511">    ListModelsRequest request = ListModelsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1512">    return listModels(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1512,7 +1539,7 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListModelsPagedResponse listModels(ListModelsRequest request) {
-<span class="fc" id="L1515">    return listModelsPagedCallable().call(request);</span>
+<span class="fc" id="L1542">    return listModelsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1541,7 +1568,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListModelsRequest, ListModelsPagedResponse&gt; listModelsPagedCallable() {
-<span class="fc" id="L1544">    return stub.listModelsPagedCallable();</span>
+<span class="fc" id="L1571">    return stub.listModelsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1577,7 +1604,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListModelsRequest, ListModelsResponse&gt; listModelsCallable() {
-<span class="nc" id="L1580">    return stub.listModelsCallable();</span>
+<span class="nc" id="L1607">    return stub.listModelsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1602,8 +1629,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteModelAsync(ModelName name) {
     DeleteModelRequest request =
-<span class="pc bpc" id="L1605" title="1 of 2 branches missed.">        DeleteModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1606">    return deleteModelAsync(request);</span>
+<span class="pc bpc" id="L1632" title="1 of 2 branches missed.">        DeleteModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1633">    return deleteModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1627,8 +1654,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteModelAsync(String name) {
-<span class="fc" id="L1630">    DeleteModelRequest request = DeleteModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1631">    return deleteModelAsync(request);</span>
+<span class="fc" id="L1657">    DeleteModelRequest request = DeleteModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1658">    return deleteModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1656,7 +1683,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteModelAsync(
       DeleteModelRequest request) {
-<span class="fc" id="L1659">    return deleteModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1686">    return deleteModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1684,7 +1711,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteModelRequest, Empty, OperationMetadata&gt;
       deleteModelOperationCallable() {
-<span class="fc" id="L1687">    return stub.deleteModelOperationCallable();</span>
+<span class="fc" id="L1714">    return stub.deleteModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1710,7 +1737,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteModelRequest, Operation&gt; deleteModelCallable() {
-<span class="nc" id="L1713">    return stub.deleteModelCallable();</span>
+<span class="nc" id="L1740">    return stub.deleteModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1735,8 +1762,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final Model updateModel(Model model, FieldMask updateMask) {
     UpdateModelRequest request =
-<span class="fc" id="L1738">        UpdateModelRequest.newBuilder().setModel(model).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L1739">    return updateModel(request);</span>
+<span class="fc" id="L1765">        UpdateModelRequest.newBuilder().setModel(model).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L1766">    return updateModel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1762,7 +1789,7 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Model updateModel(UpdateModelRequest request) {
-<span class="fc" id="L1765">    return updateModelCallable().call(request);</span>
+<span class="fc" id="L1792">    return updateModelCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1787,7 +1814,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateModelRequest, Model&gt; updateModelCallable() {
-<span class="fc" id="L1790">    return stub.updateModelCallable();</span>
+<span class="fc" id="L1817">    return stub.updateModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1819,8 +1846,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deployModelAsync(ModelName name) {
     DeployModelRequest request =
-<span class="pc bpc" id="L1822" title="1 of 2 branches missed.">        DeployModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1823">    return deployModelAsync(request);</span>
+<span class="pc bpc" id="L1849" title="1 of 2 branches missed.">        DeployModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1850">    return deployModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1851,8 +1878,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deployModelAsync(String name) {
-<span class="fc" id="L1854">    DeployModelRequest request = DeployModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1855">    return deployModelAsync(request);</span>
+<span class="fc" id="L1881">    DeployModelRequest request = DeployModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1882">    return deployModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1887,7 +1914,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deployModelAsync(
       DeployModelRequest request) {
-<span class="fc" id="L1890">    return deployModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1917">    return deployModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1922,7 +1949,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeployModelRequest, Empty, OperationMetadata&gt;
       deployModelOperationCallable() {
-<span class="fc" id="L1925">    return stub.deployModelOperationCallable();</span>
+<span class="fc" id="L1952">    return stub.deployModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1955,7 +1982,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeployModelRequest, Operation&gt; deployModelCallable() {
-<span class="nc" id="L1958">    return stub.deployModelCallable();</span>
+<span class="nc" id="L1985">    return stub.deployModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1984,8 +2011,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; undeployModelAsync(ModelName name) {
     UndeployModelRequest request =
-<span class="pc bpc" id="L1987" title="1 of 2 branches missed.">        UndeployModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1988">    return undeployModelAsync(request);</span>
+<span class="pc bpc" id="L2014" title="1 of 2 branches missed.">        UndeployModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2015">    return undeployModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2013,8 +2040,8 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; undeployModelAsync(String name) {
-<span class="fc" id="L2016">    UndeployModelRequest request = UndeployModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2017">    return undeployModelAsync(request);</span>
+<span class="fc" id="L2043">    UndeployModelRequest request = UndeployModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2044">    return undeployModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2046,7 +2073,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; undeployModelAsync(
       UndeployModelRequest request) {
-<span class="fc" id="L2049">    return undeployModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2076">    return undeployModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2078,7 +2105,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UndeployModelRequest, Empty, OperationMetadata&gt;
       undeployModelOperationCallable() {
-<span class="fc" id="L2081">    return stub.undeployModelOperationCallable();</span>
+<span class="fc" id="L2108">    return stub.undeployModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2108,7 +2135,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UndeployModelRequest, Operation&gt; undeployModelCallable() {
-<span class="nc" id="L2111">    return stub.undeployModelCallable();</span>
+<span class="nc" id="L2138">    return stub.undeployModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2139,11 +2166,11 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; exportModelAsync(
       ModelName name, ModelExportOutputConfig outputConfig) {
     ExportModelRequest request =
-<span class="fc" id="L2142">        ExportModelRequest.newBuilder()</span>
-<span class="pc bpc" id="L2143" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2144">            .setOutputConfig(outputConfig)</span>
-<span class="fc" id="L2145">            .build();</span>
-<span class="fc" id="L2146">    return exportModelAsync(request);</span>
+<span class="fc" id="L2169">        ExportModelRequest.newBuilder()</span>
+<span class="pc bpc" id="L2170" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2171">            .setOutputConfig(outputConfig)</span>
+<span class="fc" id="L2172">            .build();</span>
+<span class="fc" id="L2173">    return exportModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2174,8 +2201,8 @@ public class AutoMlClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; exportModelAsync(
       String name, ModelExportOutputConfig outputConfig) {
     ExportModelRequest request =
-<span class="fc" id="L2177">        ExportModelRequest.newBuilder().setName(name).setOutputConfig(outputConfig).build();</span>
-<span class="fc" id="L2178">    return exportModelAsync(request);</span>
+<span class="fc" id="L2204">        ExportModelRequest.newBuilder().setName(name).setOutputConfig(outputConfig).build();</span>
+<span class="fc" id="L2205">    return exportModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2207,7 +2234,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; exportModelAsync(
       ExportModelRequest request) {
-<span class="fc" id="L2210">    return exportModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2237">    return exportModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2239,7 +2266,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ExportModelRequest, Empty, OperationMetadata&gt;
       exportModelOperationCallable() {
-<span class="fc" id="L2242">    return stub.exportModelOperationCallable();</span>
+<span class="fc" id="L2269">    return stub.exportModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2269,7 +2296,7 @@ public class AutoMlClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExportModelRequest, Operation&gt; exportModelCallable() {
-<span class="nc" id="L2272">    return stub.exportModelCallable();</span>
+<span class="nc" id="L2299">    return stub.exportModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2293,10 +2320,10 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final ModelEvaluation getModelEvaluation(ModelEvaluationName name) {
     GetModelEvaluationRequest request =
-<span class="fc" id="L2296">        GetModelEvaluationRequest.newBuilder()</span>
-<span class="pc bpc" id="L2297" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2298">            .build();</span>
-<span class="fc" id="L2299">    return getModelEvaluation(request);</span>
+<span class="fc" id="L2323">        GetModelEvaluationRequest.newBuilder()</span>
+<span class="pc bpc" id="L2324" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2325">            .build();</span>
+<span class="fc" id="L2326">    return getModelEvaluation(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2321,8 +2348,8 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final ModelEvaluation getModelEvaluation(String name) {
     GetModelEvaluationRequest request =
-<span class="fc" id="L2324">        GetModelEvaluationRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2325">    return getModelEvaluation(request);</span>
+<span class="fc" id="L2351">        GetModelEvaluationRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2352">    return getModelEvaluation(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2349,7 +2376,7 @@ public class AutoMlClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ModelEvaluation getModelEvaluation(GetModelEvaluationRequest request) {
-<span class="fc" id="L2352">    return getModelEvaluationCallable().call(request);</span>
+<span class="fc" id="L2379">    return getModelEvaluationCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2377,7 +2404,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetModelEvaluationRequest, ModelEvaluation&gt;
       getModelEvaluationCallable() {
-<span class="fc" id="L2380">    return stub.getModelEvaluationCallable();</span>
+<span class="fc" id="L2407">    return stub.getModelEvaluationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2413,11 +2440,11 @@ public class AutoMlClient implements BackgroundResource {
   public final ListModelEvaluationsPagedResponse listModelEvaluations(
       ModelName parent, String filter) {
     ListModelEvaluationsRequest request =
-<span class="fc" id="L2416">        ListModelEvaluationsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2417" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2418">            .setFilter(filter)</span>
-<span class="fc" id="L2419">            .build();</span>
-<span class="fc" id="L2420">    return listModelEvaluations(request);</span>
+<span class="fc" id="L2443">        ListModelEvaluationsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2444" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2445">            .setFilter(filter)</span>
+<span class="fc" id="L2446">            .build();</span>
+<span class="fc" id="L2447">    return listModelEvaluations(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2453,8 +2480,8 @@ public class AutoMlClient implements BackgroundResource {
   public final ListModelEvaluationsPagedResponse listModelEvaluations(
       String parent, String filter) {
     ListModelEvaluationsRequest request =
-<span class="fc" id="L2456">        ListModelEvaluationsRequest.newBuilder().setParent(parent).setFilter(filter).build();</span>
-<span class="fc" id="L2457">    return listModelEvaluations(request);</span>
+<span class="fc" id="L2483">        ListModelEvaluationsRequest.newBuilder().setParent(parent).setFilter(filter).build();</span>
+<span class="fc" id="L2484">    return listModelEvaluations(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2485,7 +2512,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final ListModelEvaluationsPagedResponse listModelEvaluations(
       ListModelEvaluationsRequest request) {
-<span class="fc" id="L2488">    return listModelEvaluationsPagedCallable().call(request);</span>
+<span class="fc" id="L2515">    return listModelEvaluationsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2516,7 +2543,7 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListModelEvaluationsRequest, ListModelEvaluationsPagedResponse&gt;
       listModelEvaluationsPagedCallable() {
-<span class="fc" id="L2519">    return stub.listModelEvaluationsPagedCallable();</span>
+<span class="fc" id="L2546">    return stub.listModelEvaluationsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2554,37 +2581,37 @@ public class AutoMlClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListModelEvaluationsRequest, ListModelEvaluationsResponse&gt;
       listModelEvaluationsCallable() {
-<span class="nc" id="L2557">    return stub.listModelEvaluationsCallable();</span>
+<span class="nc" id="L2584">    return stub.listModelEvaluationsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2562">    stub.close();</span>
-<span class="fc" id="L2563">  }</span>
+<span class="fc" id="L2589">    stub.close();</span>
+<span class="fc" id="L2590">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2567">    stub.shutdown();</span>
-<span class="nc" id="L2568">  }</span>
+<span class="nc" id="L2594">    stub.shutdown();</span>
+<span class="nc" id="L2595">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2572">    return stub.isShutdown();</span>
+<span class="nc" id="L2599">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2577">    return stub.isTerminated();</span>
+<span class="nc" id="L2604">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2582">    stub.shutdownNow();</span>
-<span class="nc" id="L2583">  }</span>
+<span class="nc" id="L2609">    stub.shutdownNow();</span>
+<span class="nc" id="L2610">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2587">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2614">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListDatasetsPagedResponse
@@ -2599,16 +2626,16 @@ public class AutoMlClient implements BackgroundResource {
         PageContext&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt; context,
         ApiFuture&lt;ListDatasetsResponse&gt; futureResponse) {
       ApiFuture&lt;ListDatasetsPage&gt; futurePage =
-<span class="fc" id="L2602">          ListDatasetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2603">      return ApiFutures.transform(</span>
+<span class="fc" id="L2629">          ListDatasetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2630">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2605">          input -&gt; new ListDatasetsPagedResponse(input),</span>
-<span class="fc" id="L2606">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2632">          input -&gt; new ListDatasetsPagedResponse(input),</span>
+<span class="fc" id="L2633">          MoreExecutors.directExecutor());</span>
     }
 
     private ListDatasetsPagedResponse(ListDatasetsPage page) {
-<span class="fc" id="L2610">      super(page, ListDatasetsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2611">    }</span>
+<span class="fc" id="L2637">      super(page, ListDatasetsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2638">    }</span>
   }
 
   public static class ListDatasetsPage
@@ -2617,25 +2644,25 @@ public class AutoMlClient implements BackgroundResource {
     private ListDatasetsPage(
         PageContext&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt; context,
         ListDatasetsResponse response) {
-<span class="fc" id="L2620">      super(context, response);</span>
-<span class="fc" id="L2621">    }</span>
+<span class="fc" id="L2647">      super(context, response);</span>
+<span class="fc" id="L2648">    }</span>
 
     private static ListDatasetsPage createEmptyPage() {
-<span class="fc" id="L2624">      return new ListDatasetsPage(null, null);</span>
+<span class="fc" id="L2651">      return new ListDatasetsPage(null, null);</span>
     }
 
     @Override
     protected ListDatasetsPage createPage(
         PageContext&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt; context,
         ListDatasetsResponse response) {
-<span class="fc" id="L2631">      return new ListDatasetsPage(context, response);</span>
+<span class="fc" id="L2658">      return new ListDatasetsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListDatasetsPage&gt; createPageAsync(
         PageContext&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt; context,
         ApiFuture&lt;ListDatasetsResponse&gt; futureResponse) {
-<span class="fc" id="L2638">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2665">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2648,17 +2675,17 @@ public class AutoMlClient implements BackgroundResource {
           ListDatasetsFixedSizeCollection&gt; {
 
     private ListDatasetsFixedSizeCollection(List&lt;ListDatasetsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2651">      super(pages, collectionSize);</span>
-<span class="fc" id="L2652">    }</span>
+<span class="fc" id="L2678">      super(pages, collectionSize);</span>
+<span class="fc" id="L2679">    }</span>
 
     private static ListDatasetsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2655">      return new ListDatasetsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2682">      return new ListDatasetsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListDatasetsFixedSizeCollection createCollection(
         List&lt;ListDatasetsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2661">      return new ListDatasetsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2688">      return new ListDatasetsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2674,14 +2701,14 @@ public class AutoMlClient implements BackgroundResource {
         PageContext&lt;ListModelsRequest, ListModelsResponse, Model&gt; context,
         ApiFuture&lt;ListModelsResponse&gt; futureResponse) {
       ApiFuture&lt;ListModelsPage&gt; futurePage =
-<span class="fc" id="L2677">          ListModelsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2678">      return ApiFutures.transform(</span>
-<span class="fc" id="L2679">          futurePage, input -&gt; new ListModelsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2704">          ListModelsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2705">      return ApiFutures.transform(</span>
+<span class="fc" id="L2706">          futurePage, input -&gt; new ListModelsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListModelsPagedResponse(ListModelsPage page) {
-<span class="fc" id="L2683">      super(page, ListModelsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2684">    }</span>
+<span class="fc" id="L2710">      super(page, ListModelsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2711">    }</span>
   }
 
   public static class ListModelsPage
@@ -2690,25 +2717,25 @@ public class AutoMlClient implements BackgroundResource {
     private ListModelsPage(
         PageContext&lt;ListModelsRequest, ListModelsResponse, Model&gt; context,
         ListModelsResponse response) {
-<span class="fc" id="L2693">      super(context, response);</span>
-<span class="fc" id="L2694">    }</span>
+<span class="fc" id="L2720">      super(context, response);</span>
+<span class="fc" id="L2721">    }</span>
 
     private static ListModelsPage createEmptyPage() {
-<span class="fc" id="L2697">      return new ListModelsPage(null, null);</span>
+<span class="fc" id="L2724">      return new ListModelsPage(null, null);</span>
     }
 
     @Override
     protected ListModelsPage createPage(
         PageContext&lt;ListModelsRequest, ListModelsResponse, Model&gt; context,
         ListModelsResponse response) {
-<span class="fc" id="L2704">      return new ListModelsPage(context, response);</span>
+<span class="fc" id="L2731">      return new ListModelsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListModelsPage&gt; createPageAsync(
         PageContext&lt;ListModelsRequest, ListModelsResponse, Model&gt; context,
         ApiFuture&lt;ListModelsResponse&gt; futureResponse) {
-<span class="fc" id="L2711">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2738">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2721,17 +2748,17 @@ public class AutoMlClient implements BackgroundResource {
           ListModelsFixedSizeCollection&gt; {
 
     private ListModelsFixedSizeCollection(List&lt;ListModelsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2724">      super(pages, collectionSize);</span>
-<span class="fc" id="L2725">    }</span>
+<span class="fc" id="L2751">      super(pages, collectionSize);</span>
+<span class="fc" id="L2752">    }</span>
 
     private static ListModelsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2728">      return new ListModelsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2755">      return new ListModelsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListModelsFixedSizeCollection createCollection(
         List&lt;ListModelsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2734">      return new ListModelsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2761">      return new ListModelsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2748,16 +2775,16 @@ public class AutoMlClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListModelEvaluationsResponse&gt; futureResponse) {
       ApiFuture&lt;ListModelEvaluationsPage&gt; futurePage =
-<span class="fc" id="L2751">          ListModelEvaluationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2752">      return ApiFutures.transform(</span>
+<span class="fc" id="L2778">          ListModelEvaluationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2779">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2754">          input -&gt; new ListModelEvaluationsPagedResponse(input),</span>
-<span class="fc" id="L2755">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2781">          input -&gt; new ListModelEvaluationsPagedResponse(input),</span>
+<span class="fc" id="L2782">          MoreExecutors.directExecutor());</span>
     }
 
     private ListModelEvaluationsPagedResponse(ListModelEvaluationsPage page) {
-<span class="fc" id="L2759">      super(page, ListModelEvaluationsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2760">    }</span>
+<span class="fc" id="L2786">      super(page, ListModelEvaluationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2787">    }</span>
   }
 
   public static class ListModelEvaluationsPage
@@ -2771,11 +2798,11 @@ public class AutoMlClient implements BackgroundResource {
         PageContext&lt;ListModelEvaluationsRequest, ListModelEvaluationsResponse, ModelEvaluation&gt;
             context,
         ListModelEvaluationsResponse response) {
-<span class="fc" id="L2774">      super(context, response);</span>
-<span class="fc" id="L2775">    }</span>
+<span class="fc" id="L2801">      super(context, response);</span>
+<span class="fc" id="L2802">    }</span>
 
     private static ListModelEvaluationsPage createEmptyPage() {
-<span class="fc" id="L2778">      return new ListModelEvaluationsPage(null, null);</span>
+<span class="fc" id="L2805">      return new ListModelEvaluationsPage(null, null);</span>
     }
 
     @Override
@@ -2783,7 +2810,7 @@ public class AutoMlClient implements BackgroundResource {
         PageContext&lt;ListModelEvaluationsRequest, ListModelEvaluationsResponse, ModelEvaluation&gt;
             context,
         ListModelEvaluationsResponse response) {
-<span class="fc" id="L2786">      return new ListModelEvaluationsPage(context, response);</span>
+<span class="fc" id="L2813">      return new ListModelEvaluationsPage(context, response);</span>
     }
 
     @Override
@@ -2791,7 +2818,7 @@ public class AutoMlClient implements BackgroundResource {
         PageContext&lt;ListModelEvaluationsRequest, ListModelEvaluationsResponse, ModelEvaluation&gt;
             context,
         ApiFuture&lt;ListModelEvaluationsResponse&gt; futureResponse) {
-<span class="fc" id="L2794">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2821">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2805,17 +2832,17 @@ public class AutoMlClient implements BackgroundResource {
 
     private ListModelEvaluationsFixedSizeCollection(
         List&lt;ListModelEvaluationsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2808">      super(pages, collectionSize);</span>
-<span class="fc" id="L2809">    }</span>
+<span class="fc" id="L2835">      super(pages, collectionSize);</span>
+<span class="fc" id="L2836">    }</span>
 
     private static ListModelEvaluationsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2812">      return new ListModelEvaluationsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2839">      return new ListModelEvaluationsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListModelEvaluationsFixedSizeCollection createCollection(
         List&lt;ListModelEvaluationsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2818">      return new ListModelEvaluationsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2845">      return new ListModelEvaluationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

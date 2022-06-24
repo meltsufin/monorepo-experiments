@@ -19,6 +19,7 @@ package com.google.cloud.run.v2;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.run.v2.stub.RevisionsStub;
 import com.google.cloud.run.v2.stub.RevisionsStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -100,17 +100,32 @@ import javax.annotation.Generated;
  * RevisionsClient revisionsClient = RevisionsClient.create(revisionsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * RevisionsSettings revisionsSettings =
+ *     RevisionsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             RevisionsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * RevisionsClient revisionsClient = RevisionsClient.create(revisionsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class RevisionsClient implements BackgroundResource {
   private final RevisionsSettings settings;
   private final RevisionsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of RevisionsClient with default settings. */
   public static final RevisionsClient create() throws IOException {
-<span class="nc" id="L113">    return create(RevisionsSettings.newBuilder().build());</span>
+<span class="nc" id="L128">    return create(RevisionsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -118,7 +133,7 @@ public class RevisionsClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final RevisionsClient create(RevisionsSettings settings) throws IOException {
-<span class="fc" id="L121">    return new RevisionsClient(settings);</span>
+<span class="fc" id="L136">    return new RevisionsClient(settings);</span>
   }
 
   /**
@@ -126,39 +141,51 @@ public class RevisionsClient implements BackgroundResource {
    * advanced usage - prefer using create(RevisionsSettings).
    */
   public static final RevisionsClient create(RevisionsStub stub) {
-<span class="nc" id="L129">    return new RevisionsClient(stub);</span>
+<span class="nc" id="L144">    return new RevisionsClient(stub);</span>
   }
 
   /**
    * Constructs an instance of RevisionsClient, using the given settings. This is protected so that
    * it is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L136">  protected RevisionsClient(RevisionsSettings settings) throws IOException {</span>
-<span class="fc" id="L137">    this.settings = settings;</span>
-<span class="fc" id="L138">    this.stub = ((RevisionsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L139">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L140">  }</span>
+<span class="fc" id="L151">  protected RevisionsClient(RevisionsSettings settings) throws IOException {</span>
+<span class="fc" id="L152">    this.settings = settings;</span>
+<span class="fc" id="L153">    this.stub = ((RevisionsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L154">    this.operationsClient =</span>
+<span class="fc" id="L155">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L156">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L157">  }</span>
 
-<span class="nc" id="L142">  protected RevisionsClient(RevisionsStub stub) {</span>
-<span class="nc" id="L143">    this.settings = null;</span>
-<span class="nc" id="L144">    this.stub = stub;</span>
-<span class="nc" id="L145">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L146">  }</span>
+<span class="nc" id="L159">  protected RevisionsClient(RevisionsStub stub) {</span>
+<span class="nc" id="L160">    this.settings = null;</span>
+<span class="nc" id="L161">    this.stub = stub;</span>
+<span class="nc" id="L162">    this.operationsClient =</span>
+<span class="nc" id="L163">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L164">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L165">  }</span>
 
   public final RevisionsSettings getSettings() {
-<span class="nc" id="L149">    return settings;</span>
+<span class="nc" id="L168">    return settings;</span>
   }
 
   public RevisionsStub getStub() {
-<span class="nc" id="L153">    return stub;</span>
+<span class="nc" id="L172">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L161">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L180">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L188">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -182,8 +209,8 @@ public class RevisionsClient implements BackgroundResource {
    */
   public final Revision getRevision(RevisionName name) {
     GetRevisionRequest request =
-<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        GetRevisionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L186">    return getRevision(request);</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">        GetRevisionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L213">    return getRevision(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -207,8 +234,8 @@ public class RevisionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Revision getRevision(String name) {
-<span class="fc" id="L210">    GetRevisionRequest request = GetRevisionRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L211">    return getRevision(request);</span>
+<span class="fc" id="L237">    GetRevisionRequest request = GetRevisionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L238">    return getRevision(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -234,7 +261,7 @@ public class RevisionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Revision getRevision(GetRevisionRequest request) {
-<span class="fc" id="L237">    return getRevisionCallable().call(request);</span>
+<span class="fc" id="L264">    return getRevisionCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -259,7 +286,7 @@ public class RevisionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetRevisionRequest, Revision&gt; getRevisionCallable() {
-<span class="fc" id="L262">    return stub.getRevisionCallable();</span>
+<span class="fc" id="L289">    return stub.getRevisionCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -286,10 +313,10 @@ public class RevisionsClient implements BackgroundResource {
    */
   public final ListRevisionsPagedResponse listRevisions(ServiceName parent) {
     ListRevisionsRequest request =
-<span class="fc" id="L289">        ListRevisionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L290" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L291">            .build();</span>
-<span class="fc" id="L292">    return listRevisions(request);</span>
+<span class="fc" id="L316">        ListRevisionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L317" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L318">            .build();</span>
+<span class="fc" id="L319">    return listRevisions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -315,8 +342,8 @@ public class RevisionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListRevisionsPagedResponse listRevisions(String parent) {
-<span class="fc" id="L318">    ListRevisionsRequest request = ListRevisionsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L319">    return listRevisions(request);</span>
+<span class="fc" id="L345">    ListRevisionsRequest request = ListRevisionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L346">    return listRevisions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -346,7 +373,7 @@ public class RevisionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListRevisionsPagedResponse listRevisions(ListRevisionsRequest request) {
-<span class="fc" id="L349">    return listRevisionsPagedCallable().call(request);</span>
+<span class="fc" id="L376">    return listRevisionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -376,7 +403,7 @@ public class RevisionsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListRevisionsRequest, ListRevisionsPagedResponse&gt;
       listRevisionsPagedCallable() {
-<span class="fc" id="L379">    return stub.listRevisionsPagedCallable();</span>
+<span class="fc" id="L406">    return stub.listRevisionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -412,7 +439,7 @@ public class RevisionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListRevisionsRequest, ListRevisionsResponse&gt; listRevisionsCallable() {
-<span class="nc" id="L415">    return stub.listRevisionsCallable();</span>
+<span class="nc" id="L442">    return stub.listRevisionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -436,8 +463,8 @@ public class RevisionsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Revision, Revision&gt; deleteRevisionAsync(RevisionName name) {
     DeleteRevisionRequest request =
-<span class="pc bpc" id="L439" title="1 of 2 branches missed.">        DeleteRevisionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L440">    return deleteRevisionAsync(request);</span>
+<span class="pc bpc" id="L466" title="1 of 2 branches missed.">        DeleteRevisionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L467">    return deleteRevisionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -461,8 +488,8 @@ public class RevisionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Revision, Revision&gt; deleteRevisionAsync(String name) {
-<span class="fc" id="L464">    DeleteRevisionRequest request = DeleteRevisionRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L465">    return deleteRevisionAsync(request);</span>
+<span class="fc" id="L491">    DeleteRevisionRequest request = DeleteRevisionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L492">    return deleteRevisionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -491,7 +518,7 @@ public class RevisionsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Revision, Revision&gt; deleteRevisionAsync(
       DeleteRevisionRequest request) {
-<span class="fc" id="L494">    return deleteRevisionOperationCallable().futureCall(request);</span>
+<span class="fc" id="L521">    return deleteRevisionOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -520,7 +547,7 @@ public class RevisionsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteRevisionRequest, Revision, Revision&gt;
       deleteRevisionOperationCallable() {
-<span class="fc" id="L523">    return stub.deleteRevisionOperationCallable();</span>
+<span class="fc" id="L550">    return stub.deleteRevisionOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -547,37 +574,37 @@ public class RevisionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteRevisionRequest, Operation&gt; deleteRevisionCallable() {
-<span class="nc" id="L550">    return stub.deleteRevisionCallable();</span>
+<span class="nc" id="L577">    return stub.deleteRevisionCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L555">    stub.close();</span>
-<span class="fc" id="L556">  }</span>
+<span class="fc" id="L582">    stub.close();</span>
+<span class="fc" id="L583">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L560">    stub.shutdown();</span>
-<span class="nc" id="L561">  }</span>
+<span class="nc" id="L587">    stub.shutdown();</span>
+<span class="nc" id="L588">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L565">    return stub.isShutdown();</span>
+<span class="nc" id="L592">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L570">    return stub.isTerminated();</span>
+<span class="nc" id="L597">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L575">    stub.shutdownNow();</span>
-<span class="nc" id="L576">  }</span>
+<span class="nc" id="L602">    stub.shutdownNow();</span>
+<span class="nc" id="L603">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L580">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L607">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListRevisionsPagedResponse
@@ -592,16 +619,16 @@ public class RevisionsClient implements BackgroundResource {
         PageContext&lt;ListRevisionsRequest, ListRevisionsResponse, Revision&gt; context,
         ApiFuture&lt;ListRevisionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListRevisionsPage&gt; futurePage =
-<span class="fc" id="L595">          ListRevisionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L596">      return ApiFutures.transform(</span>
+<span class="fc" id="L622">          ListRevisionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L623">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L598">          input -&gt; new ListRevisionsPagedResponse(input),</span>
-<span class="fc" id="L599">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L625">          input -&gt; new ListRevisionsPagedResponse(input),</span>
+<span class="fc" id="L626">          MoreExecutors.directExecutor());</span>
     }
 
     private ListRevisionsPagedResponse(ListRevisionsPage page) {
-<span class="fc" id="L603">      super(page, ListRevisionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L604">    }</span>
+<span class="fc" id="L630">      super(page, ListRevisionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L631">    }</span>
   }
 
   public static class ListRevisionsPage
@@ -611,25 +638,25 @@ public class RevisionsClient implements BackgroundResource {
     private ListRevisionsPage(
         PageContext&lt;ListRevisionsRequest, ListRevisionsResponse, Revision&gt; context,
         ListRevisionsResponse response) {
-<span class="fc" id="L614">      super(context, response);</span>
-<span class="fc" id="L615">    }</span>
+<span class="fc" id="L641">      super(context, response);</span>
+<span class="fc" id="L642">    }</span>
 
     private static ListRevisionsPage createEmptyPage() {
-<span class="fc" id="L618">      return new ListRevisionsPage(null, null);</span>
+<span class="fc" id="L645">      return new ListRevisionsPage(null, null);</span>
     }
 
     @Override
     protected ListRevisionsPage createPage(
         PageContext&lt;ListRevisionsRequest, ListRevisionsResponse, Revision&gt; context,
         ListRevisionsResponse response) {
-<span class="fc" id="L625">      return new ListRevisionsPage(context, response);</span>
+<span class="fc" id="L652">      return new ListRevisionsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListRevisionsPage&gt; createPageAsync(
         PageContext&lt;ListRevisionsRequest, ListRevisionsResponse, Revision&gt; context,
         ApiFuture&lt;ListRevisionsResponse&gt; futureResponse) {
-<span class="fc" id="L632">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L659">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -642,17 +669,17 @@ public class RevisionsClient implements BackgroundResource {
           ListRevisionsFixedSizeCollection&gt; {
 
     private ListRevisionsFixedSizeCollection(List&lt;ListRevisionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L645">      super(pages, collectionSize);</span>
-<span class="fc" id="L646">    }</span>
+<span class="fc" id="L672">      super(pages, collectionSize);</span>
+<span class="fc" id="L673">    }</span>
 
     private static ListRevisionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L649">      return new ListRevisionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L676">      return new ListRevisionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListRevisionsFixedSizeCollection createCollection(
         List&lt;ListRevisionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L655">      return new ListRevisionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L682">      return new ListRevisionsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

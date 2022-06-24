@@ -19,6 +19,7 @@ package com.google.cloud.securitycenter.v1;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -36,7 +37,6 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Timestamp;
@@ -110,17 +110,32 @@ import javax.annotation.Generated;
  * SecurityCenterClient securityCenterClient = SecurityCenterClient.create(securityCenterSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * SecurityCenterSettings securityCenterSettings =
+ *     SecurityCenterSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             SecurityCenterSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * SecurityCenterClient securityCenterClient = SecurityCenterClient.create(securityCenterSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class SecurityCenterClient implements BackgroundResource {
   private final SecurityCenterSettings settings;
   private final SecurityCenterStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of SecurityCenterClient with default settings. */
   public static final SecurityCenterClient create() throws IOException {
-<span class="nc" id="L123">    return create(SecurityCenterSettings.newBuilder().build());</span>
+<span class="nc" id="L138">    return create(SecurityCenterSettings.newBuilder().build());</span>
   }
 
   /**
@@ -129,7 +144,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public static final SecurityCenterClient create(SecurityCenterSettings settings)
       throws IOException {
-<span class="fc" id="L132">    return new SecurityCenterClient(settings);</span>
+<span class="fc" id="L147">    return new SecurityCenterClient(settings);</span>
   }
 
   /**
@@ -137,7 +152,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * for advanced usage - prefer using create(SecurityCenterSettings).
    */
   public static final SecurityCenterClient create(SecurityCenterStub stub) {
-<span class="nc" id="L140">    return new SecurityCenterClient(stub);</span>
+<span class="nc" id="L155">    return new SecurityCenterClient(stub);</span>
   }
 
   /**
@@ -145,32 +160,44 @@ public class SecurityCenterClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L148">  protected SecurityCenterClient(SecurityCenterSettings settings) throws IOException {</span>
-<span class="fc" id="L149">    this.settings = settings;</span>
-<span class="fc" id="L150">    this.stub = ((SecurityCenterStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L151">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L152">  }</span>
+<span class="fc" id="L163">  protected SecurityCenterClient(SecurityCenterSettings settings) throws IOException {</span>
+<span class="fc" id="L164">    this.settings = settings;</span>
+<span class="fc" id="L165">    this.stub = ((SecurityCenterStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L166">    this.operationsClient =</span>
+<span class="fc" id="L167">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L168">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L169">  }</span>
 
-<span class="nc" id="L154">  protected SecurityCenterClient(SecurityCenterStub stub) {</span>
-<span class="nc" id="L155">    this.settings = null;</span>
-<span class="nc" id="L156">    this.stub = stub;</span>
-<span class="nc" id="L157">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L158">  }</span>
+<span class="nc" id="L171">  protected SecurityCenterClient(SecurityCenterStub stub) {</span>
+<span class="nc" id="L172">    this.settings = null;</span>
+<span class="nc" id="L173">    this.stub = stub;</span>
+<span class="nc" id="L174">    this.operationsClient =</span>
+<span class="nc" id="L175">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L176">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L177">  }</span>
 
   public final SecurityCenterSettings getSettings() {
-<span class="nc" id="L161">    return settings;</span>
+<span class="nc" id="L180">    return settings;</span>
   }
 
   public SecurityCenterStub getStub() {
-<span class="nc" id="L165">    return stub;</span>
+<span class="nc" id="L184">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L173">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L192">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L200">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -197,10 +224,10 @@ public class SecurityCenterClient implements BackgroundResource {
   public final OperationFuture&lt;BulkMuteFindingsResponse, Empty&gt; bulkMuteFindingsAsync(
       ResourceName parent) {
     BulkMuteFindingsRequest request =
-<span class="fc" id="L200">        BulkMuteFindingsRequest.newBuilder()</span>
-<span class="pc bpc" id="L201" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L202">            .build();</span>
-<span class="fc" id="L203">    return bulkMuteFindingsAsync(request);</span>
+<span class="fc" id="L227">        BulkMuteFindingsRequest.newBuilder()</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L229">            .build();</span>
+<span class="fc" id="L230">    return bulkMuteFindingsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -227,8 +254,8 @@ public class SecurityCenterClient implements BackgroundResource {
   public final OperationFuture&lt;BulkMuteFindingsResponse, Empty&gt; bulkMuteFindingsAsync(
       String parent) {
     BulkMuteFindingsRequest request =
-<span class="fc" id="L230">        BulkMuteFindingsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L231">    return bulkMuteFindingsAsync(request);</span>
+<span class="fc" id="L257">        BulkMuteFindingsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L258">    return bulkMuteFindingsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -258,7 +285,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final OperationFuture&lt;BulkMuteFindingsResponse, Empty&gt; bulkMuteFindingsAsync(
       BulkMuteFindingsRequest request) {
-<span class="fc" id="L261">    return bulkMuteFindingsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L288">    return bulkMuteFindingsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -288,7 +315,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final OperationCallable&lt;BulkMuteFindingsRequest, BulkMuteFindingsResponse, Empty&gt;
       bulkMuteFindingsOperationCallable() {
-<span class="fc" id="L291">    return stub.bulkMuteFindingsOperationCallable();</span>
+<span class="fc" id="L318">    return stub.bulkMuteFindingsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -317,7 +344,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;BulkMuteFindingsRequest, Operation&gt; bulkMuteFindingsCallable() {
-<span class="nc" id="L320">    return stub.bulkMuteFindingsCallable();</span>
+<span class="nc" id="L347">    return stub.bulkMuteFindingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -344,11 +371,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Source createSource(OrganizationName parent, Source source) {
     CreateSourceRequest request =
-<span class="fc" id="L347">        CreateSourceRequest.newBuilder()</span>
-<span class="pc bpc" id="L348" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L349">            .setSource(source)</span>
-<span class="fc" id="L350">            .build();</span>
-<span class="fc" id="L351">    return createSource(request);</span>
+<span class="fc" id="L374">        CreateSourceRequest.newBuilder()</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L376">            .setSource(source)</span>
+<span class="fc" id="L377">            .build();</span>
+<span class="fc" id="L378">    return createSource(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -375,8 +402,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Source createSource(String parent, Source source) {
     CreateSourceRequest request =
-<span class="fc" id="L378">        CreateSourceRequest.newBuilder().setParent(parent).setSource(source).build();</span>
-<span class="fc" id="L379">    return createSource(request);</span>
+<span class="fc" id="L405">        CreateSourceRequest.newBuilder().setParent(parent).setSource(source).build();</span>
+<span class="fc" id="L406">    return createSource(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -402,7 +429,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Source createSource(CreateSourceRequest request) {
-<span class="fc" id="L405">    return createSourceCallable().call(request);</span>
+<span class="fc" id="L432">    return createSourceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -427,7 +454,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateSourceRequest, Source&gt; createSourceCallable() {
-<span class="fc" id="L430">    return stub.createSourceCallable();</span>
+<span class="fc" id="L457">    return stub.createSourceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -458,12 +485,12 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Finding createFinding(SourceName parent, String findingId, Finding finding) {
     CreateFindingRequest request =
-<span class="fc" id="L461">        CreateFindingRequest.newBuilder()</span>
-<span class="pc bpc" id="L462" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L463">            .setFindingId(findingId)</span>
-<span class="fc" id="L464">            .setFinding(finding)</span>
-<span class="fc" id="L465">            .build();</span>
-<span class="fc" id="L466">    return createFinding(request);</span>
+<span class="fc" id="L488">        CreateFindingRequest.newBuilder()</span>
+<span class="pc bpc" id="L489" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L490">            .setFindingId(findingId)</span>
+<span class="fc" id="L491">            .setFinding(finding)</span>
+<span class="fc" id="L492">            .build();</span>
+<span class="fc" id="L493">    return createFinding(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -494,12 +521,12 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Finding createFinding(String parent, String findingId, Finding finding) {
     CreateFindingRequest request =
-<span class="fc" id="L497">        CreateFindingRequest.newBuilder()</span>
-<span class="fc" id="L498">            .setParent(parent)</span>
-<span class="fc" id="L499">            .setFindingId(findingId)</span>
-<span class="fc" id="L500">            .setFinding(finding)</span>
-<span class="fc" id="L501">            .build();</span>
-<span class="fc" id="L502">    return createFinding(request);</span>
+<span class="fc" id="L524">        CreateFindingRequest.newBuilder()</span>
+<span class="fc" id="L525">            .setParent(parent)</span>
+<span class="fc" id="L526">            .setFindingId(findingId)</span>
+<span class="fc" id="L527">            .setFinding(finding)</span>
+<span class="fc" id="L528">            .build();</span>
+<span class="fc" id="L529">    return createFinding(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -527,7 +554,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Finding createFinding(CreateFindingRequest request) {
-<span class="fc" id="L530">    return createFindingCallable().call(request);</span>
+<span class="fc" id="L557">    return createFindingCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -554,7 +581,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateFindingRequest, Finding&gt; createFindingCallable() {
-<span class="fc" id="L557">    return stub.createFindingCallable();</span>
+<span class="fc" id="L584">    return stub.createFindingCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -580,11 +607,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final MuteConfig createMuteConfig(FolderName parent, MuteConfig muteConfig) {
     CreateMuteConfigRequest request =
-<span class="fc" id="L583">        CreateMuteConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L584" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L585">            .setMuteConfig(muteConfig)</span>
-<span class="fc" id="L586">            .build();</span>
-<span class="fc" id="L587">    return createMuteConfig(request);</span>
+<span class="fc" id="L610">        CreateMuteConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L611" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L612">            .setMuteConfig(muteConfig)</span>
+<span class="fc" id="L613">            .build();</span>
+<span class="fc" id="L614">    return createMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -610,11 +637,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final MuteConfig createMuteConfig(OrganizationName parent, MuteConfig muteConfig) {
     CreateMuteConfigRequest request =
-<span class="fc" id="L613">        CreateMuteConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L614" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L615">            .setMuteConfig(muteConfig)</span>
-<span class="fc" id="L616">            .build();</span>
-<span class="fc" id="L617">    return createMuteConfig(request);</span>
+<span class="fc" id="L640">        CreateMuteConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L641" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L642">            .setMuteConfig(muteConfig)</span>
+<span class="fc" id="L643">            .build();</span>
+<span class="fc" id="L644">    return createMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -640,11 +667,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final MuteConfig createMuteConfig(ProjectName parent, MuteConfig muteConfig) {
     CreateMuteConfigRequest request =
-<span class="fc" id="L643">        CreateMuteConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L644" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L645">            .setMuteConfig(muteConfig)</span>
-<span class="fc" id="L646">            .build();</span>
-<span class="fc" id="L647">    return createMuteConfig(request);</span>
+<span class="fc" id="L670">        CreateMuteConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L671" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L672">            .setMuteConfig(muteConfig)</span>
+<span class="fc" id="L673">            .build();</span>
+<span class="fc" id="L674">    return createMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -670,8 +697,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final MuteConfig createMuteConfig(String parent, MuteConfig muteConfig) {
     CreateMuteConfigRequest request =
-<span class="fc" id="L673">        CreateMuteConfigRequest.newBuilder().setParent(parent).setMuteConfig(muteConfig).build();</span>
-<span class="fc" id="L674">    return createMuteConfig(request);</span>
+<span class="fc" id="L700">        CreateMuteConfigRequest.newBuilder().setParent(parent).setMuteConfig(muteConfig).build();</span>
+<span class="fc" id="L701">    return createMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -702,12 +729,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final MuteConfig createMuteConfig(
       FolderName parent, MuteConfig muteConfig, String muteConfigId) {
     CreateMuteConfigRequest request =
-<span class="fc" id="L705">        CreateMuteConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L706" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L707">            .setMuteConfig(muteConfig)</span>
-<span class="fc" id="L708">            .setMuteConfigId(muteConfigId)</span>
-<span class="fc" id="L709">            .build();</span>
-<span class="fc" id="L710">    return createMuteConfig(request);</span>
+<span class="fc" id="L732">        CreateMuteConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L733" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L734">            .setMuteConfig(muteConfig)</span>
+<span class="fc" id="L735">            .setMuteConfigId(muteConfigId)</span>
+<span class="fc" id="L736">            .build();</span>
+<span class="fc" id="L737">    return createMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -738,12 +765,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final MuteConfig createMuteConfig(
       OrganizationName parent, MuteConfig muteConfig, String muteConfigId) {
     CreateMuteConfigRequest request =
-<span class="fc" id="L741">        CreateMuteConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L742" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L743">            .setMuteConfig(muteConfig)</span>
-<span class="fc" id="L744">            .setMuteConfigId(muteConfigId)</span>
-<span class="fc" id="L745">            .build();</span>
-<span class="fc" id="L746">    return createMuteConfig(request);</span>
+<span class="fc" id="L768">        CreateMuteConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L769" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L770">            .setMuteConfig(muteConfig)</span>
+<span class="fc" id="L771">            .setMuteConfigId(muteConfigId)</span>
+<span class="fc" id="L772">            .build();</span>
+<span class="fc" id="L773">    return createMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -774,12 +801,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final MuteConfig createMuteConfig(
       ProjectName parent, MuteConfig muteConfig, String muteConfigId) {
     CreateMuteConfigRequest request =
-<span class="fc" id="L777">        CreateMuteConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L778" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L779">            .setMuteConfig(muteConfig)</span>
-<span class="fc" id="L780">            .setMuteConfigId(muteConfigId)</span>
-<span class="fc" id="L781">            .build();</span>
-<span class="fc" id="L782">    return createMuteConfig(request);</span>
+<span class="fc" id="L804">        CreateMuteConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L805" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L806">            .setMuteConfig(muteConfig)</span>
+<span class="fc" id="L807">            .setMuteConfigId(muteConfigId)</span>
+<span class="fc" id="L808">            .build();</span>
+<span class="fc" id="L809">    return createMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -810,12 +837,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final MuteConfig createMuteConfig(
       String parent, MuteConfig muteConfig, String muteConfigId) {
     CreateMuteConfigRequest request =
-<span class="fc" id="L813">        CreateMuteConfigRequest.newBuilder()</span>
-<span class="fc" id="L814">            .setParent(parent)</span>
-<span class="fc" id="L815">            .setMuteConfig(muteConfig)</span>
-<span class="fc" id="L816">            .setMuteConfigId(muteConfigId)</span>
-<span class="fc" id="L817">            .build();</span>
-<span class="fc" id="L818">    return createMuteConfig(request);</span>
+<span class="fc" id="L840">        CreateMuteConfigRequest.newBuilder()</span>
+<span class="fc" id="L841">            .setParent(parent)</span>
+<span class="fc" id="L842">            .setMuteConfig(muteConfig)</span>
+<span class="fc" id="L843">            .setMuteConfigId(muteConfigId)</span>
+<span class="fc" id="L844">            .build();</span>
+<span class="fc" id="L845">    return createMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -842,7 +869,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final MuteConfig createMuteConfig(CreateMuteConfigRequest request) {
-<span class="fc" id="L845">    return createMuteConfigCallable().call(request);</span>
+<span class="fc" id="L872">    return createMuteConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -869,7 +896,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateMuteConfigRequest, MuteConfig&gt; createMuteConfigCallable() {
-<span class="fc" id="L872">    return stub.createMuteConfigCallable();</span>
+<span class="fc" id="L899">    return stub.createMuteConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -898,11 +925,11 @@ public class SecurityCenterClient implements BackgroundResource {
   public final NotificationConfig createNotificationConfig(
       OrganizationName parent, NotificationConfig notificationConfig) {
     CreateNotificationConfigRequest request =
-<span class="fc" id="L901">        CreateNotificationConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L902" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L903">            .setNotificationConfig(notificationConfig)</span>
-<span class="fc" id="L904">            .build();</span>
-<span class="fc" id="L905">    return createNotificationConfig(request);</span>
+<span class="fc" id="L928">        CreateNotificationConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L929" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L930">            .setNotificationConfig(notificationConfig)</span>
+<span class="fc" id="L931">            .build();</span>
+<span class="fc" id="L932">    return createNotificationConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -931,11 +958,11 @@ public class SecurityCenterClient implements BackgroundResource {
   public final NotificationConfig createNotificationConfig(
       String parent, NotificationConfig notificationConfig) {
     CreateNotificationConfigRequest request =
-<span class="fc" id="L934">        CreateNotificationConfigRequest.newBuilder()</span>
-<span class="fc" id="L935">            .setParent(parent)</span>
-<span class="fc" id="L936">            .setNotificationConfig(notificationConfig)</span>
-<span class="fc" id="L937">            .build();</span>
-<span class="fc" id="L938">    return createNotificationConfig(request);</span>
+<span class="fc" id="L961">        CreateNotificationConfigRequest.newBuilder()</span>
+<span class="fc" id="L962">            .setParent(parent)</span>
+<span class="fc" id="L963">            .setNotificationConfig(notificationConfig)</span>
+<span class="fc" id="L964">            .build();</span>
+<span class="fc" id="L965">    return createNotificationConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -968,12 +995,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final NotificationConfig createNotificationConfig(
       OrganizationName parent, String configId, NotificationConfig notificationConfig) {
     CreateNotificationConfigRequest request =
-<span class="fc" id="L971">        CreateNotificationConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L972" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L973">            .setConfigId(configId)</span>
-<span class="fc" id="L974">            .setNotificationConfig(notificationConfig)</span>
-<span class="fc" id="L975">            .build();</span>
-<span class="fc" id="L976">    return createNotificationConfig(request);</span>
+<span class="fc" id="L998">        CreateNotificationConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L999" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1000">            .setConfigId(configId)</span>
+<span class="fc" id="L1001">            .setNotificationConfig(notificationConfig)</span>
+<span class="fc" id="L1002">            .build();</span>
+<span class="fc" id="L1003">    return createNotificationConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1006,12 +1033,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final NotificationConfig createNotificationConfig(
       String parent, String configId, NotificationConfig notificationConfig) {
     CreateNotificationConfigRequest request =
-<span class="fc" id="L1009">        CreateNotificationConfigRequest.newBuilder()</span>
-<span class="fc" id="L1010">            .setParent(parent)</span>
-<span class="fc" id="L1011">            .setConfigId(configId)</span>
-<span class="fc" id="L1012">            .setNotificationConfig(notificationConfig)</span>
-<span class="fc" id="L1013">            .build();</span>
-<span class="fc" id="L1014">    return createNotificationConfig(request);</span>
+<span class="fc" id="L1036">        CreateNotificationConfigRequest.newBuilder()</span>
+<span class="fc" id="L1037">            .setParent(parent)</span>
+<span class="fc" id="L1038">            .setConfigId(configId)</span>
+<span class="fc" id="L1039">            .setNotificationConfig(notificationConfig)</span>
+<span class="fc" id="L1040">            .build();</span>
+<span class="fc" id="L1041">    return createNotificationConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1039,7 +1066,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final NotificationConfig createNotificationConfig(
       CreateNotificationConfigRequest request) {
-<span class="fc" id="L1042">    return createNotificationConfigCallable().call(request);</span>
+<span class="fc" id="L1069">    return createNotificationConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1067,7 +1094,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateNotificationConfigRequest, NotificationConfig&gt;
       createNotificationConfigCallable() {
-<span class="fc" id="L1070">    return stub.createNotificationConfigCallable();</span>
+<span class="fc" id="L1097">    return stub.createNotificationConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1093,9 +1120,9 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final void deleteMuteConfig(MuteConfigName name) {
     DeleteMuteConfigRequest request =
-<span class="pc bpc" id="L1096" title="1 of 2 branches missed.">        DeleteMuteConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1097">    deleteMuteConfig(request);</span>
-<span class="fc" id="L1098">  }</span>
+<span class="pc bpc" id="L1123" title="1 of 2 branches missed.">        DeleteMuteConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1124">    deleteMuteConfig(request);</span>
+<span class="fc" id="L1125">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1119,9 +1146,9 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteMuteConfig(String name) {
-<span class="fc" id="L1122">    DeleteMuteConfigRequest request = DeleteMuteConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1123">    deleteMuteConfig(request);</span>
-<span class="fc" id="L1124">  }</span>
+<span class="fc" id="L1149">    DeleteMuteConfigRequest request = DeleteMuteConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1150">    deleteMuteConfig(request);</span>
+<span class="fc" id="L1151">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1147,8 +1174,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteMuteConfig(DeleteMuteConfigRequest request) {
-<span class="fc" id="L1150">    deleteMuteConfigCallable().call(request);</span>
-<span class="fc" id="L1151">  }</span>
+<span class="fc" id="L1177">    deleteMuteConfigCallable().call(request);</span>
+<span class="fc" id="L1178">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1173,7 +1200,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteMuteConfigRequest, Empty&gt; deleteMuteConfigCallable() {
-<span class="fc" id="L1176">    return stub.deleteMuteConfigCallable();</span>
+<span class="fc" id="L1203">    return stub.deleteMuteConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1198,11 +1225,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final void deleteNotificationConfig(NotificationConfigName name) {
     DeleteNotificationConfigRequest request =
-<span class="fc" id="L1201">        DeleteNotificationConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L1202" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1203">            .build();</span>
-<span class="fc" id="L1204">    deleteNotificationConfig(request);</span>
-<span class="fc" id="L1205">  }</span>
+<span class="fc" id="L1228">        DeleteNotificationConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L1229" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1230">            .build();</span>
+<span class="fc" id="L1231">    deleteNotificationConfig(request);</span>
+<span class="fc" id="L1232">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1225,9 +1252,9 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final void deleteNotificationConfig(String name) {
     DeleteNotificationConfigRequest request =
-<span class="fc" id="L1228">        DeleteNotificationConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1229">    deleteNotificationConfig(request);</span>
-<span class="fc" id="L1230">  }</span>
+<span class="fc" id="L1255">        DeleteNotificationConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1256">    deleteNotificationConfig(request);</span>
+<span class="fc" id="L1257">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1252,8 +1279,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteNotificationConfig(DeleteNotificationConfigRequest request) {
-<span class="fc" id="L1255">    deleteNotificationConfigCallable().call(request);</span>
-<span class="fc" id="L1256">  }</span>
+<span class="fc" id="L1282">    deleteNotificationConfigCallable().call(request);</span>
+<span class="fc" id="L1283">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1279,7 +1306,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteNotificationConfigRequest, Empty&gt;
       deleteNotificationConfigCallable() {
-<span class="fc" id="L1282">    return stub.deleteNotificationConfigCallable();</span>
+<span class="fc" id="L1309">    return stub.deleteNotificationConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1306,10 +1333,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final BigQueryExport getBigQueryExport(BigQueryExportName name) {
     GetBigQueryExportRequest request =
-<span class="fc" id="L1309">        GetBigQueryExportRequest.newBuilder()</span>
-<span class="pc bpc" id="L1310" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1311">            .build();</span>
-<span class="fc" id="L1312">    return getBigQueryExport(request);</span>
+<span class="fc" id="L1336">        GetBigQueryExportRequest.newBuilder()</span>
+<span class="pc bpc" id="L1337" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1338">            .build();</span>
+<span class="fc" id="L1339">    return getBigQueryExport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1335,8 +1362,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final BigQueryExport getBigQueryExport(String name) {
-<span class="fc" id="L1338">    GetBigQueryExportRequest request = GetBigQueryExportRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1339">    return getBigQueryExport(request);</span>
+<span class="fc" id="L1365">    GetBigQueryExportRequest request = GetBigQueryExportRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1366">    return getBigQueryExport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1363,7 +1390,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final BigQueryExport getBigQueryExport(GetBigQueryExportRequest request) {
-<span class="fc" id="L1366">    return getBigQueryExportCallable().call(request);</span>
+<span class="fc" id="L1393">    return getBigQueryExportCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1390,7 +1417,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetBigQueryExportRequest, BigQueryExport&gt; getBigQueryExportCallable() {
-<span class="fc" id="L1393">    return stub.getBigQueryExportCallable();</span>
+<span class="fc" id="L1420">    return stub.getBigQueryExportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1414,10 +1441,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Policy getIamPolicy(ResourceName resource) {
     GetIamPolicyRequest request =
-<span class="fc" id="L1417">        GetIamPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1418" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
-<span class="fc" id="L1419">            .build();</span>
-<span class="fc" id="L1420">    return getIamPolicy(request);</span>
+<span class="fc" id="L1444">        GetIamPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1445" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
+<span class="fc" id="L1446">            .build();</span>
+<span class="fc" id="L1447">    return getIamPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1440,8 +1467,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Policy getIamPolicy(String resource) {
-<span class="fc" id="L1443">    GetIamPolicyRequest request = GetIamPolicyRequest.newBuilder().setResource(resource).build();</span>
-<span class="fc" id="L1444">    return getIamPolicy(request);</span>
+<span class="fc" id="L1470">    GetIamPolicyRequest request = GetIamPolicyRequest.newBuilder().setResource(resource).build();</span>
+<span class="fc" id="L1471">    return getIamPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1468,7 +1495,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Policy getIamPolicy(GetIamPolicyRequest request) {
-<span class="fc" id="L1471">    return getIamPolicyCallable().call(request);</span>
+<span class="fc" id="L1498">    return getIamPolicyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1494,7 +1521,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
-<span class="fc" id="L1497">    return stub.getIamPolicyCallable();</span>
+<span class="fc" id="L1524">    return stub.getIamPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1520,8 +1547,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final MuteConfig getMuteConfig(MuteConfigName name) {
     GetMuteConfigRequest request =
-<span class="pc bpc" id="L1523" title="1 of 2 branches missed.">        GetMuteConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1524">    return getMuteConfig(request);</span>
+<span class="pc bpc" id="L1550" title="1 of 2 branches missed.">        GetMuteConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1551">    return getMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1546,8 +1573,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final MuteConfig getMuteConfig(String name) {
-<span class="fc" id="L1549">    GetMuteConfigRequest request = GetMuteConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1550">    return getMuteConfig(request);</span>
+<span class="fc" id="L1576">    GetMuteConfigRequest request = GetMuteConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1577">    return getMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1574,7 +1601,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final MuteConfig getMuteConfig(GetMuteConfigRequest request) {
-<span class="fc" id="L1577">    return getMuteConfigCallable().call(request);</span>
+<span class="fc" id="L1604">    return getMuteConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1601,7 +1628,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetMuteConfigRequest, MuteConfig&gt; getMuteConfigCallable() {
-<span class="fc" id="L1604">    return stub.getMuteConfigCallable();</span>
+<span class="fc" id="L1631">    return stub.getMuteConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1626,10 +1653,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final NotificationConfig getNotificationConfig(NotificationConfigName name) {
     GetNotificationConfigRequest request =
-<span class="fc" id="L1629">        GetNotificationConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L1630" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1631">            .build();</span>
-<span class="fc" id="L1632">    return getNotificationConfig(request);</span>
+<span class="fc" id="L1656">        GetNotificationConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L1657" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1658">            .build();</span>
+<span class="fc" id="L1659">    return getNotificationConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1653,8 +1680,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final NotificationConfig getNotificationConfig(String name) {
     GetNotificationConfigRequest request =
-<span class="fc" id="L1656">        GetNotificationConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1657">    return getNotificationConfig(request);</span>
+<span class="fc" id="L1683">        GetNotificationConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1684">    return getNotificationConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1680,7 +1707,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final NotificationConfig getNotificationConfig(GetNotificationConfigRequest request) {
-<span class="fc" id="L1683">    return getNotificationConfigCallable().call(request);</span>
+<span class="fc" id="L1710">    return getNotificationConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1707,7 +1734,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetNotificationConfigRequest, NotificationConfig&gt;
       getNotificationConfigCallable() {
-<span class="fc" id="L1710">    return stub.getNotificationConfigCallable();</span>
+<span class="fc" id="L1737">    return stub.getNotificationConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1731,10 +1758,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final OrganizationSettings getOrganizationSettings(OrganizationSettingsName name) {
     GetOrganizationSettingsRequest request =
-<span class="fc" id="L1734">        GetOrganizationSettingsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1735" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1736">            .build();</span>
-<span class="fc" id="L1737">    return getOrganizationSettings(request);</span>
+<span class="fc" id="L1761">        GetOrganizationSettingsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1762" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1763">            .build();</span>
+<span class="fc" id="L1764">    return getOrganizationSettings(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1758,8 +1785,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final OrganizationSettings getOrganizationSettings(String name) {
     GetOrganizationSettingsRequest request =
-<span class="fc" id="L1761">        GetOrganizationSettingsRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1762">    return getOrganizationSettings(request);</span>
+<span class="fc" id="L1788">        GetOrganizationSettingsRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1789">    return getOrganizationSettings(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1785,7 +1812,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final OrganizationSettings getOrganizationSettings(
       GetOrganizationSettingsRequest request) {
-<span class="fc" id="L1788">    return getOrganizationSettingsCallable().call(request);</span>
+<span class="fc" id="L1815">    return getOrganizationSettingsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1811,7 +1838,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetOrganizationSettingsRequest, OrganizationSettings&gt;
       getOrganizationSettingsCallable() {
-<span class="fc" id="L1814">    return stub.getOrganizationSettingsCallable();</span>
+<span class="fc" id="L1841">    return stub.getOrganizationSettingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1835,8 +1862,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Source getSource(SourceName name) {
     GetSourceRequest request =
-<span class="pc bpc" id="L1838" title="1 of 2 branches missed.">        GetSourceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1839">    return getSource(request);</span>
+<span class="pc bpc" id="L1865" title="1 of 2 branches missed.">        GetSourceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1866">    return getSource(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1859,8 +1886,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Source getSource(String name) {
-<span class="fc" id="L1862">    GetSourceRequest request = GetSourceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1863">    return getSource(request);</span>
+<span class="fc" id="L1889">    GetSourceRequest request = GetSourceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1890">    return getSource(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1885,7 +1912,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Source getSource(GetSourceRequest request) {
-<span class="fc" id="L1888">    return getSourceCallable().call(request);</span>
+<span class="fc" id="L1915">    return getSourceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1909,7 +1936,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetSourceRequest, Source&gt; getSourceCallable() {
-<span class="fc" id="L1912">    return stub.getSourceCallable();</span>
+<span class="fc" id="L1939">    return stub.getSourceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1942,7 +1969,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final GroupAssetsPagedResponse groupAssets(GroupAssetsRequest request) {
-<span class="fc" id="L1945">    return groupAssetsPagedCallable().call(request);</span>
+<span class="fc" id="L1972">    return groupAssetsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1976,7 +2003,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GroupAssetsRequest, GroupAssetsPagedResponse&gt;
       groupAssetsPagedCallable() {
-<span class="fc" id="L1979">    return stub.groupAssetsPagedCallable();</span>
+<span class="fc" id="L2006">    return stub.groupAssetsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2015,7 +2042,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GroupAssetsRequest, GroupAssetsResponse&gt; groupAssetsCallable() {
-<span class="nc" id="L2018">    return stub.groupAssetsCallable();</span>
+<span class="nc" id="L2045">    return stub.groupAssetsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2066,11 +2093,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final GroupFindingsPagedResponse groupFindings(SourceName parent, String groupBy) {
     GroupFindingsRequest request =
-<span class="fc" id="L2069">        GroupFindingsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2070" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2071">            .setGroupBy(groupBy)</span>
-<span class="fc" id="L2072">            .build();</span>
-<span class="fc" id="L2073">    return groupFindings(request);</span>
+<span class="fc" id="L2096">        GroupFindingsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2097" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2098">            .setGroupBy(groupBy)</span>
+<span class="fc" id="L2099">            .build();</span>
+<span class="fc" id="L2100">    return groupFindings(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2121,8 +2148,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final GroupFindingsPagedResponse groupFindings(String parent, String groupBy) {
     GroupFindingsRequest request =
-<span class="fc" id="L2124">        GroupFindingsRequest.newBuilder().setParent(parent).setGroupBy(groupBy).build();</span>
-<span class="fc" id="L2125">    return groupFindings(request);</span>
+<span class="fc" id="L2151">        GroupFindingsRequest.newBuilder().setParent(parent).setGroupBy(groupBy).build();</span>
+<span class="fc" id="L2152">    return groupFindings(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2160,7 +2187,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final GroupFindingsPagedResponse groupFindings(GroupFindingsRequest request) {
-<span class="fc" id="L2163">    return groupFindingsPagedCallable().call(request);</span>
+<span class="fc" id="L2190">    return groupFindingsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2199,7 +2226,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GroupFindingsRequest, GroupFindingsPagedResponse&gt;
       groupFindingsPagedCallable() {
-<span class="fc" id="L2202">    return stub.groupFindingsPagedCallable();</span>
+<span class="fc" id="L2229">    return stub.groupFindingsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2243,7 +2270,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GroupFindingsRequest, GroupFindingsResponse&gt; groupFindingsCallable() {
-<span class="nc" id="L2246">    return stub.groupFindingsCallable();</span>
+<span class="nc" id="L2273">    return stub.groupFindingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2278,7 +2305,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListAssetsPagedResponse listAssets(ListAssetsRequest request) {
-<span class="fc" id="L2281">    return listAssetsPagedCallable().call(request);</span>
+<span class="fc" id="L2308">    return listAssetsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2312,7 +2339,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListAssetsRequest, ListAssetsPagedResponse&gt; listAssetsPagedCallable() {
-<span class="fc" id="L2315">    return stub.listAssetsPagedCallable();</span>
+<span class="fc" id="L2342">    return stub.listAssetsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2352,7 +2379,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListAssetsRequest, ListAssetsResponse&gt; listAssetsCallable() {
-<span class="nc" id="L2355">    return stub.listAssetsCallable();</span>
+<span class="nc" id="L2382">    return stub.listAssetsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2391,7 +2418,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListFindingsPagedResponse listFindings(ListFindingsRequest request) {
-<span class="fc" id="L2394">    return listFindingsPagedCallable().call(request);</span>
+<span class="fc" id="L2421">    return listFindingsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2430,7 +2457,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListFindingsRequest, ListFindingsPagedResponse&gt;
       listFindingsPagedCallable() {
-<span class="fc" id="L2433">    return stub.listFindingsPagedCallable();</span>
+<span class="fc" id="L2460">    return stub.listFindingsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2475,7 +2502,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListFindingsRequest, ListFindingsResponse&gt; listFindingsCallable() {
-<span class="nc" id="L2478">    return stub.listFindingsCallable();</span>
+<span class="nc" id="L2505">    return stub.listFindingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2501,10 +2528,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListMuteConfigsPagedResponse listMuteConfigs(FolderName parent) {
     ListMuteConfigsRequest request =
-<span class="fc" id="L2504">        ListMuteConfigsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2505" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2506">            .build();</span>
-<span class="fc" id="L2507">    return listMuteConfigs(request);</span>
+<span class="fc" id="L2531">        ListMuteConfigsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2532" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2533">            .build();</span>
+<span class="fc" id="L2534">    return listMuteConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2530,10 +2557,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListMuteConfigsPagedResponse listMuteConfigs(OrganizationName parent) {
     ListMuteConfigsRequest request =
-<span class="fc" id="L2533">        ListMuteConfigsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2534" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2535">            .build();</span>
-<span class="fc" id="L2536">    return listMuteConfigs(request);</span>
+<span class="fc" id="L2560">        ListMuteConfigsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2561" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2562">            .build();</span>
+<span class="fc" id="L2563">    return listMuteConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2559,10 +2586,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListMuteConfigsPagedResponse listMuteConfigs(ProjectName parent) {
     ListMuteConfigsRequest request =
-<span class="fc" id="L2562">        ListMuteConfigsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2563" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2564">            .build();</span>
-<span class="fc" id="L2565">    return listMuteConfigs(request);</span>
+<span class="fc" id="L2589">        ListMuteConfigsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2590" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2591">            .build();</span>
+<span class="fc" id="L2592">    return listMuteConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2587,8 +2614,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListMuteConfigsPagedResponse listMuteConfigs(String parent) {
-<span class="fc" id="L2590">    ListMuteConfigsRequest request = ListMuteConfigsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2591">    return listMuteConfigs(request);</span>
+<span class="fc" id="L2617">    ListMuteConfigsRequest request = ListMuteConfigsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2618">    return listMuteConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2617,7 +2644,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListMuteConfigsPagedResponse listMuteConfigs(ListMuteConfigsRequest request) {
-<span class="fc" id="L2620">    return listMuteConfigsPagedCallable().call(request);</span>
+<span class="fc" id="L2647">    return listMuteConfigsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2647,7 +2674,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListMuteConfigsRequest, ListMuteConfigsPagedResponse&gt;
       listMuteConfigsPagedCallable() {
-<span class="fc" id="L2650">    return stub.listMuteConfigsPagedCallable();</span>
+<span class="fc" id="L2677">    return stub.listMuteConfigsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2684,7 +2711,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListMuteConfigsRequest, ListMuteConfigsResponse&gt;
       listMuteConfigsCallable() {
-<span class="nc" id="L2687">    return stub.listMuteConfigsCallable();</span>
+<span class="nc" id="L2714">    return stub.listMuteConfigsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2712,10 +2739,10 @@ public class SecurityCenterClient implements BackgroundResource {
   public final ListNotificationConfigsPagedResponse listNotificationConfigs(
       OrganizationName parent) {
     ListNotificationConfigsRequest request =
-<span class="fc" id="L2715">        ListNotificationConfigsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2716" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2717">            .build();</span>
-<span class="fc" id="L2718">    return listNotificationConfigs(request);</span>
+<span class="fc" id="L2742">        ListNotificationConfigsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2743" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2744">            .build();</span>
+<span class="fc" id="L2745">    return listNotificationConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2742,8 +2769,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListNotificationConfigsPagedResponse listNotificationConfigs(String parent) {
     ListNotificationConfigsRequest request =
-<span class="fc" id="L2745">        ListNotificationConfigsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2746">    return listNotificationConfigs(request);</span>
+<span class="fc" id="L2772">        ListNotificationConfigsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2773">    return listNotificationConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2774,7 +2801,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListNotificationConfigsPagedResponse listNotificationConfigs(
       ListNotificationConfigsRequest request) {
-<span class="fc" id="L2777">    return listNotificationConfigsPagedCallable().call(request);</span>
+<span class="fc" id="L2804">    return listNotificationConfigsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2804,7 +2831,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse&gt;
       listNotificationConfigsPagedCallable() {
-<span class="fc" id="L2807">    return stub.listNotificationConfigsPagedCallable();</span>
+<span class="fc" id="L2834">    return stub.listNotificationConfigsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2841,7 +2868,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListNotificationConfigsRequest, ListNotificationConfigsResponse&gt;
       listNotificationConfigsCallable() {
-<span class="nc" id="L2844">    return stub.listNotificationConfigsCallable();</span>
+<span class="nc" id="L2871">    return stub.listNotificationConfigsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2867,10 +2894,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListSourcesPagedResponse listSources(FolderName parent) {
     ListSourcesRequest request =
-<span class="fc" id="L2870">        ListSourcesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2871" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2872">            .build();</span>
-<span class="fc" id="L2873">    return listSources(request);</span>
+<span class="fc" id="L2897">        ListSourcesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2898" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2899">            .build();</span>
+<span class="fc" id="L2900">    return listSources(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2896,10 +2923,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListSourcesPagedResponse listSources(OrganizationName parent) {
     ListSourcesRequest request =
-<span class="fc" id="L2899">        ListSourcesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2900" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2901">            .build();</span>
-<span class="fc" id="L2902">    return listSources(request);</span>
+<span class="fc" id="L2926">        ListSourcesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2927" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2928">            .build();</span>
+<span class="fc" id="L2929">    return listSources(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2925,10 +2952,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListSourcesPagedResponse listSources(ProjectName parent) {
     ListSourcesRequest request =
-<span class="fc" id="L2928">        ListSourcesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2929" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2930">            .build();</span>
-<span class="fc" id="L2931">    return listSources(request);</span>
+<span class="fc" id="L2955">        ListSourcesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2956" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2957">            .build();</span>
+<span class="fc" id="L2958">    return listSources(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2953,8 +2980,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListSourcesPagedResponse listSources(String parent) {
-<span class="fc" id="L2956">    ListSourcesRequest request = ListSourcesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2957">    return listSources(request);</span>
+<span class="fc" id="L2983">    ListSourcesRequest request = ListSourcesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2984">    return listSources(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2983,7 +3010,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListSourcesPagedResponse listSources(ListSourcesRequest request) {
-<span class="fc" id="L2986">    return listSourcesPagedCallable().call(request);</span>
+<span class="fc" id="L3013">    return listSourcesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3013,7 +3040,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListSourcesRequest, ListSourcesPagedResponse&gt;
       listSourcesPagedCallable() {
-<span class="fc" id="L3016">    return stub.listSourcesPagedCallable();</span>
+<span class="fc" id="L3043">    return stub.listSourcesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3048,7 +3075,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListSourcesRequest, ListSourcesResponse&gt; listSourcesCallable() {
-<span class="nc" id="L3051">    return stub.listSourcesCallable();</span>
+<span class="nc" id="L3078">    return stub.listSourcesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3077,10 +3104,10 @@ public class SecurityCenterClient implements BackgroundResource {
   public final OperationFuture&lt;RunAssetDiscoveryResponse, Empty&gt; runAssetDiscoveryAsync(
       OrganizationName parent) {
     RunAssetDiscoveryRequest request =
-<span class="fc" id="L3080">        RunAssetDiscoveryRequest.newBuilder()</span>
-<span class="pc bpc" id="L3081" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L3082">            .build();</span>
-<span class="fc" id="L3083">    return runAssetDiscoveryAsync(request);</span>
+<span class="fc" id="L3107">        RunAssetDiscoveryRequest.newBuilder()</span>
+<span class="pc bpc" id="L3108" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L3109">            .build();</span>
+<span class="fc" id="L3110">    return runAssetDiscoveryAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3109,8 +3136,8 @@ public class SecurityCenterClient implements BackgroundResource {
   public final OperationFuture&lt;RunAssetDiscoveryResponse, Empty&gt; runAssetDiscoveryAsync(
       String parent) {
     RunAssetDiscoveryRequest request =
-<span class="fc" id="L3112">        RunAssetDiscoveryRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L3113">    return runAssetDiscoveryAsync(request);</span>
+<span class="fc" id="L3139">        RunAssetDiscoveryRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L3140">    return runAssetDiscoveryAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3140,7 +3167,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final OperationFuture&lt;RunAssetDiscoveryResponse, Empty&gt; runAssetDiscoveryAsync(
       RunAssetDiscoveryRequest request) {
-<span class="fc" id="L3143">    return runAssetDiscoveryOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3170">    return runAssetDiscoveryOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3169,7 +3196,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RunAssetDiscoveryRequest, RunAssetDiscoveryResponse, Empty&gt;
       runAssetDiscoveryOperationCallable() {
-<span class="fc" id="L3172">    return stub.runAssetDiscoveryOperationCallable();</span>
+<span class="fc" id="L3199">    return stub.runAssetDiscoveryOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3197,7 +3224,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RunAssetDiscoveryRequest, Operation&gt; runAssetDiscoveryCallable() {
-<span class="nc" id="L3200">    return stub.runAssetDiscoveryCallable();</span>
+<span class="nc" id="L3227">    return stub.runAssetDiscoveryCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3227,12 +3254,12 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Finding setFindingState(FindingName name, Finding.State state, Timestamp startTime) {
     SetFindingStateRequest request =
-<span class="fc" id="L3230">        SetFindingStateRequest.newBuilder()</span>
-<span class="pc bpc" id="L3231" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L3232">            .setState(state)</span>
-<span class="fc" id="L3233">            .setStartTime(startTime)</span>
-<span class="fc" id="L3234">            .build();</span>
-<span class="fc" id="L3235">    return setFindingState(request);</span>
+<span class="fc" id="L3257">        SetFindingStateRequest.newBuilder()</span>
+<span class="pc bpc" id="L3258" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L3259">            .setState(state)</span>
+<span class="fc" id="L3260">            .setStartTime(startTime)</span>
+<span class="fc" id="L3261">            .build();</span>
+<span class="fc" id="L3262">    return setFindingState(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3263,12 +3290,12 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Finding setFindingState(String name, Finding.State state, Timestamp startTime) {
     SetFindingStateRequest request =
-<span class="fc" id="L3266">        SetFindingStateRequest.newBuilder()</span>
-<span class="fc" id="L3267">            .setName(name)</span>
-<span class="fc" id="L3268">            .setState(state)</span>
-<span class="fc" id="L3269">            .setStartTime(startTime)</span>
-<span class="fc" id="L3270">            .build();</span>
-<span class="fc" id="L3271">    return setFindingState(request);</span>
+<span class="fc" id="L3293">        SetFindingStateRequest.newBuilder()</span>
+<span class="fc" id="L3294">            .setName(name)</span>
+<span class="fc" id="L3295">            .setState(state)</span>
+<span class="fc" id="L3296">            .setStartTime(startTime)</span>
+<span class="fc" id="L3297">            .build();</span>
+<span class="fc" id="L3298">    return setFindingState(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3297,7 +3324,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Finding setFindingState(SetFindingStateRequest request) {
-<span class="fc" id="L3300">    return setFindingStateCallable().call(request);</span>
+<span class="fc" id="L3327">    return setFindingStateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3326,7 +3353,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SetFindingStateRequest, Finding&gt; setFindingStateCallable() {
-<span class="fc" id="L3329">    return stub.setFindingStateCallable();</span>
+<span class="fc" id="L3356">    return stub.setFindingStateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3356,11 +3383,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Finding setMute(FindingName name, Finding.Mute mute) {
     SetMuteRequest request =
-<span class="fc" id="L3359">        SetMuteRequest.newBuilder()</span>
-<span class="pc bpc" id="L3360" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L3361">            .setMute(mute)</span>
-<span class="fc" id="L3362">            .build();</span>
-<span class="fc" id="L3363">    return setMute(request);</span>
+<span class="fc" id="L3386">        SetMuteRequest.newBuilder()</span>
+<span class="pc bpc" id="L3387" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L3388">            .setMute(mute)</span>
+<span class="fc" id="L3389">            .build();</span>
+<span class="fc" id="L3390">    return setMute(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3390,8 +3417,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Finding setMute(String name, Finding.Mute mute) {
-<span class="fc" id="L3393">    SetMuteRequest request = SetMuteRequest.newBuilder().setName(name).setMute(mute).build();</span>
-<span class="fc" id="L3394">    return setMute(request);</span>
+<span class="fc" id="L3420">    SetMuteRequest request = SetMuteRequest.newBuilder().setName(name).setMute(mute).build();</span>
+<span class="fc" id="L3421">    return setMute(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3419,7 +3446,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Finding setMute(SetMuteRequest request) {
-<span class="fc" id="L3422">    return setMuteCallable().call(request);</span>
+<span class="fc" id="L3449">    return setMuteCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3446,7 +3473,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SetMuteRequest, Finding&gt; setMuteCallable() {
-<span class="fc" id="L3449">    return stub.setMuteCallable();</span>
+<span class="fc" id="L3476">    return stub.setMuteCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3474,11 +3501,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Policy setIamPolicy(ResourceName resource, Policy policy) {
     SetIamPolicyRequest request =
-<span class="fc" id="L3477">        SetIamPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L3478" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
-<span class="fc" id="L3479">            .setPolicy(policy)</span>
-<span class="fc" id="L3480">            .build();</span>
-<span class="fc" id="L3481">    return setIamPolicy(request);</span>
+<span class="fc" id="L3504">        SetIamPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L3505" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
+<span class="fc" id="L3506">            .setPolicy(policy)</span>
+<span class="fc" id="L3507">            .build();</span>
+<span class="fc" id="L3508">    return setIamPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3506,8 +3533,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final Policy setIamPolicy(String resource, Policy policy) {
     SetIamPolicyRequest request =
-<span class="fc" id="L3509">        SetIamPolicyRequest.newBuilder().setResource(resource).setPolicy(policy).build();</span>
-<span class="fc" id="L3510">    return setIamPolicy(request);</span>
+<span class="fc" id="L3536">        SetIamPolicyRequest.newBuilder().setResource(resource).setPolicy(policy).build();</span>
+<span class="fc" id="L3537">    return setIamPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3535,7 +3562,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Policy setIamPolicy(SetIamPolicyRequest request) {
-<span class="fc" id="L3538">    return setIamPolicyCallable().call(request);</span>
+<span class="fc" id="L3565">    return setIamPolicyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3562,7 +3589,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
-<span class="fc" id="L3565">    return stub.setIamPolicyCallable();</span>
+<span class="fc" id="L3592">    return stub.setIamPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3592,11 +3619,11 @@ public class SecurityCenterClient implements BackgroundResource {
   public final TestIamPermissionsResponse testIamPermissions(
       ResourceName resource, List&lt;String&gt; permissions) {
     TestIamPermissionsRequest request =
-<span class="fc" id="L3595">        TestIamPermissionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L3596" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
-<span class="fc" id="L3597">            .addAllPermissions(permissions)</span>
-<span class="fc" id="L3598">            .build();</span>
-<span class="fc" id="L3599">    return testIamPermissions(request);</span>
+<span class="fc" id="L3622">        TestIamPermissionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L3623" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
+<span class="fc" id="L3624">            .addAllPermissions(permissions)</span>
+<span class="fc" id="L3625">            .build();</span>
+<span class="fc" id="L3626">    return testIamPermissions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3626,11 +3653,11 @@ public class SecurityCenterClient implements BackgroundResource {
   public final TestIamPermissionsResponse testIamPermissions(
       String resource, List&lt;String&gt; permissions) {
     TestIamPermissionsRequest request =
-<span class="fc" id="L3629">        TestIamPermissionsRequest.newBuilder()</span>
-<span class="fc" id="L3630">            .setResource(resource)</span>
-<span class="fc" id="L3631">            .addAllPermissions(permissions)</span>
-<span class="fc" id="L3632">            .build();</span>
-<span class="fc" id="L3633">    return testIamPermissions(request);</span>
+<span class="fc" id="L3656">        TestIamPermissionsRequest.newBuilder()</span>
+<span class="fc" id="L3657">            .setResource(resource)</span>
+<span class="fc" id="L3658">            .addAllPermissions(permissions)</span>
+<span class="fc" id="L3659">            .build();</span>
+<span class="fc" id="L3660">    return testIamPermissions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3657,7 +3684,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
-<span class="fc" id="L3660">    return testIamPermissionsCallable().call(request);</span>
+<span class="fc" id="L3687">    return testIamPermissionsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3685,7 +3712,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
       testIamPermissionsCallable() {
-<span class="fc" id="L3688">    return stub.testIamPermissionsCallable();</span>
+<span class="fc" id="L3715">    return stub.testIamPermissionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3713,11 +3740,11 @@ public class SecurityCenterClient implements BackgroundResource {
   public final ExternalSystem updateExternalSystem(
       ExternalSystem externalSystem, FieldMask updateMask) {
     UpdateExternalSystemRequest request =
-<span class="fc" id="L3716">        UpdateExternalSystemRequest.newBuilder()</span>
-<span class="fc" id="L3717">            .setExternalSystem(externalSystem)</span>
-<span class="fc" id="L3718">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L3719">            .build();</span>
-<span class="fc" id="L3720">    return updateExternalSystem(request);</span>
+<span class="fc" id="L3743">        UpdateExternalSystemRequest.newBuilder()</span>
+<span class="fc" id="L3744">            .setExternalSystem(externalSystem)</span>
+<span class="fc" id="L3745">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L3746">            .build();</span>
+<span class="fc" id="L3747">    return updateExternalSystem(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3743,7 +3770,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ExternalSystem updateExternalSystem(UpdateExternalSystemRequest request) {
-<span class="fc" id="L3746">    return updateExternalSystemCallable().call(request);</span>
+<span class="fc" id="L3773">    return updateExternalSystemCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3770,7 +3797,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateExternalSystemRequest, ExternalSystem&gt;
       updateExternalSystemCallable() {
-<span class="fc" id="L3773">    return stub.updateExternalSystemCallable();</span>
+<span class="fc" id="L3800">    return stub.updateExternalSystemCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3796,8 +3823,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Finding updateFinding(Finding finding) {
-<span class="fc" id="L3799">    UpdateFindingRequest request = UpdateFindingRequest.newBuilder().setFinding(finding).build();</span>
-<span class="fc" id="L3800">    return updateFinding(request);</span>
+<span class="fc" id="L3826">    UpdateFindingRequest request = UpdateFindingRequest.newBuilder().setFinding(finding).build();</span>
+<span class="fc" id="L3827">    return updateFinding(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3824,7 +3851,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Finding updateFinding(UpdateFindingRequest request) {
-<span class="fc" id="L3827">    return updateFindingCallable().call(request);</span>
+<span class="fc" id="L3854">    return updateFindingCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3850,7 +3877,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateFindingRequest, Finding&gt; updateFindingCallable() {
-<span class="fc" id="L3853">    return stub.updateFindingCallable();</span>
+<span class="fc" id="L3880">    return stub.updateFindingCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3876,11 +3903,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final MuteConfig updateMuteConfig(MuteConfig muteConfig, FieldMask updateMask) {
     UpdateMuteConfigRequest request =
-<span class="fc" id="L3879">        UpdateMuteConfigRequest.newBuilder()</span>
-<span class="fc" id="L3880">            .setMuteConfig(muteConfig)</span>
-<span class="fc" id="L3881">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L3882">            .build();</span>
-<span class="fc" id="L3883">    return updateMuteConfig(request);</span>
+<span class="fc" id="L3906">        UpdateMuteConfigRequest.newBuilder()</span>
+<span class="fc" id="L3907">            .setMuteConfig(muteConfig)</span>
+<span class="fc" id="L3908">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L3909">            .build();</span>
+<span class="fc" id="L3910">    return updateMuteConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3906,7 +3933,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final MuteConfig updateMuteConfig(UpdateMuteConfigRequest request) {
-<span class="fc" id="L3909">    return updateMuteConfigCallable().call(request);</span>
+<span class="fc" id="L3936">    return updateMuteConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3932,7 +3959,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateMuteConfigRequest, MuteConfig&gt; updateMuteConfigCallable() {
-<span class="fc" id="L3935">    return stub.updateMuteConfigCallable();</span>
+<span class="fc" id="L3962">    return stub.updateMuteConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3957,10 +3984,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final NotificationConfig updateNotificationConfig(NotificationConfig notificationConfig) {
     UpdateNotificationConfigRequest request =
-<span class="fc" id="L3960">        UpdateNotificationConfigRequest.newBuilder()</span>
-<span class="fc" id="L3961">            .setNotificationConfig(notificationConfig)</span>
-<span class="fc" id="L3962">            .build();</span>
-<span class="fc" id="L3963">    return updateNotificationConfig(request);</span>
+<span class="fc" id="L3987">        UpdateNotificationConfigRequest.newBuilder()</span>
+<span class="fc" id="L3988">            .setNotificationConfig(notificationConfig)</span>
+<span class="fc" id="L3989">            .build();</span>
+<span class="fc" id="L3990">    return updateNotificationConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3989,11 +4016,11 @@ public class SecurityCenterClient implements BackgroundResource {
   public final NotificationConfig updateNotificationConfig(
       NotificationConfig notificationConfig, FieldMask updateMask) {
     UpdateNotificationConfigRequest request =
-<span class="fc" id="L3992">        UpdateNotificationConfigRequest.newBuilder()</span>
-<span class="fc" id="L3993">            .setNotificationConfig(notificationConfig)</span>
-<span class="fc" id="L3994">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L3995">            .build();</span>
-<span class="fc" id="L3996">    return updateNotificationConfig(request);</span>
+<span class="fc" id="L4019">        UpdateNotificationConfigRequest.newBuilder()</span>
+<span class="fc" id="L4020">            .setNotificationConfig(notificationConfig)</span>
+<span class="fc" id="L4021">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L4022">            .build();</span>
+<span class="fc" id="L4023">    return updateNotificationConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4021,7 +4048,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final NotificationConfig updateNotificationConfig(
       UpdateNotificationConfigRequest request) {
-<span class="fc" id="L4024">    return updateNotificationConfigCallable().call(request);</span>
+<span class="fc" id="L4051">    return updateNotificationConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4049,7 +4076,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateNotificationConfigRequest, NotificationConfig&gt;
       updateNotificationConfigCallable() {
-<span class="fc" id="L4052">    return stub.updateNotificationConfigCallable();</span>
+<span class="fc" id="L4079">    return stub.updateNotificationConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4074,10 +4101,10 @@ public class SecurityCenterClient implements BackgroundResource {
   public final OrganizationSettings updateOrganizationSettings(
       OrganizationSettings organizationSettings) {
     UpdateOrganizationSettingsRequest request =
-<span class="fc" id="L4077">        UpdateOrganizationSettingsRequest.newBuilder()</span>
-<span class="fc" id="L4078">            .setOrganizationSettings(organizationSettings)</span>
-<span class="fc" id="L4079">            .build();</span>
-<span class="fc" id="L4080">    return updateOrganizationSettings(request);</span>
+<span class="fc" id="L4104">        UpdateOrganizationSettingsRequest.newBuilder()</span>
+<span class="fc" id="L4105">            .setOrganizationSettings(organizationSettings)</span>
+<span class="fc" id="L4106">            .build();</span>
+<span class="fc" id="L4107">    return updateOrganizationSettings(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4104,7 +4131,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final OrganizationSettings updateOrganizationSettings(
       UpdateOrganizationSettingsRequest request) {
-<span class="fc" id="L4107">    return updateOrganizationSettingsCallable().call(request);</span>
+<span class="fc" id="L4134">    return updateOrganizationSettingsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4131,7 +4158,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateOrganizationSettingsRequest, OrganizationSettings&gt;
       updateOrganizationSettingsCallable() {
-<span class="fc" id="L4134">    return stub.updateOrganizationSettingsCallable();</span>
+<span class="fc" id="L4161">    return stub.updateOrganizationSettingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4153,8 +4180,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Source updateSource(Source source) {
-<span class="fc" id="L4156">    UpdateSourceRequest request = UpdateSourceRequest.newBuilder().setSource(source).build();</span>
-<span class="fc" id="L4157">    return updateSource(request);</span>
+<span class="fc" id="L4183">    UpdateSourceRequest request = UpdateSourceRequest.newBuilder().setSource(source).build();</span>
+<span class="fc" id="L4184">    return updateSource(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4180,7 +4207,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Source updateSource(UpdateSourceRequest request) {
-<span class="fc" id="L4183">    return updateSourceCallable().call(request);</span>
+<span class="fc" id="L4210">    return updateSourceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4205,7 +4232,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateSourceRequest, Source&gt; updateSourceCallable() {
-<span class="fc" id="L4208">    return stub.updateSourceCallable();</span>
+<span class="fc" id="L4235">    return stub.updateSourceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4228,8 +4255,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final SecurityMarks updateSecurityMarks(SecurityMarks securityMarks) {
     UpdateSecurityMarksRequest request =
-<span class="fc" id="L4231">        UpdateSecurityMarksRequest.newBuilder().setSecurityMarks(securityMarks).build();</span>
-<span class="fc" id="L4232">    return updateSecurityMarks(request);</span>
+<span class="fc" id="L4258">        UpdateSecurityMarksRequest.newBuilder().setSecurityMarks(securityMarks).build();</span>
+<span class="fc" id="L4259">    return updateSecurityMarks(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4256,7 +4283,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final SecurityMarks updateSecurityMarks(UpdateSecurityMarksRequest request) {
-<span class="fc" id="L4259">    return updateSecurityMarksCallable().call(request);</span>
+<span class="fc" id="L4286">    return updateSecurityMarksCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4284,7 +4311,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateSecurityMarksRequest, SecurityMarks&gt;
       updateSecurityMarksCallable() {
-<span class="fc" id="L4287">    return stub.updateSecurityMarksCallable();</span>
+<span class="fc" id="L4314">    return stub.updateSecurityMarksCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4316,12 +4343,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final BigQueryExport createBigQueryExport(
       FolderName parent, BigQueryExport bigQueryExport, String bigQueryExportId) {
     CreateBigQueryExportRequest request =
-<span class="fc" id="L4319">        CreateBigQueryExportRequest.newBuilder()</span>
-<span class="pc bpc" id="L4320" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4321">            .setBigQueryExport(bigQueryExport)</span>
-<span class="fc" id="L4322">            .setBigQueryExportId(bigQueryExportId)</span>
-<span class="fc" id="L4323">            .build();</span>
-<span class="fc" id="L4324">    return createBigQueryExport(request);</span>
+<span class="fc" id="L4346">        CreateBigQueryExportRequest.newBuilder()</span>
+<span class="pc bpc" id="L4347" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4348">            .setBigQueryExport(bigQueryExport)</span>
+<span class="fc" id="L4349">            .setBigQueryExportId(bigQueryExportId)</span>
+<span class="fc" id="L4350">            .build();</span>
+<span class="fc" id="L4351">    return createBigQueryExport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4353,12 +4380,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final BigQueryExport createBigQueryExport(
       OrganizationName parent, BigQueryExport bigQueryExport, String bigQueryExportId) {
     CreateBigQueryExportRequest request =
-<span class="fc" id="L4356">        CreateBigQueryExportRequest.newBuilder()</span>
-<span class="pc bpc" id="L4357" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4358">            .setBigQueryExport(bigQueryExport)</span>
-<span class="fc" id="L4359">            .setBigQueryExportId(bigQueryExportId)</span>
-<span class="fc" id="L4360">            .build();</span>
-<span class="fc" id="L4361">    return createBigQueryExport(request);</span>
+<span class="fc" id="L4383">        CreateBigQueryExportRequest.newBuilder()</span>
+<span class="pc bpc" id="L4384" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4385">            .setBigQueryExport(bigQueryExport)</span>
+<span class="fc" id="L4386">            .setBigQueryExportId(bigQueryExportId)</span>
+<span class="fc" id="L4387">            .build();</span>
+<span class="fc" id="L4388">    return createBigQueryExport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4390,12 +4417,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final BigQueryExport createBigQueryExport(
       ProjectName parent, BigQueryExport bigQueryExport, String bigQueryExportId) {
     CreateBigQueryExportRequest request =
-<span class="fc" id="L4393">        CreateBigQueryExportRequest.newBuilder()</span>
-<span class="pc bpc" id="L4394" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4395">            .setBigQueryExport(bigQueryExport)</span>
-<span class="fc" id="L4396">            .setBigQueryExportId(bigQueryExportId)</span>
-<span class="fc" id="L4397">            .build();</span>
-<span class="fc" id="L4398">    return createBigQueryExport(request);</span>
+<span class="fc" id="L4420">        CreateBigQueryExportRequest.newBuilder()</span>
+<span class="pc bpc" id="L4421" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4422">            .setBigQueryExport(bigQueryExport)</span>
+<span class="fc" id="L4423">            .setBigQueryExportId(bigQueryExportId)</span>
+<span class="fc" id="L4424">            .build();</span>
+<span class="fc" id="L4425">    return createBigQueryExport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4427,12 +4454,12 @@ public class SecurityCenterClient implements BackgroundResource {
   public final BigQueryExport createBigQueryExport(
       String parent, BigQueryExport bigQueryExport, String bigQueryExportId) {
     CreateBigQueryExportRequest request =
-<span class="fc" id="L4430">        CreateBigQueryExportRequest.newBuilder()</span>
-<span class="fc" id="L4431">            .setParent(parent)</span>
-<span class="fc" id="L4432">            .setBigQueryExport(bigQueryExport)</span>
-<span class="fc" id="L4433">            .setBigQueryExportId(bigQueryExportId)</span>
-<span class="fc" id="L4434">            .build();</span>
-<span class="fc" id="L4435">    return createBigQueryExport(request);</span>
+<span class="fc" id="L4457">        CreateBigQueryExportRequest.newBuilder()</span>
+<span class="fc" id="L4458">            .setParent(parent)</span>
+<span class="fc" id="L4459">            .setBigQueryExport(bigQueryExport)</span>
+<span class="fc" id="L4460">            .setBigQueryExportId(bigQueryExportId)</span>
+<span class="fc" id="L4461">            .build();</span>
+<span class="fc" id="L4462">    return createBigQueryExport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4459,7 +4486,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final BigQueryExport createBigQueryExport(CreateBigQueryExportRequest request) {
-<span class="fc" id="L4462">    return createBigQueryExportCallable().call(request);</span>
+<span class="fc" id="L4489">    return createBigQueryExportCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4487,7 +4514,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateBigQueryExportRequest, BigQueryExport&gt;
       createBigQueryExportCallable() {
-<span class="fc" id="L4490">    return stub.createBigQueryExportCallable();</span>
+<span class="fc" id="L4517">    return stub.createBigQueryExportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4514,11 +4541,11 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final void deleteBigQueryExport(BigQueryExportName name) {
     DeleteBigQueryExportRequest request =
-<span class="fc" id="L4517">        DeleteBigQueryExportRequest.newBuilder()</span>
-<span class="pc bpc" id="L4518" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L4519">            .build();</span>
-<span class="fc" id="L4520">    deleteBigQueryExport(request);</span>
-<span class="fc" id="L4521">  }</span>
+<span class="fc" id="L4544">        DeleteBigQueryExportRequest.newBuilder()</span>
+<span class="pc bpc" id="L4545" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L4546">            .build();</span>
+<span class="fc" id="L4547">    deleteBigQueryExport(request);</span>
+<span class="fc" id="L4548">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -4544,9 +4571,9 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final void deleteBigQueryExport(String name) {
     DeleteBigQueryExportRequest request =
-<span class="fc" id="L4547">        DeleteBigQueryExportRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L4548">    deleteBigQueryExport(request);</span>
-<span class="fc" id="L4549">  }</span>
+<span class="fc" id="L4574">        DeleteBigQueryExportRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L4575">    deleteBigQueryExport(request);</span>
+<span class="fc" id="L4576">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -4572,8 +4599,8 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteBigQueryExport(DeleteBigQueryExportRequest request) {
-<span class="fc" id="L4575">    deleteBigQueryExportCallable().call(request);</span>
-<span class="fc" id="L4576">  }</span>
+<span class="fc" id="L4602">    deleteBigQueryExportCallable().call(request);</span>
+<span class="fc" id="L4603">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -4599,7 +4626,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteBigQueryExportRequest, Empty&gt; deleteBigQueryExportCallable() {
-<span class="fc" id="L4602">    return stub.deleteBigQueryExportCallable();</span>
+<span class="fc" id="L4629">    return stub.deleteBigQueryExportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4627,11 +4654,11 @@ public class SecurityCenterClient implements BackgroundResource {
   public final BigQueryExport updateBigQueryExport(
       BigQueryExport bigQueryExport, FieldMask updateMask) {
     UpdateBigQueryExportRequest request =
-<span class="fc" id="L4630">        UpdateBigQueryExportRequest.newBuilder()</span>
-<span class="fc" id="L4631">            .setBigQueryExport(bigQueryExport)</span>
-<span class="fc" id="L4632">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L4633">            .build();</span>
-<span class="fc" id="L4634">    return updateBigQueryExport(request);</span>
+<span class="fc" id="L4657">        UpdateBigQueryExportRequest.newBuilder()</span>
+<span class="fc" id="L4658">            .setBigQueryExport(bigQueryExport)</span>
+<span class="fc" id="L4659">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L4660">            .build();</span>
+<span class="fc" id="L4661">    return updateBigQueryExport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4657,7 +4684,7 @@ public class SecurityCenterClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final BigQueryExport updateBigQueryExport(UpdateBigQueryExportRequest request) {
-<span class="fc" id="L4660">    return updateBigQueryExportCallable().call(request);</span>
+<span class="fc" id="L4687">    return updateBigQueryExportCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4684,7 +4711,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateBigQueryExportRequest, BigQueryExport&gt;
       updateBigQueryExportCallable() {
-<span class="fc" id="L4687">    return stub.updateBigQueryExportCallable();</span>
+<span class="fc" id="L4714">    return stub.updateBigQueryExportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4713,10 +4740,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListBigQueryExportsPagedResponse listBigQueryExports(FolderName parent) {
     ListBigQueryExportsRequest request =
-<span class="fc" id="L4716">        ListBigQueryExportsRequest.newBuilder()</span>
-<span class="pc bpc" id="L4717" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4718">            .build();</span>
-<span class="fc" id="L4719">    return listBigQueryExports(request);</span>
+<span class="fc" id="L4743">        ListBigQueryExportsRequest.newBuilder()</span>
+<span class="pc bpc" id="L4744" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4745">            .build();</span>
+<span class="fc" id="L4746">    return listBigQueryExports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4745,10 +4772,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListBigQueryExportsPagedResponse listBigQueryExports(OrganizationName parent) {
     ListBigQueryExportsRequest request =
-<span class="fc" id="L4748">        ListBigQueryExportsRequest.newBuilder()</span>
-<span class="pc bpc" id="L4749" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4750">            .build();</span>
-<span class="fc" id="L4751">    return listBigQueryExports(request);</span>
+<span class="fc" id="L4775">        ListBigQueryExportsRequest.newBuilder()</span>
+<span class="pc bpc" id="L4776" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4777">            .build();</span>
+<span class="fc" id="L4778">    return listBigQueryExports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4777,10 +4804,10 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListBigQueryExportsPagedResponse listBigQueryExports(ProjectName parent) {
     ListBigQueryExportsRequest request =
-<span class="fc" id="L4780">        ListBigQueryExportsRequest.newBuilder()</span>
-<span class="pc bpc" id="L4781" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4782">            .build();</span>
-<span class="fc" id="L4783">    return listBigQueryExports(request);</span>
+<span class="fc" id="L4807">        ListBigQueryExportsRequest.newBuilder()</span>
+<span class="pc bpc" id="L4808" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4809">            .build();</span>
+<span class="fc" id="L4810">    return listBigQueryExports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4809,8 +4836,8 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListBigQueryExportsPagedResponse listBigQueryExports(String parent) {
     ListBigQueryExportsRequest request =
-<span class="fc" id="L4812">        ListBigQueryExportsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L4813">    return listBigQueryExports(request);</span>
+<span class="fc" id="L4839">        ListBigQueryExportsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L4840">    return listBigQueryExports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4844,7 +4871,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final ListBigQueryExportsPagedResponse listBigQueryExports(
       ListBigQueryExportsRequest request) {
-<span class="fc" id="L4847">    return listBigQueryExportsPagedCallable().call(request);</span>
+<span class="fc" id="L4874">    return listBigQueryExportsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4877,7 +4904,7 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListBigQueryExportsRequest, ListBigQueryExportsPagedResponse&gt;
       listBigQueryExportsPagedCallable() {
-<span class="fc" id="L4880">    return stub.listBigQueryExportsPagedCallable();</span>
+<span class="fc" id="L4907">    return stub.listBigQueryExportsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4917,37 +4944,37 @@ public class SecurityCenterClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListBigQueryExportsRequest, ListBigQueryExportsResponse&gt;
       listBigQueryExportsCallable() {
-<span class="nc" id="L4920">    return stub.listBigQueryExportsCallable();</span>
+<span class="nc" id="L4947">    return stub.listBigQueryExportsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L4925">    stub.close();</span>
-<span class="fc" id="L4926">  }</span>
+<span class="fc" id="L4952">    stub.close();</span>
+<span class="fc" id="L4953">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L4930">    stub.shutdown();</span>
-<span class="nc" id="L4931">  }</span>
+<span class="nc" id="L4957">    stub.shutdown();</span>
+<span class="nc" id="L4958">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L4935">    return stub.isShutdown();</span>
+<span class="nc" id="L4962">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L4940">    return stub.isTerminated();</span>
+<span class="nc" id="L4967">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L4945">    stub.shutdownNow();</span>
-<span class="nc" id="L4946">  }</span>
+<span class="nc" id="L4972">    stub.shutdownNow();</span>
+<span class="nc" id="L4973">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L4950">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L4977">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class GroupAssetsPagedResponse
@@ -4962,14 +4989,14 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;GroupAssetsRequest, GroupAssetsResponse, GroupResult&gt; context,
         ApiFuture&lt;GroupAssetsResponse&gt; futureResponse) {
       ApiFuture&lt;GroupAssetsPage&gt; futurePage =
-<span class="fc" id="L4965">          GroupAssetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4966">      return ApiFutures.transform(</span>
-<span class="fc" id="L4967">          futurePage, input -&gt; new GroupAssetsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4992">          GroupAssetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4993">      return ApiFutures.transform(</span>
+<span class="fc" id="L4994">          futurePage, input -&gt; new GroupAssetsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private GroupAssetsPagedResponse(GroupAssetsPage page) {
-<span class="fc" id="L4971">      super(page, GroupAssetsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4972">    }</span>
+<span class="fc" id="L4998">      super(page, GroupAssetsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4999">    }</span>
   }
 
   public static class GroupAssetsPage
@@ -4978,25 +5005,25 @@ public class SecurityCenterClient implements BackgroundResource {
     private GroupAssetsPage(
         PageContext&lt;GroupAssetsRequest, GroupAssetsResponse, GroupResult&gt; context,
         GroupAssetsResponse response) {
-<span class="fc" id="L4981">      super(context, response);</span>
-<span class="fc" id="L4982">    }</span>
+<span class="fc" id="L5008">      super(context, response);</span>
+<span class="fc" id="L5009">    }</span>
 
     private static GroupAssetsPage createEmptyPage() {
-<span class="fc" id="L4985">      return new GroupAssetsPage(null, null);</span>
+<span class="fc" id="L5012">      return new GroupAssetsPage(null, null);</span>
     }
 
     @Override
     protected GroupAssetsPage createPage(
         PageContext&lt;GroupAssetsRequest, GroupAssetsResponse, GroupResult&gt; context,
         GroupAssetsResponse response) {
-<span class="fc" id="L4992">      return new GroupAssetsPage(context, response);</span>
+<span class="fc" id="L5019">      return new GroupAssetsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;GroupAssetsPage&gt; createPageAsync(
         PageContext&lt;GroupAssetsRequest, GroupAssetsResponse, GroupResult&gt; context,
         ApiFuture&lt;GroupAssetsResponse&gt; futureResponse) {
-<span class="fc" id="L4999">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5026">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5009,17 +5036,17 @@ public class SecurityCenterClient implements BackgroundResource {
           GroupAssetsFixedSizeCollection&gt; {
 
     private GroupAssetsFixedSizeCollection(List&lt;GroupAssetsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5012">      super(pages, collectionSize);</span>
-<span class="fc" id="L5013">    }</span>
+<span class="fc" id="L5039">      super(pages, collectionSize);</span>
+<span class="fc" id="L5040">    }</span>
 
     private static GroupAssetsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5016">      return new GroupAssetsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5043">      return new GroupAssetsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected GroupAssetsFixedSizeCollection createCollection(
         List&lt;GroupAssetsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5022">      return new GroupAssetsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5049">      return new GroupAssetsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5035,16 +5062,16 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;GroupFindingsRequest, GroupFindingsResponse, GroupResult&gt; context,
         ApiFuture&lt;GroupFindingsResponse&gt; futureResponse) {
       ApiFuture&lt;GroupFindingsPage&gt; futurePage =
-<span class="fc" id="L5038">          GroupFindingsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5039">      return ApiFutures.transform(</span>
+<span class="fc" id="L5065">          GroupFindingsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5066">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L5041">          input -&gt; new GroupFindingsPagedResponse(input),</span>
-<span class="fc" id="L5042">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5068">          input -&gt; new GroupFindingsPagedResponse(input),</span>
+<span class="fc" id="L5069">          MoreExecutors.directExecutor());</span>
     }
 
     private GroupFindingsPagedResponse(GroupFindingsPage page) {
-<span class="fc" id="L5046">      super(page, GroupFindingsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5047">    }</span>
+<span class="fc" id="L5073">      super(page, GroupFindingsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5074">    }</span>
   }
 
   public static class GroupFindingsPage
@@ -5054,25 +5081,25 @@ public class SecurityCenterClient implements BackgroundResource {
     private GroupFindingsPage(
         PageContext&lt;GroupFindingsRequest, GroupFindingsResponse, GroupResult&gt; context,
         GroupFindingsResponse response) {
-<span class="fc" id="L5057">      super(context, response);</span>
-<span class="fc" id="L5058">    }</span>
+<span class="fc" id="L5084">      super(context, response);</span>
+<span class="fc" id="L5085">    }</span>
 
     private static GroupFindingsPage createEmptyPage() {
-<span class="fc" id="L5061">      return new GroupFindingsPage(null, null);</span>
+<span class="fc" id="L5088">      return new GroupFindingsPage(null, null);</span>
     }
 
     @Override
     protected GroupFindingsPage createPage(
         PageContext&lt;GroupFindingsRequest, GroupFindingsResponse, GroupResult&gt; context,
         GroupFindingsResponse response) {
-<span class="fc" id="L5068">      return new GroupFindingsPage(context, response);</span>
+<span class="fc" id="L5095">      return new GroupFindingsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;GroupFindingsPage&gt; createPageAsync(
         PageContext&lt;GroupFindingsRequest, GroupFindingsResponse, GroupResult&gt; context,
         ApiFuture&lt;GroupFindingsResponse&gt; futureResponse) {
-<span class="fc" id="L5075">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5102">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5085,17 +5112,17 @@ public class SecurityCenterClient implements BackgroundResource {
           GroupFindingsFixedSizeCollection&gt; {
 
     private GroupFindingsFixedSizeCollection(List&lt;GroupFindingsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5088">      super(pages, collectionSize);</span>
-<span class="fc" id="L5089">    }</span>
+<span class="fc" id="L5115">      super(pages, collectionSize);</span>
+<span class="fc" id="L5116">    }</span>
 
     private static GroupFindingsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5092">      return new GroupFindingsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5119">      return new GroupFindingsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected GroupFindingsFixedSizeCollection createCollection(
         List&lt;GroupFindingsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5098">      return new GroupFindingsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5125">      return new GroupFindingsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5112,14 +5139,14 @@ public class SecurityCenterClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListAssetsResponse&gt; futureResponse) {
       ApiFuture&lt;ListAssetsPage&gt; futurePage =
-<span class="fc" id="L5115">          ListAssetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5116">      return ApiFutures.transform(</span>
-<span class="fc" id="L5117">          futurePage, input -&gt; new ListAssetsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5142">          ListAssetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5143">      return ApiFutures.transform(</span>
+<span class="fc" id="L5144">          futurePage, input -&gt; new ListAssetsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListAssetsPagedResponse(ListAssetsPage page) {
-<span class="fc" id="L5121">      super(page, ListAssetsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5122">    }</span>
+<span class="fc" id="L5148">      super(page, ListAssetsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5149">    }</span>
   }
 
   public static class ListAssetsPage
@@ -5133,11 +5160,11 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;ListAssetsRequest, ListAssetsResponse, ListAssetsResponse.ListAssetsResult&gt;
             context,
         ListAssetsResponse response) {
-<span class="fc" id="L5136">      super(context, response);</span>
-<span class="fc" id="L5137">    }</span>
+<span class="fc" id="L5163">      super(context, response);</span>
+<span class="fc" id="L5164">    }</span>
 
     private static ListAssetsPage createEmptyPage() {
-<span class="fc" id="L5140">      return new ListAssetsPage(null, null);</span>
+<span class="fc" id="L5167">      return new ListAssetsPage(null, null);</span>
     }
 
     @Override
@@ -5145,7 +5172,7 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;ListAssetsRequest, ListAssetsResponse, ListAssetsResponse.ListAssetsResult&gt;
             context,
         ListAssetsResponse response) {
-<span class="fc" id="L5148">      return new ListAssetsPage(context, response);</span>
+<span class="fc" id="L5175">      return new ListAssetsPage(context, response);</span>
     }
 
     @Override
@@ -5153,7 +5180,7 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;ListAssetsRequest, ListAssetsResponse, ListAssetsResponse.ListAssetsResult&gt;
             context,
         ApiFuture&lt;ListAssetsResponse&gt; futureResponse) {
-<span class="fc" id="L5156">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5183">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5166,17 +5193,17 @@ public class SecurityCenterClient implements BackgroundResource {
           ListAssetsFixedSizeCollection&gt; {
 
     private ListAssetsFixedSizeCollection(List&lt;ListAssetsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5169">      super(pages, collectionSize);</span>
-<span class="fc" id="L5170">    }</span>
+<span class="fc" id="L5196">      super(pages, collectionSize);</span>
+<span class="fc" id="L5197">    }</span>
 
     private static ListAssetsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5173">      return new ListAssetsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5200">      return new ListAssetsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListAssetsFixedSizeCollection createCollection(
         List&lt;ListAssetsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5179">      return new ListAssetsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5206">      return new ListAssetsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5194,16 +5221,16 @@ public class SecurityCenterClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListFindingsResponse&gt; futureResponse) {
       ApiFuture&lt;ListFindingsPage&gt; futurePage =
-<span class="fc" id="L5197">          ListFindingsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5198">      return ApiFutures.transform(</span>
+<span class="fc" id="L5224">          ListFindingsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5225">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L5200">          input -&gt; new ListFindingsPagedResponse(input),</span>
-<span class="fc" id="L5201">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5227">          input -&gt; new ListFindingsPagedResponse(input),</span>
+<span class="fc" id="L5228">          MoreExecutors.directExecutor());</span>
     }
 
     private ListFindingsPagedResponse(ListFindingsPage page) {
-<span class="fc" id="L5205">      super(page, ListFindingsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5206">    }</span>
+<span class="fc" id="L5232">      super(page, ListFindingsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5233">    }</span>
   }
 
   public static class ListFindingsPage
@@ -5218,11 +5245,11 @@ public class SecurityCenterClient implements BackgroundResource {
                 ListFindingsRequest, ListFindingsResponse, ListFindingsResponse.ListFindingsResult&gt;
             context,
         ListFindingsResponse response) {
-<span class="fc" id="L5221">      super(context, response);</span>
-<span class="fc" id="L5222">    }</span>
+<span class="fc" id="L5248">      super(context, response);</span>
+<span class="fc" id="L5249">    }</span>
 
     private static ListFindingsPage createEmptyPage() {
-<span class="fc" id="L5225">      return new ListFindingsPage(null, null);</span>
+<span class="fc" id="L5252">      return new ListFindingsPage(null, null);</span>
     }
 
     @Override
@@ -5231,7 +5258,7 @@ public class SecurityCenterClient implements BackgroundResource {
                 ListFindingsRequest, ListFindingsResponse, ListFindingsResponse.ListFindingsResult&gt;
             context,
         ListFindingsResponse response) {
-<span class="fc" id="L5234">      return new ListFindingsPage(context, response);</span>
+<span class="fc" id="L5261">      return new ListFindingsPage(context, response);</span>
     }
 
     @Override
@@ -5240,7 +5267,7 @@ public class SecurityCenterClient implements BackgroundResource {
                 ListFindingsRequest, ListFindingsResponse, ListFindingsResponse.ListFindingsResult&gt;
             context,
         ApiFuture&lt;ListFindingsResponse&gt; futureResponse) {
-<span class="fc" id="L5243">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5270">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5253,17 +5280,17 @@ public class SecurityCenterClient implements BackgroundResource {
           ListFindingsFixedSizeCollection&gt; {
 
     private ListFindingsFixedSizeCollection(List&lt;ListFindingsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5256">      super(pages, collectionSize);</span>
-<span class="fc" id="L5257">    }</span>
+<span class="fc" id="L5283">      super(pages, collectionSize);</span>
+<span class="fc" id="L5284">    }</span>
 
     private static ListFindingsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5260">      return new ListFindingsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5287">      return new ListFindingsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListFindingsFixedSizeCollection createCollection(
         List&lt;ListFindingsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5266">      return new ListFindingsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5293">      return new ListFindingsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5279,16 +5306,16 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;ListMuteConfigsRequest, ListMuteConfigsResponse, MuteConfig&gt; context,
         ApiFuture&lt;ListMuteConfigsResponse&gt; futureResponse) {
       ApiFuture&lt;ListMuteConfigsPage&gt; futurePage =
-<span class="fc" id="L5282">          ListMuteConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5283">      return ApiFutures.transform(</span>
+<span class="fc" id="L5309">          ListMuteConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5310">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L5285">          input -&gt; new ListMuteConfigsPagedResponse(input),</span>
-<span class="fc" id="L5286">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5312">          input -&gt; new ListMuteConfigsPagedResponse(input),</span>
+<span class="fc" id="L5313">          MoreExecutors.directExecutor());</span>
     }
 
     private ListMuteConfigsPagedResponse(ListMuteConfigsPage page) {
-<span class="fc" id="L5290">      super(page, ListMuteConfigsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5291">    }</span>
+<span class="fc" id="L5317">      super(page, ListMuteConfigsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5318">    }</span>
   }
 
   public static class ListMuteConfigsPage
@@ -5298,25 +5325,25 @@ public class SecurityCenterClient implements BackgroundResource {
     private ListMuteConfigsPage(
         PageContext&lt;ListMuteConfigsRequest, ListMuteConfigsResponse, MuteConfig&gt; context,
         ListMuteConfigsResponse response) {
-<span class="fc" id="L5301">      super(context, response);</span>
-<span class="fc" id="L5302">    }</span>
+<span class="fc" id="L5328">      super(context, response);</span>
+<span class="fc" id="L5329">    }</span>
 
     private static ListMuteConfigsPage createEmptyPage() {
-<span class="fc" id="L5305">      return new ListMuteConfigsPage(null, null);</span>
+<span class="fc" id="L5332">      return new ListMuteConfigsPage(null, null);</span>
     }
 
     @Override
     protected ListMuteConfigsPage createPage(
         PageContext&lt;ListMuteConfigsRequest, ListMuteConfigsResponse, MuteConfig&gt; context,
         ListMuteConfigsResponse response) {
-<span class="fc" id="L5312">      return new ListMuteConfigsPage(context, response);</span>
+<span class="fc" id="L5339">      return new ListMuteConfigsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListMuteConfigsPage&gt; createPageAsync(
         PageContext&lt;ListMuteConfigsRequest, ListMuteConfigsResponse, MuteConfig&gt; context,
         ApiFuture&lt;ListMuteConfigsResponse&gt; futureResponse) {
-<span class="fc" id="L5319">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5346">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5330,17 +5357,17 @@ public class SecurityCenterClient implements BackgroundResource {
 
     private ListMuteConfigsFixedSizeCollection(
         List&lt;ListMuteConfigsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5333">      super(pages, collectionSize);</span>
-<span class="fc" id="L5334">    }</span>
+<span class="fc" id="L5360">      super(pages, collectionSize);</span>
+<span class="fc" id="L5361">    }</span>
 
     private static ListMuteConfigsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5337">      return new ListMuteConfigsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5364">      return new ListMuteConfigsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListMuteConfigsFixedSizeCollection createCollection(
         List&lt;ListMuteConfigsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5343">      return new ListMuteConfigsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5370">      return new ListMuteConfigsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5358,16 +5385,16 @@ public class SecurityCenterClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListNotificationConfigsResponse&gt; futureResponse) {
       ApiFuture&lt;ListNotificationConfigsPage&gt; futurePage =
-<span class="fc" id="L5361">          ListNotificationConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5362">      return ApiFutures.transform(</span>
+<span class="fc" id="L5388">          ListNotificationConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5389">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L5364">          input -&gt; new ListNotificationConfigsPagedResponse(input),</span>
-<span class="fc" id="L5365">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5391">          input -&gt; new ListNotificationConfigsPagedResponse(input),</span>
+<span class="fc" id="L5392">          MoreExecutors.directExecutor());</span>
     }
 
     private ListNotificationConfigsPagedResponse(ListNotificationConfigsPage page) {
-<span class="fc" id="L5369">      super(page, ListNotificationConfigsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5370">    }</span>
+<span class="fc" id="L5396">      super(page, ListNotificationConfigsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5397">    }</span>
   }
 
   public static class ListNotificationConfigsPage
@@ -5382,11 +5409,11 @@ public class SecurityCenterClient implements BackgroundResource {
                 ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig&gt;
             context,
         ListNotificationConfigsResponse response) {
-<span class="fc" id="L5385">      super(context, response);</span>
-<span class="fc" id="L5386">    }</span>
+<span class="fc" id="L5412">      super(context, response);</span>
+<span class="fc" id="L5413">    }</span>
 
     private static ListNotificationConfigsPage createEmptyPage() {
-<span class="fc" id="L5389">      return new ListNotificationConfigsPage(null, null);</span>
+<span class="fc" id="L5416">      return new ListNotificationConfigsPage(null, null);</span>
     }
 
     @Override
@@ -5395,7 +5422,7 @@ public class SecurityCenterClient implements BackgroundResource {
                 ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig&gt;
             context,
         ListNotificationConfigsResponse response) {
-<span class="fc" id="L5398">      return new ListNotificationConfigsPage(context, response);</span>
+<span class="fc" id="L5425">      return new ListNotificationConfigsPage(context, response);</span>
     }
 
     @Override
@@ -5404,7 +5431,7 @@ public class SecurityCenterClient implements BackgroundResource {
                 ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig&gt;
             context,
         ApiFuture&lt;ListNotificationConfigsResponse&gt; futureResponse) {
-<span class="fc" id="L5407">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5434">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5418,17 +5445,17 @@ public class SecurityCenterClient implements BackgroundResource {
 
     private ListNotificationConfigsFixedSizeCollection(
         List&lt;ListNotificationConfigsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5421">      super(pages, collectionSize);</span>
-<span class="fc" id="L5422">    }</span>
+<span class="fc" id="L5448">      super(pages, collectionSize);</span>
+<span class="fc" id="L5449">    }</span>
 
     private static ListNotificationConfigsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5425">      return new ListNotificationConfigsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5452">      return new ListNotificationConfigsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListNotificationConfigsFixedSizeCollection createCollection(
         List&lt;ListNotificationConfigsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5431">      return new ListNotificationConfigsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5458">      return new ListNotificationConfigsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5444,14 +5471,14 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;ListSourcesRequest, ListSourcesResponse, Source&gt; context,
         ApiFuture&lt;ListSourcesResponse&gt; futureResponse) {
       ApiFuture&lt;ListSourcesPage&gt; futurePage =
-<span class="fc" id="L5447">          ListSourcesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5448">      return ApiFutures.transform(</span>
-<span class="fc" id="L5449">          futurePage, input -&gt; new ListSourcesPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5474">          ListSourcesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5475">      return ApiFutures.transform(</span>
+<span class="fc" id="L5476">          futurePage, input -&gt; new ListSourcesPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListSourcesPagedResponse(ListSourcesPage page) {
-<span class="fc" id="L5453">      super(page, ListSourcesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5454">    }</span>
+<span class="fc" id="L5480">      super(page, ListSourcesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5481">    }</span>
   }
 
   public static class ListSourcesPage
@@ -5460,25 +5487,25 @@ public class SecurityCenterClient implements BackgroundResource {
     private ListSourcesPage(
         PageContext&lt;ListSourcesRequest, ListSourcesResponse, Source&gt; context,
         ListSourcesResponse response) {
-<span class="fc" id="L5463">      super(context, response);</span>
-<span class="fc" id="L5464">    }</span>
+<span class="fc" id="L5490">      super(context, response);</span>
+<span class="fc" id="L5491">    }</span>
 
     private static ListSourcesPage createEmptyPage() {
-<span class="fc" id="L5467">      return new ListSourcesPage(null, null);</span>
+<span class="fc" id="L5494">      return new ListSourcesPage(null, null);</span>
     }
 
     @Override
     protected ListSourcesPage createPage(
         PageContext&lt;ListSourcesRequest, ListSourcesResponse, Source&gt; context,
         ListSourcesResponse response) {
-<span class="fc" id="L5474">      return new ListSourcesPage(context, response);</span>
+<span class="fc" id="L5501">      return new ListSourcesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListSourcesPage&gt; createPageAsync(
         PageContext&lt;ListSourcesRequest, ListSourcesResponse, Source&gt; context,
         ApiFuture&lt;ListSourcesResponse&gt; futureResponse) {
-<span class="fc" id="L5481">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5508">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5491,17 +5518,17 @@ public class SecurityCenterClient implements BackgroundResource {
           ListSourcesFixedSizeCollection&gt; {
 
     private ListSourcesFixedSizeCollection(List&lt;ListSourcesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5494">      super(pages, collectionSize);</span>
-<span class="fc" id="L5495">    }</span>
+<span class="fc" id="L5521">      super(pages, collectionSize);</span>
+<span class="fc" id="L5522">    }</span>
 
     private static ListSourcesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5498">      return new ListSourcesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5525">      return new ListSourcesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListSourcesFixedSizeCollection createCollection(
         List&lt;ListSourcesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5504">      return new ListSourcesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5531">      return new ListSourcesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5518,16 +5545,16 @@ public class SecurityCenterClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListBigQueryExportsResponse&gt; futureResponse) {
       ApiFuture&lt;ListBigQueryExportsPage&gt; futurePage =
-<span class="fc" id="L5521">          ListBigQueryExportsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5522">      return ApiFutures.transform(</span>
+<span class="fc" id="L5548">          ListBigQueryExportsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5549">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L5524">          input -&gt; new ListBigQueryExportsPagedResponse(input),</span>
-<span class="fc" id="L5525">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5551">          input -&gt; new ListBigQueryExportsPagedResponse(input),</span>
+<span class="fc" id="L5552">          MoreExecutors.directExecutor());</span>
     }
 
     private ListBigQueryExportsPagedResponse(ListBigQueryExportsPage page) {
-<span class="fc" id="L5529">      super(page, ListBigQueryExportsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5530">    }</span>
+<span class="fc" id="L5556">      super(page, ListBigQueryExportsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5557">    }</span>
   }
 
   public static class ListBigQueryExportsPage
@@ -5541,11 +5568,11 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;ListBigQueryExportsRequest, ListBigQueryExportsResponse, BigQueryExport&gt;
             context,
         ListBigQueryExportsResponse response) {
-<span class="fc" id="L5544">      super(context, response);</span>
-<span class="fc" id="L5545">    }</span>
+<span class="fc" id="L5571">      super(context, response);</span>
+<span class="fc" id="L5572">    }</span>
 
     private static ListBigQueryExportsPage createEmptyPage() {
-<span class="fc" id="L5548">      return new ListBigQueryExportsPage(null, null);</span>
+<span class="fc" id="L5575">      return new ListBigQueryExportsPage(null, null);</span>
     }
 
     @Override
@@ -5553,7 +5580,7 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;ListBigQueryExportsRequest, ListBigQueryExportsResponse, BigQueryExport&gt;
             context,
         ListBigQueryExportsResponse response) {
-<span class="fc" id="L5556">      return new ListBigQueryExportsPage(context, response);</span>
+<span class="fc" id="L5583">      return new ListBigQueryExportsPage(context, response);</span>
     }
 
     @Override
@@ -5561,7 +5588,7 @@ public class SecurityCenterClient implements BackgroundResource {
         PageContext&lt;ListBigQueryExportsRequest, ListBigQueryExportsResponse, BigQueryExport&gt;
             context,
         ApiFuture&lt;ListBigQueryExportsResponse&gt; futureResponse) {
-<span class="fc" id="L5564">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5591">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5575,17 +5602,17 @@ public class SecurityCenterClient implements BackgroundResource {
 
     private ListBigQueryExportsFixedSizeCollection(
         List&lt;ListBigQueryExportsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5578">      super(pages, collectionSize);</span>
-<span class="fc" id="L5579">    }</span>
+<span class="fc" id="L5605">      super(pages, collectionSize);</span>
+<span class="fc" id="L5606">    }</span>
 
     private static ListBigQueryExportsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5582">      return new ListBigQueryExportsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5609">      return new ListBigQueryExportsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListBigQueryExportsFixedSizeCollection createCollection(
         List&lt;ListBigQueryExportsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5588">      return new ListBigQueryExportsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5615">      return new ListBigQueryExportsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

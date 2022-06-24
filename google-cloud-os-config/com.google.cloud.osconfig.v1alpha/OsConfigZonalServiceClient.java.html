@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.osconfig.v1alpha.stub.OsConfigZonalServiceStub;
 import com.google.cloud.osconfig.v1alpha.stub.OsConfigZonalServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -111,6 +111,21 @@ import javax.annotation.Generated;
  *     OsConfigZonalServiceClient.create(osConfigZonalServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * OsConfigZonalServiceSettings osConfigZonalServiceSettings =
+ *     OsConfigZonalServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             OsConfigZonalServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * OsConfigZonalServiceClient osConfigZonalServiceClient =
+ *     OsConfigZonalServiceClient.create(osConfigZonalServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -118,11 +133,12 @@ import javax.annotation.Generated;
 public class OsConfigZonalServiceClient implements BackgroundResource {
   private final OsConfigZonalServiceSettings settings;
   private final OsConfigZonalServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of OsConfigZonalServiceClient with default settings. */
   public static final OsConfigZonalServiceClient create() throws IOException {
-<span class="nc" id="L125">    return create(OsConfigZonalServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L141">    return create(OsConfigZonalServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -131,7 +147,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public static final OsConfigZonalServiceClient create(OsConfigZonalServiceSettings settings)
       throws IOException {
-<span class="fc" id="L134">    return new OsConfigZonalServiceClient(settings);</span>
+<span class="fc" id="L150">    return new OsConfigZonalServiceClient(settings);</span>
   }
 
   /**
@@ -139,7 +155,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * This is for advanced usage - prefer using create(OsConfigZonalServiceSettings).
    */
   public static final OsConfigZonalServiceClient create(OsConfigZonalServiceStub stub) {
-<span class="nc" id="L142">    return new OsConfigZonalServiceClient(stub);</span>
+<span class="nc" id="L158">    return new OsConfigZonalServiceClient(stub);</span>
   }
 
   /**
@@ -147,32 +163,44 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * protected so that it is easy to make a subclass, but otherwise, the static factory methods
    * should be preferred.
    */
-<span class="fc" id="L150">  protected OsConfigZonalServiceClient(OsConfigZonalServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L151">    this.settings = settings;</span>
-<span class="fc" id="L152">    this.stub = ((OsConfigZonalServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L153">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L154">  }</span>
+<span class="fc" id="L166">  protected OsConfigZonalServiceClient(OsConfigZonalServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L167">    this.settings = settings;</span>
+<span class="fc" id="L168">    this.stub = ((OsConfigZonalServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L169">    this.operationsClient =</span>
+<span class="fc" id="L170">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L171">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L172">  }</span>
 
-<span class="nc" id="L156">  protected OsConfigZonalServiceClient(OsConfigZonalServiceStub stub) {</span>
-<span class="nc" id="L157">    this.settings = null;</span>
-<span class="nc" id="L158">    this.stub = stub;</span>
-<span class="nc" id="L159">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L160">  }</span>
+<span class="nc" id="L174">  protected OsConfigZonalServiceClient(OsConfigZonalServiceStub stub) {</span>
+<span class="nc" id="L175">    this.settings = null;</span>
+<span class="nc" id="L176">    this.stub = stub;</span>
+<span class="nc" id="L177">    this.operationsClient =</span>
+<span class="nc" id="L178">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L179">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L180">  }</span>
 
   public final OsConfigZonalServiceSettings getSettings() {
-<span class="nc" id="L163">    return settings;</span>
+<span class="nc" id="L183">    return settings;</span>
   }
 
   public OsConfigZonalServiceStub getStub() {
-<span class="nc" id="L167">    return stub;</span>
+<span class="nc" id="L187">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L175">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L195">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L203">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -223,12 +251,12 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
       createOSPolicyAssignmentAsync(
           LocationName parent, OSPolicyAssignment osPolicyAssignment, String osPolicyAssignmentId) {
     CreateOSPolicyAssignmentRequest request =
-<span class="fc" id="L226">        CreateOSPolicyAssignmentRequest.newBuilder()</span>
-<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L228">            .setOsPolicyAssignment(osPolicyAssignment)</span>
-<span class="fc" id="L229">            .setOsPolicyAssignmentId(osPolicyAssignmentId)</span>
-<span class="fc" id="L230">            .build();</span>
-<span class="fc" id="L231">    return createOSPolicyAssignmentAsync(request);</span>
+<span class="fc" id="L254">        CreateOSPolicyAssignmentRequest.newBuilder()</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L256">            .setOsPolicyAssignment(osPolicyAssignment)</span>
+<span class="fc" id="L257">            .setOsPolicyAssignmentId(osPolicyAssignmentId)</span>
+<span class="fc" id="L258">            .build();</span>
+<span class="fc" id="L259">    return createOSPolicyAssignmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -279,12 +307,12 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
       createOSPolicyAssignmentAsync(
           String parent, OSPolicyAssignment osPolicyAssignment, String osPolicyAssignmentId) {
     CreateOSPolicyAssignmentRequest request =
-<span class="fc" id="L282">        CreateOSPolicyAssignmentRequest.newBuilder()</span>
-<span class="fc" id="L283">            .setParent(parent)</span>
-<span class="fc" id="L284">            .setOsPolicyAssignment(osPolicyAssignment)</span>
-<span class="fc" id="L285">            .setOsPolicyAssignmentId(osPolicyAssignmentId)</span>
-<span class="fc" id="L286">            .build();</span>
-<span class="fc" id="L287">    return createOSPolicyAssignmentAsync(request);</span>
+<span class="fc" id="L310">        CreateOSPolicyAssignmentRequest.newBuilder()</span>
+<span class="fc" id="L311">            .setParent(parent)</span>
+<span class="fc" id="L312">            .setOsPolicyAssignment(osPolicyAssignment)</span>
+<span class="fc" id="L313">            .setOsPolicyAssignmentId(osPolicyAssignmentId)</span>
+<span class="fc" id="L314">            .build();</span>
+<span class="fc" id="L315">    return createOSPolicyAssignmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -322,7 +350,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;OSPolicyAssignment, OSPolicyAssignmentOperationMetadata&gt;
       createOSPolicyAssignmentAsync(CreateOSPolicyAssignmentRequest request) {
-<span class="fc" id="L325">    return createOSPolicyAssignmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L353">    return createOSPolicyAssignmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -362,7 +390,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateOSPolicyAssignmentRequest, OSPolicyAssignment, OSPolicyAssignmentOperationMetadata&gt;
       createOSPolicyAssignmentOperationCallable() {
-<span class="fc" id="L365">    return stub.createOSPolicyAssignmentOperationCallable();</span>
+<span class="fc" id="L393">    return stub.createOSPolicyAssignmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -399,7 +427,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateOSPolicyAssignmentRequest, Operation&gt;
       createOSPolicyAssignmentCallable() {
-<span class="nc" id="L402">    return stub.createOSPolicyAssignmentCallable();</span>
+<span class="nc" id="L430">    return stub.createOSPolicyAssignmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -438,11 +466,11 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final OperationFuture&lt;OSPolicyAssignment, OSPolicyAssignmentOperationMetadata&gt;
       updateOSPolicyAssignmentAsync(OSPolicyAssignment osPolicyAssignment, FieldMask updateMask) {
     UpdateOSPolicyAssignmentRequest request =
-<span class="fc" id="L441">        UpdateOSPolicyAssignmentRequest.newBuilder()</span>
-<span class="fc" id="L442">            .setOsPolicyAssignment(osPolicyAssignment)</span>
-<span class="fc" id="L443">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L444">            .build();</span>
-<span class="fc" id="L445">    return updateOSPolicyAssignmentAsync(request);</span>
+<span class="fc" id="L469">        UpdateOSPolicyAssignmentRequest.newBuilder()</span>
+<span class="fc" id="L470">            .setOsPolicyAssignment(osPolicyAssignment)</span>
+<span class="fc" id="L471">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L472">            .build();</span>
+<span class="fc" id="L473">    return updateOSPolicyAssignmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -479,7 +507,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;OSPolicyAssignment, OSPolicyAssignmentOperationMetadata&gt;
       updateOSPolicyAssignmentAsync(UpdateOSPolicyAssignmentRequest request) {
-<span class="fc" id="L482">    return updateOSPolicyAssignmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L510">    return updateOSPolicyAssignmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -518,7 +546,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateOSPolicyAssignmentRequest, OSPolicyAssignment, OSPolicyAssignmentOperationMetadata&gt;
       updateOSPolicyAssignmentOperationCallable() {
-<span class="fc" id="L521">    return stub.updateOSPolicyAssignmentOperationCallable();</span>
+<span class="fc" id="L549">    return stub.updateOSPolicyAssignmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -554,7 +582,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateOSPolicyAssignmentRequest, Operation&gt;
       updateOSPolicyAssignmentCallable() {
-<span class="nc" id="L557">    return stub.updateOSPolicyAssignmentCallable();</span>
+<span class="nc" id="L585">    return stub.updateOSPolicyAssignmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -584,10 +612,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final OSPolicyAssignment getOSPolicyAssignment(OSPolicyAssignmentName name) {
     GetOSPolicyAssignmentRequest request =
-<span class="fc" id="L587">        GetOSPolicyAssignmentRequest.newBuilder()</span>
-<span class="pc bpc" id="L588" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L589">            .build();</span>
-<span class="fc" id="L590">    return getOSPolicyAssignment(request);</span>
+<span class="fc" id="L615">        GetOSPolicyAssignmentRequest.newBuilder()</span>
+<span class="pc bpc" id="L616" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L617">            .build();</span>
+<span class="fc" id="L618">    return getOSPolicyAssignment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -617,8 +645,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final OSPolicyAssignment getOSPolicyAssignment(String name) {
     GetOSPolicyAssignmentRequest request =
-<span class="fc" id="L620">        GetOSPolicyAssignmentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L621">    return getOSPolicyAssignment(request);</span>
+<span class="fc" id="L648">        GetOSPolicyAssignmentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L649">    return getOSPolicyAssignment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -649,7 +677,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OSPolicyAssignment getOSPolicyAssignment(GetOSPolicyAssignmentRequest request) {
-<span class="fc" id="L652">    return getOSPolicyAssignmentCallable().call(request);</span>
+<span class="fc" id="L680">    return getOSPolicyAssignmentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -681,7 +709,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetOSPolicyAssignmentRequest, OSPolicyAssignment&gt;
       getOSPolicyAssignmentCallable() {
-<span class="fc" id="L684">    return stub.getOSPolicyAssignmentCallable();</span>
+<span class="fc" id="L712">    return stub.getOSPolicyAssignmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -710,10 +738,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListOSPolicyAssignmentsPagedResponse listOSPolicyAssignments(LocationName parent) {
     ListOSPolicyAssignmentsRequest request =
-<span class="fc" id="L713">        ListOSPolicyAssignmentsRequest.newBuilder()</span>
-<span class="pc bpc" id="L714" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L715">            .build();</span>
-<span class="fc" id="L716">    return listOSPolicyAssignments(request);</span>
+<span class="fc" id="L741">        ListOSPolicyAssignmentsRequest.newBuilder()</span>
+<span class="pc bpc" id="L742" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L743">            .build();</span>
+<span class="fc" id="L744">    return listOSPolicyAssignments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -742,8 +770,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListOSPolicyAssignmentsPagedResponse listOSPolicyAssignments(String parent) {
     ListOSPolicyAssignmentsRequest request =
-<span class="fc" id="L745">        ListOSPolicyAssignmentsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L746">    return listOSPolicyAssignments(request);</span>
+<span class="fc" id="L773">        ListOSPolicyAssignmentsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L774">    return listOSPolicyAssignments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -777,7 +805,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListOSPolicyAssignmentsPagedResponse listOSPolicyAssignments(
       ListOSPolicyAssignmentsRequest request) {
-<span class="fc" id="L780">    return listOSPolicyAssignmentsPagedCallable().call(request);</span>
+<span class="fc" id="L808">    return listOSPolicyAssignmentsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -810,7 +838,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListOSPolicyAssignmentsRequest, ListOSPolicyAssignmentsPagedResponse&gt;
       listOSPolicyAssignmentsPagedCallable() {
-<span class="fc" id="L813">    return stub.listOSPolicyAssignmentsPagedCallable();</span>
+<span class="fc" id="L841">    return stub.listOSPolicyAssignmentsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -850,7 +878,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListOSPolicyAssignmentsRequest, ListOSPolicyAssignmentsResponse&gt;
       listOSPolicyAssignmentsCallable() {
-<span class="nc" id="L853">    return stub.listOSPolicyAssignmentsCallable();</span>
+<span class="nc" id="L881">    return stub.listOSPolicyAssignmentsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -879,10 +907,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final ListOSPolicyAssignmentRevisionsPagedResponse listOSPolicyAssignmentRevisions(
       OSPolicyAssignmentName name) {
     ListOSPolicyAssignmentRevisionsRequest request =
-<span class="fc" id="L882">        ListOSPolicyAssignmentRevisionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L883" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L884">            .build();</span>
-<span class="fc" id="L885">    return listOSPolicyAssignmentRevisions(request);</span>
+<span class="fc" id="L910">        ListOSPolicyAssignmentRevisionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L911" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L912">            .build();</span>
+<span class="fc" id="L913">    return listOSPolicyAssignmentRevisions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -911,8 +939,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final ListOSPolicyAssignmentRevisionsPagedResponse listOSPolicyAssignmentRevisions(
       String name) {
     ListOSPolicyAssignmentRevisionsRequest request =
-<span class="fc" id="L914">        ListOSPolicyAssignmentRevisionsRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L915">    return listOSPolicyAssignmentRevisions(request);</span>
+<span class="fc" id="L942">        ListOSPolicyAssignmentRevisionsRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L943">    return listOSPolicyAssignmentRevisions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -946,7 +974,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListOSPolicyAssignmentRevisionsPagedResponse listOSPolicyAssignmentRevisions(
       ListOSPolicyAssignmentRevisionsRequest request) {
-<span class="fc" id="L949">    return listOSPolicyAssignmentRevisionsPagedCallable().call(request);</span>
+<span class="fc" id="L977">    return listOSPolicyAssignmentRevisionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -982,7 +1010,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListOSPolicyAssignmentRevisionsRequest, ListOSPolicyAssignmentRevisionsPagedResponse&gt;
       listOSPolicyAssignmentRevisionsPagedCallable() {
-<span class="fc" id="L985">    return stub.listOSPolicyAssignmentRevisionsPagedCallable();</span>
+<span class="fc" id="L1013">    return stub.listOSPolicyAssignmentRevisionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1023,7 +1051,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListOSPolicyAssignmentRevisionsRequest, ListOSPolicyAssignmentRevisionsResponse&gt;
       listOSPolicyAssignmentRevisionsCallable() {
-<span class="nc" id="L1026">    return stub.listOSPolicyAssignmentRevisionsCallable();</span>
+<span class="nc" id="L1054">    return stub.listOSPolicyAssignmentRevisionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1060,10 +1088,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OSPolicyAssignmentOperationMetadata&gt;
       deleteOSPolicyAssignmentAsync(OSPolicyAssignmentName name) {
     DeleteOSPolicyAssignmentRequest request =
-<span class="fc" id="L1063">        DeleteOSPolicyAssignmentRequest.newBuilder()</span>
-<span class="pc bpc" id="L1064" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1065">            .build();</span>
-<span class="fc" id="L1066">    return deleteOSPolicyAssignmentAsync(request);</span>
+<span class="fc" id="L1091">        DeleteOSPolicyAssignmentRequest.newBuilder()</span>
+<span class="pc bpc" id="L1092" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1093">            .build();</span>
+<span class="fc" id="L1094">    return deleteOSPolicyAssignmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1100,8 +1128,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OSPolicyAssignmentOperationMetadata&gt;
       deleteOSPolicyAssignmentAsync(String name) {
     DeleteOSPolicyAssignmentRequest request =
-<span class="fc" id="L1103">        DeleteOSPolicyAssignmentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1104">    return deleteOSPolicyAssignmentAsync(request);</span>
+<span class="fc" id="L1131">        DeleteOSPolicyAssignmentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1132">    return deleteOSPolicyAssignmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1141,7 +1169,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OSPolicyAssignmentOperationMetadata&gt;
       deleteOSPolicyAssignmentAsync(DeleteOSPolicyAssignmentRequest request) {
-<span class="fc" id="L1144">    return deleteOSPolicyAssignmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1172">    return deleteOSPolicyAssignmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1184,7 +1212,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           DeleteOSPolicyAssignmentRequest, Empty, OSPolicyAssignmentOperationMetadata&gt;
       deleteOSPolicyAssignmentOperationCallable() {
-<span class="fc" id="L1187">    return stub.deleteOSPolicyAssignmentOperationCallable();</span>
+<span class="fc" id="L1215">    return stub.deleteOSPolicyAssignmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1224,7 +1252,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteOSPolicyAssignmentRequest, Operation&gt;
       deleteOSPolicyAssignmentCallable() {
-<span class="nc" id="L1227">    return stub.deleteOSPolicyAssignmentCallable();</span>
+<span class="nc" id="L1255">    return stub.deleteOSPolicyAssignmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1257,10 +1285,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final InstanceOSPoliciesCompliance getInstanceOSPoliciesCompliance(
       InstanceOSPoliciesComplianceName name) {
     GetInstanceOSPoliciesComplianceRequest request =
-<span class="fc" id="L1260">        GetInstanceOSPoliciesComplianceRequest.newBuilder()</span>
-<span class="pc bpc" id="L1261" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1262">            .build();</span>
-<span class="fc" id="L1263">    return getInstanceOSPoliciesCompliance(request);</span>
+<span class="fc" id="L1288">        GetInstanceOSPoliciesComplianceRequest.newBuilder()</span>
+<span class="pc bpc" id="L1289" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1290">            .build();</span>
+<span class="fc" id="L1291">    return getInstanceOSPoliciesCompliance(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1292,8 +1320,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   @Deprecated
   public final InstanceOSPoliciesCompliance getInstanceOSPoliciesCompliance(String name) {
     GetInstanceOSPoliciesComplianceRequest request =
-<span class="fc" id="L1295">        GetInstanceOSPoliciesComplianceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1296">    return getInstanceOSPoliciesCompliance(request);</span>
+<span class="fc" id="L1323">        GetInstanceOSPoliciesComplianceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1324">    return getInstanceOSPoliciesCompliance(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1325,7 +1353,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   @Deprecated
   public final InstanceOSPoliciesCompliance getInstanceOSPoliciesCompliance(
       GetInstanceOSPoliciesComplianceRequest request) {
-<span class="fc" id="L1328">    return getInstanceOSPoliciesComplianceCallable().call(request);</span>
+<span class="fc" id="L1356">    return getInstanceOSPoliciesComplianceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1357,7 +1385,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   @Deprecated
   public final UnaryCallable&lt;GetInstanceOSPoliciesComplianceRequest, InstanceOSPoliciesCompliance&gt;
       getInstanceOSPoliciesComplianceCallable() {
-<span class="fc" id="L1360">    return stub.getInstanceOSPoliciesComplianceCallable();</span>
+<span class="fc" id="L1388">    return stub.getInstanceOSPoliciesComplianceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1389,10 +1417,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final ListInstanceOSPoliciesCompliancesPagedResponse listInstanceOSPoliciesCompliances(
       LocationName parent) {
     ListInstanceOSPoliciesCompliancesRequest request =
-<span class="fc" id="L1392">        ListInstanceOSPoliciesCompliancesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1393" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1394">            .build();</span>
-<span class="fc" id="L1395">    return listInstanceOSPoliciesCompliances(request);</span>
+<span class="fc" id="L1420">        ListInstanceOSPoliciesCompliancesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1421" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1422">            .build();</span>
+<span class="fc" id="L1423">    return listInstanceOSPoliciesCompliances(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1424,8 +1452,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final ListInstanceOSPoliciesCompliancesPagedResponse listInstanceOSPoliciesCompliances(
       String parent) {
     ListInstanceOSPoliciesCompliancesRequest request =
-<span class="fc" id="L1427">        ListInstanceOSPoliciesCompliancesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1428">    return listInstanceOSPoliciesCompliances(request);</span>
+<span class="fc" id="L1455">        ListInstanceOSPoliciesCompliancesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1456">    return listInstanceOSPoliciesCompliances(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1460,7 +1488,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   @Deprecated
   public final ListInstanceOSPoliciesCompliancesPagedResponse listInstanceOSPoliciesCompliances(
       ListInstanceOSPoliciesCompliancesRequest request) {
-<span class="fc" id="L1463">    return listInstanceOSPoliciesCompliancesPagedCallable().call(request);</span>
+<span class="fc" id="L1491">    return listInstanceOSPoliciesCompliancesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1498,7 +1526,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListInstanceOSPoliciesCompliancesRequest, ListInstanceOSPoliciesCompliancesPagedResponse&gt;
       listInstanceOSPoliciesCompliancesPagedCallable() {
-<span class="fc" id="L1501">    return stub.listInstanceOSPoliciesCompliancesPagedCallable();</span>
+<span class="fc" id="L1529">    return stub.listInstanceOSPoliciesCompliancesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1542,7 +1570,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListInstanceOSPoliciesCompliancesRequest, ListInstanceOSPoliciesCompliancesResponse&gt;
       listInstanceOSPoliciesCompliancesCallable() {
-<span class="nc" id="L1545">    return stub.listInstanceOSPoliciesCompliancesCallable();</span>
+<span class="nc" id="L1573">    return stub.listInstanceOSPoliciesCompliancesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1574,10 +1602,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final OSPolicyAssignmentReport getOSPolicyAssignmentReport(
       OSPolicyAssignmentReportName name) {
     GetOSPolicyAssignmentReportRequest request =
-<span class="fc" id="L1577">        GetOSPolicyAssignmentReportRequest.newBuilder()</span>
-<span class="pc bpc" id="L1578" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1579">            .build();</span>
-<span class="fc" id="L1580">    return getOSPolicyAssignmentReport(request);</span>
+<span class="fc" id="L1605">        GetOSPolicyAssignmentReportRequest.newBuilder()</span>
+<span class="pc bpc" id="L1606" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1607">            .build();</span>
+<span class="fc" id="L1608">    return getOSPolicyAssignmentReport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1609,8 +1637,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final OSPolicyAssignmentReport getOSPolicyAssignmentReport(String name) {
     GetOSPolicyAssignmentReportRequest request =
-<span class="fc" id="L1612">        GetOSPolicyAssignmentReportRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1613">    return getOSPolicyAssignmentReport(request);</span>
+<span class="fc" id="L1640">        GetOSPolicyAssignmentReportRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1641">    return getOSPolicyAssignmentReport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1641,7 +1669,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final OSPolicyAssignmentReport getOSPolicyAssignmentReport(
       GetOSPolicyAssignmentReportRequest request) {
-<span class="fc" id="L1644">    return getOSPolicyAssignmentReportCallable().call(request);</span>
+<span class="fc" id="L1672">    return getOSPolicyAssignmentReportCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1671,7 +1699,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetOSPolicyAssignmentReportRequest, OSPolicyAssignmentReport&gt;
       getOSPolicyAssignmentReportCallable() {
-<span class="fc" id="L1674">    return stub.getOSPolicyAssignmentReportCallable();</span>
+<span class="fc" id="L1702">    return stub.getOSPolicyAssignmentReportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1716,10 +1744,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final ListOSPolicyAssignmentReportsPagedResponse listOSPolicyAssignmentReports(
       InstanceOSPolicyAssignmentName parent) {
     ListOSPolicyAssignmentReportsRequest request =
-<span class="fc" id="L1719">        ListOSPolicyAssignmentReportsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1720" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1721">            .build();</span>
-<span class="fc" id="L1722">    return listOSPolicyAssignmentReports(request);</span>
+<span class="fc" id="L1747">        ListOSPolicyAssignmentReportsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1748" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1749">            .build();</span>
+<span class="fc" id="L1750">    return listOSPolicyAssignmentReports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1764,8 +1792,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final ListOSPolicyAssignmentReportsPagedResponse listOSPolicyAssignmentReports(
       String parent) {
     ListOSPolicyAssignmentReportsRequest request =
-<span class="fc" id="L1767">        ListOSPolicyAssignmentReportsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1768">    return listOSPolicyAssignmentReports(request);</span>
+<span class="fc" id="L1795">        ListOSPolicyAssignmentReportsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1796">    return listOSPolicyAssignmentReports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1801,7 +1829,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListOSPolicyAssignmentReportsPagedResponse listOSPolicyAssignmentReports(
       ListOSPolicyAssignmentReportsRequest request) {
-<span class="fc" id="L1804">    return listOSPolicyAssignmentReportsPagedCallable().call(request);</span>
+<span class="fc" id="L1832">    return listOSPolicyAssignmentReportsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1839,7 +1867,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListOSPolicyAssignmentReportsRequest, ListOSPolicyAssignmentReportsPagedResponse&gt;
       listOSPolicyAssignmentReportsPagedCallable() {
-<span class="fc" id="L1842">    return stub.listOSPolicyAssignmentReportsPagedCallable();</span>
+<span class="fc" id="L1870">    return stub.listOSPolicyAssignmentReportsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1882,7 +1910,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListOSPolicyAssignmentReportsRequest, ListOSPolicyAssignmentReportsResponse&gt;
       listOSPolicyAssignmentReportsCallable() {
-<span class="nc" id="L1885">    return stub.listOSPolicyAssignmentReportsCallable();</span>
+<span class="nc" id="L1913">    return stub.listOSPolicyAssignmentReportsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1910,8 +1938,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final Inventory getInventory(InventoryName name) {
     GetInventoryRequest request =
-<span class="pc bpc" id="L1913" title="1 of 2 branches missed.">        GetInventoryRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1914">    return getInventory(request);</span>
+<span class="pc bpc" id="L1941" title="1 of 2 branches missed.">        GetInventoryRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1942">    return getInventory(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1938,8 +1966,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Inventory getInventory(String name) {
-<span class="fc" id="L1941">    GetInventoryRequest request = GetInventoryRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1942">    return getInventory(request);</span>
+<span class="fc" id="L1969">    GetInventoryRequest request = GetInventoryRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1970">    return getInventory(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1967,7 +1995,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Inventory getInventory(GetInventoryRequest request) {
-<span class="fc" id="L1970">    return getInventoryCallable().call(request);</span>
+<span class="fc" id="L1998">    return getInventoryCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1995,7 +2023,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetInventoryRequest, Inventory&gt; getInventoryCallable() {
-<span class="fc" id="L1998">    return stub.getInventoryCallable();</span>
+<span class="fc" id="L2026">    return stub.getInventoryCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2023,10 +2051,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListInventoriesPagedResponse listInventories(InstanceName parent) {
     ListInventoriesRequest request =
-<span class="fc" id="L2026">        ListInventoriesRequest.newBuilder()</span>
-<span class="pc bpc" id="L2027" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2028">            .build();</span>
-<span class="fc" id="L2029">    return listInventories(request);</span>
+<span class="fc" id="L2054">        ListInventoriesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2055" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2056">            .build();</span>
+<span class="fc" id="L2057">    return listInventories(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2053,8 +2081,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListInventoriesPagedResponse listInventories(String parent) {
-<span class="fc" id="L2056">    ListInventoriesRequest request = ListInventoriesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2057">    return listInventories(request);</span>
+<span class="fc" id="L2084">    ListInventoriesRequest request = ListInventoriesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2085">    return listInventories(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2086,7 +2114,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListInventoriesPagedResponse listInventories(ListInventoriesRequest request) {
-<span class="fc" id="L2089">    return listInventoriesPagedCallable().call(request);</span>
+<span class="fc" id="L2117">    return listInventoriesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2119,7 +2147,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListInventoriesRequest, ListInventoriesPagedResponse&gt;
       listInventoriesPagedCallable() {
-<span class="fc" id="L2122">    return stub.listInventoriesPagedCallable();</span>
+<span class="fc" id="L2150">    return stub.listInventoriesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2159,7 +2187,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListInventoriesRequest, ListInventoriesResponse&gt;
       listInventoriesCallable() {
-<span class="nc" id="L2162">    return stub.listInventoriesCallable();</span>
+<span class="nc" id="L2190">    return stub.listInventoriesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2189,10 +2217,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final VulnerabilityReport getVulnerabilityReport(VulnerabilityReportName name) {
     GetVulnerabilityReportRequest request =
-<span class="fc" id="L2192">        GetVulnerabilityReportRequest.newBuilder()</span>
-<span class="pc bpc" id="L2193" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2194">            .build();</span>
-<span class="fc" id="L2195">    return getVulnerabilityReport(request);</span>
+<span class="fc" id="L2220">        GetVulnerabilityReportRequest.newBuilder()</span>
+<span class="pc bpc" id="L2221" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2222">            .build();</span>
+<span class="fc" id="L2223">    return getVulnerabilityReport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2221,8 +2249,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final VulnerabilityReport getVulnerabilityReport(String name) {
     GetVulnerabilityReportRequest request =
-<span class="fc" id="L2224">        GetVulnerabilityReportRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2225">    return getVulnerabilityReport(request);</span>
+<span class="fc" id="L2252">        GetVulnerabilityReportRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2253">    return getVulnerabilityReport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2250,7 +2278,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final VulnerabilityReport getVulnerabilityReport(GetVulnerabilityReportRequest request) {
-<span class="fc" id="L2253">    return getVulnerabilityReportCallable().call(request);</span>
+<span class="fc" id="L2281">    return getVulnerabilityReportCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2279,7 +2307,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetVulnerabilityReportRequest, VulnerabilityReport&gt;
       getVulnerabilityReportCallable() {
-<span class="fc" id="L2282">    return stub.getVulnerabilityReportCallable();</span>
+<span class="fc" id="L2310">    return stub.getVulnerabilityReportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2308,10 +2336,10 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListVulnerabilityReportsPagedResponse listVulnerabilityReports(InstanceName parent) {
     ListVulnerabilityReportsRequest request =
-<span class="fc" id="L2311">        ListVulnerabilityReportsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2312" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2313">            .build();</span>
-<span class="fc" id="L2314">    return listVulnerabilityReports(request);</span>
+<span class="fc" id="L2339">        ListVulnerabilityReportsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2340" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2341">            .build();</span>
+<span class="fc" id="L2342">    return listVulnerabilityReports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2340,8 +2368,8 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListVulnerabilityReportsPagedResponse listVulnerabilityReports(String parent) {
     ListVulnerabilityReportsRequest request =
-<span class="fc" id="L2343">        ListVulnerabilityReportsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2344">    return listVulnerabilityReports(request);</span>
+<span class="fc" id="L2371">        ListVulnerabilityReportsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2372">    return listVulnerabilityReports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2374,7 +2402,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final ListVulnerabilityReportsPagedResponse listVulnerabilityReports(
       ListVulnerabilityReportsRequest request) {
-<span class="fc" id="L2377">    return listVulnerabilityReportsPagedCallable().call(request);</span>
+<span class="fc" id="L2405">    return listVulnerabilityReportsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2406,7 +2434,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListVulnerabilityReportsRequest, ListVulnerabilityReportsPagedResponse&gt;
       listVulnerabilityReportsPagedCallable() {
-<span class="fc" id="L2409">    return stub.listVulnerabilityReportsPagedCallable();</span>
+<span class="fc" id="L2437">    return stub.listVulnerabilityReportsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2445,37 +2473,37 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListVulnerabilityReportsRequest, ListVulnerabilityReportsResponse&gt;
       listVulnerabilityReportsCallable() {
-<span class="nc" id="L2448">    return stub.listVulnerabilityReportsCallable();</span>
+<span class="nc" id="L2476">    return stub.listVulnerabilityReportsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2453">    stub.close();</span>
-<span class="fc" id="L2454">  }</span>
+<span class="fc" id="L2481">    stub.close();</span>
+<span class="fc" id="L2482">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2458">    stub.shutdown();</span>
-<span class="nc" id="L2459">  }</span>
+<span class="nc" id="L2486">    stub.shutdown();</span>
+<span class="nc" id="L2487">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2463">    return stub.isShutdown();</span>
+<span class="nc" id="L2491">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2468">    return stub.isTerminated();</span>
+<span class="nc" id="L2496">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2473">    stub.shutdownNow();</span>
-<span class="nc" id="L2474">  }</span>
+<span class="nc" id="L2501">    stub.shutdownNow();</span>
+<span class="nc" id="L2502">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2478">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2506">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListOSPolicyAssignmentsPagedResponse
@@ -2492,16 +2520,16 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListOSPolicyAssignmentsResponse&gt; futureResponse) {
       ApiFuture&lt;ListOSPolicyAssignmentsPage&gt; futurePage =
-<span class="fc" id="L2495">          ListOSPolicyAssignmentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2496">      return ApiFutures.transform(</span>
+<span class="fc" id="L2523">          ListOSPolicyAssignmentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2524">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2498">          input -&gt; new ListOSPolicyAssignmentsPagedResponse(input),</span>
-<span class="fc" id="L2499">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2526">          input -&gt; new ListOSPolicyAssignmentsPagedResponse(input),</span>
+<span class="fc" id="L2527">          MoreExecutors.directExecutor());</span>
     }
 
     private ListOSPolicyAssignmentsPagedResponse(ListOSPolicyAssignmentsPage page) {
-<span class="fc" id="L2503">      super(page, ListOSPolicyAssignmentsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2504">    }</span>
+<span class="fc" id="L2531">      super(page, ListOSPolicyAssignmentsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2532">    }</span>
   }
 
   public static class ListOSPolicyAssignmentsPage
@@ -2516,11 +2544,11 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 ListOSPolicyAssignmentsRequest, ListOSPolicyAssignmentsResponse, OSPolicyAssignment&gt;
             context,
         ListOSPolicyAssignmentsResponse response) {
-<span class="fc" id="L2519">      super(context, response);</span>
-<span class="fc" id="L2520">    }</span>
+<span class="fc" id="L2547">      super(context, response);</span>
+<span class="fc" id="L2548">    }</span>
 
     private static ListOSPolicyAssignmentsPage createEmptyPage() {
-<span class="fc" id="L2523">      return new ListOSPolicyAssignmentsPage(null, null);</span>
+<span class="fc" id="L2551">      return new ListOSPolicyAssignmentsPage(null, null);</span>
     }
 
     @Override
@@ -2529,7 +2557,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 ListOSPolicyAssignmentsRequest, ListOSPolicyAssignmentsResponse, OSPolicyAssignment&gt;
             context,
         ListOSPolicyAssignmentsResponse response) {
-<span class="fc" id="L2532">      return new ListOSPolicyAssignmentsPage(context, response);</span>
+<span class="fc" id="L2560">      return new ListOSPolicyAssignmentsPage(context, response);</span>
     }
 
     @Override
@@ -2538,7 +2566,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 ListOSPolicyAssignmentsRequest, ListOSPolicyAssignmentsResponse, OSPolicyAssignment&gt;
             context,
         ApiFuture&lt;ListOSPolicyAssignmentsResponse&gt; futureResponse) {
-<span class="fc" id="L2541">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2569">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2552,17 +2580,17 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
 
     private ListOSPolicyAssignmentsFixedSizeCollection(
         List&lt;ListOSPolicyAssignmentsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2555">      super(pages, collectionSize);</span>
-<span class="fc" id="L2556">    }</span>
+<span class="fc" id="L2583">      super(pages, collectionSize);</span>
+<span class="fc" id="L2584">    }</span>
 
     private static ListOSPolicyAssignmentsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2559">      return new ListOSPolicyAssignmentsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2587">      return new ListOSPolicyAssignmentsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListOSPolicyAssignmentsFixedSizeCollection createCollection(
         List&lt;ListOSPolicyAssignmentsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2565">      return new ListOSPolicyAssignmentsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2593">      return new ListOSPolicyAssignmentsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2582,17 +2610,17 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListOSPolicyAssignmentRevisionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListOSPolicyAssignmentRevisionsPage&gt; futurePage =
-<span class="fc" id="L2585">          ListOSPolicyAssignmentRevisionsPage.createEmptyPage()</span>
-<span class="fc" id="L2586">              .createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2587">      return ApiFutures.transform(</span>
+<span class="fc" id="L2613">          ListOSPolicyAssignmentRevisionsPage.createEmptyPage()</span>
+<span class="fc" id="L2614">              .createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2615">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2589">          input -&gt; new ListOSPolicyAssignmentRevisionsPagedResponse(input),</span>
-<span class="fc" id="L2590">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2617">          input -&gt; new ListOSPolicyAssignmentRevisionsPagedResponse(input),</span>
+<span class="fc" id="L2618">          MoreExecutors.directExecutor());</span>
     }
 
     private ListOSPolicyAssignmentRevisionsPagedResponse(ListOSPolicyAssignmentRevisionsPage page) {
-<span class="fc" id="L2594">      super(page, ListOSPolicyAssignmentRevisionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2595">    }</span>
+<span class="fc" id="L2622">      super(page, ListOSPolicyAssignmentRevisionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2623">    }</span>
   }
 
   public static class ListOSPolicyAssignmentRevisionsPage
@@ -2609,11 +2637,11 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 OSPolicyAssignment&gt;
             context,
         ListOSPolicyAssignmentRevisionsResponse response) {
-<span class="fc" id="L2612">      super(context, response);</span>
-<span class="fc" id="L2613">    }</span>
+<span class="fc" id="L2640">      super(context, response);</span>
+<span class="fc" id="L2641">    }</span>
 
     private static ListOSPolicyAssignmentRevisionsPage createEmptyPage() {
-<span class="fc" id="L2616">      return new ListOSPolicyAssignmentRevisionsPage(null, null);</span>
+<span class="fc" id="L2644">      return new ListOSPolicyAssignmentRevisionsPage(null, null);</span>
     }
 
     @Override
@@ -2624,7 +2652,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 OSPolicyAssignment&gt;
             context,
         ListOSPolicyAssignmentRevisionsResponse response) {
-<span class="fc" id="L2627">      return new ListOSPolicyAssignmentRevisionsPage(context, response);</span>
+<span class="fc" id="L2655">      return new ListOSPolicyAssignmentRevisionsPage(context, response);</span>
     }
 
     @Override
@@ -2635,7 +2663,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 OSPolicyAssignment&gt;
             context,
         ApiFuture&lt;ListOSPolicyAssignmentRevisionsResponse&gt; futureResponse) {
-<span class="fc" id="L2638">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2666">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2649,17 +2677,17 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
 
     private ListOSPolicyAssignmentRevisionsFixedSizeCollection(
         List&lt;ListOSPolicyAssignmentRevisionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2652">      super(pages, collectionSize);</span>
-<span class="fc" id="L2653">    }</span>
+<span class="fc" id="L2680">      super(pages, collectionSize);</span>
+<span class="fc" id="L2681">    }</span>
 
     private static ListOSPolicyAssignmentRevisionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2656">      return new ListOSPolicyAssignmentRevisionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2684">      return new ListOSPolicyAssignmentRevisionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListOSPolicyAssignmentRevisionsFixedSizeCollection createCollection(
         List&lt;ListOSPolicyAssignmentRevisionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2662">      return new ListOSPolicyAssignmentRevisionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2690">      return new ListOSPolicyAssignmentRevisionsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2679,18 +2707,18 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListInstanceOSPoliciesCompliancesResponse&gt; futureResponse) {
       ApiFuture&lt;ListInstanceOSPoliciesCompliancesPage&gt; futurePage =
-<span class="fc" id="L2682">          ListInstanceOSPoliciesCompliancesPage.createEmptyPage()</span>
-<span class="fc" id="L2683">              .createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2684">      return ApiFutures.transform(</span>
+<span class="fc" id="L2710">          ListInstanceOSPoliciesCompliancesPage.createEmptyPage()</span>
+<span class="fc" id="L2711">              .createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2712">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2686">          input -&gt; new ListInstanceOSPoliciesCompliancesPagedResponse(input),</span>
-<span class="fc" id="L2687">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2714">          input -&gt; new ListInstanceOSPoliciesCompliancesPagedResponse(input),</span>
+<span class="fc" id="L2715">          MoreExecutors.directExecutor());</span>
     }
 
     private ListInstanceOSPoliciesCompliancesPagedResponse(
         ListInstanceOSPoliciesCompliancesPage page) {
-<span class="fc" id="L2692">      super(page, ListInstanceOSPoliciesCompliancesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2693">    }</span>
+<span class="fc" id="L2720">      super(page, ListInstanceOSPoliciesCompliancesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2721">    }</span>
   }
 
   public static class ListInstanceOSPoliciesCompliancesPage
@@ -2707,11 +2735,11 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 InstanceOSPoliciesCompliance&gt;
             context,
         ListInstanceOSPoliciesCompliancesResponse response) {
-<span class="fc" id="L2710">      super(context, response);</span>
-<span class="fc" id="L2711">    }</span>
+<span class="fc" id="L2738">      super(context, response);</span>
+<span class="fc" id="L2739">    }</span>
 
     private static ListInstanceOSPoliciesCompliancesPage createEmptyPage() {
-<span class="fc" id="L2714">      return new ListInstanceOSPoliciesCompliancesPage(null, null);</span>
+<span class="fc" id="L2742">      return new ListInstanceOSPoliciesCompliancesPage(null, null);</span>
     }
 
     @Override
@@ -2722,7 +2750,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 InstanceOSPoliciesCompliance&gt;
             context,
         ListInstanceOSPoliciesCompliancesResponse response) {
-<span class="fc" id="L2725">      return new ListInstanceOSPoliciesCompliancesPage(context, response);</span>
+<span class="fc" id="L2753">      return new ListInstanceOSPoliciesCompliancesPage(context, response);</span>
     }
 
     @Override
@@ -2733,7 +2761,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 InstanceOSPoliciesCompliance&gt;
             context,
         ApiFuture&lt;ListInstanceOSPoliciesCompliancesResponse&gt; futureResponse) {
-<span class="fc" id="L2736">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2764">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2747,17 +2775,17 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
 
     private ListInstanceOSPoliciesCompliancesFixedSizeCollection(
         List&lt;ListInstanceOSPoliciesCompliancesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2750">      super(pages, collectionSize);</span>
-<span class="fc" id="L2751">    }</span>
+<span class="fc" id="L2778">      super(pages, collectionSize);</span>
+<span class="fc" id="L2779">    }</span>
 
     private static ListInstanceOSPoliciesCompliancesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2754">      return new ListInstanceOSPoliciesCompliancesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2782">      return new ListInstanceOSPoliciesCompliancesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListInstanceOSPoliciesCompliancesFixedSizeCollection createCollection(
         List&lt;ListInstanceOSPoliciesCompliancesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2760">      return new ListInstanceOSPoliciesCompliancesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2788">      return new ListInstanceOSPoliciesCompliancesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2777,17 +2805,17 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListOSPolicyAssignmentReportsResponse&gt; futureResponse) {
       ApiFuture&lt;ListOSPolicyAssignmentReportsPage&gt; futurePage =
-<span class="fc" id="L2780">          ListOSPolicyAssignmentReportsPage.createEmptyPage()</span>
-<span class="fc" id="L2781">              .createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2782">      return ApiFutures.transform(</span>
+<span class="fc" id="L2808">          ListOSPolicyAssignmentReportsPage.createEmptyPage()</span>
+<span class="fc" id="L2809">              .createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2810">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2784">          input -&gt; new ListOSPolicyAssignmentReportsPagedResponse(input),</span>
-<span class="fc" id="L2785">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2812">          input -&gt; new ListOSPolicyAssignmentReportsPagedResponse(input),</span>
+<span class="fc" id="L2813">          MoreExecutors.directExecutor());</span>
     }
 
     private ListOSPolicyAssignmentReportsPagedResponse(ListOSPolicyAssignmentReportsPage page) {
-<span class="fc" id="L2789">      super(page, ListOSPolicyAssignmentReportsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2790">    }</span>
+<span class="fc" id="L2817">      super(page, ListOSPolicyAssignmentReportsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2818">    }</span>
   }
 
   public static class ListOSPolicyAssignmentReportsPage
@@ -2804,11 +2832,11 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 OSPolicyAssignmentReport&gt;
             context,
         ListOSPolicyAssignmentReportsResponse response) {
-<span class="fc" id="L2807">      super(context, response);</span>
-<span class="fc" id="L2808">    }</span>
+<span class="fc" id="L2835">      super(context, response);</span>
+<span class="fc" id="L2836">    }</span>
 
     private static ListOSPolicyAssignmentReportsPage createEmptyPage() {
-<span class="fc" id="L2811">      return new ListOSPolicyAssignmentReportsPage(null, null);</span>
+<span class="fc" id="L2839">      return new ListOSPolicyAssignmentReportsPage(null, null);</span>
     }
 
     @Override
@@ -2819,7 +2847,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 OSPolicyAssignmentReport&gt;
             context,
         ListOSPolicyAssignmentReportsResponse response) {
-<span class="fc" id="L2822">      return new ListOSPolicyAssignmentReportsPage(context, response);</span>
+<span class="fc" id="L2850">      return new ListOSPolicyAssignmentReportsPage(context, response);</span>
     }
 
     @Override
@@ -2830,7 +2858,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 OSPolicyAssignmentReport&gt;
             context,
         ApiFuture&lt;ListOSPolicyAssignmentReportsResponse&gt; futureResponse) {
-<span class="fc" id="L2833">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2861">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2844,17 +2872,17 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
 
     private ListOSPolicyAssignmentReportsFixedSizeCollection(
         List&lt;ListOSPolicyAssignmentReportsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2847">      super(pages, collectionSize);</span>
-<span class="fc" id="L2848">    }</span>
+<span class="fc" id="L2875">      super(pages, collectionSize);</span>
+<span class="fc" id="L2876">    }</span>
 
     private static ListOSPolicyAssignmentReportsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2851">      return new ListOSPolicyAssignmentReportsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2879">      return new ListOSPolicyAssignmentReportsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListOSPolicyAssignmentReportsFixedSizeCollection createCollection(
         List&lt;ListOSPolicyAssignmentReportsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2857">      return new ListOSPolicyAssignmentReportsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2885">      return new ListOSPolicyAssignmentReportsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2870,16 +2898,16 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
         PageContext&lt;ListInventoriesRequest, ListInventoriesResponse, Inventory&gt; context,
         ApiFuture&lt;ListInventoriesResponse&gt; futureResponse) {
       ApiFuture&lt;ListInventoriesPage&gt; futurePage =
-<span class="fc" id="L2873">          ListInventoriesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2874">      return ApiFutures.transform(</span>
+<span class="fc" id="L2901">          ListInventoriesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2902">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2876">          input -&gt; new ListInventoriesPagedResponse(input),</span>
-<span class="fc" id="L2877">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2904">          input -&gt; new ListInventoriesPagedResponse(input),</span>
+<span class="fc" id="L2905">          MoreExecutors.directExecutor());</span>
     }
 
     private ListInventoriesPagedResponse(ListInventoriesPage page) {
-<span class="fc" id="L2881">      super(page, ListInventoriesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2882">    }</span>
+<span class="fc" id="L2909">      super(page, ListInventoriesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2910">    }</span>
   }
 
   public static class ListInventoriesPage
@@ -2889,25 +2917,25 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
     private ListInventoriesPage(
         PageContext&lt;ListInventoriesRequest, ListInventoriesResponse, Inventory&gt; context,
         ListInventoriesResponse response) {
-<span class="fc" id="L2892">      super(context, response);</span>
-<span class="fc" id="L2893">    }</span>
+<span class="fc" id="L2920">      super(context, response);</span>
+<span class="fc" id="L2921">    }</span>
 
     private static ListInventoriesPage createEmptyPage() {
-<span class="fc" id="L2896">      return new ListInventoriesPage(null, null);</span>
+<span class="fc" id="L2924">      return new ListInventoriesPage(null, null);</span>
     }
 
     @Override
     protected ListInventoriesPage createPage(
         PageContext&lt;ListInventoriesRequest, ListInventoriesResponse, Inventory&gt; context,
         ListInventoriesResponse response) {
-<span class="fc" id="L2903">      return new ListInventoriesPage(context, response);</span>
+<span class="fc" id="L2931">      return new ListInventoriesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListInventoriesPage&gt; createPageAsync(
         PageContext&lt;ListInventoriesRequest, ListInventoriesResponse, Inventory&gt; context,
         ApiFuture&lt;ListInventoriesResponse&gt; futureResponse) {
-<span class="fc" id="L2910">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2938">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2921,17 +2949,17 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
 
     private ListInventoriesFixedSizeCollection(
         List&lt;ListInventoriesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2924">      super(pages, collectionSize);</span>
-<span class="fc" id="L2925">    }</span>
+<span class="fc" id="L2952">      super(pages, collectionSize);</span>
+<span class="fc" id="L2953">    }</span>
 
     private static ListInventoriesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2928">      return new ListInventoriesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2956">      return new ListInventoriesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListInventoriesFixedSizeCollection createCollection(
         List&lt;ListInventoriesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2934">      return new ListInventoriesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2962">      return new ListInventoriesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2951,16 +2979,16 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListVulnerabilityReportsResponse&gt; futureResponse) {
       ApiFuture&lt;ListVulnerabilityReportsPage&gt; futurePage =
-<span class="fc" id="L2954">          ListVulnerabilityReportsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2955">      return ApiFutures.transform(</span>
+<span class="fc" id="L2982">          ListVulnerabilityReportsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2983">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2957">          input -&gt; new ListVulnerabilityReportsPagedResponse(input),</span>
-<span class="fc" id="L2958">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2985">          input -&gt; new ListVulnerabilityReportsPagedResponse(input),</span>
+<span class="fc" id="L2986">          MoreExecutors.directExecutor());</span>
     }
 
     private ListVulnerabilityReportsPagedResponse(ListVulnerabilityReportsPage page) {
-<span class="fc" id="L2962">      super(page, ListVulnerabilityReportsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2963">    }</span>
+<span class="fc" id="L2990">      super(page, ListVulnerabilityReportsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2991">    }</span>
   }
 
   public static class ListVulnerabilityReportsPage
@@ -2977,11 +3005,11 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 VulnerabilityReport&gt;
             context,
         ListVulnerabilityReportsResponse response) {
-<span class="fc" id="L2980">      super(context, response);</span>
-<span class="fc" id="L2981">    }</span>
+<span class="fc" id="L3008">      super(context, response);</span>
+<span class="fc" id="L3009">    }</span>
 
     private static ListVulnerabilityReportsPage createEmptyPage() {
-<span class="fc" id="L2984">      return new ListVulnerabilityReportsPage(null, null);</span>
+<span class="fc" id="L3012">      return new ListVulnerabilityReportsPage(null, null);</span>
     }
 
     @Override
@@ -2992,7 +3020,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 VulnerabilityReport&gt;
             context,
         ListVulnerabilityReportsResponse response) {
-<span class="fc" id="L2995">      return new ListVulnerabilityReportsPage(context, response);</span>
+<span class="fc" id="L3023">      return new ListVulnerabilityReportsPage(context, response);</span>
     }
 
     @Override
@@ -3003,7 +3031,7 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
                 VulnerabilityReport&gt;
             context,
         ApiFuture&lt;ListVulnerabilityReportsResponse&gt; futureResponse) {
-<span class="fc" id="L3006">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3034">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3017,17 +3045,17 @@ public class OsConfigZonalServiceClient implements BackgroundResource {
 
     private ListVulnerabilityReportsFixedSizeCollection(
         List&lt;ListVulnerabilityReportsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3020">      super(pages, collectionSize);</span>
-<span class="fc" id="L3021">    }</span>
+<span class="fc" id="L3048">      super(pages, collectionSize);</span>
+<span class="fc" id="L3049">    }</span>
 
     private static ListVulnerabilityReportsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3024">      return new ListVulnerabilityReportsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3052">      return new ListVulnerabilityReportsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListVulnerabilityReportsFixedSizeCollection createCollection(
         List&lt;ListVulnerabilityReportsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3030">      return new ListVulnerabilityReportsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L3058">      return new ListVulnerabilityReportsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

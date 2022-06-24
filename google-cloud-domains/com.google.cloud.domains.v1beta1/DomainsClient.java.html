@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.domains.v1beta1.stub.DomainsStub;
 import com.google.cloud.domains.v1beta1.stub.DomainsStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import com.google.type.Money;
@@ -104,6 +104,20 @@ import javax.annotation.Generated;
  * DomainsClient domainsClient = DomainsClient.create(domainsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * DomainsSettings domainsSettings =
+ *     DomainsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             DomainsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * DomainsClient domainsClient = DomainsClient.create(domainsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -111,11 +125,12 @@ import javax.annotation.Generated;
 public class DomainsClient implements BackgroundResource {
   private final DomainsSettings settings;
   private final DomainsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of DomainsClient with default settings. */
   public static final DomainsClient create() throws IOException {
-<span class="nc" id="L118">    return create(DomainsSettings.newBuilder().build());</span>
+<span class="nc" id="L133">    return create(DomainsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -123,7 +138,7 @@ public class DomainsClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final DomainsClient create(DomainsSettings settings) throws IOException {
-<span class="fc" id="L126">    return new DomainsClient(settings);</span>
+<span class="fc" id="L141">    return new DomainsClient(settings);</span>
   }
 
   /**
@@ -131,39 +146,51 @@ public class DomainsClient implements BackgroundResource {
    * advanced usage - prefer using create(DomainsSettings).
    */
   public static final DomainsClient create(DomainsStub stub) {
-<span class="nc" id="L134">    return new DomainsClient(stub);</span>
+<span class="nc" id="L149">    return new DomainsClient(stub);</span>
   }
 
   /**
    * Constructs an instance of DomainsClient, using the given settings. This is protected so that it
    * is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L141">  protected DomainsClient(DomainsSettings settings) throws IOException {</span>
-<span class="fc" id="L142">    this.settings = settings;</span>
-<span class="fc" id="L143">    this.stub = ((DomainsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L144">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L145">  }</span>
+<span class="fc" id="L156">  protected DomainsClient(DomainsSettings settings) throws IOException {</span>
+<span class="fc" id="L157">    this.settings = settings;</span>
+<span class="fc" id="L158">    this.stub = ((DomainsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L159">    this.operationsClient =</span>
+<span class="fc" id="L160">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L161">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L162">  }</span>
 
-<span class="nc" id="L147">  protected DomainsClient(DomainsStub stub) {</span>
-<span class="nc" id="L148">    this.settings = null;</span>
-<span class="nc" id="L149">    this.stub = stub;</span>
-<span class="nc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L151">  }</span>
+<span class="nc" id="L164">  protected DomainsClient(DomainsStub stub) {</span>
+<span class="nc" id="L165">    this.settings = null;</span>
+<span class="nc" id="L166">    this.stub = stub;</span>
+<span class="nc" id="L167">    this.operationsClient =</span>
+<span class="nc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L170">  }</span>
 
   public final DomainsSettings getSettings() {
-<span class="nc" id="L154">    return settings;</span>
+<span class="nc" id="L173">    return settings;</span>
   }
 
   public DomainsStub getStub() {
-<span class="nc" id="L158">    return stub;</span>
+<span class="nc" id="L177">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L166">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L185">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L193">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -191,11 +218,11 @@ public class DomainsClient implements BackgroundResource {
    */
   public final SearchDomainsResponse searchDomains(LocationName location, String query) {
     SearchDomainsRequest request =
-<span class="fc" id="L194">        SearchDomainsRequest.newBuilder()</span>
-<span class="pc bpc" id="L195" title="1 of 2 branches missed.">            .setLocation(location == null ? null : location.toString())</span>
-<span class="fc" id="L196">            .setQuery(query)</span>
-<span class="fc" id="L197">            .build();</span>
-<span class="fc" id="L198">    return searchDomains(request);</span>
+<span class="fc" id="L221">        SearchDomainsRequest.newBuilder()</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">            .setLocation(location == null ? null : location.toString())</span>
+<span class="fc" id="L223">            .setQuery(query)</span>
+<span class="fc" id="L224">            .build();</span>
+<span class="fc" id="L225">    return searchDomains(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -223,8 +250,8 @@ public class DomainsClient implements BackgroundResource {
    */
   public final SearchDomainsResponse searchDomains(String location, String query) {
     SearchDomainsRequest request =
-<span class="fc" id="L226">        SearchDomainsRequest.newBuilder().setLocation(location).setQuery(query).build();</span>
-<span class="fc" id="L227">    return searchDomains(request);</span>
+<span class="fc" id="L253">        SearchDomainsRequest.newBuilder().setLocation(location).setQuery(query).build();</span>
+<span class="fc" id="L254">    return searchDomains(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -253,7 +280,7 @@ public class DomainsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final SearchDomainsResponse searchDomains(SearchDomainsRequest request) {
-<span class="fc" id="L256">    return searchDomainsCallable().call(request);</span>
+<span class="fc" id="L283">    return searchDomainsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -282,7 +309,7 @@ public class DomainsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SearchDomainsRequest, SearchDomainsResponse&gt; searchDomainsCallable() {
-<span class="fc" id="L285">    return stub.searchDomainsCallable();</span>
+<span class="fc" id="L312">    return stub.searchDomainsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -311,11 +338,11 @@ public class DomainsClient implements BackgroundResource {
   public final RetrieveRegisterParametersResponse retrieveRegisterParameters(
       LocationName location, String domainName) {
     RetrieveRegisterParametersRequest request =
-<span class="fc" id="L314">        RetrieveRegisterParametersRequest.newBuilder()</span>
-<span class="pc bpc" id="L315" title="1 of 2 branches missed.">            .setLocation(location == null ? null : location.toString())</span>
-<span class="fc" id="L316">            .setDomainName(domainName)</span>
-<span class="fc" id="L317">            .build();</span>
-<span class="fc" id="L318">    return retrieveRegisterParameters(request);</span>
+<span class="fc" id="L341">        RetrieveRegisterParametersRequest.newBuilder()</span>
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">            .setLocation(location == null ? null : location.toString())</span>
+<span class="fc" id="L343">            .setDomainName(domainName)</span>
+<span class="fc" id="L344">            .build();</span>
+<span class="fc" id="L345">    return retrieveRegisterParameters(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -344,11 +371,11 @@ public class DomainsClient implements BackgroundResource {
   public final RetrieveRegisterParametersResponse retrieveRegisterParameters(
       String location, String domainName) {
     RetrieveRegisterParametersRequest request =
-<span class="fc" id="L347">        RetrieveRegisterParametersRequest.newBuilder()</span>
-<span class="fc" id="L348">            .setLocation(location)</span>
-<span class="fc" id="L349">            .setDomainName(domainName)</span>
-<span class="fc" id="L350">            .build();</span>
-<span class="fc" id="L351">    return retrieveRegisterParameters(request);</span>
+<span class="fc" id="L374">        RetrieveRegisterParametersRequest.newBuilder()</span>
+<span class="fc" id="L375">            .setLocation(location)</span>
+<span class="fc" id="L376">            .setDomainName(domainName)</span>
+<span class="fc" id="L377">            .build();</span>
+<span class="fc" id="L378">    return retrieveRegisterParameters(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -377,7 +404,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final RetrieveRegisterParametersResponse retrieveRegisterParameters(
       RetrieveRegisterParametersRequest request) {
-<span class="fc" id="L380">    return retrieveRegisterParametersCallable().call(request);</span>
+<span class="fc" id="L407">    return retrieveRegisterParametersCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -405,7 +432,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;RetrieveRegisterParametersRequest, RetrieveRegisterParametersResponse&gt;
       retrieveRegisterParametersCallable() {
-<span class="fc" id="L408">    return stub.retrieveRegisterParametersCallable();</span>
+<span class="fc" id="L435">    return stub.retrieveRegisterParametersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -445,12 +472,12 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; registerDomainAsync(
       LocationName parent, Registration registration, Money yearlyPrice) {
     RegisterDomainRequest request =
-<span class="fc" id="L448">        RegisterDomainRequest.newBuilder()</span>
-<span class="pc bpc" id="L449" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L450">            .setRegistration(registration)</span>
-<span class="fc" id="L451">            .setYearlyPrice(yearlyPrice)</span>
-<span class="fc" id="L452">            .build();</span>
-<span class="fc" id="L453">    return registerDomainAsync(request);</span>
+<span class="fc" id="L475">        RegisterDomainRequest.newBuilder()</span>
+<span class="pc bpc" id="L476" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L477">            .setRegistration(registration)</span>
+<span class="fc" id="L478">            .setYearlyPrice(yearlyPrice)</span>
+<span class="fc" id="L479">            .build();</span>
+<span class="fc" id="L480">    return registerDomainAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -490,12 +517,12 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; registerDomainAsync(
       String parent, Registration registration, Money yearlyPrice) {
     RegisterDomainRequest request =
-<span class="fc" id="L493">        RegisterDomainRequest.newBuilder()</span>
-<span class="fc" id="L494">            .setParent(parent)</span>
-<span class="fc" id="L495">            .setRegistration(registration)</span>
-<span class="fc" id="L496">            .setYearlyPrice(yearlyPrice)</span>
-<span class="fc" id="L497">            .build();</span>
-<span class="fc" id="L498">    return registerDomainAsync(request);</span>
+<span class="fc" id="L520">        RegisterDomainRequest.newBuilder()</span>
+<span class="fc" id="L521">            .setParent(parent)</span>
+<span class="fc" id="L522">            .setRegistration(registration)</span>
+<span class="fc" id="L523">            .setYearlyPrice(yearlyPrice)</span>
+<span class="fc" id="L524">            .build();</span>
+<span class="fc" id="L525">    return registerDomainAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -535,7 +562,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Registration, OperationMetadata&gt; registerDomainAsync(
       RegisterDomainRequest request) {
-<span class="fc" id="L538">    return registerDomainOperationCallable().futureCall(request);</span>
+<span class="fc" id="L565">    return registerDomainOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -575,7 +602,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RegisterDomainRequest, Registration, OperationMetadata&gt;
       registerDomainOperationCallable() {
-<span class="fc" id="L578">    return stub.registerDomainOperationCallable();</span>
+<span class="fc" id="L605">    return stub.registerDomainOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -613,7 +640,7 @@ public class DomainsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RegisterDomainRequest, Operation&gt; registerDomainCallable() {
-<span class="nc" id="L616">    return stub.registerDomainCallable();</span>
+<span class="nc" id="L643">    return stub.registerDomainCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -644,11 +671,11 @@ public class DomainsClient implements BackgroundResource {
   public final RetrieveTransferParametersResponse retrieveTransferParameters(
       LocationName location, String domainName) {
     RetrieveTransferParametersRequest request =
-<span class="fc" id="L647">        RetrieveTransferParametersRequest.newBuilder()</span>
-<span class="pc bpc" id="L648" title="1 of 2 branches missed.">            .setLocation(location == null ? null : location.toString())</span>
-<span class="fc" id="L649">            .setDomainName(domainName)</span>
-<span class="fc" id="L650">            .build();</span>
-<span class="fc" id="L651">    return retrieveTransferParameters(request);</span>
+<span class="fc" id="L674">        RetrieveTransferParametersRequest.newBuilder()</span>
+<span class="pc bpc" id="L675" title="1 of 2 branches missed.">            .setLocation(location == null ? null : location.toString())</span>
+<span class="fc" id="L676">            .setDomainName(domainName)</span>
+<span class="fc" id="L677">            .build();</span>
+<span class="fc" id="L678">    return retrieveTransferParameters(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -679,11 +706,11 @@ public class DomainsClient implements BackgroundResource {
   public final RetrieveTransferParametersResponse retrieveTransferParameters(
       String location, String domainName) {
     RetrieveTransferParametersRequest request =
-<span class="fc" id="L682">        RetrieveTransferParametersRequest.newBuilder()</span>
-<span class="fc" id="L683">            .setLocation(location)</span>
-<span class="fc" id="L684">            .setDomainName(domainName)</span>
-<span class="fc" id="L685">            .build();</span>
-<span class="fc" id="L686">    return retrieveTransferParameters(request);</span>
+<span class="fc" id="L709">        RetrieveTransferParametersRequest.newBuilder()</span>
+<span class="fc" id="L710">            .setLocation(location)</span>
+<span class="fc" id="L711">            .setDomainName(domainName)</span>
+<span class="fc" id="L712">            .build();</span>
+<span class="fc" id="L713">    return retrieveTransferParameters(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -714,7 +741,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final RetrieveTransferParametersResponse retrieveTransferParameters(
       RetrieveTransferParametersRequest request) {
-<span class="fc" id="L717">    return retrieveTransferParametersCallable().call(request);</span>
+<span class="fc" id="L744">    return retrieveTransferParametersCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -744,7 +771,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;RetrieveTransferParametersRequest, RetrieveTransferParametersResponse&gt;
       retrieveTransferParametersCallable() {
-<span class="fc" id="L747">    return stub.retrieveTransferParametersCallable();</span>
+<span class="fc" id="L774">    return stub.retrieveTransferParametersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -804,13 +831,13 @@ public class DomainsClient implements BackgroundResource {
       Money yearlyPrice,
       AuthorizationCode authorizationCode) {
     TransferDomainRequest request =
-<span class="fc" id="L807">        TransferDomainRequest.newBuilder()</span>
-<span class="pc bpc" id="L808" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L809">            .setRegistration(registration)</span>
-<span class="fc" id="L810">            .setYearlyPrice(yearlyPrice)</span>
-<span class="fc" id="L811">            .setAuthorizationCode(authorizationCode)</span>
-<span class="fc" id="L812">            .build();</span>
-<span class="fc" id="L813">    return transferDomainAsync(request);</span>
+<span class="fc" id="L834">        TransferDomainRequest.newBuilder()</span>
+<span class="pc bpc" id="L835" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L836">            .setRegistration(registration)</span>
+<span class="fc" id="L837">            .setYearlyPrice(yearlyPrice)</span>
+<span class="fc" id="L838">            .setAuthorizationCode(authorizationCode)</span>
+<span class="fc" id="L839">            .build();</span>
+<span class="fc" id="L840">    return transferDomainAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -870,13 +897,13 @@ public class DomainsClient implements BackgroundResource {
       Money yearlyPrice,
       AuthorizationCode authorizationCode) {
     TransferDomainRequest request =
-<span class="fc" id="L873">        TransferDomainRequest.newBuilder()</span>
-<span class="fc" id="L874">            .setParent(parent)</span>
-<span class="fc" id="L875">            .setRegistration(registration)</span>
-<span class="fc" id="L876">            .setYearlyPrice(yearlyPrice)</span>
-<span class="fc" id="L877">            .setAuthorizationCode(authorizationCode)</span>
-<span class="fc" id="L878">            .build();</span>
-<span class="fc" id="L879">    return transferDomainAsync(request);</span>
+<span class="fc" id="L900">        TransferDomainRequest.newBuilder()</span>
+<span class="fc" id="L901">            .setParent(parent)</span>
+<span class="fc" id="L902">            .setRegistration(registration)</span>
+<span class="fc" id="L903">            .setYearlyPrice(yearlyPrice)</span>
+<span class="fc" id="L904">            .setAuthorizationCode(authorizationCode)</span>
+<span class="fc" id="L905">            .build();</span>
+<span class="fc" id="L906">    return transferDomainAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -923,7 +950,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Registration, OperationMetadata&gt; transferDomainAsync(
       TransferDomainRequest request) {
-<span class="fc" id="L926">    return transferDomainOperationCallable().futureCall(request);</span>
+<span class="fc" id="L953">    return transferDomainOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -970,7 +997,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;TransferDomainRequest, Registration, OperationMetadata&gt;
       transferDomainOperationCallable() {
-<span class="fc" id="L973">    return stub.transferDomainOperationCallable();</span>
+<span class="fc" id="L1000">    return stub.transferDomainOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1015,7 +1042,7 @@ public class DomainsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;TransferDomainRequest, Operation&gt; transferDomainCallable() {
-<span class="nc" id="L1018">    return stub.transferDomainCallable();</span>
+<span class="nc" id="L1045">    return stub.transferDomainCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1041,10 +1068,10 @@ public class DomainsClient implements BackgroundResource {
    */
   public final ListRegistrationsPagedResponse listRegistrations(LocationName parent) {
     ListRegistrationsRequest request =
-<span class="fc" id="L1044">        ListRegistrationsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1045" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1046">            .build();</span>
-<span class="fc" id="L1047">    return listRegistrations(request);</span>
+<span class="fc" id="L1071">        ListRegistrationsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1072" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1073">            .build();</span>
+<span class="fc" id="L1074">    return listRegistrations(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1070,8 +1097,8 @@ public class DomainsClient implements BackgroundResource {
    */
   public final ListRegistrationsPagedResponse listRegistrations(String parent) {
     ListRegistrationsRequest request =
-<span class="fc" id="L1073">        ListRegistrationsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1074">    return listRegistrations(request);</span>
+<span class="fc" id="L1100">        ListRegistrationsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1101">    return listRegistrations(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1101,7 +1128,7 @@ public class DomainsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListRegistrationsPagedResponse listRegistrations(ListRegistrationsRequest request) {
-<span class="fc" id="L1104">    return listRegistrationsPagedCallable().call(request);</span>
+<span class="fc" id="L1131">    return listRegistrationsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1132,7 +1159,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListRegistrationsRequest, ListRegistrationsPagedResponse&gt;
       listRegistrationsPagedCallable() {
-<span class="fc" id="L1135">    return stub.listRegistrationsPagedCallable();</span>
+<span class="fc" id="L1162">    return stub.listRegistrationsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1170,7 +1197,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListRegistrationsRequest, ListRegistrationsResponse&gt;
       listRegistrationsCallable() {
-<span class="nc" id="L1173">    return stub.listRegistrationsCallable();</span>
+<span class="nc" id="L1200">    return stub.listRegistrationsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1194,8 +1221,8 @@ public class DomainsClient implements BackgroundResource {
    */
   public final Registration getRegistration(RegistrationName name) {
     GetRegistrationRequest request =
-<span class="pc bpc" id="L1197" title="1 of 2 branches missed.">        GetRegistrationRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1198">    return getRegistration(request);</span>
+<span class="pc bpc" id="L1224" title="1 of 2 branches missed.">        GetRegistrationRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1225">    return getRegistration(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1218,8 +1245,8 @@ public class DomainsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Registration getRegistration(String name) {
-<span class="fc" id="L1221">    GetRegistrationRequest request = GetRegistrationRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1222">    return getRegistration(request);</span>
+<span class="fc" id="L1248">    GetRegistrationRequest request = GetRegistrationRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1249">    return getRegistration(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1244,7 +1271,7 @@ public class DomainsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Registration getRegistration(GetRegistrationRequest request) {
-<span class="fc" id="L1247">    return getRegistrationCallable().call(request);</span>
+<span class="fc" id="L1274">    return getRegistrationCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1268,7 +1295,7 @@ public class DomainsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetRegistrationRequest, Registration&gt; getRegistrationCallable() {
-<span class="fc" id="L1271">    return stub.getRegistrationCallable();</span>
+<span class="fc" id="L1298">    return stub.getRegistrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1303,11 +1330,11 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; updateRegistrationAsync(
       Registration registration, FieldMask updateMask) {
     UpdateRegistrationRequest request =
-<span class="fc" id="L1306">        UpdateRegistrationRequest.newBuilder()</span>
-<span class="fc" id="L1307">            .setRegistration(registration)</span>
-<span class="fc" id="L1308">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1309">            .build();</span>
-<span class="fc" id="L1310">    return updateRegistrationAsync(request);</span>
+<span class="fc" id="L1333">        UpdateRegistrationRequest.newBuilder()</span>
+<span class="fc" id="L1334">            .setRegistration(registration)</span>
+<span class="fc" id="L1335">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1336">            .build();</span>
+<span class="fc" id="L1337">    return updateRegistrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1341,7 +1368,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Registration, OperationMetadata&gt; updateRegistrationAsync(
       UpdateRegistrationRequest request) {
-<span class="fc" id="L1344">    return updateRegistrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1371">    return updateRegistrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1375,7 +1402,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateRegistrationRequest, Registration, OperationMetadata&gt;
       updateRegistrationOperationCallable() {
-<span class="fc" id="L1378">    return stub.updateRegistrationOperationCallable();</span>
+<span class="fc" id="L1405">    return stub.updateRegistrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1407,7 +1434,7 @@ public class DomainsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateRegistrationRequest, Operation&gt; updateRegistrationCallable() {
-<span class="nc" id="L1410">    return stub.updateRegistrationCallable();</span>
+<span class="nc" id="L1437">    return stub.updateRegistrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1442,12 +1469,12 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureManagementSettingsAsync(
       RegistrationName registration, ManagementSettings managementSettings, FieldMask updateMask) {
     ConfigureManagementSettingsRequest request =
-<span class="fc" id="L1445">        ConfigureManagementSettingsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1446" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
-<span class="fc" id="L1447">            .setManagementSettings(managementSettings)</span>
-<span class="fc" id="L1448">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1449">            .build();</span>
-<span class="fc" id="L1450">    return configureManagementSettingsAsync(request);</span>
+<span class="fc" id="L1472">        ConfigureManagementSettingsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1473" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
+<span class="fc" id="L1474">            .setManagementSettings(managementSettings)</span>
+<span class="fc" id="L1475">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1476">            .build();</span>
+<span class="fc" id="L1477">    return configureManagementSettingsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1482,12 +1509,12 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureManagementSettingsAsync(
       String registration, ManagementSettings managementSettings, FieldMask updateMask) {
     ConfigureManagementSettingsRequest request =
-<span class="fc" id="L1485">        ConfigureManagementSettingsRequest.newBuilder()</span>
-<span class="fc" id="L1486">            .setRegistration(registration)</span>
-<span class="fc" id="L1487">            .setManagementSettings(managementSettings)</span>
-<span class="fc" id="L1488">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1489">            .build();</span>
-<span class="fc" id="L1490">    return configureManagementSettingsAsync(request);</span>
+<span class="fc" id="L1512">        ConfigureManagementSettingsRequest.newBuilder()</span>
+<span class="fc" id="L1513">            .setRegistration(registration)</span>
+<span class="fc" id="L1514">            .setManagementSettings(managementSettings)</span>
+<span class="fc" id="L1515">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1516">            .build();</span>
+<span class="fc" id="L1517">    return configureManagementSettingsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1516,7 +1543,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureManagementSettingsAsync(
       ConfigureManagementSettingsRequest request) {
-<span class="fc" id="L1519">    return configureManagementSettingsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1546">    return configureManagementSettingsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1546,7 +1573,7 @@ public class DomainsClient implements BackgroundResource {
   public final OperationCallable&lt;
           ConfigureManagementSettingsRequest, Registration, OperationMetadata&gt;
       configureManagementSettingsOperationCallable() {
-<span class="fc" id="L1549">    return stub.configureManagementSettingsOperationCallable();</span>
+<span class="fc" id="L1576">    return stub.configureManagementSettingsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1575,7 +1602,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ConfigureManagementSettingsRequest, Operation&gt;
       configureManagementSettingsCallable() {
-<span class="nc" id="L1578">    return stub.configureManagementSettingsCallable();</span>
+<span class="nc" id="L1605">    return stub.configureManagementSettingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1611,12 +1638,12 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureDnsSettingsAsync(
       RegistrationName registration, DnsSettings dnsSettings, FieldMask updateMask) {
     ConfigureDnsSettingsRequest request =
-<span class="fc" id="L1614">        ConfigureDnsSettingsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1615" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
-<span class="fc" id="L1616">            .setDnsSettings(dnsSettings)</span>
-<span class="fc" id="L1617">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1618">            .build();</span>
-<span class="fc" id="L1619">    return configureDnsSettingsAsync(request);</span>
+<span class="fc" id="L1641">        ConfigureDnsSettingsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1642" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
+<span class="fc" id="L1643">            .setDnsSettings(dnsSettings)</span>
+<span class="fc" id="L1644">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1645">            .build();</span>
+<span class="fc" id="L1646">    return configureDnsSettingsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1652,12 +1679,12 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureDnsSettingsAsync(
       String registration, DnsSettings dnsSettings, FieldMask updateMask) {
     ConfigureDnsSettingsRequest request =
-<span class="fc" id="L1655">        ConfigureDnsSettingsRequest.newBuilder()</span>
-<span class="fc" id="L1656">            .setRegistration(registration)</span>
-<span class="fc" id="L1657">            .setDnsSettings(dnsSettings)</span>
-<span class="fc" id="L1658">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1659">            .build();</span>
-<span class="fc" id="L1660">    return configureDnsSettingsAsync(request);</span>
+<span class="fc" id="L1682">        ConfigureDnsSettingsRequest.newBuilder()</span>
+<span class="fc" id="L1683">            .setRegistration(registration)</span>
+<span class="fc" id="L1684">            .setDnsSettings(dnsSettings)</span>
+<span class="fc" id="L1685">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1686">            .build();</span>
+<span class="fc" id="L1687">    return configureDnsSettingsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1687,7 +1714,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureDnsSettingsAsync(
       ConfigureDnsSettingsRequest request) {
-<span class="fc" id="L1690">    return configureDnsSettingsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1717">    return configureDnsSettingsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1717,7 +1744,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ConfigureDnsSettingsRequest, Registration, OperationMetadata&gt;
       configureDnsSettingsOperationCallable() {
-<span class="fc" id="L1720">    return stub.configureDnsSettingsOperationCallable();</span>
+<span class="fc" id="L1747">    return stub.configureDnsSettingsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1747,7 +1774,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ConfigureDnsSettingsRequest, Operation&gt;
       configureDnsSettingsCallable() {
-<span class="nc" id="L1750">    return stub.configureDnsSettingsCallable();</span>
+<span class="nc" id="L1777">    return stub.configureDnsSettingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1783,12 +1810,12 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureContactSettingsAsync(
       RegistrationName registration, ContactSettings contactSettings, FieldMask updateMask) {
     ConfigureContactSettingsRequest request =
-<span class="fc" id="L1786">        ConfigureContactSettingsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1787" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
-<span class="fc" id="L1788">            .setContactSettings(contactSettings)</span>
-<span class="fc" id="L1789">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1790">            .build();</span>
-<span class="fc" id="L1791">    return configureContactSettingsAsync(request);</span>
+<span class="fc" id="L1813">        ConfigureContactSettingsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1814" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
+<span class="fc" id="L1815">            .setContactSettings(contactSettings)</span>
+<span class="fc" id="L1816">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1817">            .build();</span>
+<span class="fc" id="L1818">    return configureContactSettingsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1824,12 +1851,12 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureContactSettingsAsync(
       String registration, ContactSettings contactSettings, FieldMask updateMask) {
     ConfigureContactSettingsRequest request =
-<span class="fc" id="L1827">        ConfigureContactSettingsRequest.newBuilder()</span>
-<span class="fc" id="L1828">            .setRegistration(registration)</span>
-<span class="fc" id="L1829">            .setContactSettings(contactSettings)</span>
-<span class="fc" id="L1830">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1831">            .build();</span>
-<span class="fc" id="L1832">    return configureContactSettingsAsync(request);</span>
+<span class="fc" id="L1854">        ConfigureContactSettingsRequest.newBuilder()</span>
+<span class="fc" id="L1855">            .setRegistration(registration)</span>
+<span class="fc" id="L1856">            .setContactSettings(contactSettings)</span>
+<span class="fc" id="L1857">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1858">            .build();</span>
+<span class="fc" id="L1859">    return configureContactSettingsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1861,7 +1888,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Registration, OperationMetadata&gt; configureContactSettingsAsync(
       ConfigureContactSettingsRequest request) {
-<span class="fc" id="L1864">    return configureContactSettingsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1891">    return configureContactSettingsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1893,7 +1920,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ConfigureContactSettingsRequest, Registration, OperationMetadata&gt;
       configureContactSettingsOperationCallable() {
-<span class="fc" id="L1896">    return stub.configureContactSettingsOperationCallable();</span>
+<span class="fc" id="L1923">    return stub.configureContactSettingsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1925,7 +1952,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ConfigureContactSettingsRequest, Operation&gt;
       configureContactSettingsCallable() {
-<span class="nc" id="L1928">    return stub.configureContactSettingsCallable();</span>
+<span class="nc" id="L1955">    return stub.configureContactSettingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1956,10 +1983,10 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; exportRegistrationAsync(
       RegistrationName name) {
     ExportRegistrationRequest request =
-<span class="fc" id="L1959">        ExportRegistrationRequest.newBuilder()</span>
-<span class="pc bpc" id="L1960" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1961">            .build();</span>
-<span class="fc" id="L1962">    return exportRegistrationAsync(request);</span>
+<span class="fc" id="L1986">        ExportRegistrationRequest.newBuilder()</span>
+<span class="pc bpc" id="L1987" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1988">            .build();</span>
+<span class="fc" id="L1989">    return exportRegistrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1990,8 +2017,8 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Registration, OperationMetadata&gt; exportRegistrationAsync(
       String name) {
     ExportRegistrationRequest request =
-<span class="fc" id="L1993">        ExportRegistrationRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1994">    return exportRegistrationAsync(request);</span>
+<span class="fc" id="L2020">        ExportRegistrationRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2021">    return exportRegistrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2023,7 +2050,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Registration, OperationMetadata&gt; exportRegistrationAsync(
       ExportRegistrationRequest request) {
-<span class="fc" id="L2026">    return exportRegistrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2053">    return exportRegistrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2055,7 +2082,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ExportRegistrationRequest, Registration, OperationMetadata&gt;
       exportRegistrationOperationCallable() {
-<span class="fc" id="L2058">    return stub.exportRegistrationOperationCallable();</span>
+<span class="fc" id="L2085">    return stub.exportRegistrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2085,7 +2112,7 @@ public class DomainsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExportRegistrationRequest, Operation&gt; exportRegistrationCallable() {
-<span class="nc" id="L2088">    return stub.exportRegistrationCallable();</span>
+<span class="nc" id="L2115">    return stub.exportRegistrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2129,10 +2156,10 @@ public class DomainsClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteRegistrationAsync(
       RegistrationName name) {
     DeleteRegistrationRequest request =
-<span class="fc" id="L2132">        DeleteRegistrationRequest.newBuilder()</span>
-<span class="pc bpc" id="L2133" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2134">            .build();</span>
-<span class="fc" id="L2135">    return deleteRegistrationAsync(request);</span>
+<span class="fc" id="L2159">        DeleteRegistrationRequest.newBuilder()</span>
+<span class="pc bpc" id="L2160" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2161">            .build();</span>
+<span class="fc" id="L2162">    return deleteRegistrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2175,8 +2202,8 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteRegistrationAsync(String name) {
     DeleteRegistrationRequest request =
-<span class="fc" id="L2178">        DeleteRegistrationRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2179">    return deleteRegistrationAsync(request);</span>
+<span class="fc" id="L2205">        DeleteRegistrationRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2206">    return deleteRegistrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2221,7 +2248,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteRegistrationAsync(
       DeleteRegistrationRequest request) {
-<span class="fc" id="L2224">    return deleteRegistrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2251">    return deleteRegistrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2266,7 +2293,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteRegistrationRequest, Empty, OperationMetadata&gt;
       deleteRegistrationOperationCallable() {
-<span class="fc" id="L2269">    return stub.deleteRegistrationOperationCallable();</span>
+<span class="fc" id="L2296">    return stub.deleteRegistrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2309,7 +2336,7 @@ public class DomainsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteRegistrationRequest, Operation&gt; deleteRegistrationCallable() {
-<span class="nc" id="L2312">    return stub.deleteRegistrationCallable();</span>
+<span class="nc" id="L2339">    return stub.deleteRegistrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2338,10 +2365,10 @@ public class DomainsClient implements BackgroundResource {
    */
   public final AuthorizationCode retrieveAuthorizationCode(RegistrationName registration) {
     RetrieveAuthorizationCodeRequest request =
-<span class="fc" id="L2341">        RetrieveAuthorizationCodeRequest.newBuilder()</span>
-<span class="pc bpc" id="L2342" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
-<span class="fc" id="L2343">            .build();</span>
-<span class="fc" id="L2344">    return retrieveAuthorizationCode(request);</span>
+<span class="fc" id="L2368">        RetrieveAuthorizationCodeRequest.newBuilder()</span>
+<span class="pc bpc" id="L2369" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
+<span class="fc" id="L2370">            .build();</span>
+<span class="fc" id="L2371">    return retrieveAuthorizationCode(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2370,8 +2397,8 @@ public class DomainsClient implements BackgroundResource {
    */
   public final AuthorizationCode retrieveAuthorizationCode(String registration) {
     RetrieveAuthorizationCodeRequest request =
-<span class="fc" id="L2373">        RetrieveAuthorizationCodeRequest.newBuilder().setRegistration(registration).build();</span>
-<span class="fc" id="L2374">    return retrieveAuthorizationCode(request);</span>
+<span class="fc" id="L2400">        RetrieveAuthorizationCodeRequest.newBuilder().setRegistration(registration).build();</span>
+<span class="fc" id="L2401">    return retrieveAuthorizationCode(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2402,7 +2429,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final AuthorizationCode retrieveAuthorizationCode(
       RetrieveAuthorizationCodeRequest request) {
-<span class="fc" id="L2405">    return retrieveAuthorizationCodeCallable().call(request);</span>
+<span class="fc" id="L2432">    return retrieveAuthorizationCodeCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2433,7 +2460,7 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;RetrieveAuthorizationCodeRequest, AuthorizationCode&gt;
       retrieveAuthorizationCodeCallable() {
-<span class="fc" id="L2436">    return stub.retrieveAuthorizationCodeCallable();</span>
+<span class="fc" id="L2463">    return stub.retrieveAuthorizationCodeCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2461,10 +2488,10 @@ public class DomainsClient implements BackgroundResource {
    */
   public final AuthorizationCode resetAuthorizationCode(RegistrationName registration) {
     ResetAuthorizationCodeRequest request =
-<span class="fc" id="L2464">        ResetAuthorizationCodeRequest.newBuilder()</span>
-<span class="pc bpc" id="L2465" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
-<span class="fc" id="L2466">            .build();</span>
-<span class="fc" id="L2467">    return resetAuthorizationCode(request);</span>
+<span class="fc" id="L2491">        ResetAuthorizationCodeRequest.newBuilder()</span>
+<span class="pc bpc" id="L2492" title="1 of 2 branches missed.">            .setRegistration(registration == null ? null : registration.toString())</span>
+<span class="fc" id="L2493">            .build();</span>
+<span class="fc" id="L2494">    return resetAuthorizationCode(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2492,8 +2519,8 @@ public class DomainsClient implements BackgroundResource {
    */
   public final AuthorizationCode resetAuthorizationCode(String registration) {
     ResetAuthorizationCodeRequest request =
-<span class="fc" id="L2495">        ResetAuthorizationCodeRequest.newBuilder().setRegistration(registration).build();</span>
-<span class="fc" id="L2496">    return resetAuthorizationCode(request);</span>
+<span class="fc" id="L2522">        ResetAuthorizationCodeRequest.newBuilder().setRegistration(registration).build();</span>
+<span class="fc" id="L2523">    return resetAuthorizationCode(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2522,7 +2549,7 @@ public class DomainsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final AuthorizationCode resetAuthorizationCode(ResetAuthorizationCodeRequest request) {
-<span class="fc" id="L2525">    return resetAuthorizationCodeCallable().call(request);</span>
+<span class="fc" id="L2552">    return resetAuthorizationCodeCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2552,37 +2579,37 @@ public class DomainsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ResetAuthorizationCodeRequest, AuthorizationCode&gt;
       resetAuthorizationCodeCallable() {
-<span class="fc" id="L2555">    return stub.resetAuthorizationCodeCallable();</span>
+<span class="fc" id="L2582">    return stub.resetAuthorizationCodeCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2560">    stub.close();</span>
-<span class="fc" id="L2561">  }</span>
+<span class="fc" id="L2587">    stub.close();</span>
+<span class="fc" id="L2588">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2565">    stub.shutdown();</span>
-<span class="nc" id="L2566">  }</span>
+<span class="nc" id="L2592">    stub.shutdown();</span>
+<span class="nc" id="L2593">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2570">    return stub.isShutdown();</span>
+<span class="nc" id="L2597">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2575">    return stub.isTerminated();</span>
+<span class="nc" id="L2602">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2580">    stub.shutdownNow();</span>
-<span class="nc" id="L2581">  }</span>
+<span class="nc" id="L2607">    stub.shutdownNow();</span>
+<span class="nc" id="L2608">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2585">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2612">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListRegistrationsPagedResponse
@@ -2597,16 +2624,16 @@ public class DomainsClient implements BackgroundResource {
         PageContext&lt;ListRegistrationsRequest, ListRegistrationsResponse, Registration&gt; context,
         ApiFuture&lt;ListRegistrationsResponse&gt; futureResponse) {
       ApiFuture&lt;ListRegistrationsPage&gt; futurePage =
-<span class="fc" id="L2600">          ListRegistrationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2601">      return ApiFutures.transform(</span>
+<span class="fc" id="L2627">          ListRegistrationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2628">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2603">          input -&gt; new ListRegistrationsPagedResponse(input),</span>
-<span class="fc" id="L2604">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2630">          input -&gt; new ListRegistrationsPagedResponse(input),</span>
+<span class="fc" id="L2631">          MoreExecutors.directExecutor());</span>
     }
 
     private ListRegistrationsPagedResponse(ListRegistrationsPage page) {
-<span class="fc" id="L2608">      super(page, ListRegistrationsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2609">    }</span>
+<span class="fc" id="L2635">      super(page, ListRegistrationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2636">    }</span>
   }
 
   public static class ListRegistrationsPage
@@ -2619,25 +2646,25 @@ public class DomainsClient implements BackgroundResource {
     private ListRegistrationsPage(
         PageContext&lt;ListRegistrationsRequest, ListRegistrationsResponse, Registration&gt; context,
         ListRegistrationsResponse response) {
-<span class="fc" id="L2622">      super(context, response);</span>
-<span class="fc" id="L2623">    }</span>
+<span class="fc" id="L2649">      super(context, response);</span>
+<span class="fc" id="L2650">    }</span>
 
     private static ListRegistrationsPage createEmptyPage() {
-<span class="fc" id="L2626">      return new ListRegistrationsPage(null, null);</span>
+<span class="fc" id="L2653">      return new ListRegistrationsPage(null, null);</span>
     }
 
     @Override
     protected ListRegistrationsPage createPage(
         PageContext&lt;ListRegistrationsRequest, ListRegistrationsResponse, Registration&gt; context,
         ListRegistrationsResponse response) {
-<span class="fc" id="L2633">      return new ListRegistrationsPage(context, response);</span>
+<span class="fc" id="L2660">      return new ListRegistrationsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListRegistrationsPage&gt; createPageAsync(
         PageContext&lt;ListRegistrationsRequest, ListRegistrationsResponse, Registration&gt; context,
         ApiFuture&lt;ListRegistrationsResponse&gt; futureResponse) {
-<span class="fc" id="L2640">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2667">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2651,17 +2678,17 @@ public class DomainsClient implements BackgroundResource {
 
     private ListRegistrationsFixedSizeCollection(
         List&lt;ListRegistrationsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2654">      super(pages, collectionSize);</span>
-<span class="fc" id="L2655">    }</span>
+<span class="fc" id="L2681">      super(pages, collectionSize);</span>
+<span class="fc" id="L2682">    }</span>
 
     private static ListRegistrationsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2658">      return new ListRegistrationsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2685">      return new ListRegistrationsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListRegistrationsFixedSizeCollection createCollection(
         List&lt;ListRegistrationsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2664">      return new ListRegistrationsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2691">      return new ListRegistrationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

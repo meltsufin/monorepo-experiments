@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.gaming.v1beta.stub.GameServerDeploymentsServiceStub;
 import com.google.cloud.gaming.v1beta.stub.GameServerDeploymentsServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -110,6 +110,22 @@ import javax.annotation.Generated;
  *     GameServerDeploymentsServiceClient.create(gameServerDeploymentsServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * GameServerDeploymentsServiceSettings gameServerDeploymentsServiceSettings =
+ *     GameServerDeploymentsServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             GameServerDeploymentsServiceSettings.defaultHttpJsonTransportProviderBuilder()
+ *                 .build())
+ *         .build();
+ * GameServerDeploymentsServiceClient gameServerDeploymentsServiceClient =
+ *     GameServerDeploymentsServiceClient.create(gameServerDeploymentsServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -117,11 +133,12 @@ import javax.annotation.Generated;
 public class GameServerDeploymentsServiceClient implements BackgroundResource {
   private final GameServerDeploymentsServiceSettings settings;
   private final GameServerDeploymentsServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of GameServerDeploymentsServiceClient with default settings. */
   public static final GameServerDeploymentsServiceClient create() throws IOException {
-<span class="nc" id="L124">    return create(GameServerDeploymentsServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L141">    return create(GameServerDeploymentsServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -131,7 +148,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public static final GameServerDeploymentsServiceClient create(
       GameServerDeploymentsServiceSettings settings) throws IOException {
-<span class="fc" id="L134">    return new GameServerDeploymentsServiceClient(settings);</span>
+<span class="fc" id="L151">    return new GameServerDeploymentsServiceClient(settings);</span>
   }
 
   /**
@@ -140,7 +157,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public static final GameServerDeploymentsServiceClient create(
       GameServerDeploymentsServiceStub stub) {
-<span class="nc" id="L143">    return new GameServerDeploymentsServiceClient(stub);</span>
+<span class="nc" id="L160">    return new GameServerDeploymentsServiceClient(stub);</span>
   }
 
   /**
@@ -149,33 +166,45 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    * should be preferred.
    */
   protected GameServerDeploymentsServiceClient(GameServerDeploymentsServiceSettings settings)
-<span class="fc" id="L152">      throws IOException {</span>
-<span class="fc" id="L153">    this.settings = settings;</span>
-<span class="fc" id="L154">    this.stub =</span>
-<span class="fc" id="L155">        ((GameServerDeploymentsServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L156">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L157">  }</span>
+<span class="fc" id="L169">      throws IOException {</span>
+<span class="fc" id="L170">    this.settings = settings;</span>
+<span class="fc" id="L171">    this.stub =</span>
+<span class="fc" id="L172">        ((GameServerDeploymentsServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L173">    this.operationsClient =</span>
+<span class="fc" id="L174">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L175">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L176">  }</span>
 
-<span class="nc" id="L159">  protected GameServerDeploymentsServiceClient(GameServerDeploymentsServiceStub stub) {</span>
-<span class="nc" id="L160">    this.settings = null;</span>
-<span class="nc" id="L161">    this.stub = stub;</span>
-<span class="nc" id="L162">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L163">  }</span>
+<span class="nc" id="L178">  protected GameServerDeploymentsServiceClient(GameServerDeploymentsServiceStub stub) {</span>
+<span class="nc" id="L179">    this.settings = null;</span>
+<span class="nc" id="L180">    this.stub = stub;</span>
+<span class="nc" id="L181">    this.operationsClient =</span>
+<span class="nc" id="L182">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L183">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L184">  }</span>
 
   public final GameServerDeploymentsServiceSettings getSettings() {
-<span class="nc" id="L166">    return settings;</span>
+<span class="nc" id="L187">    return settings;</span>
   }
 
   public GameServerDeploymentsServiceStub getStub() {
-<span class="nc" id="L170">    return stub;</span>
+<span class="nc" id="L191">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L178">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L199">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L207">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -204,10 +233,10 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final ListGameServerDeploymentsPagedResponse listGameServerDeployments(
       LocationName parent) {
     ListGameServerDeploymentsRequest request =
-<span class="fc" id="L207">        ListGameServerDeploymentsRequest.newBuilder()</span>
-<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L209">            .build();</span>
-<span class="fc" id="L210">    return listGameServerDeployments(request);</span>
+<span class="fc" id="L236">        ListGameServerDeploymentsRequest.newBuilder()</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L238">            .build();</span>
+<span class="fc" id="L239">    return listGameServerDeployments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -235,8 +264,8 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final ListGameServerDeploymentsPagedResponse listGameServerDeployments(String parent) {
     ListGameServerDeploymentsRequest request =
-<span class="fc" id="L238">        ListGameServerDeploymentsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L239">    return listGameServerDeployments(request);</span>
+<span class="fc" id="L267">        ListGameServerDeploymentsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L268">    return listGameServerDeployments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -270,7 +299,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final ListGameServerDeploymentsPagedResponse listGameServerDeployments(
       ListGameServerDeploymentsRequest request) {
-<span class="fc" id="L273">    return listGameServerDeploymentsPagedCallable().call(request);</span>
+<span class="fc" id="L302">    return listGameServerDeploymentsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -306,7 +335,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListGameServerDeploymentsRequest, ListGameServerDeploymentsPagedResponse&gt;
       listGameServerDeploymentsPagedCallable() {
-<span class="fc" id="L309">    return stub.listGameServerDeploymentsPagedCallable();</span>
+<span class="fc" id="L338">    return stub.listGameServerDeploymentsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -346,7 +375,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListGameServerDeploymentsRequest, ListGameServerDeploymentsResponse&gt;
       listGameServerDeploymentsCallable() {
-<span class="nc" id="L349">    return stub.listGameServerDeploymentsCallable();</span>
+<span class="nc" id="L378">    return stub.listGameServerDeploymentsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -373,10 +402,10 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final GameServerDeployment getGameServerDeployment(GameServerDeploymentName name) {
     GetGameServerDeploymentRequest request =
-<span class="fc" id="L376">        GetGameServerDeploymentRequest.newBuilder()</span>
-<span class="pc bpc" id="L377" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L378">            .build();</span>
-<span class="fc" id="L379">    return getGameServerDeployment(request);</span>
+<span class="fc" id="L405">        GetGameServerDeploymentRequest.newBuilder()</span>
+<span class="pc bpc" id="L406" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L407">            .build();</span>
+<span class="fc" id="L408">    return getGameServerDeployment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -403,8 +432,8 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final GameServerDeployment getGameServerDeployment(String name) {
     GetGameServerDeploymentRequest request =
-<span class="fc" id="L406">        GetGameServerDeploymentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L407">    return getGameServerDeployment(request);</span>
+<span class="fc" id="L435">        GetGameServerDeploymentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L436">    return getGameServerDeployment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -433,7 +462,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final GameServerDeployment getGameServerDeployment(
       GetGameServerDeploymentRequest request) {
-<span class="fc" id="L436">    return getGameServerDeploymentCallable().call(request);</span>
+<span class="fc" id="L465">    return getGameServerDeploymentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -461,7 +490,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetGameServerDeploymentRequest, GameServerDeployment&gt;
       getGameServerDeploymentCallable() {
-<span class="fc" id="L464">    return stub.getGameServerDeploymentCallable();</span>
+<span class="fc" id="L493">    return stub.getGameServerDeploymentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -493,11 +522,11 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
       createGameServerDeploymentAsync(
           LocationName parent, GameServerDeployment gameServerDeployment) {
     CreateGameServerDeploymentRequest request =
-<span class="fc" id="L496">        CreateGameServerDeploymentRequest.newBuilder()</span>
-<span class="pc bpc" id="L497" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L498">            .setGameServerDeployment(gameServerDeployment)</span>
-<span class="fc" id="L499">            .build();</span>
-<span class="fc" id="L500">    return createGameServerDeploymentAsync(request);</span>
+<span class="fc" id="L525">        CreateGameServerDeploymentRequest.newBuilder()</span>
+<span class="pc bpc" id="L526" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L527">            .setGameServerDeployment(gameServerDeployment)</span>
+<span class="fc" id="L528">            .build();</span>
+<span class="fc" id="L529">    return createGameServerDeploymentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -528,11 +557,11 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final OperationFuture&lt;GameServerDeployment, OperationMetadata&gt;
       createGameServerDeploymentAsync(String parent, GameServerDeployment gameServerDeployment) {
     CreateGameServerDeploymentRequest request =
-<span class="fc" id="L531">        CreateGameServerDeploymentRequest.newBuilder()</span>
-<span class="fc" id="L532">            .setParent(parent)</span>
-<span class="fc" id="L533">            .setGameServerDeployment(gameServerDeployment)</span>
-<span class="fc" id="L534">            .build();</span>
-<span class="fc" id="L535">    return createGameServerDeploymentAsync(request);</span>
+<span class="fc" id="L560">        CreateGameServerDeploymentRequest.newBuilder()</span>
+<span class="fc" id="L561">            .setParent(parent)</span>
+<span class="fc" id="L562">            .setGameServerDeployment(gameServerDeployment)</span>
+<span class="fc" id="L563">            .build();</span>
+<span class="fc" id="L564">    return createGameServerDeploymentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -562,7 +591,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;GameServerDeployment, OperationMetadata&gt;
       createGameServerDeploymentAsync(CreateGameServerDeploymentRequest request) {
-<span class="fc" id="L565">    return createGameServerDeploymentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L594">    return createGameServerDeploymentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -594,7 +623,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateGameServerDeploymentRequest, GameServerDeployment, OperationMetadata&gt;
       createGameServerDeploymentOperationCallable() {
-<span class="fc" id="L597">    return stub.createGameServerDeploymentOperationCallable();</span>
+<span class="fc" id="L626">    return stub.createGameServerDeploymentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -625,7 +654,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateGameServerDeploymentRequest, Operation&gt;
       createGameServerDeploymentCallable() {
-<span class="nc" id="L628">    return stub.createGameServerDeploymentCallable();</span>
+<span class="nc" id="L657">    return stub.createGameServerDeploymentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -652,10 +681,10 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGameServerDeploymentAsync(
       GameServerDeploymentName name) {
     DeleteGameServerDeploymentRequest request =
-<span class="fc" id="L655">        DeleteGameServerDeploymentRequest.newBuilder()</span>
-<span class="pc bpc" id="L656" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L657">            .build();</span>
-<span class="fc" id="L658">    return deleteGameServerDeploymentAsync(request);</span>
+<span class="fc" id="L684">        DeleteGameServerDeploymentRequest.newBuilder()</span>
+<span class="pc bpc" id="L685" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L686">            .build();</span>
+<span class="fc" id="L687">    return deleteGameServerDeploymentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -682,8 +711,8 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGameServerDeploymentAsync(
       String name) {
     DeleteGameServerDeploymentRequest request =
-<span class="fc" id="L685">        DeleteGameServerDeploymentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L686">    return deleteGameServerDeploymentAsync(request);</span>
+<span class="fc" id="L714">        DeleteGameServerDeploymentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L715">    return deleteGameServerDeploymentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -711,7 +740,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGameServerDeploymentAsync(
       DeleteGameServerDeploymentRequest request) {
-<span class="fc" id="L714">    return deleteGameServerDeploymentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L743">    return deleteGameServerDeploymentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -741,7 +770,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteGameServerDeploymentRequest, Empty, OperationMetadata&gt;
       deleteGameServerDeploymentOperationCallable() {
-<span class="fc" id="L744">    return stub.deleteGameServerDeploymentOperationCallable();</span>
+<span class="fc" id="L773">    return stub.deleteGameServerDeploymentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -771,7 +800,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteGameServerDeploymentRequest, Operation&gt;
       deleteGameServerDeploymentCallable() {
-<span class="nc" id="L774">    return stub.deleteGameServerDeploymentCallable();</span>
+<span class="nc" id="L803">    return stub.deleteGameServerDeploymentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -806,11 +835,11 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
       updateGameServerDeploymentAsync(
           GameServerDeployment gameServerDeployment, FieldMask updateMask) {
     UpdateGameServerDeploymentRequest request =
-<span class="fc" id="L809">        UpdateGameServerDeploymentRequest.newBuilder()</span>
-<span class="fc" id="L810">            .setGameServerDeployment(gameServerDeployment)</span>
-<span class="fc" id="L811">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L812">            .build();</span>
-<span class="fc" id="L813">    return updateGameServerDeploymentAsync(request);</span>
+<span class="fc" id="L838">        UpdateGameServerDeploymentRequest.newBuilder()</span>
+<span class="fc" id="L839">            .setGameServerDeployment(gameServerDeployment)</span>
+<span class="fc" id="L840">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L841">            .build();</span>
+<span class="fc" id="L842">    return updateGameServerDeploymentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -839,7 +868,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;GameServerDeployment, OperationMetadata&gt;
       updateGameServerDeploymentAsync(UpdateGameServerDeploymentRequest request) {
-<span class="fc" id="L842">    return updateGameServerDeploymentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L871">    return updateGameServerDeploymentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -870,7 +899,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateGameServerDeploymentRequest, GameServerDeployment, OperationMetadata&gt;
       updateGameServerDeploymentOperationCallable() {
-<span class="fc" id="L873">    return stub.updateGameServerDeploymentOperationCallable();</span>
+<span class="fc" id="L902">    return stub.updateGameServerDeploymentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -900,7 +929,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateGameServerDeploymentRequest, Operation&gt;
       updateGameServerDeploymentCallable() {
-<span class="nc" id="L903">    return stub.updateGameServerDeploymentCallable();</span>
+<span class="nc" id="L932">    return stub.updateGameServerDeploymentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -928,10 +957,10 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final GameServerDeploymentRollout getGameServerDeploymentRollout(
       GameServerDeploymentName name) {
     GetGameServerDeploymentRolloutRequest request =
-<span class="fc" id="L931">        GetGameServerDeploymentRolloutRequest.newBuilder()</span>
-<span class="pc bpc" id="L932" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L933">            .build();</span>
-<span class="fc" id="L934">    return getGameServerDeploymentRollout(request);</span>
+<span class="fc" id="L960">        GetGameServerDeploymentRolloutRequest.newBuilder()</span>
+<span class="pc bpc" id="L961" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L962">            .build();</span>
+<span class="fc" id="L963">    return getGameServerDeploymentRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -958,8 +987,8 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final GameServerDeploymentRollout getGameServerDeploymentRollout(String name) {
     GetGameServerDeploymentRolloutRequest request =
-<span class="fc" id="L961">        GetGameServerDeploymentRolloutRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L962">    return getGameServerDeploymentRollout(request);</span>
+<span class="fc" id="L990">        GetGameServerDeploymentRolloutRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L991">    return getGameServerDeploymentRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -988,7 +1017,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final GameServerDeploymentRollout getGameServerDeploymentRollout(
       GetGameServerDeploymentRolloutRequest request) {
-<span class="fc" id="L991">    return getGameServerDeploymentRolloutCallable().call(request);</span>
+<span class="fc" id="L1020">    return getGameServerDeploymentRolloutCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1018,7 +1047,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetGameServerDeploymentRolloutRequest, GameServerDeploymentRollout&gt;
       getGameServerDeploymentRolloutCallable() {
-<span class="fc" id="L1021">    return stub.getGameServerDeploymentRolloutCallable();</span>
+<span class="fc" id="L1050">    return stub.getGameServerDeploymentRolloutCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1057,11 +1086,11 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
       updateGameServerDeploymentRolloutAsync(
           GameServerDeploymentRollout rollout, FieldMask updateMask) {
     UpdateGameServerDeploymentRolloutRequest request =
-<span class="fc" id="L1060">        UpdateGameServerDeploymentRolloutRequest.newBuilder()</span>
-<span class="fc" id="L1061">            .setRollout(rollout)</span>
-<span class="fc" id="L1062">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1063">            .build();</span>
-<span class="fc" id="L1064">    return updateGameServerDeploymentRolloutAsync(request);</span>
+<span class="fc" id="L1089">        UpdateGameServerDeploymentRolloutRequest.newBuilder()</span>
+<span class="fc" id="L1090">            .setRollout(rollout)</span>
+<span class="fc" id="L1091">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1092">            .build();</span>
+<span class="fc" id="L1093">    return updateGameServerDeploymentRolloutAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1094,7 +1123,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;GameServerDeployment, OperationMetadata&gt;
       updateGameServerDeploymentRolloutAsync(UpdateGameServerDeploymentRolloutRequest request) {
-<span class="fc" id="L1097">    return updateGameServerDeploymentRolloutOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1126">    return updateGameServerDeploymentRolloutOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1129,7 +1158,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateGameServerDeploymentRolloutRequest, GameServerDeployment, OperationMetadata&gt;
       updateGameServerDeploymentRolloutOperationCallable() {
-<span class="fc" id="L1132">    return stub.updateGameServerDeploymentRolloutOperationCallable();</span>
+<span class="fc" id="L1161">    return stub.updateGameServerDeploymentRolloutOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1163,7 +1192,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateGameServerDeploymentRolloutRequest, Operation&gt;
       updateGameServerDeploymentRolloutCallable() {
-<span class="nc" id="L1166">    return stub.updateGameServerDeploymentRolloutCallable();</span>
+<span class="nc" id="L1195">    return stub.updateGameServerDeploymentRolloutCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1193,7 +1222,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final PreviewGameServerDeploymentRolloutResponse previewGameServerDeploymentRollout(
       PreviewGameServerDeploymentRolloutRequest request) {
-<span class="fc" id="L1196">    return previewGameServerDeploymentRolloutCallable().call(request);</span>
+<span class="fc" id="L1225">    return previewGameServerDeploymentRolloutCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1225,7 +1254,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           PreviewGameServerDeploymentRolloutRequest, PreviewGameServerDeploymentRolloutResponse&gt;
       previewGameServerDeploymentRolloutCallable() {
-<span class="fc" id="L1228">    return stub.previewGameServerDeploymentRolloutCallable();</span>
+<span class="fc" id="L1257">    return stub.previewGameServerDeploymentRolloutCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1253,7 +1282,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final FetchDeploymentStateResponse fetchDeploymentState(
       FetchDeploymentStateRequest request) {
-<span class="fc" id="L1256">    return fetchDeploymentStateCallable().call(request);</span>
+<span class="fc" id="L1285">    return fetchDeploymentStateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1280,37 +1309,37 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;FetchDeploymentStateRequest, FetchDeploymentStateResponse&gt;
       fetchDeploymentStateCallable() {
-<span class="fc" id="L1283">    return stub.fetchDeploymentStateCallable();</span>
+<span class="fc" id="L1312">    return stub.fetchDeploymentStateCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1288">    stub.close();</span>
-<span class="fc" id="L1289">  }</span>
+<span class="fc" id="L1317">    stub.close();</span>
+<span class="fc" id="L1318">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1293">    stub.shutdown();</span>
-<span class="nc" id="L1294">  }</span>
+<span class="nc" id="L1322">    stub.shutdown();</span>
+<span class="nc" id="L1323">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1298">    return stub.isShutdown();</span>
+<span class="nc" id="L1327">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1303">    return stub.isTerminated();</span>
+<span class="nc" id="L1332">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1308">    stub.shutdownNow();</span>
-<span class="nc" id="L1309">  }</span>
+<span class="nc" id="L1337">    stub.shutdownNow();</span>
+<span class="nc" id="L1338">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1313">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1342">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListGameServerDeploymentsPagedResponse
@@ -1329,16 +1358,16 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListGameServerDeploymentsResponse&gt; futureResponse) {
       ApiFuture&lt;ListGameServerDeploymentsPage&gt; futurePage =
-<span class="fc" id="L1332">          ListGameServerDeploymentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1333">      return ApiFutures.transform(</span>
+<span class="fc" id="L1361">          ListGameServerDeploymentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1362">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1335">          input -&gt; new ListGameServerDeploymentsPagedResponse(input),</span>
-<span class="fc" id="L1336">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1364">          input -&gt; new ListGameServerDeploymentsPagedResponse(input),</span>
+<span class="fc" id="L1365">          MoreExecutors.directExecutor());</span>
     }
 
     private ListGameServerDeploymentsPagedResponse(ListGameServerDeploymentsPage page) {
-<span class="fc" id="L1340">      super(page, ListGameServerDeploymentsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1341">    }</span>
+<span class="fc" id="L1369">      super(page, ListGameServerDeploymentsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1370">    }</span>
   }
 
   public static class ListGameServerDeploymentsPage
@@ -1355,11 +1384,11 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
                 GameServerDeployment&gt;
             context,
         ListGameServerDeploymentsResponse response) {
-<span class="fc" id="L1358">      super(context, response);</span>
-<span class="fc" id="L1359">    }</span>
+<span class="fc" id="L1387">      super(context, response);</span>
+<span class="fc" id="L1388">    }</span>
 
     private static ListGameServerDeploymentsPage createEmptyPage() {
-<span class="fc" id="L1362">      return new ListGameServerDeploymentsPage(null, null);</span>
+<span class="fc" id="L1391">      return new ListGameServerDeploymentsPage(null, null);</span>
     }
 
     @Override
@@ -1370,7 +1399,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
                 GameServerDeployment&gt;
             context,
         ListGameServerDeploymentsResponse response) {
-<span class="fc" id="L1373">      return new ListGameServerDeploymentsPage(context, response);</span>
+<span class="fc" id="L1402">      return new ListGameServerDeploymentsPage(context, response);</span>
     }
 
     @Override
@@ -1381,7 +1410,7 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
                 GameServerDeployment&gt;
             context,
         ApiFuture&lt;ListGameServerDeploymentsResponse&gt; futureResponse) {
-<span class="fc" id="L1384">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1413">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1395,17 +1424,17 @@ public class GameServerDeploymentsServiceClient implements BackgroundResource {
 
     private ListGameServerDeploymentsFixedSizeCollection(
         List&lt;ListGameServerDeploymentsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1398">      super(pages, collectionSize);</span>
-<span class="fc" id="L1399">    }</span>
+<span class="fc" id="L1427">      super(pages, collectionSize);</span>
+<span class="fc" id="L1428">    }</span>
 
     private static ListGameServerDeploymentsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1402">      return new ListGameServerDeploymentsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1431">      return new ListGameServerDeploymentsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListGameServerDeploymentsFixedSizeCollection createCollection(
         List&lt;ListGameServerDeploymentsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1408">      return new ListGameServerDeploymentsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1437">      return new ListGameServerDeploymentsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

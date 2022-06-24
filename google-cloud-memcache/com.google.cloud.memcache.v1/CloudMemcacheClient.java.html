@@ -19,6 +19,7 @@ package com.google.cloud.memcache.v1;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.memcache.v1.stub.CloudMemcacheStub;
 import com.google.cloud.memcache.v1.stub.CloudMemcacheStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -120,17 +120,32 @@ import javax.annotation.Generated;
  * CloudMemcacheClient cloudMemcacheClient = CloudMemcacheClient.create(cloudMemcacheSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * CloudMemcacheSettings cloudMemcacheSettings =
+ *     CloudMemcacheSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             CloudMemcacheSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * CloudMemcacheClient cloudMemcacheClient = CloudMemcacheClient.create(cloudMemcacheSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class CloudMemcacheClient implements BackgroundResource {
   private final CloudMemcacheSettings settings;
   private final CloudMemcacheStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of CloudMemcacheClient with default settings. */
   public static final CloudMemcacheClient create() throws IOException {
-<span class="nc" id="L133">    return create(CloudMemcacheSettings.newBuilder().build());</span>
+<span class="nc" id="L148">    return create(CloudMemcacheSettings.newBuilder().build());</span>
   }
 
   /**
@@ -139,7 +154,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public static final CloudMemcacheClient create(CloudMemcacheSettings settings)
       throws IOException {
-<span class="fc" id="L142">    return new CloudMemcacheClient(settings);</span>
+<span class="fc" id="L157">    return new CloudMemcacheClient(settings);</span>
   }
 
   /**
@@ -147,7 +162,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * for advanced usage - prefer using create(CloudMemcacheSettings).
    */
   public static final CloudMemcacheClient create(CloudMemcacheStub stub) {
-<span class="nc" id="L150">    return new CloudMemcacheClient(stub);</span>
+<span class="nc" id="L165">    return new CloudMemcacheClient(stub);</span>
   }
 
   /**
@@ -155,32 +170,44 @@ public class CloudMemcacheClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L158">  protected CloudMemcacheClient(CloudMemcacheSettings settings) throws IOException {</span>
-<span class="fc" id="L159">    this.settings = settings;</span>
-<span class="fc" id="L160">    this.stub = ((CloudMemcacheStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L161">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L162">  }</span>
+<span class="fc" id="L173">  protected CloudMemcacheClient(CloudMemcacheSettings settings) throws IOException {</span>
+<span class="fc" id="L174">    this.settings = settings;</span>
+<span class="fc" id="L175">    this.stub = ((CloudMemcacheStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L176">    this.operationsClient =</span>
+<span class="fc" id="L177">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L178">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L179">  }</span>
 
-<span class="nc" id="L164">  protected CloudMemcacheClient(CloudMemcacheStub stub) {</span>
-<span class="nc" id="L165">    this.settings = null;</span>
-<span class="nc" id="L166">    this.stub = stub;</span>
-<span class="nc" id="L167">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L168">  }</span>
+<span class="nc" id="L181">  protected CloudMemcacheClient(CloudMemcacheStub stub) {</span>
+<span class="nc" id="L182">    this.settings = null;</span>
+<span class="nc" id="L183">    this.stub = stub;</span>
+<span class="nc" id="L184">    this.operationsClient =</span>
+<span class="nc" id="L185">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L186">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L187">  }</span>
 
   public final CloudMemcacheSettings getSettings() {
-<span class="nc" id="L171">    return settings;</span>
+<span class="nc" id="L190">    return settings;</span>
   }
 
   public CloudMemcacheStub getStub() {
-<span class="nc" id="L175">    return stub;</span>
+<span class="nc" id="L194">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L183">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L202">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L210">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -206,10 +233,10 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final ListInstancesPagedResponse listInstances(LocationName parent) {
     ListInstancesRequest request =
-<span class="fc" id="L209">        ListInstancesRequest.newBuilder()</span>
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L211">            .build();</span>
-<span class="fc" id="L212">    return listInstances(request);</span>
+<span class="fc" id="L236">        ListInstancesRequest.newBuilder()</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L238">            .build();</span>
+<span class="fc" id="L239">    return listInstances(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -234,8 +261,8 @@ public class CloudMemcacheClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListInstancesPagedResponse listInstances(String parent) {
-<span class="fc" id="L237">    ListInstancesRequest request = ListInstancesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L238">    return listInstances(request);</span>
+<span class="fc" id="L264">    ListInstancesRequest request = ListInstancesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L265">    return listInstances(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -266,7 +293,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListInstancesPagedResponse listInstances(ListInstancesRequest request) {
-<span class="fc" id="L269">    return listInstancesPagedCallable().call(request);</span>
+<span class="fc" id="L296">    return listInstancesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -298,7 +325,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListInstancesRequest, ListInstancesPagedResponse&gt;
       listInstancesPagedCallable() {
-<span class="fc" id="L301">    return stub.listInstancesPagedCallable();</span>
+<span class="fc" id="L328">    return stub.listInstancesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -335,7 +362,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListInstancesRequest, ListInstancesResponse&gt; listInstancesCallable() {
-<span class="nc" id="L338">    return stub.listInstancesCallable();</span>
+<span class="nc" id="L365">    return stub.listInstancesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -360,8 +387,8 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final Instance getInstance(InstanceName name) {
     GetInstanceRequest request =
-<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        GetInstanceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L364">    return getInstance(request);</span>
+<span class="pc bpc" id="L390" title="1 of 2 branches missed.">        GetInstanceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L391">    return getInstance(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -385,8 +412,8 @@ public class CloudMemcacheClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Instance getInstance(String name) {
-<span class="fc" id="L388">    GetInstanceRequest request = GetInstanceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L389">    return getInstance(request);</span>
+<span class="fc" id="L415">    GetInstanceRequest request = GetInstanceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L416">    return getInstance(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -411,7 +438,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Instance getInstance(GetInstanceRequest request) {
-<span class="fc" id="L414">    return getInstanceCallable().call(request);</span>
+<span class="fc" id="L441">    return getInstanceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -435,7 +462,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetInstanceRequest, Instance&gt; getInstanceCallable() {
-<span class="fc" id="L438">    return stub.getInstanceCallable();</span>
+<span class="fc" id="L465">    return stub.getInstanceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -474,12 +501,12 @@ public class CloudMemcacheClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; createInstanceAsync(
       LocationName parent, Instance instance, String instanceId) {
     CreateInstanceRequest request =
-<span class="fc" id="L477">        CreateInstanceRequest.newBuilder()</span>
-<span class="pc bpc" id="L478" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L479">            .setInstance(instance)</span>
-<span class="fc" id="L480">            .setInstanceId(instanceId)</span>
-<span class="fc" id="L481">            .build();</span>
-<span class="fc" id="L482">    return createInstanceAsync(request);</span>
+<span class="fc" id="L504">        CreateInstanceRequest.newBuilder()</span>
+<span class="pc bpc" id="L505" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L506">            .setInstance(instance)</span>
+<span class="fc" id="L507">            .setInstanceId(instanceId)</span>
+<span class="fc" id="L508">            .build();</span>
+<span class="fc" id="L509">    return createInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -518,12 +545,12 @@ public class CloudMemcacheClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; createInstanceAsync(
       String parent, Instance instance, String instanceId) {
     CreateInstanceRequest request =
-<span class="fc" id="L521">        CreateInstanceRequest.newBuilder()</span>
-<span class="fc" id="L522">            .setParent(parent)</span>
-<span class="fc" id="L523">            .setInstance(instance)</span>
-<span class="fc" id="L524">            .setInstanceId(instanceId)</span>
-<span class="fc" id="L525">            .build();</span>
-<span class="fc" id="L526">    return createInstanceAsync(request);</span>
+<span class="fc" id="L548">        CreateInstanceRequest.newBuilder()</span>
+<span class="fc" id="L549">            .setParent(parent)</span>
+<span class="fc" id="L550">            .setInstance(instance)</span>
+<span class="fc" id="L551">            .setInstanceId(instanceId)</span>
+<span class="fc" id="L552">            .build();</span>
+<span class="fc" id="L553">    return createInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -551,7 +578,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Instance, OperationMetadata&gt; createInstanceAsync(
       CreateInstanceRequest request) {
-<span class="fc" id="L554">    return createInstanceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L581">    return createInstanceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -579,7 +606,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateInstanceRequest, Instance, OperationMetadata&gt;
       createInstanceOperationCallable() {
-<span class="fc" id="L582">    return stub.createInstanceOperationCallable();</span>
+<span class="fc" id="L609">    return stub.createInstanceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -606,7 +633,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateInstanceRequest, Operation&gt; createInstanceCallable() {
-<span class="nc" id="L609">    return stub.createInstanceCallable();</span>
+<span class="nc" id="L636">    return stub.createInstanceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -633,8 +660,8 @@ public class CloudMemcacheClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; updateInstanceAsync(
       Instance instance, FieldMask updateMask) {
     UpdateInstanceRequest request =
-<span class="fc" id="L636">        UpdateInstanceRequest.newBuilder().setInstance(instance).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L637">    return updateInstanceAsync(request);</span>
+<span class="fc" id="L663">        UpdateInstanceRequest.newBuilder().setInstance(instance).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L664">    return updateInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -661,7 +688,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Instance, OperationMetadata&gt; updateInstanceAsync(
       UpdateInstanceRequest request) {
-<span class="fc" id="L664">    return updateInstanceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L691">    return updateInstanceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -688,7 +715,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateInstanceRequest, Instance, OperationMetadata&gt;
       updateInstanceOperationCallable() {
-<span class="fc" id="L691">    return stub.updateInstanceOperationCallable();</span>
+<span class="fc" id="L718">    return stub.updateInstanceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -714,7 +741,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateInstanceRequest, Operation&gt; updateInstanceCallable() {
-<span class="nc" id="L717">    return stub.updateInstanceCallable();</span>
+<span class="nc" id="L744">    return stub.updateInstanceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -746,12 +773,12 @@ public class CloudMemcacheClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; updateParametersAsync(
       InstanceName name, FieldMask updateMask, MemcacheParameters parameters) {
     UpdateParametersRequest request =
-<span class="fc" id="L749">        UpdateParametersRequest.newBuilder()</span>
-<span class="pc bpc" id="L750" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L751">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L752">            .setParameters(parameters)</span>
-<span class="fc" id="L753">            .build();</span>
-<span class="fc" id="L754">    return updateParametersAsync(request);</span>
+<span class="fc" id="L776">        UpdateParametersRequest.newBuilder()</span>
+<span class="pc bpc" id="L777" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L778">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L779">            .setParameters(parameters)</span>
+<span class="fc" id="L780">            .build();</span>
+<span class="fc" id="L781">    return updateParametersAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -783,12 +810,12 @@ public class CloudMemcacheClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; updateParametersAsync(
       String name, FieldMask updateMask, MemcacheParameters parameters) {
     UpdateParametersRequest request =
-<span class="fc" id="L786">        UpdateParametersRequest.newBuilder()</span>
-<span class="fc" id="L787">            .setName(name)</span>
-<span class="fc" id="L788">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L789">            .setParameters(parameters)</span>
-<span class="fc" id="L790">            .build();</span>
-<span class="fc" id="L791">    return updateParametersAsync(request);</span>
+<span class="fc" id="L813">        UpdateParametersRequest.newBuilder()</span>
+<span class="fc" id="L814">            .setName(name)</span>
+<span class="fc" id="L815">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L816">            .setParameters(parameters)</span>
+<span class="fc" id="L817">            .build();</span>
+<span class="fc" id="L818">    return updateParametersAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -818,7 +845,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Instance, OperationMetadata&gt; updateParametersAsync(
       UpdateParametersRequest request) {
-<span class="fc" id="L821">    return updateParametersOperationCallable().futureCall(request);</span>
+<span class="fc" id="L848">    return updateParametersOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -848,7 +875,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateParametersRequest, Instance, OperationMetadata&gt;
       updateParametersOperationCallable() {
-<span class="fc" id="L851">    return stub.updateParametersOperationCallable();</span>
+<span class="fc" id="L878">    return stub.updateParametersOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -877,7 +904,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateParametersRequest, Operation&gt; updateParametersCallable() {
-<span class="nc" id="L880">    return stub.updateParametersCallable();</span>
+<span class="nc" id="L907">    return stub.updateParametersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -902,8 +929,8 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteInstanceAsync(InstanceName name) {
     DeleteInstanceRequest request =
-<span class="pc bpc" id="L905" title="1 of 2 branches missed.">        DeleteInstanceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L906">    return deleteInstanceAsync(request);</span>
+<span class="pc bpc" id="L932" title="1 of 2 branches missed.">        DeleteInstanceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L933">    return deleteInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -927,8 +954,8 @@ public class CloudMemcacheClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteInstanceAsync(String name) {
-<span class="fc" id="L930">    DeleteInstanceRequest request = DeleteInstanceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L931">    return deleteInstanceAsync(request);</span>
+<span class="fc" id="L957">    DeleteInstanceRequest request = DeleteInstanceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L958">    return deleteInstanceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -954,7 +981,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteInstanceAsync(
       DeleteInstanceRequest request) {
-<span class="fc" id="L957">    return deleteInstanceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L984">    return deleteInstanceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -980,7 +1007,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteInstanceRequest, Empty, OperationMetadata&gt;
       deleteInstanceOperationCallable() {
-<span class="fc" id="L983">    return stub.deleteInstanceOperationCallable();</span>
+<span class="fc" id="L1010">    return stub.deleteInstanceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1005,7 +1032,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteInstanceRequest, Operation&gt; deleteInstanceCallable() {
-<span class="nc" id="L1008">    return stub.deleteInstanceCallable();</span>
+<span class="nc" id="L1035">    return stub.deleteInstanceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1037,12 +1064,12 @@ public class CloudMemcacheClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; applyParametersAsync(
       InstanceName name, List&lt;String&gt; nodeIds, boolean applyAll) {
     ApplyParametersRequest request =
-<span class="fc" id="L1040">        ApplyParametersRequest.newBuilder()</span>
-<span class="pc bpc" id="L1041" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1042">            .addAllNodeIds(nodeIds)</span>
-<span class="fc" id="L1043">            .setApplyAll(applyAll)</span>
-<span class="fc" id="L1044">            .build();</span>
-<span class="fc" id="L1045">    return applyParametersAsync(request);</span>
+<span class="fc" id="L1067">        ApplyParametersRequest.newBuilder()</span>
+<span class="pc bpc" id="L1068" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1069">            .addAllNodeIds(nodeIds)</span>
+<span class="fc" id="L1070">            .setApplyAll(applyAll)</span>
+<span class="fc" id="L1071">            .build();</span>
+<span class="fc" id="L1072">    return applyParametersAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1074,12 +1101,12 @@ public class CloudMemcacheClient implements BackgroundResource {
   public final OperationFuture&lt;Instance, OperationMetadata&gt; applyParametersAsync(
       String name, List&lt;String&gt; nodeIds, boolean applyAll) {
     ApplyParametersRequest request =
-<span class="fc" id="L1077">        ApplyParametersRequest.newBuilder()</span>
-<span class="fc" id="L1078">            .setName(name)</span>
-<span class="fc" id="L1079">            .addAllNodeIds(nodeIds)</span>
-<span class="fc" id="L1080">            .setApplyAll(applyAll)</span>
-<span class="fc" id="L1081">            .build();</span>
-<span class="fc" id="L1082">    return applyParametersAsync(request);</span>
+<span class="fc" id="L1104">        ApplyParametersRequest.newBuilder()</span>
+<span class="fc" id="L1105">            .setName(name)</span>
+<span class="fc" id="L1106">            .addAllNodeIds(nodeIds)</span>
+<span class="fc" id="L1107">            .setApplyAll(applyAll)</span>
+<span class="fc" id="L1108">            .build();</span>
+<span class="fc" id="L1109">    return applyParametersAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1108,7 +1135,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Instance, OperationMetadata&gt; applyParametersAsync(
       ApplyParametersRequest request) {
-<span class="fc" id="L1111">    return applyParametersOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1138">    return applyParametersOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1137,7 +1164,7 @@ public class CloudMemcacheClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ApplyParametersRequest, Instance, OperationMetadata&gt;
       applyParametersOperationCallable() {
-<span class="fc" id="L1140">    return stub.applyParametersOperationCallable();</span>
+<span class="fc" id="L1167">    return stub.applyParametersOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1165,37 +1192,37 @@ public class CloudMemcacheClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ApplyParametersRequest, Operation&gt; applyParametersCallable() {
-<span class="nc" id="L1168">    return stub.applyParametersCallable();</span>
+<span class="nc" id="L1195">    return stub.applyParametersCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1173">    stub.close();</span>
-<span class="fc" id="L1174">  }</span>
+<span class="fc" id="L1200">    stub.close();</span>
+<span class="fc" id="L1201">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1178">    stub.shutdown();</span>
-<span class="nc" id="L1179">  }</span>
+<span class="nc" id="L1205">    stub.shutdown();</span>
+<span class="nc" id="L1206">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1183">    return stub.isShutdown();</span>
+<span class="nc" id="L1210">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1188">    return stub.isTerminated();</span>
+<span class="nc" id="L1215">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1193">    stub.shutdownNow();</span>
-<span class="nc" id="L1194">  }</span>
+<span class="nc" id="L1220">    stub.shutdownNow();</span>
+<span class="nc" id="L1221">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1198">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1225">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListInstancesPagedResponse
@@ -1210,16 +1237,16 @@ public class CloudMemcacheClient implements BackgroundResource {
         PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; context,
         ApiFuture&lt;ListInstancesResponse&gt; futureResponse) {
       ApiFuture&lt;ListInstancesPage&gt; futurePage =
-<span class="fc" id="L1213">          ListInstancesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1214">      return ApiFutures.transform(</span>
+<span class="fc" id="L1240">          ListInstancesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1241">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1216">          input -&gt; new ListInstancesPagedResponse(input),</span>
-<span class="fc" id="L1217">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1243">          input -&gt; new ListInstancesPagedResponse(input),</span>
+<span class="fc" id="L1244">          MoreExecutors.directExecutor());</span>
     }
 
     private ListInstancesPagedResponse(ListInstancesPage page) {
-<span class="fc" id="L1221">      super(page, ListInstancesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1222">    }</span>
+<span class="fc" id="L1248">      super(page, ListInstancesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1249">    }</span>
   }
 
   public static class ListInstancesPage
@@ -1229,25 +1256,25 @@ public class CloudMemcacheClient implements BackgroundResource {
     private ListInstancesPage(
         PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; context,
         ListInstancesResponse response) {
-<span class="fc" id="L1232">      super(context, response);</span>
-<span class="fc" id="L1233">    }</span>
+<span class="fc" id="L1259">      super(context, response);</span>
+<span class="fc" id="L1260">    }</span>
 
     private static ListInstancesPage createEmptyPage() {
-<span class="fc" id="L1236">      return new ListInstancesPage(null, null);</span>
+<span class="fc" id="L1263">      return new ListInstancesPage(null, null);</span>
     }
 
     @Override
     protected ListInstancesPage createPage(
         PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; context,
         ListInstancesResponse response) {
-<span class="fc" id="L1243">      return new ListInstancesPage(context, response);</span>
+<span class="fc" id="L1270">      return new ListInstancesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListInstancesPage&gt; createPageAsync(
         PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; context,
         ApiFuture&lt;ListInstancesResponse&gt; futureResponse) {
-<span class="fc" id="L1250">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1277">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1260,17 +1287,17 @@ public class CloudMemcacheClient implements BackgroundResource {
           ListInstancesFixedSizeCollection&gt; {
 
     private ListInstancesFixedSizeCollection(List&lt;ListInstancesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1263">      super(pages, collectionSize);</span>
-<span class="fc" id="L1264">    }</span>
+<span class="fc" id="L1290">      super(pages, collectionSize);</span>
+<span class="fc" id="L1291">    }</span>
 
     private static ListInstancesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1267">      return new ListInstancesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1294">      return new ListInstancesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListInstancesFixedSizeCollection createCollection(
         List&lt;ListInstancesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1273">      return new ListInstancesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1300">      return new ListInstancesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

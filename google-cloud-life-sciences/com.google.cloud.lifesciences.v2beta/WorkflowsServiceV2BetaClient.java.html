@@ -18,13 +18,13 @@ package com.google.cloud.lifesciences.v2beta;
 
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.rpc.OperationCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.lifesciences.v2beta.stub.WorkflowsServiceV2BetaStub;
 import com.google.cloud.lifesciences.v2beta.stub.WorkflowsServiceV2BetaStubSettings;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
@@ -104,6 +104,21 @@ import javax.annotation.Generated;
  *     WorkflowsServiceV2BetaClient.create(workflowsServiceV2BetaSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * WorkflowsServiceV2BetaSettings workflowsServiceV2BetaSettings =
+ *     WorkflowsServiceV2BetaSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             WorkflowsServiceV2BetaSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * WorkflowsServiceV2BetaClient workflowsServiceV2BetaClient =
+ *     WorkflowsServiceV2BetaClient.create(workflowsServiceV2BetaSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -111,11 +126,12 @@ import javax.annotation.Generated;
 public class WorkflowsServiceV2BetaClient implements BackgroundResource {
   private final WorkflowsServiceV2BetaSettings settings;
   private final WorkflowsServiceV2BetaStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of WorkflowsServiceV2BetaClient with default settings. */
   public static final WorkflowsServiceV2BetaClient create() throws IOException {
-<span class="nc" id="L118">    return create(WorkflowsServiceV2BetaSettings.newBuilder().build());</span>
+<span class="nc" id="L134">    return create(WorkflowsServiceV2BetaSettings.newBuilder().build());</span>
   }
 
   /**
@@ -124,7 +140,7 @@ public class WorkflowsServiceV2BetaClient implements BackgroundResource {
    */
   public static final WorkflowsServiceV2BetaClient create(WorkflowsServiceV2BetaSettings settings)
       throws IOException {
-<span class="fc" id="L127">    return new WorkflowsServiceV2BetaClient(settings);</span>
+<span class="fc" id="L143">    return new WorkflowsServiceV2BetaClient(settings);</span>
   }
 
   /**
@@ -132,7 +148,7 @@ public class WorkflowsServiceV2BetaClient implements BackgroundResource {
    * This is for advanced usage - prefer using create(WorkflowsServiceV2BetaSettings).
    */
   public static final WorkflowsServiceV2BetaClient create(WorkflowsServiceV2BetaStub stub) {
-<span class="nc" id="L135">    return new WorkflowsServiceV2BetaClient(stub);</span>
+<span class="nc" id="L151">    return new WorkflowsServiceV2BetaClient(stub);</span>
   }
 
   /**
@@ -141,32 +157,44 @@ public class WorkflowsServiceV2BetaClient implements BackgroundResource {
    * should be preferred.
    */
   protected WorkflowsServiceV2BetaClient(WorkflowsServiceV2BetaSettings settings)
-<span class="fc" id="L144">      throws IOException {</span>
-<span class="fc" id="L145">    this.settings = settings;</span>
-<span class="fc" id="L146">    this.stub = ((WorkflowsServiceV2BetaStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L147">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L148">  }</span>
+<span class="fc" id="L160">      throws IOException {</span>
+<span class="fc" id="L161">    this.settings = settings;</span>
+<span class="fc" id="L162">    this.stub = ((WorkflowsServiceV2BetaStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L163">    this.operationsClient =</span>
+<span class="fc" id="L164">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L165">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L166">  }</span>
 
-<span class="nc" id="L150">  protected WorkflowsServiceV2BetaClient(WorkflowsServiceV2BetaStub stub) {</span>
-<span class="nc" id="L151">    this.settings = null;</span>
-<span class="nc" id="L152">    this.stub = stub;</span>
-<span class="nc" id="L153">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L154">  }</span>
+<span class="nc" id="L168">  protected WorkflowsServiceV2BetaClient(WorkflowsServiceV2BetaStub stub) {</span>
+<span class="nc" id="L169">    this.settings = null;</span>
+<span class="nc" id="L170">    this.stub = stub;</span>
+<span class="nc" id="L171">    this.operationsClient =</span>
+<span class="nc" id="L172">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L173">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L174">  }</span>
 
   public final WorkflowsServiceV2BetaSettings getSettings() {
-<span class="nc" id="L157">    return settings;</span>
+<span class="nc" id="L177">    return settings;</span>
   }
 
   public WorkflowsServiceV2BetaStub getStub() {
-<span class="nc" id="L161">    return stub;</span>
+<span class="nc" id="L181">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L169">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L189">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L197">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -212,7 +240,7 @@ public class WorkflowsServiceV2BetaClient implements BackgroundResource {
    */
   public final OperationFuture&lt;RunPipelineResponse, Metadata&gt; runPipelineAsync(
       RunPipelineRequest request) {
-<span class="fc" id="L215">    return runPipelineOperationCallable().futureCall(request);</span>
+<span class="fc" id="L243">    return runPipelineOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -258,7 +286,7 @@ public class WorkflowsServiceV2BetaClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RunPipelineRequest, RunPipelineResponse, Metadata&gt;
       runPipelineOperationCallable() {
-<span class="fc" id="L261">    return stub.runPipelineOperationCallable();</span>
+<span class="fc" id="L289">    return stub.runPipelineOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -303,37 +331,37 @@ public class WorkflowsServiceV2BetaClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RunPipelineRequest, Operation&gt; runPipelineCallable() {
-<span class="nc" id="L306">    return stub.runPipelineCallable();</span>
+<span class="nc" id="L334">    return stub.runPipelineCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L311">    stub.close();</span>
-<span class="fc" id="L312">  }</span>
+<span class="fc" id="L339">    stub.close();</span>
+<span class="fc" id="L340">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L316">    stub.shutdown();</span>
-<span class="nc" id="L317">  }</span>
+<span class="nc" id="L344">    stub.shutdown();</span>
+<span class="nc" id="L345">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L321">    return stub.isShutdown();</span>
+<span class="nc" id="L349">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L326">    return stub.isTerminated();</span>
+<span class="nc" id="L354">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L331">    stub.shutdownNow();</span>
-<span class="nc" id="L332">  }</span>
+<span class="nc" id="L359">    stub.shutdownNow();</span>
+<span class="nc" id="L360">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L336">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L364">    return stub.awaitTermination(duration, unit);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
