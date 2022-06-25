@@ -17,6 +17,7 @@
 package com.google.cloud.dialogflow.cx.v3.stub;
 
 import static com.google.cloud.dialogflow.cx.v3.IntentsClient.ListIntentsPagedResponse;
+import static com.google.cloud.dialogflow.cx.v3.IntentsClient.ListLocationsPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
@@ -27,6 +28,9 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
@@ -47,6 +51,10 @@ import com.google.cloud.dialogflow.cx.v3.Intent;
 import com.google.cloud.dialogflow.cx.v3.ListIntentsRequest;
 import com.google.cloud.dialogflow.cx.v3.ListIntentsResponse;
 import com.google.cloud.dialogflow.cx.v3.UpdateIntentRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -94,10 +102,10 @@ import org.threeten.bp.Duration;
 public class IntentsStubSettings extends StubSettings&lt;IntentsStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L97">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L98">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L99">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L100">          .build();</span>
+<span class="fc" id="L105">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L106">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L107">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L108">          .build();</span>
 
   private final PagedCallSettings&lt;ListIntentsRequest, ListIntentsResponse, ListIntentsPagedResponse&gt;
       listIntentsSettings;
@@ -105,166 +113,266 @@ public class IntentsStubSettings extends StubSettings&lt;IntentsStubSettings&gt;
   private final UnaryCallSettings&lt;CreateIntentRequest, Intent&gt; createIntentSettings;
   private final UnaryCallSettings&lt;UpdateIntentRequest, Intent&gt; updateIntentSettings;
   private final UnaryCallSettings&lt;DeleteIntentRequest, Empty&gt; deleteIntentSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;ListIntentsRequest, ListIntentsResponse, Intent&gt;
-<span class="fc" id="L110">      LIST_INTENTS_PAGE_STR_DESC =</span>
-<span class="fc" id="L111">          new PagedListDescriptor&lt;ListIntentsRequest, ListIntentsResponse, Intent&gt;() {</span>
+<span class="fc" id="L122">      LIST_INTENTS_PAGE_STR_DESC =</span>
+<span class="fc" id="L123">          new PagedListDescriptor&lt;ListIntentsRequest, ListIntentsResponse, Intent&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L114">              return &quot;&quot;;</span>
+<span class="fc" id="L126">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListIntentsRequest injectToken(ListIntentsRequest payload, String token) {
-<span class="nc" id="L119">              return ListIntentsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L131">              return ListIntentsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListIntentsRequest injectPageSize(ListIntentsRequest payload, int pageSize) {
-<span class="nc" id="L124">              return ListIntentsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L136">              return ListIntentsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListIntentsRequest payload) {
-<span class="nc" id="L129">              return payload.getPageSize();</span>
+<span class="nc" id="L141">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListIntentsResponse payload) {
-<span class="fc" id="L134">              return payload.getNextPageToken();</span>
+<span class="fc" id="L146">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Intent&gt; extractResources(ListIntentsResponse payload) {
-<span class="pc bpc" id="L139" title="1 of 2 branches missed.">              return payload.getIntentsList() == null</span>
-<span class="nc" id="L140">                  ? ImmutableList.&lt;Intent&gt;of()</span>
-<span class="fc" id="L141">                  : payload.getIntentsList();</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">              return payload.getIntentsList() == null</span>
+<span class="nc" id="L152">                  ? ImmutableList.&lt;Intent&gt;of()</span>
+<span class="fc" id="L153">                  : payload.getIntentsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L158">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L159">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L162">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L167">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L172">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L177">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L182">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L188">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L189">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListIntentsRequest, ListIntentsResponse, ListIntentsPagedResponse&gt;
-<span class="fc" id="L147">      LIST_INTENTS_PAGE_STR_FACT =</span>
+<span class="fc" id="L195">      LIST_INTENTS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L149">              ListIntentsRequest, ListIntentsResponse, ListIntentsPagedResponse&gt;() {</span>
+<span class="fc" id="L197">              ListIntentsRequest, ListIntentsResponse, ListIntentsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListIntentsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListIntentsRequest, ListIntentsResponse&gt; callable,
                 ListIntentsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListIntentsResponse&gt; futureResponse) {
-<span class="fc" id="L156">              PageContext&lt;ListIntentsRequest, ListIntentsResponse, Intent&gt; pageContext =</span>
-<span class="fc" id="L157">                  PageContext.create(callable, LIST_INTENTS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L158">              return ListIntentsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L204">              PageContext&lt;ListIntentsRequest, ListIntentsResponse, Intent&gt; pageContext =</span>
+<span class="fc" id="L205">                  PageContext.create(callable, LIST_INTENTS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L206">              return ListIntentsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L212">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L214">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L221">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L222">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L223">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to listIntents. */
   public PagedCallSettings&lt;ListIntentsRequest, ListIntentsResponse, ListIntentsPagedResponse&gt;
       listIntentsSettings() {
-<span class="fc" id="L165">    return listIntentsSettings;</span>
+<span class="fc" id="L230">    return listIntentsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getIntent. */
   public UnaryCallSettings&lt;GetIntentRequest, Intent&gt; getIntentSettings() {
-<span class="fc" id="L170">    return getIntentSettings;</span>
+<span class="fc" id="L235">    return getIntentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createIntent. */
   public UnaryCallSettings&lt;CreateIntentRequest, Intent&gt; createIntentSettings() {
-<span class="fc" id="L175">    return createIntentSettings;</span>
+<span class="fc" id="L240">    return createIntentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateIntent. */
   public UnaryCallSettings&lt;UpdateIntentRequest, Intent&gt; updateIntentSettings() {
-<span class="fc" id="L180">    return updateIntentSettings;</span>
+<span class="fc" id="L245">    return updateIntentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteIntent. */
   public UnaryCallSettings&lt;DeleteIntentRequest, Empty&gt; deleteIntentSettings() {
-<span class="fc" id="L185">    return deleteIntentSettings;</span>
+<span class="fc" id="L250">    return deleteIntentSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L256">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L261">    return getLocationSettings;</span>
   }
 
   public IntentsStub createStub() throws IOException {
-<span class="fc" id="L189">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L190">        .getTransportName()</span>
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L192">      return GrpcIntentsStub.create(this);</span>
+<span class="fc" id="L265">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L266">        .getTransportName()</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L268">      return GrpcIntentsStub.create(this);</span>
     }
-<span class="nc" id="L194">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L195">        String.format(</span>
-<span class="nc" id="L196">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L270">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L271">        .getTransportName()</span>
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L273">      return HttpJsonIntentsStub.create(this);</span>
+    }
+<span class="nc" id="L275">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L276">        String.format(</span>
+<span class="nc" id="L277">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L201">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L282">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L206">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L287">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L211">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L292">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L216">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L297">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L221">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L222">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L223">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L302">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L303">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L304">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L228">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L229">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L309">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L310">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L317">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L233">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L321">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L238">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L239">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(IntentsStubSettings.class))</span>
-<span class="fc" id="L240">        .setTransportToken(</span>
-<span class="fc" id="L241">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L326">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L327">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(IntentsStubSettings.class))</span>
+<span class="fc" id="L328">        .setTransportToken(</span>
+<span class="fc" id="L329">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L334">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L335">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(IntentsStubSettings.class))</span>
+<span class="fc" id="L336">        .setTransportToken(</span>
+<span class="fc" id="L337">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L338">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L342">    return IntentsStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L246">    return Builder.createDefault();</span>
+<span class="fc" id="L347">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L352">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L251">    return new Builder(clientContext);</span>
+<span class="nc" id="L357">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L256">    return new Builder(this);</span>
+<span class="nc" id="L362">    return new Builder(this);</span>
   }
 
   protected IntentsStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L260">    super(settingsBuilder);</span>
+<span class="fc" id="L366">    super(settingsBuilder);</span>
 
-<span class="fc" id="L262">    listIntentsSettings = settingsBuilder.listIntentsSettings().build();</span>
-<span class="fc" id="L263">    getIntentSettings = settingsBuilder.getIntentSettings().build();</span>
-<span class="fc" id="L264">    createIntentSettings = settingsBuilder.createIntentSettings().build();</span>
-<span class="fc" id="L265">    updateIntentSettings = settingsBuilder.updateIntentSettings().build();</span>
-<span class="fc" id="L266">    deleteIntentSettings = settingsBuilder.deleteIntentSettings().build();</span>
-<span class="fc" id="L267">  }</span>
+<span class="fc" id="L368">    listIntentsSettings = settingsBuilder.listIntentsSettings().build();</span>
+<span class="fc" id="L369">    getIntentSettings = settingsBuilder.getIntentSettings().build();</span>
+<span class="fc" id="L370">    createIntentSettings = settingsBuilder.createIntentSettings().build();</span>
+<span class="fc" id="L371">    updateIntentSettings = settingsBuilder.updateIntentSettings().build();</span>
+<span class="fc" id="L372">    deleteIntentSettings = settingsBuilder.deleteIntentSettings().build();</span>
+<span class="fc" id="L373">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L374">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L375">  }</span>
 
   /** Builder for IntentsStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;IntentsStubSettings, Builder&gt; {
@@ -276,118 +384,153 @@ public class IntentsStubSettings extends StubSettings&lt;IntentsStubSettings&gt;
     private final UnaryCallSettings.Builder&lt;CreateIntentRequest, Intent&gt; createIntentSettings;
     private final UnaryCallSettings.Builder&lt;UpdateIntentRequest, Intent&gt; updateIntentSettings;
     private final UnaryCallSettings.Builder&lt;DeleteIntentRequest, Empty&gt; deleteIntentSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L284">          ImmutableMap.builder();</span>
-<span class="fc" id="L285">      definitions.put(</span>
+<span class="fc" id="L396">          ImmutableMap.builder();</span>
+<span class="fc" id="L397">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L287">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L288">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L399">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L400">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L294">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L295">      RetrySettings settings = null;</span>
+<span class="fc" id="L406">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L407">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L297">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L298">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L299">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L300">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L301">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L302">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L303">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L304">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L305">              .build();</span>
-<span class="fc" id="L306">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L307">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L308">    }</span>
+<span class="fc" id="L409">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L410">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L411">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L412">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L413">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L414">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L415">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L416">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L417">              .build();</span>
+<span class="fc" id="L418">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L419">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L420">    }</span>
 
     protected Builder() {
-<span class="nc" id="L311">      this(((ClientContext) null));</span>
-<span class="nc" id="L312">    }</span>
+<span class="nc" id="L423">      this(((ClientContext) null));</span>
+<span class="nc" id="L424">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L315">      super(clientContext);</span>
+<span class="fc" id="L427">      super(clientContext);</span>
 
-<span class="fc" id="L317">      listIntentsSettings = PagedCallSettings.newBuilder(LIST_INTENTS_PAGE_STR_FACT);</span>
-<span class="fc" id="L318">      getIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L319">      createIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L320">      updateIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L321">      deleteIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L429">      listIntentsSettings = PagedCallSettings.newBuilder(LIST_INTENTS_PAGE_STR_FACT);</span>
+<span class="fc" id="L430">      getIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L431">      createIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L432">      updateIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L433">      deleteIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L434">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L435">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L323">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L324">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L437">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L438">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listIntentsSettings,
               getIntentSettings,
               createIntentSettings,
               updateIntentSettings,
-              deleteIntentSettings);
-<span class="fc" id="L330">      initDefaults(this);</span>
-<span class="fc" id="L331">    }</span>
+              deleteIntentSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L446">      initDefaults(this);</span>
+<span class="fc" id="L447">    }</span>
 
     protected Builder(IntentsStubSettings settings) {
-<span class="nc" id="L334">      super(settings);</span>
+<span class="nc" id="L450">      super(settings);</span>
 
-<span class="nc" id="L336">      listIntentsSettings = settings.listIntentsSettings.toBuilder();</span>
-<span class="nc" id="L337">      getIntentSettings = settings.getIntentSettings.toBuilder();</span>
-<span class="nc" id="L338">      createIntentSettings = settings.createIntentSettings.toBuilder();</span>
-<span class="nc" id="L339">      updateIntentSettings = settings.updateIntentSettings.toBuilder();</span>
-<span class="nc" id="L340">      deleteIntentSettings = settings.deleteIntentSettings.toBuilder();</span>
+<span class="nc" id="L452">      listIntentsSettings = settings.listIntentsSettings.toBuilder();</span>
+<span class="nc" id="L453">      getIntentSettings = settings.getIntentSettings.toBuilder();</span>
+<span class="nc" id="L454">      createIntentSettings = settings.createIntentSettings.toBuilder();</span>
+<span class="nc" id="L455">      updateIntentSettings = settings.updateIntentSettings.toBuilder();</span>
+<span class="nc" id="L456">      deleteIntentSettings = settings.deleteIntentSettings.toBuilder();</span>
+<span class="nc" id="L457">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L458">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L342">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L343">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L460">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L461">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listIntentsSettings,
               getIntentSettings,
               createIntentSettings,
               updateIntentSettings,
-              deleteIntentSettings);
-<span class="nc" id="L349">    }</span>
+              deleteIntentSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L469">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L352">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L472">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L354">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L355">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L356">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L357">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L358">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L359">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L474">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L475">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L476">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L477">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L478">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L479">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L361">      return initDefaults(builder);</span>
+<span class="fc" id="L481">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L485">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L487">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L488">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L489">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L490">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L491">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L492">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L494">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L365">      builder</span>
-<span class="fc" id="L366">          .listIntentsSettings()</span>
-<span class="fc" id="L367">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L368">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L498">      builder</span>
+<span class="fc" id="L499">          .listIntentsSettings()</span>
+<span class="fc" id="L500">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L501">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L370">      builder</span>
-<span class="fc" id="L371">          .getIntentSettings()</span>
-<span class="fc" id="L372">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L373">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L503">      builder</span>
+<span class="fc" id="L504">          .getIntentSettings()</span>
+<span class="fc" id="L505">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L506">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L375">      builder</span>
-<span class="fc" id="L376">          .createIntentSettings()</span>
-<span class="fc" id="L377">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L378">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L508">      builder</span>
+<span class="fc" id="L509">          .createIntentSettings()</span>
+<span class="fc" id="L510">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L511">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L380">      builder</span>
-<span class="fc" id="L381">          .updateIntentSettings()</span>
-<span class="fc" id="L382">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L383">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L513">      builder</span>
+<span class="fc" id="L514">          .updateIntentSettings()</span>
+<span class="fc" id="L515">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L516">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L385">      builder</span>
-<span class="fc" id="L386">          .deleteIntentSettings()</span>
-<span class="fc" id="L387">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L388">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L518">      builder</span>
+<span class="fc" id="L519">          .deleteIntentSettings()</span>
+<span class="fc" id="L520">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L521">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L390">      return builder;</span>
+<span class="fc" id="L523">      builder</span>
+<span class="fc" id="L524">          .listLocationsSettings()</span>
+<span class="fc" id="L525">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L526">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L528">      builder</span>
+<span class="fc" id="L529">          .getLocationSettings()</span>
+<span class="fc" id="L530">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L531">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L533">      return builder;</span>
     }
 
     /**
@@ -397,44 +540,56 @@ public class IntentsStubSettings extends StubSettings&lt;IntentsStubSettings&gt;
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L400">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L401">      return this;</span>
+<span class="nc" id="L543">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L544">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L405">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L548">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listIntents. */
     public PagedCallSettings.Builder&lt;
             ListIntentsRequest, ListIntentsResponse, ListIntentsPagedResponse&gt;
         listIntentsSettings() {
-<span class="fc" id="L412">      return listIntentsSettings;</span>
+<span class="fc" id="L555">      return listIntentsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getIntent. */
     public UnaryCallSettings.Builder&lt;GetIntentRequest, Intent&gt; getIntentSettings() {
-<span class="fc" id="L417">      return getIntentSettings;</span>
+<span class="fc" id="L560">      return getIntentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createIntent. */
     public UnaryCallSettings.Builder&lt;CreateIntentRequest, Intent&gt; createIntentSettings() {
-<span class="fc" id="L422">      return createIntentSettings;</span>
+<span class="fc" id="L565">      return createIntentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateIntent. */
     public UnaryCallSettings.Builder&lt;UpdateIntentRequest, Intent&gt; updateIntentSettings() {
-<span class="fc" id="L427">      return updateIntentSettings;</span>
+<span class="fc" id="L570">      return updateIntentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteIntent. */
     public UnaryCallSettings.Builder&lt;DeleteIntentRequest, Empty&gt; deleteIntentSettings() {
-<span class="fc" id="L432">      return deleteIntentSettings;</span>
+<span class="fc" id="L575">      return deleteIntentSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L582">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L587">      return getLocationSettings;</span>
     }
 
     @Override
     public IntentsStubSettings build() throws IOException {
-<span class="fc" id="L437">      return new IntentsStubSettings(this);</span>
+<span class="fc" id="L592">      return new IntentsStubSettings(this);</span>
     }
   }
 }

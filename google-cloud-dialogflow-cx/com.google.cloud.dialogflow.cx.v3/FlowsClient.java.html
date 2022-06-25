@@ -19,6 +19,7 @@ package com.google.cloud.dialogflow.cx.v3;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -28,9 +29,12 @@ import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.dialogflow.cx.v3.stub.FlowsStub;
 import com.google.cloud.dialogflow.cx.v3.stub.FlowsStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Struct;
@@ -103,17 +107,32 @@ import javax.annotation.Generated;
  * FlowsClient flowsClient = FlowsClient.create(flowsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * FlowsSettings flowsSettings =
+ *     FlowsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             FlowsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * FlowsClient flowsClient = FlowsClient.create(flowsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class FlowsClient implements BackgroundResource {
   private final FlowsSettings settings;
   private final FlowsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of FlowsClient with default settings. */
   public static final FlowsClient create() throws IOException {
-<span class="nc" id="L116">    return create(FlowsSettings.newBuilder().build());</span>
+<span class="nc" id="L135">    return create(FlowsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -121,7 +140,7 @@ public class FlowsClient implements BackgroundResource {
    * on the settings passed in, or defaults for any settings that are not set.
    */
   public static final FlowsClient create(FlowsSettings settings) throws IOException {
-<span class="fc" id="L124">    return new FlowsClient(settings);</span>
+<span class="fc" id="L143">    return new FlowsClient(settings);</span>
   }
 
   /**
@@ -129,39 +148,51 @@ public class FlowsClient implements BackgroundResource {
    * advanced usage - prefer using create(FlowsSettings).
    */
   public static final FlowsClient create(FlowsStub stub) {
-<span class="nc" id="L132">    return new FlowsClient(stub);</span>
+<span class="nc" id="L151">    return new FlowsClient(stub);</span>
   }
 
   /**
    * Constructs an instance of FlowsClient, using the given settings. This is protected so that it
    * is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L139">  protected FlowsClient(FlowsSettings settings) throws IOException {</span>
-<span class="fc" id="L140">    this.settings = settings;</span>
-<span class="fc" id="L141">    this.stub = ((FlowsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L142">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L143">  }</span>
+<span class="fc" id="L158">  protected FlowsClient(FlowsSettings settings) throws IOException {</span>
+<span class="fc" id="L159">    this.settings = settings;</span>
+<span class="fc" id="L160">    this.stub = ((FlowsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L161">    this.operationsClient =</span>
+<span class="fc" id="L162">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L163">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L164">  }</span>
 
-<span class="nc" id="L145">  protected FlowsClient(FlowsStub stub) {</span>
-<span class="nc" id="L146">    this.settings = null;</span>
-<span class="nc" id="L147">    this.stub = stub;</span>
-<span class="nc" id="L148">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L149">  }</span>
+<span class="nc" id="L166">  protected FlowsClient(FlowsStub stub) {</span>
+<span class="nc" id="L167">    this.settings = null;</span>
+<span class="nc" id="L168">    this.stub = stub;</span>
+<span class="nc" id="L169">    this.operationsClient =</span>
+<span class="nc" id="L170">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L171">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L172">  }</span>
 
   public final FlowsSettings getSettings() {
-<span class="nc" id="L152">    return settings;</span>
+<span class="nc" id="L175">    return settings;</span>
   }
 
   public FlowsStub getStub() {
-<span class="nc" id="L156">    return stub;</span>
+<span class="nc" id="L179">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L164">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L187">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L195">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -190,11 +221,11 @@ public class FlowsClient implements BackgroundResource {
    */
   public final Flow createFlow(AgentName parent, Flow flow) {
     CreateFlowRequest request =
-<span class="fc" id="L193">        CreateFlowRequest.newBuilder()</span>
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L195">            .setFlow(flow)</span>
-<span class="fc" id="L196">            .build();</span>
-<span class="fc" id="L197">    return createFlow(request);</span>
+<span class="fc" id="L224">        CreateFlowRequest.newBuilder()</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L226">            .setFlow(flow)</span>
+<span class="fc" id="L227">            .build();</span>
+<span class="fc" id="L228">    return createFlow(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -223,8 +254,8 @@ public class FlowsClient implements BackgroundResource {
    */
   public final Flow createFlow(String parent, Flow flow) {
     CreateFlowRequest request =
-<span class="fc" id="L226">        CreateFlowRequest.newBuilder().setParent(parent).setFlow(flow).build();</span>
-<span class="fc" id="L227">    return createFlow(request);</span>
+<span class="fc" id="L257">        CreateFlowRequest.newBuilder().setParent(parent).setFlow(flow).build();</span>
+<span class="fc" id="L258">    return createFlow(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -254,7 +285,7 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Flow createFlow(CreateFlowRequest request) {
-<span class="fc" id="L257">    return createFlowCallable().call(request);</span>
+<span class="fc" id="L288">    return createFlowCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -283,7 +314,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateFlowRequest, Flow&gt; createFlowCallable() {
-<span class="fc" id="L286">    return stub.createFlowCallable();</span>
+<span class="fc" id="L317">    return stub.createFlowCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -307,9 +338,9 @@ public class FlowsClient implements BackgroundResource {
    */
   public final void deleteFlow(FlowName name) {
     DeleteFlowRequest request =
-<span class="pc bpc" id="L310" title="1 of 2 branches missed.">        DeleteFlowRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L311">    deleteFlow(request);</span>
-<span class="fc" id="L312">  }</span>
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">        DeleteFlowRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L342">    deleteFlow(request);</span>
+<span class="fc" id="L343">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -331,9 +362,9 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteFlow(String name) {
-<span class="fc" id="L334">    DeleteFlowRequest request = DeleteFlowRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L335">    deleteFlow(request);</span>
-<span class="fc" id="L336">  }</span>
+<span class="fc" id="L365">    DeleteFlowRequest request = DeleteFlowRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L366">    deleteFlow(request);</span>
+<span class="fc" id="L367">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -358,8 +389,8 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteFlow(DeleteFlowRequest request) {
-<span class="fc" id="L361">    deleteFlowCallable().call(request);</span>
-<span class="fc" id="L362">  }</span>
+<span class="fc" id="L392">    deleteFlowCallable().call(request);</span>
+<span class="fc" id="L393">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -383,7 +414,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteFlowRequest, Empty&gt; deleteFlowCallable() {
-<span class="fc" id="L386">    return stub.deleteFlowCallable();</span>
+<span class="fc" id="L417">    return stub.deleteFlowCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -409,8 +440,8 @@ public class FlowsClient implements BackgroundResource {
    */
   public final ListFlowsPagedResponse listFlows(AgentName parent) {
     ListFlowsRequest request =
-<span class="pc bpc" id="L412" title="1 of 2 branches missed.">        ListFlowsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L413">    return listFlows(request);</span>
+<span class="pc bpc" id="L443" title="1 of 2 branches missed.">        ListFlowsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L444">    return listFlows(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -435,8 +466,8 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListFlowsPagedResponse listFlows(String parent) {
-<span class="fc" id="L438">    ListFlowsRequest request = ListFlowsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L439">    return listFlows(request);</span>
+<span class="fc" id="L469">    ListFlowsRequest request = ListFlowsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L470">    return listFlows(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -466,7 +497,7 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListFlowsPagedResponse listFlows(ListFlowsRequest request) {
-<span class="fc" id="L469">    return listFlowsPagedCallable().call(request);</span>
+<span class="fc" id="L500">    return listFlowsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -495,7 +526,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListFlowsRequest, ListFlowsPagedResponse&gt; listFlowsPagedCallable() {
-<span class="fc" id="L498">    return stub.listFlowsPagedCallable();</span>
+<span class="fc" id="L529">    return stub.listFlowsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -517,7 +548,7 @@ public class FlowsClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListFlowsResponse response = flowsClient.listFlowsCallable().call(request);
-   *     for (Flow element : response.getResponsesList()) {
+   *     for (Flow element : response.getFlowsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -531,7 +562,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListFlowsRequest, ListFlowsResponse&gt; listFlowsCallable() {
-<span class="nc" id="L534">    return stub.listFlowsCallable();</span>
+<span class="nc" id="L565">    return stub.listFlowsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -555,8 +586,8 @@ public class FlowsClient implements BackgroundResource {
    */
   public final Flow getFlow(FlowName name) {
     GetFlowRequest request =
-<span class="pc bpc" id="L558" title="1 of 2 branches missed.">        GetFlowRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L559">    return getFlow(request);</span>
+<span class="pc bpc" id="L589" title="1 of 2 branches missed.">        GetFlowRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L590">    return getFlow(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -579,8 +610,8 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Flow getFlow(String name) {
-<span class="fc" id="L582">    GetFlowRequest request = GetFlowRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L583">    return getFlow(request);</span>
+<span class="fc" id="L613">    GetFlowRequest request = GetFlowRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L614">    return getFlow(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -606,7 +637,7 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Flow getFlow(GetFlowRequest request) {
-<span class="fc" id="L609">    return getFlowCallable().call(request);</span>
+<span class="fc" id="L640">    return getFlowCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -631,7 +662,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetFlowRequest, Flow&gt; getFlowCallable() {
-<span class="fc" id="L634">    return stub.getFlowCallable();</span>
+<span class="fc" id="L665">    return stub.getFlowCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -660,8 +691,8 @@ public class FlowsClient implements BackgroundResource {
    */
   public final Flow updateFlow(Flow flow, FieldMask updateMask) {
     UpdateFlowRequest request =
-<span class="fc" id="L663">        UpdateFlowRequest.newBuilder().setFlow(flow).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L664">    return updateFlow(request);</span>
+<span class="fc" id="L694">        UpdateFlowRequest.newBuilder().setFlow(flow).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L695">    return updateFlow(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -691,7 +722,7 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Flow updateFlow(UpdateFlowRequest request) {
-<span class="fc" id="L694">    return updateFlowCallable().call(request);</span>
+<span class="fc" id="L725">    return updateFlowCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -720,7 +751,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateFlowRequest, Flow&gt; updateFlowCallable() {
-<span class="fc" id="L723">    return stub.updateFlowCallable();</span>
+<span class="fc" id="L754">    return stub.updateFlowCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -756,8 +787,8 @@ public class FlowsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, Struct&gt; trainFlowAsync(FlowName name) {
     TrainFlowRequest request =
-<span class="pc bpc" id="L759" title="1 of 2 branches missed.">        TrainFlowRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L760">    return trainFlowAsync(request);</span>
+<span class="pc bpc" id="L790" title="1 of 2 branches missed.">        TrainFlowRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L791">    return trainFlowAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -792,8 +823,8 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, Struct&gt; trainFlowAsync(String name) {
-<span class="fc" id="L795">    TrainFlowRequest request = TrainFlowRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L796">    return trainFlowAsync(request);</span>
+<span class="fc" id="L826">    TrainFlowRequest request = TrainFlowRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L827">    return trainFlowAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -830,7 +861,7 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, Struct&gt; trainFlowAsync(TrainFlowRequest request) {
-<span class="fc" id="L833">    return trainFlowOperationCallable().futureCall(request);</span>
+<span class="fc" id="L864">    return trainFlowOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -867,7 +898,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final OperationCallable&lt;TrainFlowRequest, Empty, Struct&gt; trainFlowOperationCallable() {
-<span class="fc" id="L870">    return stub.trainFlowOperationCallable();</span>
+<span class="fc" id="L901">    return stub.trainFlowOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -903,7 +934,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;TrainFlowRequest, Operation&gt; trainFlowCallable() {
-<span class="nc" id="L906">    return stub.trainFlowCallable();</span>
+<span class="nc" id="L937">    return stub.trainFlowCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -930,7 +961,7 @@ public class FlowsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final FlowValidationResult validateFlow(ValidateFlowRequest request) {
-<span class="fc" id="L933">    return validateFlowCallable().call(request);</span>
+<span class="fc" id="L964">    return validateFlowCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -957,7 +988,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ValidateFlowRequest, FlowValidationResult&gt; validateFlowCallable() {
-<span class="fc" id="L960">    return stub.validateFlowCallable();</span>
+<span class="fc" id="L991">    return stub.validateFlowCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -984,10 +1015,10 @@ public class FlowsClient implements BackgroundResource {
    */
   public final FlowValidationResult getFlowValidationResult(FlowValidationResultName name) {
     GetFlowValidationResultRequest request =
-<span class="fc" id="L987">        GetFlowValidationResultRequest.newBuilder()</span>
-<span class="pc bpc" id="L988" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L989">            .build();</span>
-<span class="fc" id="L990">    return getFlowValidationResult(request);</span>
+<span class="fc" id="L1018">        GetFlowValidationResultRequest.newBuilder()</span>
+<span class="pc bpc" id="L1019" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1020">            .build();</span>
+<span class="fc" id="L1021">    return getFlowValidationResult(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1014,8 +1045,8 @@ public class FlowsClient implements BackgroundResource {
    */
   public final FlowValidationResult getFlowValidationResult(String name) {
     GetFlowValidationResultRequest request =
-<span class="fc" id="L1017">        GetFlowValidationResultRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1018">    return getFlowValidationResult(request);</span>
+<span class="fc" id="L1048">        GetFlowValidationResultRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1049">    return getFlowValidationResult(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1045,7 +1076,7 @@ public class FlowsClient implements BackgroundResource {
    */
   public final FlowValidationResult getFlowValidationResult(
       GetFlowValidationResultRequest request) {
-<span class="fc" id="L1048">    return getFlowValidationResultCallable().call(request);</span>
+<span class="fc" id="L1079">    return getFlowValidationResultCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1075,7 +1106,7 @@ public class FlowsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetFlowValidationResultRequest, FlowValidationResult&gt;
       getFlowValidationResultCallable() {
-<span class="fc" id="L1078">    return stub.getFlowValidationResultCallable();</span>
+<span class="fc" id="L1109">    return stub.getFlowValidationResultCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1112,7 +1143,7 @@ public class FlowsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ImportFlowResponse, Struct&gt; importFlowAsync(
       ImportFlowRequest request) {
-<span class="fc" id="L1115">    return importFlowOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1146">    return importFlowOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1149,7 +1180,7 @@ public class FlowsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ImportFlowRequest, ImportFlowResponse, Struct&gt;
       importFlowOperationCallable() {
-<span class="fc" id="L1152">    return stub.importFlowOperationCallable();</span>
+<span class="fc" id="L1183">    return stub.importFlowOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1184,7 +1215,7 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ImportFlowRequest, Operation&gt; importFlowCallable() {
-<span class="nc" id="L1187">    return stub.importFlowCallable();</span>
+<span class="nc" id="L1218">    return stub.importFlowCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1223,7 +1254,7 @@ public class FlowsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ExportFlowResponse, Struct&gt; exportFlowAsync(
       ExportFlowRequest request) {
-<span class="fc" id="L1226">    return exportFlowOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1257">    return exportFlowOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1262,7 +1293,7 @@ public class FlowsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ExportFlowRequest, ExportFlowResponse, Struct&gt;
       exportFlowOperationCallable() {
-<span class="fc" id="L1265">    return stub.exportFlowOperationCallable();</span>
+<span class="fc" id="L1296">    return stub.exportFlowOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1299,37 +1330,176 @@ public class FlowsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExportFlowRequest, Operation&gt; exportFlowCallable() {
-<span class="nc" id="L1302">    return stub.exportFlowCallable();</span>
+<span class="nc" id="L1333">    return stub.exportFlowCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FlowsClient flowsClient = FlowsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : flowsClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L1363">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FlowsClient flowsClient = FlowsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future = flowsClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L1393">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FlowsClient flowsClient = FlowsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response = flowsClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L1429">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FlowsClient flowsClient = FlowsClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = flowsClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L1451">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FlowsClient flowsClient = FlowsClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = flowsClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L1472">    return stub.getLocationCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1307">    stub.close();</span>
-<span class="fc" id="L1308">  }</span>
+<span class="fc" id="L1477">    stub.close();</span>
+<span class="fc" id="L1478">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1312">    stub.shutdown();</span>
-<span class="nc" id="L1313">  }</span>
+<span class="nc" id="L1482">    stub.shutdown();</span>
+<span class="nc" id="L1483">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1317">    return stub.isShutdown();</span>
+<span class="nc" id="L1487">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1322">    return stub.isTerminated();</span>
+<span class="nc" id="L1492">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1327">    stub.shutdownNow();</span>
-<span class="nc" id="L1328">  }</span>
+<span class="nc" id="L1497">    stub.shutdownNow();</span>
+<span class="nc" id="L1498">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1332">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1502">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListFlowsPagedResponse
@@ -1340,14 +1510,14 @@ public class FlowsClient implements BackgroundResource {
         PageContext&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt; context,
         ApiFuture&lt;ListFlowsResponse&gt; futureResponse) {
       ApiFuture&lt;ListFlowsPage&gt; futurePage =
-<span class="fc" id="L1343">          ListFlowsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1344">      return ApiFutures.transform(</span>
-<span class="fc" id="L1345">          futurePage, input -&gt; new ListFlowsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1513">          ListFlowsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1514">      return ApiFutures.transform(</span>
+<span class="fc" id="L1515">          futurePage, input -&gt; new ListFlowsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListFlowsPagedResponse(ListFlowsPage page) {
-<span class="fc" id="L1349">      super(page, ListFlowsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1350">    }</span>
+<span class="fc" id="L1519">      super(page, ListFlowsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1520">    }</span>
   }
 
   public static class ListFlowsPage
@@ -1356,25 +1526,25 @@ public class FlowsClient implements BackgroundResource {
     private ListFlowsPage(
         PageContext&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt; context,
         ListFlowsResponse response) {
-<span class="fc" id="L1359">      super(context, response);</span>
-<span class="fc" id="L1360">    }</span>
+<span class="fc" id="L1529">      super(context, response);</span>
+<span class="fc" id="L1530">    }</span>
 
     private static ListFlowsPage createEmptyPage() {
-<span class="fc" id="L1363">      return new ListFlowsPage(null, null);</span>
+<span class="fc" id="L1533">      return new ListFlowsPage(null, null);</span>
     }
 
     @Override
     protected ListFlowsPage createPage(
         PageContext&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt; context,
         ListFlowsResponse response) {
-<span class="fc" id="L1370">      return new ListFlowsPage(context, response);</span>
+<span class="fc" id="L1540">      return new ListFlowsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListFlowsPage&gt; createPageAsync(
         PageContext&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt; context,
         ApiFuture&lt;ListFlowsResponse&gt; futureResponse) {
-<span class="fc" id="L1377">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1547">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1383,17 +1553,93 @@ public class FlowsClient implements BackgroundResource {
           ListFlowsRequest, ListFlowsResponse, Flow, ListFlowsPage, ListFlowsFixedSizeCollection&gt; {
 
     private ListFlowsFixedSizeCollection(List&lt;ListFlowsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1386">      super(pages, collectionSize);</span>
-<span class="fc" id="L1387">    }</span>
+<span class="fc" id="L1556">      super(pages, collectionSize);</span>
+<span class="fc" id="L1557">    }</span>
 
     private static ListFlowsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1390">      return new ListFlowsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1560">      return new ListFlowsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListFlowsFixedSizeCollection createCollection(
         List&lt;ListFlowsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1396">      return new ListFlowsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1566">      return new ListFlowsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L1582">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1583">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1585">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L1586">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L1590">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1591">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1601">      super(context, response);</span>
+<span class="fc" id="L1602">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L1605">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1612">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L1619">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1632">      super(pages, collectionSize);</span>
+<span class="fc" id="L1633">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1636">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1642">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

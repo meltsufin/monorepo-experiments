@@ -19,6 +19,7 @@ package com.google.cloud.dialogflow.cx.v3;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -28,9 +29,12 @@ import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.dialogflow.cx.v3.stub.TestCasesStub;
 import com.google.cloud.dialogflow.cx.v3.stub.TestCasesStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -103,17 +107,32 @@ import javax.annotation.Generated;
  * TestCasesClient testCasesClient = TestCasesClient.create(testCasesSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * TestCasesSettings testCasesSettings =
+ *     TestCasesSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             TestCasesSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * TestCasesClient testCasesClient = TestCasesClient.create(testCasesSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class TestCasesClient implements BackgroundResource {
   private final TestCasesSettings settings;
   private final TestCasesStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of TestCasesClient with default settings. */
   public static final TestCasesClient create() throws IOException {
-<span class="nc" id="L116">    return create(TestCasesSettings.newBuilder().build());</span>
+<span class="nc" id="L135">    return create(TestCasesSettings.newBuilder().build());</span>
   }
 
   /**
@@ -121,7 +140,7 @@ public class TestCasesClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final TestCasesClient create(TestCasesSettings settings) throws IOException {
-<span class="fc" id="L124">    return new TestCasesClient(settings);</span>
+<span class="fc" id="L143">    return new TestCasesClient(settings);</span>
   }
 
   /**
@@ -129,39 +148,51 @@ public class TestCasesClient implements BackgroundResource {
    * advanced usage - prefer using create(TestCasesSettings).
    */
   public static final TestCasesClient create(TestCasesStub stub) {
-<span class="nc" id="L132">    return new TestCasesClient(stub);</span>
+<span class="nc" id="L151">    return new TestCasesClient(stub);</span>
   }
 
   /**
    * Constructs an instance of TestCasesClient, using the given settings. This is protected so that
    * it is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L139">  protected TestCasesClient(TestCasesSettings settings) throws IOException {</span>
-<span class="fc" id="L140">    this.settings = settings;</span>
-<span class="fc" id="L141">    this.stub = ((TestCasesStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L142">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L143">  }</span>
+<span class="fc" id="L158">  protected TestCasesClient(TestCasesSettings settings) throws IOException {</span>
+<span class="fc" id="L159">    this.settings = settings;</span>
+<span class="fc" id="L160">    this.stub = ((TestCasesStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L161">    this.operationsClient =</span>
+<span class="fc" id="L162">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L163">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L164">  }</span>
 
-<span class="nc" id="L145">  protected TestCasesClient(TestCasesStub stub) {</span>
-<span class="nc" id="L146">    this.settings = null;</span>
-<span class="nc" id="L147">    this.stub = stub;</span>
-<span class="nc" id="L148">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L149">  }</span>
+<span class="nc" id="L166">  protected TestCasesClient(TestCasesStub stub) {</span>
+<span class="nc" id="L167">    this.settings = null;</span>
+<span class="nc" id="L168">    this.stub = stub;</span>
+<span class="nc" id="L169">    this.operationsClient =</span>
+<span class="nc" id="L170">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L171">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L172">  }</span>
 
   public final TestCasesSettings getSettings() {
-<span class="nc" id="L152">    return settings;</span>
+<span class="nc" id="L175">    return settings;</span>
   }
 
   public TestCasesStub getStub() {
-<span class="nc" id="L156">    return stub;</span>
+<span class="nc" id="L179">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L164">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L187">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L195">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -187,10 +218,10 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final ListTestCasesPagedResponse listTestCases(AgentName parent) {
     ListTestCasesRequest request =
-<span class="fc" id="L190">        ListTestCasesRequest.newBuilder()</span>
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L192">            .build();</span>
-<span class="fc" id="L193">    return listTestCases(request);</span>
+<span class="fc" id="L221">        ListTestCasesRequest.newBuilder()</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L223">            .build();</span>
+<span class="fc" id="L224">    return listTestCases(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -215,8 +246,8 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTestCasesPagedResponse listTestCases(String parent) {
-<span class="fc" id="L218">    ListTestCasesRequest request = ListTestCasesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L219">    return listTestCases(request);</span>
+<span class="fc" id="L249">    ListTestCasesRequest request = ListTestCasesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L250">    return listTestCases(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -245,7 +276,7 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTestCasesPagedResponse listTestCases(ListTestCasesRequest request) {
-<span class="fc" id="L248">    return listTestCasesPagedCallable().call(request);</span>
+<span class="fc" id="L279">    return listTestCasesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -274,7 +305,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTestCasesRequest, ListTestCasesPagedResponse&gt;
       listTestCasesPagedCallable() {
-<span class="fc" id="L277">    return stub.listTestCasesPagedCallable();</span>
+<span class="fc" id="L308">    return stub.listTestCasesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -295,7 +326,7 @@ public class TestCasesClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListTestCasesResponse response = testCasesClient.listTestCasesCallable().call(request);
-   *     for (TestCase element : response.getResponsesList()) {
+   *     for (TestCase element : response.getTestCasesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -309,7 +340,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListTestCasesRequest, ListTestCasesResponse&gt; listTestCasesCallable() {
-<span class="nc" id="L312">    return stub.listTestCasesCallable();</span>
+<span class="nc" id="L343">    return stub.listTestCasesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -333,11 +364,11 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final void batchDeleteTestCases(AgentName parent) {
     BatchDeleteTestCasesRequest request =
-<span class="fc" id="L336">        BatchDeleteTestCasesRequest.newBuilder()</span>
-<span class="pc bpc" id="L337" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L338">            .build();</span>
-<span class="fc" id="L339">    batchDeleteTestCases(request);</span>
-<span class="fc" id="L340">  }</span>
+<span class="fc" id="L367">        BatchDeleteTestCasesRequest.newBuilder()</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L369">            .build();</span>
+<span class="fc" id="L370">    batchDeleteTestCases(request);</span>
+<span class="fc" id="L371">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -360,9 +391,9 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final void batchDeleteTestCases(String parent) {
     BatchDeleteTestCasesRequest request =
-<span class="fc" id="L363">        BatchDeleteTestCasesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L364">    batchDeleteTestCases(request);</span>
-<span class="fc" id="L365">  }</span>
+<span class="fc" id="L394">        BatchDeleteTestCasesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L395">    batchDeleteTestCases(request);</span>
+<span class="fc" id="L396">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -387,8 +418,8 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void batchDeleteTestCases(BatchDeleteTestCasesRequest request) {
-<span class="fc" id="L390">    batchDeleteTestCasesCallable().call(request);</span>
-<span class="fc" id="L391">  }</span>
+<span class="fc" id="L421">    batchDeleteTestCasesCallable().call(request);</span>
+<span class="fc" id="L422">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -412,7 +443,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;BatchDeleteTestCasesRequest, Empty&gt; batchDeleteTestCasesCallable() {
-<span class="fc" id="L415">    return stub.batchDeleteTestCasesCallable();</span>
+<span class="fc" id="L446">    return stub.batchDeleteTestCasesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -437,8 +468,8 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final TestCase getTestCase(TestCaseName name) {
     GetTestCaseRequest request =
-<span class="pc bpc" id="L440" title="1 of 2 branches missed.">        GetTestCaseRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L441">    return getTestCase(request);</span>
+<span class="pc bpc" id="L471" title="1 of 2 branches missed.">        GetTestCaseRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L472">    return getTestCase(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -462,8 +493,8 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TestCase getTestCase(String name) {
-<span class="fc" id="L465">    GetTestCaseRequest request = GetTestCaseRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L466">    return getTestCase(request);</span>
+<span class="fc" id="L496">    GetTestCaseRequest request = GetTestCaseRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L497">    return getTestCase(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -489,7 +520,7 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TestCase getTestCase(GetTestCaseRequest request) {
-<span class="fc" id="L492">    return getTestCaseCallable().call(request);</span>
+<span class="fc" id="L523">    return getTestCaseCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -514,7 +545,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTestCaseRequest, TestCase&gt; getTestCaseCallable() {
-<span class="fc" id="L517">    return stub.getTestCaseCallable();</span>
+<span class="fc" id="L548">    return stub.getTestCaseCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -540,11 +571,11 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final TestCase createTestCase(AgentName parent, TestCase testCase) {
     CreateTestCaseRequest request =
-<span class="fc" id="L543">        CreateTestCaseRequest.newBuilder()</span>
-<span class="pc bpc" id="L544" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L545">            .setTestCase(testCase)</span>
-<span class="fc" id="L546">            .build();</span>
-<span class="fc" id="L547">    return createTestCase(request);</span>
+<span class="fc" id="L574">        CreateTestCaseRequest.newBuilder()</span>
+<span class="pc bpc" id="L575" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L576">            .setTestCase(testCase)</span>
+<span class="fc" id="L577">            .build();</span>
+<span class="fc" id="L578">    return createTestCase(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -570,8 +601,8 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final TestCase createTestCase(String parent, TestCase testCase) {
     CreateTestCaseRequest request =
-<span class="fc" id="L573">        CreateTestCaseRequest.newBuilder().setParent(parent).setTestCase(testCase).build();</span>
-<span class="fc" id="L574">    return createTestCase(request);</span>
+<span class="fc" id="L604">        CreateTestCaseRequest.newBuilder().setParent(parent).setTestCase(testCase).build();</span>
+<span class="fc" id="L605">    return createTestCase(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -597,7 +628,7 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TestCase createTestCase(CreateTestCaseRequest request) {
-<span class="fc" id="L600">    return createTestCaseCallable().call(request);</span>
+<span class="fc" id="L631">    return createTestCaseCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -622,7 +653,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateTestCaseRequest, TestCase&gt; createTestCaseCallable() {
-<span class="fc" id="L625">    return stub.createTestCaseCallable();</span>
+<span class="fc" id="L656">    return stub.createTestCaseCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -650,8 +681,8 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final TestCase updateTestCase(TestCase testCase, FieldMask updateMask) {
     UpdateTestCaseRequest request =
-<span class="fc" id="L653">        UpdateTestCaseRequest.newBuilder().setTestCase(testCase).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L654">    return updateTestCase(request);</span>
+<span class="fc" id="L684">        UpdateTestCaseRequest.newBuilder().setTestCase(testCase).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L685">    return updateTestCase(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -677,7 +708,7 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TestCase updateTestCase(UpdateTestCaseRequest request) {
-<span class="fc" id="L680">    return updateTestCaseCallable().call(request);</span>
+<span class="fc" id="L711">    return updateTestCaseCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -702,7 +733,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateTestCaseRequest, TestCase&gt; updateTestCaseCallable() {
-<span class="fc" id="L705">    return stub.updateTestCaseCallable();</span>
+<span class="fc" id="L736">    return stub.updateTestCaseCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -739,7 +770,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final OperationFuture&lt;RunTestCaseResponse, RunTestCaseMetadata&gt; runTestCaseAsync(
       RunTestCaseRequest request) {
-<span class="fc" id="L742">    return runTestCaseOperationCallable().futureCall(request);</span>
+<span class="fc" id="L773">    return runTestCaseOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -776,7 +807,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RunTestCaseRequest, RunTestCaseResponse, RunTestCaseMetadata&gt;
       runTestCaseOperationCallable() {
-<span class="fc" id="L779">    return stub.runTestCaseOperationCallable();</span>
+<span class="fc" id="L810">    return stub.runTestCaseOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -811,7 +842,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RunTestCaseRequest, Operation&gt; runTestCaseCallable() {
-<span class="nc" id="L814">    return stub.runTestCaseCallable();</span>
+<span class="nc" id="L845">    return stub.runTestCaseCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -850,7 +881,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final OperationFuture&lt;BatchRunTestCasesResponse, BatchRunTestCasesMetadata&gt;
       batchRunTestCasesAsync(BatchRunTestCasesRequest request) {
-<span class="fc" id="L853">    return batchRunTestCasesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L884">    return batchRunTestCasesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -890,7 +921,7 @@ public class TestCasesClient implements BackgroundResource {
   public final OperationCallable&lt;
           BatchRunTestCasesRequest, BatchRunTestCasesResponse, BatchRunTestCasesMetadata&gt;
       batchRunTestCasesOperationCallable() {
-<span class="fc" id="L893">    return stub.batchRunTestCasesOperationCallable();</span>
+<span class="fc" id="L924">    return stub.batchRunTestCasesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -927,7 +958,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;BatchRunTestCasesRequest, Operation&gt; batchRunTestCasesCallable() {
-<span class="nc" id="L930">    return stub.batchRunTestCasesCallable();</span>
+<span class="nc" id="L961">    return stub.batchRunTestCasesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -952,7 +983,7 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final CalculateCoverageResponse calculateCoverage(CalculateCoverageRequest request) {
-<span class="fc" id="L955">    return calculateCoverageCallable().call(request);</span>
+<span class="fc" id="L986">    return calculateCoverageCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -978,7 +1009,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CalculateCoverageRequest, CalculateCoverageResponse&gt;
       calculateCoverageCallable() {
-<span class="fc" id="L981">    return stub.calculateCoverageCallable();</span>
+<span class="fc" id="L1012">    return stub.calculateCoverageCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1014,7 +1045,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ImportTestCasesResponse, ImportTestCasesMetadata&gt;
       importTestCasesAsync(ImportTestCasesRequest request) {
-<span class="fc" id="L1017">    return importTestCasesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1048">    return importTestCasesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1051,7 +1082,7 @@ public class TestCasesClient implements BackgroundResource {
   public final OperationCallable&lt;
           ImportTestCasesRequest, ImportTestCasesResponse, ImportTestCasesMetadata&gt;
       importTestCasesOperationCallable() {
-<span class="fc" id="L1054">    return stub.importTestCasesOperationCallable();</span>
+<span class="fc" id="L1085">    return stub.importTestCasesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1085,7 +1116,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ImportTestCasesRequest, Operation&gt; importTestCasesCallable() {
-<span class="nc" id="L1088">    return stub.importTestCasesCallable();</span>
+<span class="nc" id="L1119">    return stub.importTestCasesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1121,7 +1152,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ExportTestCasesResponse, ExportTestCasesMetadata&gt;
       exportTestCasesAsync(ExportTestCasesRequest request) {
-<span class="fc" id="L1124">    return exportTestCasesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1155">    return exportTestCasesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1158,7 +1189,7 @@ public class TestCasesClient implements BackgroundResource {
   public final OperationCallable&lt;
           ExportTestCasesRequest, ExportTestCasesResponse, ExportTestCasesMetadata&gt;
       exportTestCasesOperationCallable() {
-<span class="fc" id="L1161">    return stub.exportTestCasesOperationCallable();</span>
+<span class="fc" id="L1192">    return stub.exportTestCasesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1192,7 +1223,7 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExportTestCasesRequest, Operation&gt; exportTestCasesCallable() {
-<span class="nc" id="L1195">    return stub.exportTestCasesCallable();</span>
+<span class="nc" id="L1226">    return stub.exportTestCasesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1220,10 +1251,10 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final ListTestCaseResultsPagedResponse listTestCaseResults(TestCaseName parent) {
     ListTestCaseResultsRequest request =
-<span class="fc" id="L1223">        ListTestCaseResultsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1224" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1225">            .build();</span>
-<span class="fc" id="L1226">    return listTestCaseResults(request);</span>
+<span class="fc" id="L1254">        ListTestCaseResultsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1255" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1256">            .build();</span>
+<span class="fc" id="L1257">    return listTestCaseResults(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1252,8 +1283,8 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final ListTestCaseResultsPagedResponse listTestCaseResults(String parent) {
     ListTestCaseResultsRequest request =
-<span class="fc" id="L1255">        ListTestCaseResultsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1256">    return listTestCaseResults(request);</span>
+<span class="fc" id="L1286">        ListTestCaseResultsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1287">    return listTestCaseResults(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1285,7 +1316,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final ListTestCaseResultsPagedResponse listTestCaseResults(
       ListTestCaseResultsRequest request) {
-<span class="fc" id="L1288">    return listTestCaseResultsPagedCallable().call(request);</span>
+<span class="fc" id="L1319">    return listTestCaseResultsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1317,7 +1348,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTestCaseResultsRequest, ListTestCaseResultsPagedResponse&gt;
       listTestCaseResultsPagedCallable() {
-<span class="fc" id="L1320">    return stub.listTestCaseResultsPagedCallable();</span>
+<span class="fc" id="L1351">    return stub.listTestCaseResultsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1341,7 +1372,7 @@ public class TestCasesClient implements BackgroundResource {
    *   while (true) {
    *     ListTestCaseResultsResponse response =
    *         testCasesClient.listTestCaseResultsCallable().call(request);
-   *     for (TestCaseResult element : response.getResponsesList()) {
+   *     for (TestCaseResult element : response.getTestCaseResultsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1356,7 +1387,7 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTestCaseResultsRequest, ListTestCaseResultsResponse&gt;
       listTestCaseResultsCallable() {
-<span class="nc" id="L1359">    return stub.listTestCaseResultsCallable();</span>
+<span class="nc" id="L1390">    return stub.listTestCaseResultsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1382,10 +1413,10 @@ public class TestCasesClient implements BackgroundResource {
    */
   public final TestCaseResult getTestCaseResult(TestCaseResultName name) {
     GetTestCaseResultRequest request =
-<span class="fc" id="L1385">        GetTestCaseResultRequest.newBuilder()</span>
-<span class="pc bpc" id="L1386" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1387">            .build();</span>
-<span class="fc" id="L1388">    return getTestCaseResult(request);</span>
+<span class="fc" id="L1416">        GetTestCaseResultRequest.newBuilder()</span>
+<span class="pc bpc" id="L1417" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1418">            .build();</span>
+<span class="fc" id="L1419">    return getTestCaseResult(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1411,8 +1442,8 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TestCaseResult getTestCaseResult(String name) {
-<span class="fc" id="L1414">    GetTestCaseResultRequest request = GetTestCaseResultRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1415">    return getTestCaseResult(request);</span>
+<span class="fc" id="L1445">    GetTestCaseResultRequest request = GetTestCaseResultRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1446">    return getTestCaseResult(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1440,7 +1471,7 @@ public class TestCasesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TestCaseResult getTestCaseResult(GetTestCaseResultRequest request) {
-<span class="fc" id="L1443">    return getTestCaseResultCallable().call(request);</span>
+<span class="fc" id="L1474">    return getTestCaseResultCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1468,37 +1499,176 @@ public class TestCasesClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTestCaseResultRequest, TestCaseResult&gt; getTestCaseResultCallable() {
-<span class="fc" id="L1471">    return stub.getTestCaseResultCallable();</span>
+<span class="fc" id="L1502">    return stub.getTestCaseResultCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TestCasesClient testCasesClient = TestCasesClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : testCasesClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L1532">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TestCasesClient testCasesClient = TestCasesClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future = testCasesClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L1562">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TestCasesClient testCasesClient = TestCasesClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response = testCasesClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L1598">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TestCasesClient testCasesClient = TestCasesClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = testCasesClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L1620">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (TestCasesClient testCasesClient = TestCasesClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = testCasesClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L1641">    return stub.getLocationCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1476">    stub.close();</span>
-<span class="fc" id="L1477">  }</span>
+<span class="fc" id="L1646">    stub.close();</span>
+<span class="fc" id="L1647">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1481">    stub.shutdown();</span>
-<span class="nc" id="L1482">  }</span>
+<span class="nc" id="L1651">    stub.shutdown();</span>
+<span class="nc" id="L1652">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1486">    return stub.isShutdown();</span>
+<span class="nc" id="L1656">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1491">    return stub.isTerminated();</span>
+<span class="nc" id="L1661">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1496">    stub.shutdownNow();</span>
-<span class="nc" id="L1497">  }</span>
+<span class="nc" id="L1666">    stub.shutdownNow();</span>
+<span class="nc" id="L1667">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1501">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1671">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListTestCasesPagedResponse
@@ -1513,16 +1683,16 @@ public class TestCasesClient implements BackgroundResource {
         PageContext&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt; context,
         ApiFuture&lt;ListTestCasesResponse&gt; futureResponse) {
       ApiFuture&lt;ListTestCasesPage&gt; futurePage =
-<span class="fc" id="L1516">          ListTestCasesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1517">      return ApiFutures.transform(</span>
+<span class="fc" id="L1686">          ListTestCasesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1687">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1519">          input -&gt; new ListTestCasesPagedResponse(input),</span>
-<span class="fc" id="L1520">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1689">          input -&gt; new ListTestCasesPagedResponse(input),</span>
+<span class="fc" id="L1690">          MoreExecutors.directExecutor());</span>
     }
 
     private ListTestCasesPagedResponse(ListTestCasesPage page) {
-<span class="fc" id="L1524">      super(page, ListTestCasesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1525">    }</span>
+<span class="fc" id="L1694">      super(page, ListTestCasesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1695">    }</span>
   }
 
   public static class ListTestCasesPage
@@ -1532,25 +1702,25 @@ public class TestCasesClient implements BackgroundResource {
     private ListTestCasesPage(
         PageContext&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt; context,
         ListTestCasesResponse response) {
-<span class="fc" id="L1535">      super(context, response);</span>
-<span class="fc" id="L1536">    }</span>
+<span class="fc" id="L1705">      super(context, response);</span>
+<span class="fc" id="L1706">    }</span>
 
     private static ListTestCasesPage createEmptyPage() {
-<span class="fc" id="L1539">      return new ListTestCasesPage(null, null);</span>
+<span class="fc" id="L1709">      return new ListTestCasesPage(null, null);</span>
     }
 
     @Override
     protected ListTestCasesPage createPage(
         PageContext&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt; context,
         ListTestCasesResponse response) {
-<span class="fc" id="L1546">      return new ListTestCasesPage(context, response);</span>
+<span class="fc" id="L1716">      return new ListTestCasesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListTestCasesPage&gt; createPageAsync(
         PageContext&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt; context,
         ApiFuture&lt;ListTestCasesResponse&gt; futureResponse) {
-<span class="fc" id="L1553">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1723">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1563,17 +1733,17 @@ public class TestCasesClient implements BackgroundResource {
           ListTestCasesFixedSizeCollection&gt; {
 
     private ListTestCasesFixedSizeCollection(List&lt;ListTestCasesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1566">      super(pages, collectionSize);</span>
-<span class="fc" id="L1567">    }</span>
+<span class="fc" id="L1736">      super(pages, collectionSize);</span>
+<span class="fc" id="L1737">    }</span>
 
     private static ListTestCasesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1570">      return new ListTestCasesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1740">      return new ListTestCasesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTestCasesFixedSizeCollection createCollection(
         List&lt;ListTestCasesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1576">      return new ListTestCasesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1746">      return new ListTestCasesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -1590,16 +1760,16 @@ public class TestCasesClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListTestCaseResultsResponse&gt; futureResponse) {
       ApiFuture&lt;ListTestCaseResultsPage&gt; futurePage =
-<span class="fc" id="L1593">          ListTestCaseResultsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1594">      return ApiFutures.transform(</span>
+<span class="fc" id="L1763">          ListTestCaseResultsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1764">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1596">          input -&gt; new ListTestCaseResultsPagedResponse(input),</span>
-<span class="fc" id="L1597">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1766">          input -&gt; new ListTestCaseResultsPagedResponse(input),</span>
+<span class="fc" id="L1767">          MoreExecutors.directExecutor());</span>
     }
 
     private ListTestCaseResultsPagedResponse(ListTestCaseResultsPage page) {
-<span class="fc" id="L1601">      super(page, ListTestCaseResultsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1602">    }</span>
+<span class="fc" id="L1771">      super(page, ListTestCaseResultsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1772">    }</span>
   }
 
   public static class ListTestCaseResultsPage
@@ -1613,11 +1783,11 @@ public class TestCasesClient implements BackgroundResource {
         PageContext&lt;ListTestCaseResultsRequest, ListTestCaseResultsResponse, TestCaseResult&gt;
             context,
         ListTestCaseResultsResponse response) {
-<span class="fc" id="L1616">      super(context, response);</span>
-<span class="fc" id="L1617">    }</span>
+<span class="fc" id="L1786">      super(context, response);</span>
+<span class="fc" id="L1787">    }</span>
 
     private static ListTestCaseResultsPage createEmptyPage() {
-<span class="fc" id="L1620">      return new ListTestCaseResultsPage(null, null);</span>
+<span class="fc" id="L1790">      return new ListTestCaseResultsPage(null, null);</span>
     }
 
     @Override
@@ -1625,7 +1795,7 @@ public class TestCasesClient implements BackgroundResource {
         PageContext&lt;ListTestCaseResultsRequest, ListTestCaseResultsResponse, TestCaseResult&gt;
             context,
         ListTestCaseResultsResponse response) {
-<span class="fc" id="L1628">      return new ListTestCaseResultsPage(context, response);</span>
+<span class="fc" id="L1798">      return new ListTestCaseResultsPage(context, response);</span>
     }
 
     @Override
@@ -1633,7 +1803,7 @@ public class TestCasesClient implements BackgroundResource {
         PageContext&lt;ListTestCaseResultsRequest, ListTestCaseResultsResponse, TestCaseResult&gt;
             context,
         ApiFuture&lt;ListTestCaseResultsResponse&gt; futureResponse) {
-<span class="fc" id="L1636">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1806">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1647,17 +1817,93 @@ public class TestCasesClient implements BackgroundResource {
 
     private ListTestCaseResultsFixedSizeCollection(
         List&lt;ListTestCaseResultsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1650">      super(pages, collectionSize);</span>
-<span class="fc" id="L1651">    }</span>
+<span class="fc" id="L1820">      super(pages, collectionSize);</span>
+<span class="fc" id="L1821">    }</span>
 
     private static ListTestCaseResultsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1654">      return new ListTestCaseResultsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1824">      return new ListTestCaseResultsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTestCaseResultsFixedSizeCollection createCollection(
         List&lt;ListTestCaseResultsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1660">      return new ListTestCaseResultsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1830">      return new ListTestCaseResultsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L1846">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1847">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1849">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L1850">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L1854">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1855">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1865">      super(context, response);</span>
+<span class="fc" id="L1866">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L1869">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1876">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L1883">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1896">      super(pages, collectionSize);</span>
+<span class="fc" id="L1897">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1900">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1906">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

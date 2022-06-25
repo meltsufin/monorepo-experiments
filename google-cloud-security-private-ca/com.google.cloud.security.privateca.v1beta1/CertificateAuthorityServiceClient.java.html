@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.security.privateca.v1beta1.stub.CertificateAuthorityServ
 import com.google.cloud.security.privateca.v1beta1.stub.CertificateAuthorityServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
 import java.util.List;
@@ -112,6 +112,22 @@ import javax.annotation.Generated;
  *     CertificateAuthorityServiceClient.create(certificateAuthorityServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * CertificateAuthorityServiceSettings certificateAuthorityServiceSettings =
+ *     CertificateAuthorityServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             CertificateAuthorityServiceSettings.defaultHttpJsonTransportProviderBuilder()
+ *                 .build())
+ *         .build();
+ * CertificateAuthorityServiceClient certificateAuthorityServiceClient =
+ *     CertificateAuthorityServiceClient.create(certificateAuthorityServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -119,11 +135,12 @@ import javax.annotation.Generated;
 public class CertificateAuthorityServiceClient implements BackgroundResource {
   private final CertificateAuthorityServiceSettings settings;
   private final CertificateAuthorityServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of CertificateAuthorityServiceClient with default settings. */
   public static final CertificateAuthorityServiceClient create() throws IOException {
-<span class="nc" id="L126">    return create(CertificateAuthorityServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L143">    return create(CertificateAuthorityServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -133,7 +150,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public static final CertificateAuthorityServiceClient create(
       CertificateAuthorityServiceSettings settings) throws IOException {
-<span class="fc" id="L136">    return new CertificateAuthorityServiceClient(settings);</span>
+<span class="fc" id="L153">    return new CertificateAuthorityServiceClient(settings);</span>
   }
 
   /**
@@ -142,7 +159,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public static final CertificateAuthorityServiceClient create(
       CertificateAuthorityServiceStub stub) {
-<span class="nc" id="L145">    return new CertificateAuthorityServiceClient(stub);</span>
+<span class="nc" id="L162">    return new CertificateAuthorityServiceClient(stub);</span>
   }
 
   /**
@@ -151,32 +168,44 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * should be preferred.
    */
   protected CertificateAuthorityServiceClient(CertificateAuthorityServiceSettings settings)
-<span class="fc" id="L154">      throws IOException {</span>
-<span class="fc" id="L155">    this.settings = settings;</span>
-<span class="fc" id="L156">    this.stub = ((CertificateAuthorityServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L157">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L158">  }</span>
+<span class="fc" id="L171">      throws IOException {</span>
+<span class="fc" id="L172">    this.settings = settings;</span>
+<span class="fc" id="L173">    this.stub = ((CertificateAuthorityServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L174">    this.operationsClient =</span>
+<span class="fc" id="L175">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L176">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L177">  }</span>
 
-<span class="nc" id="L160">  protected CertificateAuthorityServiceClient(CertificateAuthorityServiceStub stub) {</span>
-<span class="nc" id="L161">    this.settings = null;</span>
-<span class="nc" id="L162">    this.stub = stub;</span>
-<span class="nc" id="L163">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L164">  }</span>
+<span class="nc" id="L179">  protected CertificateAuthorityServiceClient(CertificateAuthorityServiceStub stub) {</span>
+<span class="nc" id="L180">    this.settings = null;</span>
+<span class="nc" id="L181">    this.stub = stub;</span>
+<span class="nc" id="L182">    this.operationsClient =</span>
+<span class="nc" id="L183">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L184">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L185">  }</span>
 
   public final CertificateAuthorityServiceSettings getSettings() {
-<span class="nc" id="L167">    return settings;</span>
+<span class="nc" id="L188">    return settings;</span>
   }
 
   public CertificateAuthorityServiceStub getStub() {
-<span class="nc" id="L171">    return stub;</span>
+<span class="nc" id="L192">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L179">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L200">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L208">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -219,12 +248,12 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final Certificate createCertificate(
       CertificateAuthorityName parent, Certificate certificate, String certificateId) {
     CreateCertificateRequest request =
-<span class="fc" id="L222">        CreateCertificateRequest.newBuilder()</span>
-<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L224">            .setCertificate(certificate)</span>
-<span class="fc" id="L225">            .setCertificateId(certificateId)</span>
-<span class="fc" id="L226">            .build();</span>
-<span class="fc" id="L227">    return createCertificate(request);</span>
+<span class="fc" id="L251">        CreateCertificateRequest.newBuilder()</span>
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L253">            .setCertificate(certificate)</span>
+<span class="fc" id="L254">            .setCertificateId(certificateId)</span>
+<span class="fc" id="L255">            .build();</span>
+<span class="fc" id="L256">    return createCertificate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -268,12 +297,12 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final Certificate createCertificate(
       String parent, Certificate certificate, String certificateId) {
     CreateCertificateRequest request =
-<span class="fc" id="L271">        CreateCertificateRequest.newBuilder()</span>
-<span class="fc" id="L272">            .setParent(parent)</span>
-<span class="fc" id="L273">            .setCertificate(certificate)</span>
-<span class="fc" id="L274">            .setCertificateId(certificateId)</span>
-<span class="fc" id="L275">            .build();</span>
-<span class="fc" id="L276">    return createCertificate(request);</span>
+<span class="fc" id="L300">        CreateCertificateRequest.newBuilder()</span>
+<span class="fc" id="L301">            .setParent(parent)</span>
+<span class="fc" id="L302">            .setCertificate(certificate)</span>
+<span class="fc" id="L303">            .setCertificateId(certificateId)</span>
+<span class="fc" id="L304">            .build();</span>
+<span class="fc" id="L305">    return createCertificate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -306,7 +335,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Certificate createCertificate(CreateCertificateRequest request) {
-<span class="fc" id="L309">    return createCertificateCallable().call(request);</span>
+<span class="fc" id="L338">    return createCertificateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -339,7 +368,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateCertificateRequest, Certificate&gt; createCertificateCallable() {
-<span class="fc" id="L342">    return stub.createCertificateCallable();</span>
+<span class="fc" id="L371">    return stub.createCertificateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -365,8 +394,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final Certificate getCertificate(CertificateName name) {
     GetCertificateRequest request =
-<span class="pc bpc" id="L368" title="1 of 2 branches missed.">        GetCertificateRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L369">    return getCertificate(request);</span>
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">        GetCertificateRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L398">    return getCertificate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -392,8 +421,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Certificate getCertificate(String name) {
-<span class="fc" id="L395">    GetCertificateRequest request = GetCertificateRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L396">    return getCertificate(request);</span>
+<span class="fc" id="L424">    GetCertificateRequest request = GetCertificateRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L425">    return getCertificate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -422,7 +451,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Certificate getCertificate(GetCertificateRequest request) {
-<span class="fc" id="L425">    return getCertificateCallable().call(request);</span>
+<span class="fc" id="L454">    return getCertificateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -451,7 +480,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetCertificateRequest, Certificate&gt; getCertificateCallable() {
-<span class="fc" id="L454">    return stub.getCertificateCallable();</span>
+<span class="fc" id="L483">    return stub.getCertificateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -481,10 +510,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ListCertificatesPagedResponse listCertificates(CertificateAuthorityName parent) {
     ListCertificatesRequest request =
-<span class="fc" id="L484">        ListCertificatesRequest.newBuilder()</span>
-<span class="pc bpc" id="L485" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L486">            .build();</span>
-<span class="fc" id="L487">    return listCertificates(request);</span>
+<span class="fc" id="L513">        ListCertificatesRequest.newBuilder()</span>
+<span class="pc bpc" id="L514" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L515">            .build();</span>
+<span class="fc" id="L516">    return listCertificates(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -515,8 +544,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ListCertificatesPagedResponse listCertificates(String parent) {
     ListCertificatesRequest request =
-<span class="fc" id="L518">        ListCertificatesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L519">    return listCertificates(request);</span>
+<span class="fc" id="L547">        ListCertificatesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L548">    return listCertificates(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -551,7 +580,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListCertificatesPagedResponse listCertificates(ListCertificatesRequest request) {
-<span class="fc" id="L554">    return listCertificatesPagedCallable().call(request);</span>
+<span class="fc" id="L583">    return listCertificatesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -586,7 +615,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListCertificatesRequest, ListCertificatesPagedResponse&gt;
       listCertificatesPagedCallable() {
-<span class="fc" id="L589">    return stub.listCertificatesPagedCallable();</span>
+<span class="fc" id="L618">    return stub.listCertificatesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -628,7 +657,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListCertificatesRequest, ListCertificatesResponse&gt;
       listCertificatesCallable() {
-<span class="nc" id="L631">    return stub.listCertificatesCallable();</span>
+<span class="nc" id="L660">    return stub.listCertificatesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -655,10 +684,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final Certificate revokeCertificate(CertificateName name) {
     RevokeCertificateRequest request =
-<span class="fc" id="L658">        RevokeCertificateRequest.newBuilder()</span>
-<span class="pc bpc" id="L659" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L660">            .build();</span>
-<span class="fc" id="L661">    return revokeCertificate(request);</span>
+<span class="fc" id="L687">        RevokeCertificateRequest.newBuilder()</span>
+<span class="pc bpc" id="L688" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L689">            .build();</span>
+<span class="fc" id="L690">    return revokeCertificate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -685,8 +714,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Certificate revokeCertificate(String name) {
-<span class="fc" id="L688">    RevokeCertificateRequest request = RevokeCertificateRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L689">    return revokeCertificate(request);</span>
+<span class="fc" id="L717">    RevokeCertificateRequest request = RevokeCertificateRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L718">    return revokeCertificate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -717,7 +746,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Certificate revokeCertificate(RevokeCertificateRequest request) {
-<span class="fc" id="L720">    return revokeCertificateCallable().call(request);</span>
+<span class="fc" id="L749">    return revokeCertificateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -748,7 +777,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RevokeCertificateRequest, Certificate&gt; revokeCertificateCallable() {
-<span class="fc" id="L751">    return stub.revokeCertificateCallable();</span>
+<span class="fc" id="L780">    return stub.revokeCertificateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -778,11 +807,11 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final Certificate updateCertificate(Certificate certificate, FieldMask updateMask) {
     UpdateCertificateRequest request =
-<span class="fc" id="L781">        UpdateCertificateRequest.newBuilder()</span>
-<span class="fc" id="L782">            .setCertificate(certificate)</span>
-<span class="fc" id="L783">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L784">            .build();</span>
-<span class="fc" id="L785">    return updateCertificate(request);</span>
+<span class="fc" id="L810">        UpdateCertificateRequest.newBuilder()</span>
+<span class="fc" id="L811">            .setCertificate(certificate)</span>
+<span class="fc" id="L812">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L813">            .build();</span>
+<span class="fc" id="L814">    return updateCertificate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -812,7 +841,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Certificate updateCertificate(UpdateCertificateRequest request) {
-<span class="fc" id="L815">    return updateCertificateCallable().call(request);</span>
+<span class="fc" id="L844">    return updateCertificateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -842,7 +871,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateCertificateRequest, Certificate&gt; updateCertificateCallable() {
-<span class="fc" id="L845">    return stub.updateCertificateCallable();</span>
+<span class="fc" id="L874">    return stub.updateCertificateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -878,10 +907,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       activateCertificateAuthorityAsync(CertificateAuthorityName name) {
     ActivateCertificateAuthorityRequest request =
-<span class="fc" id="L881">        ActivateCertificateAuthorityRequest.newBuilder()</span>
-<span class="pc bpc" id="L882" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L883">            .build();</span>
-<span class="fc" id="L884">    return activateCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L910">        ActivateCertificateAuthorityRequest.newBuilder()</span>
+<span class="pc bpc" id="L911" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L912">            .build();</span>
+<span class="fc" id="L913">    return activateCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -918,8 +947,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       activateCertificateAuthorityAsync(String name) {
     ActivateCertificateAuthorityRequest request =
-<span class="fc" id="L921">        ActivateCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L922">    return activateCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L950">        ActivateCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L951">    return activateCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -959,7 +988,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       activateCertificateAuthorityAsync(ActivateCertificateAuthorityRequest request) {
-<span class="fc" id="L962">    return activateCertificateAuthorityOperationCallable().futureCall(request);</span>
+<span class="fc" id="L991">    return activateCertificateAuthorityOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1001,7 +1030,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           ActivateCertificateAuthorityRequest, CertificateAuthority, OperationMetadata&gt;
       activateCertificateAuthorityOperationCallable() {
-<span class="fc" id="L1004">    return stub.activateCertificateAuthorityOperationCallable();</span>
+<span class="fc" id="L1033">    return stub.activateCertificateAuthorityOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1042,7 +1071,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ActivateCertificateAuthorityRequest, Operation&gt;
       activateCertificateAuthorityCallable() {
-<span class="nc" id="L1045">    return stub.activateCertificateAuthorityCallable();</span>
+<span class="nc" id="L1074">    return stub.activateCertificateAuthorityCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1084,12 +1113,12 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
           CertificateAuthority certificateAuthority,
           String certificateAuthorityId) {
     CreateCertificateAuthorityRequest request =
-<span class="fc" id="L1087">        CreateCertificateAuthorityRequest.newBuilder()</span>
-<span class="pc bpc" id="L1088" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1089">            .setCertificateAuthority(certificateAuthority)</span>
-<span class="fc" id="L1090">            .setCertificateAuthorityId(certificateAuthorityId)</span>
-<span class="fc" id="L1091">            .build();</span>
-<span class="fc" id="L1092">    return createCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L1116">        CreateCertificateAuthorityRequest.newBuilder()</span>
+<span class="pc bpc" id="L1117" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1118">            .setCertificateAuthority(certificateAuthority)</span>
+<span class="fc" id="L1119">            .setCertificateAuthorityId(certificateAuthorityId)</span>
+<span class="fc" id="L1120">            .build();</span>
+<span class="fc" id="L1121">    return createCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1129,12 +1158,12 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
       createCertificateAuthorityAsync(
           String parent, CertificateAuthority certificateAuthority, String certificateAuthorityId) {
     CreateCertificateAuthorityRequest request =
-<span class="fc" id="L1132">        CreateCertificateAuthorityRequest.newBuilder()</span>
-<span class="fc" id="L1133">            .setParent(parent)</span>
-<span class="fc" id="L1134">            .setCertificateAuthority(certificateAuthority)</span>
-<span class="fc" id="L1135">            .setCertificateAuthorityId(certificateAuthorityId)</span>
-<span class="fc" id="L1136">            .build();</span>
-<span class="fc" id="L1137">    return createCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L1161">        CreateCertificateAuthorityRequest.newBuilder()</span>
+<span class="fc" id="L1162">            .setParent(parent)</span>
+<span class="fc" id="L1163">            .setCertificateAuthority(certificateAuthority)</span>
+<span class="fc" id="L1164">            .setCertificateAuthorityId(certificateAuthorityId)</span>
+<span class="fc" id="L1165">            .build();</span>
+<span class="fc" id="L1166">    return createCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1167,7 +1196,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       createCertificateAuthorityAsync(CreateCertificateAuthorityRequest request) {
-<span class="fc" id="L1170">    return createCertificateAuthorityOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1199">    return createCertificateAuthorityOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1202,7 +1231,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateCertificateAuthorityRequest, CertificateAuthority, OperationMetadata&gt;
       createCertificateAuthorityOperationCallable() {
-<span class="fc" id="L1205">    return stub.createCertificateAuthorityOperationCallable();</span>
+<span class="fc" id="L1234">    return stub.createCertificateAuthorityOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1236,7 +1265,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateCertificateAuthorityRequest, Operation&gt;
       createCertificateAuthorityCallable() {
-<span class="nc" id="L1239">    return stub.createCertificateAuthorityCallable();</span>
+<span class="nc" id="L1268">    return stub.createCertificateAuthorityCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1265,10 +1294,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       disableCertificateAuthorityAsync(CertificateAuthorityName name) {
     DisableCertificateAuthorityRequest request =
-<span class="fc" id="L1268">        DisableCertificateAuthorityRequest.newBuilder()</span>
-<span class="pc bpc" id="L1269" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1270">            .build();</span>
-<span class="fc" id="L1271">    return disableCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L1297">        DisableCertificateAuthorityRequest.newBuilder()</span>
+<span class="pc bpc" id="L1298" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1299">            .build();</span>
+<span class="fc" id="L1300">    return disableCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1298,8 +1327,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       disableCertificateAuthorityAsync(String name) {
     DisableCertificateAuthorityRequest request =
-<span class="fc" id="L1301">        DisableCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1302">    return disableCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L1330">        DisableCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1331">    return disableCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1330,7 +1359,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       disableCertificateAuthorityAsync(DisableCertificateAuthorityRequest request) {
-<span class="fc" id="L1333">    return disableCertificateAuthorityOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1362">    return disableCertificateAuthorityOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1363,7 +1392,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           DisableCertificateAuthorityRequest, CertificateAuthority, OperationMetadata&gt;
       disableCertificateAuthorityOperationCallable() {
-<span class="fc" id="L1366">    return stub.disableCertificateAuthorityOperationCallable();</span>
+<span class="fc" id="L1395">    return stub.disableCertificateAuthorityOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1395,7 +1424,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DisableCertificateAuthorityRequest, Operation&gt;
       disableCertificateAuthorityCallable() {
-<span class="nc" id="L1398">    return stub.disableCertificateAuthorityCallable();</span>
+<span class="nc" id="L1427">    return stub.disableCertificateAuthorityCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1424,10 +1453,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       enableCertificateAuthorityAsync(CertificateAuthorityName name) {
     EnableCertificateAuthorityRequest request =
-<span class="fc" id="L1427">        EnableCertificateAuthorityRequest.newBuilder()</span>
-<span class="pc bpc" id="L1428" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1429">            .build();</span>
-<span class="fc" id="L1430">    return enableCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L1456">        EnableCertificateAuthorityRequest.newBuilder()</span>
+<span class="pc bpc" id="L1457" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1458">            .build();</span>
+<span class="fc" id="L1459">    return enableCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1457,8 +1486,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       enableCertificateAuthorityAsync(String name) {
     EnableCertificateAuthorityRequest request =
-<span class="fc" id="L1460">        EnableCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1461">    return enableCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L1489">        EnableCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1490">    return enableCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1489,7 +1518,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       enableCertificateAuthorityAsync(EnableCertificateAuthorityRequest request) {
-<span class="fc" id="L1492">    return enableCertificateAuthorityOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1521">    return enableCertificateAuthorityOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1522,7 +1551,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           EnableCertificateAuthorityRequest, CertificateAuthority, OperationMetadata&gt;
       enableCertificateAuthorityOperationCallable() {
-<span class="fc" id="L1525">    return stub.enableCertificateAuthorityOperationCallable();</span>
+<span class="fc" id="L1554">    return stub.enableCertificateAuthorityOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1554,7 +1583,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;EnableCertificateAuthorityRequest, Operation&gt;
       enableCertificateAuthorityCallable() {
-<span class="nc" id="L1557">    return stub.enableCertificateAuthorityCallable();</span>
+<span class="nc" id="L1586">    return stub.enableCertificateAuthorityCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1592,10 +1621,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final FetchCertificateAuthorityCsrResponse fetchCertificateAuthorityCsr(
       CertificateAuthorityName name) {
     FetchCertificateAuthorityCsrRequest request =
-<span class="fc" id="L1595">        FetchCertificateAuthorityCsrRequest.newBuilder()</span>
-<span class="pc bpc" id="L1596" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1597">            .build();</span>
-<span class="fc" id="L1598">    return fetchCertificateAuthorityCsr(request);</span>
+<span class="fc" id="L1624">        FetchCertificateAuthorityCsrRequest.newBuilder()</span>
+<span class="pc bpc" id="L1625" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1626">            .build();</span>
+<span class="fc" id="L1627">    return fetchCertificateAuthorityCsr(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1633,8 +1662,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final FetchCertificateAuthorityCsrResponse fetchCertificateAuthorityCsr(String name) {
     FetchCertificateAuthorityCsrRequest request =
-<span class="fc" id="L1636">        FetchCertificateAuthorityCsrRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1637">    return fetchCertificateAuthorityCsr(request);</span>
+<span class="fc" id="L1665">        FetchCertificateAuthorityCsrRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1666">    return fetchCertificateAuthorityCsr(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1673,7 +1702,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final FetchCertificateAuthorityCsrResponse fetchCertificateAuthorityCsr(
       FetchCertificateAuthorityCsrRequest request) {
-<span class="fc" id="L1676">    return fetchCertificateAuthorityCsrCallable().call(request);</span>
+<span class="fc" id="L1705">    return fetchCertificateAuthorityCsrCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1714,7 +1743,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           FetchCertificateAuthorityCsrRequest, FetchCertificateAuthorityCsrResponse&gt;
       fetchCertificateAuthorityCsrCallable() {
-<span class="fc" id="L1717">    return stub.fetchCertificateAuthorityCsrCallable();</span>
+<span class="fc" id="L1746">    return stub.fetchCertificateAuthorityCsrCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1743,10 +1772,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final CertificateAuthority getCertificateAuthority(CertificateAuthorityName name) {
     GetCertificateAuthorityRequest request =
-<span class="fc" id="L1746">        GetCertificateAuthorityRequest.newBuilder()</span>
-<span class="pc bpc" id="L1747" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1748">            .build();</span>
-<span class="fc" id="L1749">    return getCertificateAuthority(request);</span>
+<span class="fc" id="L1775">        GetCertificateAuthorityRequest.newBuilder()</span>
+<span class="pc bpc" id="L1776" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1777">            .build();</span>
+<span class="fc" id="L1778">    return getCertificateAuthority(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1776,8 +1805,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final CertificateAuthority getCertificateAuthority(String name) {
     GetCertificateAuthorityRequest request =
-<span class="fc" id="L1779">        GetCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1780">    return getCertificateAuthority(request);</span>
+<span class="fc" id="L1808">        GetCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1809">    return getCertificateAuthority(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1807,7 +1836,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final CertificateAuthority getCertificateAuthority(
       GetCertificateAuthorityRequest request) {
-<span class="fc" id="L1810">    return getCertificateAuthorityCallable().call(request);</span>
+<span class="fc" id="L1839">    return getCertificateAuthorityCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1836,7 +1865,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetCertificateAuthorityRequest, CertificateAuthority&gt;
       getCertificateAuthorityCallable() {
-<span class="fc" id="L1839">    return stub.getCertificateAuthorityCallable();</span>
+<span class="fc" id="L1868">    return stub.getCertificateAuthorityCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1866,10 +1895,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final ListCertificateAuthoritiesPagedResponse listCertificateAuthorities(
       LocationName parent) {
     ListCertificateAuthoritiesRequest request =
-<span class="fc" id="L1869">        ListCertificateAuthoritiesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1870" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1871">            .build();</span>
-<span class="fc" id="L1872">    return listCertificateAuthorities(request);</span>
+<span class="fc" id="L1898">        ListCertificateAuthoritiesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1899" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1900">            .build();</span>
+<span class="fc" id="L1901">    return listCertificateAuthorities(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1898,8 +1927,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ListCertificateAuthoritiesPagedResponse listCertificateAuthorities(String parent) {
     ListCertificateAuthoritiesRequest request =
-<span class="fc" id="L1901">        ListCertificateAuthoritiesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1902">    return listCertificateAuthorities(request);</span>
+<span class="fc" id="L1930">        ListCertificateAuthoritiesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1931">    return listCertificateAuthorities(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1933,7 +1962,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ListCertificateAuthoritiesPagedResponse listCertificateAuthorities(
       ListCertificateAuthoritiesRequest request) {
-<span class="fc" id="L1936">    return listCertificateAuthoritiesPagedCallable().call(request);</span>
+<span class="fc" id="L1965">    return listCertificateAuthoritiesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1969,7 +1998,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListCertificateAuthoritiesRequest, ListCertificateAuthoritiesPagedResponse&gt;
       listCertificateAuthoritiesPagedCallable() {
-<span class="fc" id="L1972">    return stub.listCertificateAuthoritiesPagedCallable();</span>
+<span class="fc" id="L2001">    return stub.listCertificateAuthoritiesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2009,7 +2038,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListCertificateAuthoritiesRequest, ListCertificateAuthoritiesResponse&gt;
       listCertificateAuthoritiesCallable() {
-<span class="nc" id="L2012">    return stub.listCertificateAuthoritiesCallable();</span>
+<span class="nc" id="L2041">    return stub.listCertificateAuthoritiesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2039,10 +2068,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       restoreCertificateAuthorityAsync(CertificateAuthorityName name) {
     RestoreCertificateAuthorityRequest request =
-<span class="fc" id="L2042">        RestoreCertificateAuthorityRequest.newBuilder()</span>
-<span class="pc bpc" id="L2043" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2044">            .build();</span>
-<span class="fc" id="L2045">    return restoreCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L2071">        RestoreCertificateAuthorityRequest.newBuilder()</span>
+<span class="pc bpc" id="L2072" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2073">            .build();</span>
+<span class="fc" id="L2074">    return restoreCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2073,8 +2102,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       restoreCertificateAuthorityAsync(String name) {
     RestoreCertificateAuthorityRequest request =
-<span class="fc" id="L2076">        RestoreCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2077">    return restoreCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L2105">        RestoreCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2106">    return restoreCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2106,7 +2135,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       restoreCertificateAuthorityAsync(RestoreCertificateAuthorityRequest request) {
-<span class="fc" id="L2109">    return restoreCertificateAuthorityOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2138">    return restoreCertificateAuthorityOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2140,7 +2169,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           RestoreCertificateAuthorityRequest, CertificateAuthority, OperationMetadata&gt;
       restoreCertificateAuthorityOperationCallable() {
-<span class="fc" id="L2143">    return stub.restoreCertificateAuthorityOperationCallable();</span>
+<span class="fc" id="L2172">    return stub.restoreCertificateAuthorityOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2173,7 +2202,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;RestoreCertificateAuthorityRequest, Operation&gt;
       restoreCertificateAuthorityCallable() {
-<span class="nc" id="L2176">    return stub.restoreCertificateAuthorityCallable();</span>
+<span class="nc" id="L2205">    return stub.restoreCertificateAuthorityCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2203,10 +2232,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       scheduleDeleteCertificateAuthorityAsync(CertificateAuthorityName name) {
     ScheduleDeleteCertificateAuthorityRequest request =
-<span class="fc" id="L2206">        ScheduleDeleteCertificateAuthorityRequest.newBuilder()</span>
-<span class="pc bpc" id="L2207" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2208">            .build();</span>
-<span class="fc" id="L2209">    return scheduleDeleteCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L2235">        ScheduleDeleteCertificateAuthorityRequest.newBuilder()</span>
+<span class="pc bpc" id="L2236" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2237">            .build();</span>
+<span class="fc" id="L2238">    return scheduleDeleteCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2237,8 +2266,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       scheduleDeleteCertificateAuthorityAsync(String name) {
     ScheduleDeleteCertificateAuthorityRequest request =
-<span class="fc" id="L2240">        ScheduleDeleteCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2241">    return scheduleDeleteCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L2269">        ScheduleDeleteCertificateAuthorityRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2270">    return scheduleDeleteCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2270,7 +2299,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       scheduleDeleteCertificateAuthorityAsync(ScheduleDeleteCertificateAuthorityRequest request) {
-<span class="fc" id="L2273">    return scheduleDeleteCertificateAuthorityOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2302">    return scheduleDeleteCertificateAuthorityOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2304,7 +2333,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           ScheduleDeleteCertificateAuthorityRequest, CertificateAuthority, OperationMetadata&gt;
       scheduleDeleteCertificateAuthorityOperationCallable() {
-<span class="fc" id="L2307">    return stub.scheduleDeleteCertificateAuthorityOperationCallable();</span>
+<span class="fc" id="L2336">    return stub.scheduleDeleteCertificateAuthorityOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2337,7 +2366,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ScheduleDeleteCertificateAuthorityRequest, Operation&gt;
       scheduleDeleteCertificateAuthorityCallable() {
-<span class="nc" id="L2340">    return stub.scheduleDeleteCertificateAuthorityCallable();</span>
+<span class="nc" id="L2369">    return stub.scheduleDeleteCertificateAuthorityCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2370,11 +2399,11 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
       updateCertificateAuthorityAsync(
           CertificateAuthority certificateAuthority, FieldMask updateMask) {
     UpdateCertificateAuthorityRequest request =
-<span class="fc" id="L2373">        UpdateCertificateAuthorityRequest.newBuilder()</span>
-<span class="fc" id="L2374">            .setCertificateAuthority(certificateAuthority)</span>
-<span class="fc" id="L2375">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L2376">            .build();</span>
-<span class="fc" id="L2377">    return updateCertificateAuthorityAsync(request);</span>
+<span class="fc" id="L2402">        UpdateCertificateAuthorityRequest.newBuilder()</span>
+<span class="fc" id="L2403">            .setCertificateAuthority(certificateAuthority)</span>
+<span class="fc" id="L2404">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L2405">            .build();</span>
+<span class="fc" id="L2406">    return updateCertificateAuthorityAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2404,7 +2433,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CertificateAuthority, OperationMetadata&gt;
       updateCertificateAuthorityAsync(UpdateCertificateAuthorityRequest request) {
-<span class="fc" id="L2407">    return updateCertificateAuthorityOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2436">    return updateCertificateAuthorityOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2436,7 +2465,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateCertificateAuthorityRequest, CertificateAuthority, OperationMetadata&gt;
       updateCertificateAuthorityOperationCallable() {
-<span class="fc" id="L2439">    return stub.updateCertificateAuthorityOperationCallable();</span>
+<span class="fc" id="L2468">    return stub.updateCertificateAuthorityOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2467,7 +2496,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateCertificateAuthorityRequest, Operation&gt;
       updateCertificateAuthorityCallable() {
-<span class="nc" id="L2470">    return stub.updateCertificateAuthorityCallable();</span>
+<span class="nc" id="L2499">    return stub.updateCertificateAuthorityCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2502,10 +2531,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final CertificateRevocationList getCertificateRevocationList(
       CertificateRevocationListName name) {
     GetCertificateRevocationListRequest request =
-<span class="fc" id="L2505">        GetCertificateRevocationListRequest.newBuilder()</span>
-<span class="pc bpc" id="L2506" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2507">            .build();</span>
-<span class="fc" id="L2508">    return getCertificateRevocationList(request);</span>
+<span class="fc" id="L2534">        GetCertificateRevocationListRequest.newBuilder()</span>
+<span class="pc bpc" id="L2535" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2536">            .build();</span>
+<span class="fc" id="L2537">    return getCertificateRevocationList(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2540,8 +2569,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final CertificateRevocationList getCertificateRevocationList(String name) {
     GetCertificateRevocationListRequest request =
-<span class="fc" id="L2543">        GetCertificateRevocationListRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2544">    return getCertificateRevocationList(request);</span>
+<span class="fc" id="L2572">        GetCertificateRevocationListRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2573">    return getCertificateRevocationList(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2576,7 +2605,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final CertificateRevocationList getCertificateRevocationList(
       GetCertificateRevocationListRequest request) {
-<span class="fc" id="L2579">    return getCertificateRevocationListCallable().call(request);</span>
+<span class="fc" id="L2608">    return getCertificateRevocationListCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2612,7 +2641,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetCertificateRevocationListRequest, CertificateRevocationList&gt;
       getCertificateRevocationListCallable() {
-<span class="fc" id="L2615">    return stub.getCertificateRevocationListCallable();</span>
+<span class="fc" id="L2644">    return stub.getCertificateRevocationListCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2644,10 +2673,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final ListCertificateRevocationListsPagedResponse listCertificateRevocationLists(
       CertificateAuthorityName parent) {
     ListCertificateRevocationListsRequest request =
-<span class="fc" id="L2647">        ListCertificateRevocationListsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2648" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2649">            .build();</span>
-<span class="fc" id="L2650">    return listCertificateRevocationLists(request);</span>
+<span class="fc" id="L2676">        ListCertificateRevocationListsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2677" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2678">            .build();</span>
+<span class="fc" id="L2679">    return listCertificateRevocationLists(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2680,8 +2709,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final ListCertificateRevocationListsPagedResponse listCertificateRevocationLists(
       String parent) {
     ListCertificateRevocationListsRequest request =
-<span class="fc" id="L2683">        ListCertificateRevocationListsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2684">    return listCertificateRevocationLists(request);</span>
+<span class="fc" id="L2712">        ListCertificateRevocationListsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2713">    return listCertificateRevocationLists(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2718,7 +2747,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ListCertificateRevocationListsPagedResponse listCertificateRevocationLists(
       ListCertificateRevocationListsRequest request) {
-<span class="fc" id="L2721">    return listCertificateRevocationListsPagedCallable().call(request);</span>
+<span class="fc" id="L2750">    return listCertificateRevocationListsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2757,7 +2786,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListCertificateRevocationListsRequest, ListCertificateRevocationListsPagedResponse&gt;
       listCertificateRevocationListsPagedCallable() {
-<span class="fc" id="L2760">    return stub.listCertificateRevocationListsPagedCallable();</span>
+<span class="fc" id="L2789">    return stub.listCertificateRevocationListsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2803,7 +2832,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListCertificateRevocationListsRequest, ListCertificateRevocationListsResponse&gt;
       listCertificateRevocationListsCallable() {
-<span class="nc" id="L2806">    return stub.listCertificateRevocationListsCallable();</span>
+<span class="nc" id="L2835">    return stub.listCertificateRevocationListsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2838,11 +2867,11 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
       updateCertificateRevocationListAsync(
           CertificateRevocationList certificateRevocationList, FieldMask updateMask) {
     UpdateCertificateRevocationListRequest request =
-<span class="fc" id="L2841">        UpdateCertificateRevocationListRequest.newBuilder()</span>
-<span class="fc" id="L2842">            .setCertificateRevocationList(certificateRevocationList)</span>
-<span class="fc" id="L2843">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L2844">            .build();</span>
-<span class="fc" id="L2845">    return updateCertificateRevocationListAsync(request);</span>
+<span class="fc" id="L2870">        UpdateCertificateRevocationListRequest.newBuilder()</span>
+<span class="fc" id="L2871">            .setCertificateRevocationList(certificateRevocationList)</span>
+<span class="fc" id="L2872">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L2873">            .build();</span>
+<span class="fc" id="L2874">    return updateCertificateRevocationListAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2873,7 +2902,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CertificateRevocationList, OperationMetadata&gt;
       updateCertificateRevocationListAsync(UpdateCertificateRevocationListRequest request) {
-<span class="fc" id="L2876">    return updateCertificateRevocationListOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2905">    return updateCertificateRevocationListOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2906,7 +2935,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateCertificateRevocationListRequest, CertificateRevocationList, OperationMetadata&gt;
       updateCertificateRevocationListOperationCallable() {
-<span class="fc" id="L2909">    return stub.updateCertificateRevocationListOperationCallable();</span>
+<span class="fc" id="L2938">    return stub.updateCertificateRevocationListOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2938,7 +2967,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateCertificateRevocationListRequest, Operation&gt;
       updateCertificateRevocationListCallable() {
-<span class="nc" id="L2941">    return stub.updateCertificateRevocationListCallable();</span>
+<span class="nc" id="L2970">    return stub.updateCertificateRevocationListCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2963,10 +2992,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ReusableConfig getReusableConfig(ReusableConfigName name) {
     GetReusableConfigRequest request =
-<span class="fc" id="L2966">        GetReusableConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L2967" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2968">            .build();</span>
-<span class="fc" id="L2969">    return getReusableConfig(request);</span>
+<span class="fc" id="L2995">        GetReusableConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L2996" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2997">            .build();</span>
+<span class="fc" id="L2998">    return getReusableConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2990,8 +3019,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ReusableConfig getReusableConfig(String name) {
-<span class="fc" id="L2993">    GetReusableConfigRequest request = GetReusableConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2994">    return getReusableConfig(request);</span>
+<span class="fc" id="L3022">    GetReusableConfigRequest request = GetReusableConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3023">    return getReusableConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3018,7 +3047,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ReusableConfig getReusableConfig(GetReusableConfigRequest request) {
-<span class="fc" id="L3021">    return getReusableConfigCallable().call(request);</span>
+<span class="fc" id="L3050">    return getReusableConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3045,7 +3074,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetReusableConfigRequest, ReusableConfig&gt; getReusableConfigCallable() {
-<span class="fc" id="L3048">    return stub.getReusableConfigCallable();</span>
+<span class="fc" id="L3077">    return stub.getReusableConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3074,10 +3103,10 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ListReusableConfigsPagedResponse listReusableConfigs(LocationName parent) {
     ListReusableConfigsRequest request =
-<span class="fc" id="L3077">        ListReusableConfigsRequest.newBuilder()</span>
-<span class="pc bpc" id="L3078" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L3079">            .build();</span>
-<span class="fc" id="L3080">    return listReusableConfigs(request);</span>
+<span class="fc" id="L3106">        ListReusableConfigsRequest.newBuilder()</span>
+<span class="pc bpc" id="L3107" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L3108">            .build();</span>
+<span class="fc" id="L3109">    return listReusableConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3106,8 +3135,8 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ListReusableConfigsPagedResponse listReusableConfigs(String parent) {
     ListReusableConfigsRequest request =
-<span class="fc" id="L3109">        ListReusableConfigsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L3110">    return listReusableConfigs(request);</span>
+<span class="fc" id="L3138">        ListReusableConfigsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L3139">    return listReusableConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3141,7 +3170,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final ListReusableConfigsPagedResponse listReusableConfigs(
       ListReusableConfigsRequest request) {
-<span class="fc" id="L3144">    return listReusableConfigsPagedCallable().call(request);</span>
+<span class="fc" id="L3173">    return listReusableConfigsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3174,7 +3203,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListReusableConfigsRequest, ListReusableConfigsPagedResponse&gt;
       listReusableConfigsPagedCallable() {
-<span class="fc" id="L3177">    return stub.listReusableConfigsPagedCallable();</span>
+<span class="fc" id="L3206">    return stub.listReusableConfigsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3214,37 +3243,37 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListReusableConfigsRequest, ListReusableConfigsResponse&gt;
       listReusableConfigsCallable() {
-<span class="nc" id="L3217">    return stub.listReusableConfigsCallable();</span>
+<span class="nc" id="L3246">    return stub.listReusableConfigsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L3222">    stub.close();</span>
-<span class="fc" id="L3223">  }</span>
+<span class="fc" id="L3251">    stub.close();</span>
+<span class="fc" id="L3252">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L3227">    stub.shutdown();</span>
-<span class="nc" id="L3228">  }</span>
+<span class="nc" id="L3256">    stub.shutdown();</span>
+<span class="nc" id="L3257">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L3232">    return stub.isShutdown();</span>
+<span class="nc" id="L3261">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L3237">    return stub.isTerminated();</span>
+<span class="nc" id="L3266">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L3242">    stub.shutdownNow();</span>
-<span class="nc" id="L3243">  }</span>
+<span class="nc" id="L3271">    stub.shutdownNow();</span>
+<span class="nc" id="L3272">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L3247">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L3276">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListCertificatesPagedResponse
@@ -3259,16 +3288,16 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
         PageContext&lt;ListCertificatesRequest, ListCertificatesResponse, Certificate&gt; context,
         ApiFuture&lt;ListCertificatesResponse&gt; futureResponse) {
       ApiFuture&lt;ListCertificatesPage&gt; futurePage =
-<span class="fc" id="L3262">          ListCertificatesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3263">      return ApiFutures.transform(</span>
+<span class="fc" id="L3291">          ListCertificatesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3292">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3265">          input -&gt; new ListCertificatesPagedResponse(input),</span>
-<span class="fc" id="L3266">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3294">          input -&gt; new ListCertificatesPagedResponse(input),</span>
+<span class="fc" id="L3295">          MoreExecutors.directExecutor());</span>
     }
 
     private ListCertificatesPagedResponse(ListCertificatesPage page) {
-<span class="fc" id="L3270">      super(page, ListCertificatesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3271">    }</span>
+<span class="fc" id="L3299">      super(page, ListCertificatesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3300">    }</span>
   }
 
   public static class ListCertificatesPage
@@ -3278,25 +3307,25 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
     private ListCertificatesPage(
         PageContext&lt;ListCertificatesRequest, ListCertificatesResponse, Certificate&gt; context,
         ListCertificatesResponse response) {
-<span class="fc" id="L3281">      super(context, response);</span>
-<span class="fc" id="L3282">    }</span>
+<span class="fc" id="L3310">      super(context, response);</span>
+<span class="fc" id="L3311">    }</span>
 
     private static ListCertificatesPage createEmptyPage() {
-<span class="fc" id="L3285">      return new ListCertificatesPage(null, null);</span>
+<span class="fc" id="L3314">      return new ListCertificatesPage(null, null);</span>
     }
 
     @Override
     protected ListCertificatesPage createPage(
         PageContext&lt;ListCertificatesRequest, ListCertificatesResponse, Certificate&gt; context,
         ListCertificatesResponse response) {
-<span class="fc" id="L3292">      return new ListCertificatesPage(context, response);</span>
+<span class="fc" id="L3321">      return new ListCertificatesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListCertificatesPage&gt; createPageAsync(
         PageContext&lt;ListCertificatesRequest, ListCertificatesResponse, Certificate&gt; context,
         ApiFuture&lt;ListCertificatesResponse&gt; futureResponse) {
-<span class="fc" id="L3299">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3328">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3310,17 +3339,17 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
 
     private ListCertificatesFixedSizeCollection(
         List&lt;ListCertificatesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3313">      super(pages, collectionSize);</span>
-<span class="fc" id="L3314">    }</span>
+<span class="fc" id="L3342">      super(pages, collectionSize);</span>
+<span class="fc" id="L3343">    }</span>
 
     private static ListCertificatesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3317">      return new ListCertificatesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3346">      return new ListCertificatesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListCertificatesFixedSizeCollection createCollection(
         List&lt;ListCertificatesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3323">      return new ListCertificatesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L3352">      return new ListCertificatesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3340,16 +3369,16 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListCertificateAuthoritiesResponse&gt; futureResponse) {
       ApiFuture&lt;ListCertificateAuthoritiesPage&gt; futurePage =
-<span class="fc" id="L3343">          ListCertificateAuthoritiesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3344">      return ApiFutures.transform(</span>
+<span class="fc" id="L3372">          ListCertificateAuthoritiesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3373">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3346">          input -&gt; new ListCertificateAuthoritiesPagedResponse(input),</span>
-<span class="fc" id="L3347">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3375">          input -&gt; new ListCertificateAuthoritiesPagedResponse(input),</span>
+<span class="fc" id="L3376">          MoreExecutors.directExecutor());</span>
     }
 
     private ListCertificateAuthoritiesPagedResponse(ListCertificateAuthoritiesPage page) {
-<span class="fc" id="L3351">      super(page, ListCertificateAuthoritiesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3352">    }</span>
+<span class="fc" id="L3380">      super(page, ListCertificateAuthoritiesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3381">    }</span>
   }
 
   public static class ListCertificateAuthoritiesPage
@@ -3366,11 +3395,11 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
                 CertificateAuthority&gt;
             context,
         ListCertificateAuthoritiesResponse response) {
-<span class="fc" id="L3369">      super(context, response);</span>
-<span class="fc" id="L3370">    }</span>
+<span class="fc" id="L3398">      super(context, response);</span>
+<span class="fc" id="L3399">    }</span>
 
     private static ListCertificateAuthoritiesPage createEmptyPage() {
-<span class="fc" id="L3373">      return new ListCertificateAuthoritiesPage(null, null);</span>
+<span class="fc" id="L3402">      return new ListCertificateAuthoritiesPage(null, null);</span>
     }
 
     @Override
@@ -3381,7 +3410,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
                 CertificateAuthority&gt;
             context,
         ListCertificateAuthoritiesResponse response) {
-<span class="fc" id="L3384">      return new ListCertificateAuthoritiesPage(context, response);</span>
+<span class="fc" id="L3413">      return new ListCertificateAuthoritiesPage(context, response);</span>
     }
 
     @Override
@@ -3392,7 +3421,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
                 CertificateAuthority&gt;
             context,
         ApiFuture&lt;ListCertificateAuthoritiesResponse&gt; futureResponse) {
-<span class="fc" id="L3395">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3424">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3406,17 +3435,17 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
 
     private ListCertificateAuthoritiesFixedSizeCollection(
         List&lt;ListCertificateAuthoritiesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3409">      super(pages, collectionSize);</span>
-<span class="fc" id="L3410">    }</span>
+<span class="fc" id="L3438">      super(pages, collectionSize);</span>
+<span class="fc" id="L3439">    }</span>
 
     private static ListCertificateAuthoritiesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3413">      return new ListCertificateAuthoritiesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3442">      return new ListCertificateAuthoritiesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListCertificateAuthoritiesFixedSizeCollection createCollection(
         List&lt;ListCertificateAuthoritiesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3419">      return new ListCertificateAuthoritiesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L3448">      return new ListCertificateAuthoritiesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3436,17 +3465,17 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListCertificateRevocationListsResponse&gt; futureResponse) {
       ApiFuture&lt;ListCertificateRevocationListsPage&gt; futurePage =
-<span class="fc" id="L3439">          ListCertificateRevocationListsPage.createEmptyPage()</span>
-<span class="fc" id="L3440">              .createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3441">      return ApiFutures.transform(</span>
+<span class="fc" id="L3468">          ListCertificateRevocationListsPage.createEmptyPage()</span>
+<span class="fc" id="L3469">              .createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3470">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3443">          input -&gt; new ListCertificateRevocationListsPagedResponse(input),</span>
-<span class="fc" id="L3444">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3472">          input -&gt; new ListCertificateRevocationListsPagedResponse(input),</span>
+<span class="fc" id="L3473">          MoreExecutors.directExecutor());</span>
     }
 
     private ListCertificateRevocationListsPagedResponse(ListCertificateRevocationListsPage page) {
-<span class="fc" id="L3448">      super(page, ListCertificateRevocationListsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3449">    }</span>
+<span class="fc" id="L3477">      super(page, ListCertificateRevocationListsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3478">    }</span>
   }
 
   public static class ListCertificateRevocationListsPage
@@ -3463,11 +3492,11 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
                 CertificateRevocationList&gt;
             context,
         ListCertificateRevocationListsResponse response) {
-<span class="fc" id="L3466">      super(context, response);</span>
-<span class="fc" id="L3467">    }</span>
+<span class="fc" id="L3495">      super(context, response);</span>
+<span class="fc" id="L3496">    }</span>
 
     private static ListCertificateRevocationListsPage createEmptyPage() {
-<span class="fc" id="L3470">      return new ListCertificateRevocationListsPage(null, null);</span>
+<span class="fc" id="L3499">      return new ListCertificateRevocationListsPage(null, null);</span>
     }
 
     @Override
@@ -3478,7 +3507,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
                 CertificateRevocationList&gt;
             context,
         ListCertificateRevocationListsResponse response) {
-<span class="fc" id="L3481">      return new ListCertificateRevocationListsPage(context, response);</span>
+<span class="fc" id="L3510">      return new ListCertificateRevocationListsPage(context, response);</span>
     }
 
     @Override
@@ -3489,7 +3518,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
                 CertificateRevocationList&gt;
             context,
         ApiFuture&lt;ListCertificateRevocationListsResponse&gt; futureResponse) {
-<span class="fc" id="L3492">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3521">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3503,17 +3532,17 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
 
     private ListCertificateRevocationListsFixedSizeCollection(
         List&lt;ListCertificateRevocationListsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3506">      super(pages, collectionSize);</span>
-<span class="fc" id="L3507">    }</span>
+<span class="fc" id="L3535">      super(pages, collectionSize);</span>
+<span class="fc" id="L3536">    }</span>
 
     private static ListCertificateRevocationListsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3510">      return new ListCertificateRevocationListsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3539">      return new ListCertificateRevocationListsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListCertificateRevocationListsFixedSizeCollection createCollection(
         List&lt;ListCertificateRevocationListsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3516">      return new ListCertificateRevocationListsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L3545">      return new ListCertificateRevocationListsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3530,16 +3559,16 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListReusableConfigsResponse&gt; futureResponse) {
       ApiFuture&lt;ListReusableConfigsPage&gt; futurePage =
-<span class="fc" id="L3533">          ListReusableConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3534">      return ApiFutures.transform(</span>
+<span class="fc" id="L3562">          ListReusableConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3563">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3536">          input -&gt; new ListReusableConfigsPagedResponse(input),</span>
-<span class="fc" id="L3537">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3565">          input -&gt; new ListReusableConfigsPagedResponse(input),</span>
+<span class="fc" id="L3566">          MoreExecutors.directExecutor());</span>
     }
 
     private ListReusableConfigsPagedResponse(ListReusableConfigsPage page) {
-<span class="fc" id="L3541">      super(page, ListReusableConfigsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3542">    }</span>
+<span class="fc" id="L3570">      super(page, ListReusableConfigsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3571">    }</span>
   }
 
   public static class ListReusableConfigsPage
@@ -3553,11 +3582,11 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
         PageContext&lt;ListReusableConfigsRequest, ListReusableConfigsResponse, ReusableConfig&gt;
             context,
         ListReusableConfigsResponse response) {
-<span class="fc" id="L3556">      super(context, response);</span>
-<span class="fc" id="L3557">    }</span>
+<span class="fc" id="L3585">      super(context, response);</span>
+<span class="fc" id="L3586">    }</span>
 
     private static ListReusableConfigsPage createEmptyPage() {
-<span class="fc" id="L3560">      return new ListReusableConfigsPage(null, null);</span>
+<span class="fc" id="L3589">      return new ListReusableConfigsPage(null, null);</span>
     }
 
     @Override
@@ -3565,7 +3594,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
         PageContext&lt;ListReusableConfigsRequest, ListReusableConfigsResponse, ReusableConfig&gt;
             context,
         ListReusableConfigsResponse response) {
-<span class="fc" id="L3568">      return new ListReusableConfigsPage(context, response);</span>
+<span class="fc" id="L3597">      return new ListReusableConfigsPage(context, response);</span>
     }
 
     @Override
@@ -3573,7 +3602,7 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
         PageContext&lt;ListReusableConfigsRequest, ListReusableConfigsResponse, ReusableConfig&gt;
             context,
         ApiFuture&lt;ListReusableConfigsResponse&gt; futureResponse) {
-<span class="fc" id="L3576">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3605">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3587,17 +3616,17 @@ public class CertificateAuthorityServiceClient implements BackgroundResource {
 
     private ListReusableConfigsFixedSizeCollection(
         List&lt;ListReusableConfigsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3590">      super(pages, collectionSize);</span>
-<span class="fc" id="L3591">    }</span>
+<span class="fc" id="L3619">      super(pages, collectionSize);</span>
+<span class="fc" id="L3620">    }</span>
 
     private static ListReusableConfigsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3594">      return new ListReusableConfigsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3623">      return new ListReusableConfigsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListReusableConfigsFixedSizeCollection createCollection(
         List&lt;ListReusableConfigsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3600">      return new ListReusableConfigsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L3629">      return new ListReusableConfigsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

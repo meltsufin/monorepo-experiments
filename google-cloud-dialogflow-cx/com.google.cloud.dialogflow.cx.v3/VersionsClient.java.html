@@ -19,6 +19,7 @@ package com.google.cloud.dialogflow.cx.v3;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -28,9 +29,12 @@ import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.dialogflow.cx.v3.stub.VersionsStub;
 import com.google.cloud.dialogflow.cx.v3.stub.VersionsStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Struct;
@@ -104,17 +108,32 @@ import javax.annotation.Generated;
  * VersionsClient versionsClient = VersionsClient.create(versionsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * VersionsSettings versionsSettings =
+ *     VersionsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             VersionsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * VersionsClient versionsClient = VersionsClient.create(versionsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class VersionsClient implements BackgroundResource {
   private final VersionsSettings settings;
   private final VersionsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of VersionsClient with default settings. */
   public static final VersionsClient create() throws IOException {
-<span class="nc" id="L117">    return create(VersionsSettings.newBuilder().build());</span>
+<span class="nc" id="L136">    return create(VersionsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -122,7 +141,7 @@ public class VersionsClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final VersionsClient create(VersionsSettings settings) throws IOException {
-<span class="fc" id="L125">    return new VersionsClient(settings);</span>
+<span class="fc" id="L144">    return new VersionsClient(settings);</span>
   }
 
   /**
@@ -130,39 +149,51 @@ public class VersionsClient implements BackgroundResource {
    * advanced usage - prefer using create(VersionsSettings).
    */
   public static final VersionsClient create(VersionsStub stub) {
-<span class="nc" id="L133">    return new VersionsClient(stub);</span>
+<span class="nc" id="L152">    return new VersionsClient(stub);</span>
   }
 
   /**
    * Constructs an instance of VersionsClient, using the given settings. This is protected so that
    * it is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L140">  protected VersionsClient(VersionsSettings settings) throws IOException {</span>
-<span class="fc" id="L141">    this.settings = settings;</span>
-<span class="fc" id="L142">    this.stub = ((VersionsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L143">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L144">  }</span>
+<span class="fc" id="L159">  protected VersionsClient(VersionsSettings settings) throws IOException {</span>
+<span class="fc" id="L160">    this.settings = settings;</span>
+<span class="fc" id="L161">    this.stub = ((VersionsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L162">    this.operationsClient =</span>
+<span class="fc" id="L163">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L164">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L165">  }</span>
 
-<span class="nc" id="L146">  protected VersionsClient(VersionsStub stub) {</span>
-<span class="nc" id="L147">    this.settings = null;</span>
-<span class="nc" id="L148">    this.stub = stub;</span>
-<span class="nc" id="L149">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L150">  }</span>
+<span class="nc" id="L167">  protected VersionsClient(VersionsStub stub) {</span>
+<span class="nc" id="L168">    this.settings = null;</span>
+<span class="nc" id="L169">    this.stub = stub;</span>
+<span class="nc" id="L170">    this.operationsClient =</span>
+<span class="nc" id="L171">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L172">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L173">  }</span>
 
   public final VersionsSettings getSettings() {
-<span class="nc" id="L153">    return settings;</span>
+<span class="nc" id="L176">    return settings;</span>
   }
 
   public VersionsStub getStub() {
-<span class="nc" id="L157">    return stub;</span>
+<span class="nc" id="L180">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L165">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L188">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L196">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -189,10 +220,10 @@ public class VersionsClient implements BackgroundResource {
    */
   public final ListVersionsPagedResponse listVersions(FlowName parent) {
     ListVersionsRequest request =
-<span class="fc" id="L192">        ListVersionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L193" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L194">            .build();</span>
-<span class="fc" id="L195">    return listVersions(request);</span>
+<span class="fc" id="L223">        ListVersionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L225">            .build();</span>
+<span class="fc" id="L226">    return listVersions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -218,8 +249,8 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListVersionsPagedResponse listVersions(String parent) {
-<span class="fc" id="L221">    ListVersionsRequest request = ListVersionsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L222">    return listVersions(request);</span>
+<span class="fc" id="L252">    ListVersionsRequest request = ListVersionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L253">    return listVersions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -248,7 +279,7 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListVersionsPagedResponse listVersions(ListVersionsRequest request) {
-<span class="fc" id="L251">    return listVersionsPagedCallable().call(request);</span>
+<span class="fc" id="L282">    return listVersionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -277,7 +308,7 @@ public class VersionsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListVersionsRequest, ListVersionsPagedResponse&gt;
       listVersionsPagedCallable() {
-<span class="fc" id="L280">    return stub.listVersionsPagedCallable();</span>
+<span class="fc" id="L311">    return stub.listVersionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -298,7 +329,7 @@ public class VersionsClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListVersionsResponse response = versionsClient.listVersionsCallable().call(request);
-   *     for (Version element : response.getResponsesList()) {
+   *     for (Version element : response.getVersionsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -312,7 +343,7 @@ public class VersionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListVersionsRequest, ListVersionsResponse&gt; listVersionsCallable() {
-<span class="nc" id="L315">    return stub.listVersionsCallable();</span>
+<span class="nc" id="L346">    return stub.listVersionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -338,8 +369,8 @@ public class VersionsClient implements BackgroundResource {
    */
   public final Version getVersion(VersionName name) {
     GetVersionRequest request =
-<span class="pc bpc" id="L341" title="1 of 2 branches missed.">        GetVersionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L342">    return getVersion(request);</span>
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">        GetVersionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L373">    return getVersion(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -364,8 +395,8 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Version getVersion(String name) {
-<span class="fc" id="L367">    GetVersionRequest request = GetVersionRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L368">    return getVersion(request);</span>
+<span class="fc" id="L398">    GetVersionRequest request = GetVersionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L399">    return getVersion(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -392,7 +423,7 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Version getVersion(GetVersionRequest request) {
-<span class="fc" id="L395">    return getVersionCallable().call(request);</span>
+<span class="fc" id="L426">    return getVersionCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -418,7 +449,7 @@ public class VersionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetVersionRequest, Version&gt; getVersionCallable() {
-<span class="fc" id="L421">    return stub.getVersionCallable();</span>
+<span class="fc" id="L452">    return stub.getVersionCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -455,11 +486,11 @@ public class VersionsClient implements BackgroundResource {
   public final OperationFuture&lt;Version, CreateVersionOperationMetadata&gt; createVersionAsync(
       FlowName parent, Version version) {
     CreateVersionRequest request =
-<span class="fc" id="L458">        CreateVersionRequest.newBuilder()</span>
-<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L460">            .setVersion(version)</span>
-<span class="fc" id="L461">            .build();</span>
-<span class="fc" id="L462">    return createVersionAsync(request);</span>
+<span class="fc" id="L489">        CreateVersionRequest.newBuilder()</span>
+<span class="pc bpc" id="L490" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L491">            .setVersion(version)</span>
+<span class="fc" id="L492">            .build();</span>
+<span class="fc" id="L493">    return createVersionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -496,8 +527,8 @@ public class VersionsClient implements BackgroundResource {
   public final OperationFuture&lt;Version, CreateVersionOperationMetadata&gt; createVersionAsync(
       String parent, Version version) {
     CreateVersionRequest request =
-<span class="fc" id="L499">        CreateVersionRequest.newBuilder().setParent(parent).setVersion(version).build();</span>
-<span class="fc" id="L500">    return createVersionAsync(request);</span>
+<span class="fc" id="L530">        CreateVersionRequest.newBuilder().setParent(parent).setVersion(version).build();</span>
+<span class="fc" id="L531">    return createVersionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -533,7 +564,7 @@ public class VersionsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Version, CreateVersionOperationMetadata&gt; createVersionAsync(
       CreateVersionRequest request) {
-<span class="fc" id="L536">    return createVersionOperationCallable().futureCall(request);</span>
+<span class="fc" id="L567">    return createVersionOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -569,7 +600,7 @@ public class VersionsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateVersionRequest, Version, CreateVersionOperationMetadata&gt;
       createVersionOperationCallable() {
-<span class="fc" id="L572">    return stub.createVersionOperationCallable();</span>
+<span class="fc" id="L603">    return stub.createVersionOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -603,7 +634,7 @@ public class VersionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateVersionRequest, Operation&gt; createVersionCallable() {
-<span class="nc" id="L606">    return stub.createVersionCallable();</span>
+<span class="nc" id="L637">    return stub.createVersionCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -629,8 +660,8 @@ public class VersionsClient implements BackgroundResource {
    */
   public final Version updateVersion(Version version, FieldMask updateMask) {
     UpdateVersionRequest request =
-<span class="fc" id="L632">        UpdateVersionRequest.newBuilder().setVersion(version).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L633">    return updateVersion(request);</span>
+<span class="fc" id="L663">        UpdateVersionRequest.newBuilder().setVersion(version).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L664">    return updateVersion(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -656,7 +687,7 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Version updateVersion(UpdateVersionRequest request) {
-<span class="fc" id="L659">    return updateVersionCallable().call(request);</span>
+<span class="fc" id="L690">    return updateVersionCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -681,7 +712,7 @@ public class VersionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateVersionRequest, Version&gt; updateVersionCallable() {
-<span class="fc" id="L684">    return stub.updateVersionCallable();</span>
+<span class="fc" id="L715">    return stub.updateVersionCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -707,9 +738,9 @@ public class VersionsClient implements BackgroundResource {
    */
   public final void deleteVersion(VersionName name) {
     DeleteVersionRequest request =
-<span class="pc bpc" id="L710" title="1 of 2 branches missed.">        DeleteVersionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L711">    deleteVersion(request);</span>
-<span class="fc" id="L712">  }</span>
+<span class="pc bpc" id="L741" title="1 of 2 branches missed.">        DeleteVersionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L742">    deleteVersion(request);</span>
+<span class="fc" id="L743">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -733,9 +764,9 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteVersion(String name) {
-<span class="fc" id="L736">    DeleteVersionRequest request = DeleteVersionRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L737">    deleteVersion(request);</span>
-<span class="fc" id="L738">  }</span>
+<span class="fc" id="L767">    DeleteVersionRequest request = DeleteVersionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L768">    deleteVersion(request);</span>
+<span class="fc" id="L769">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -761,8 +792,8 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteVersion(DeleteVersionRequest request) {
-<span class="fc" id="L764">    deleteVersionCallable().call(request);</span>
-<span class="fc" id="L765">  }</span>
+<span class="fc" id="L795">    deleteVersionCallable().call(request);</span>
+<span class="fc" id="L796">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -787,7 +818,7 @@ public class VersionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteVersionRequest, Empty&gt; deleteVersionCallable() {
-<span class="fc" id="L790">    return stub.deleteVersionCallable();</span>
+<span class="fc" id="L821">    return stub.deleteVersionCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -822,8 +853,8 @@ public class VersionsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, Struct&gt; loadVersionAsync(VersionName name) {
     LoadVersionRequest request =
-<span class="pc bpc" id="L825" title="1 of 2 branches missed.">        LoadVersionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L826">    return loadVersionAsync(request);</span>
+<span class="pc bpc" id="L856" title="1 of 2 branches missed.">        LoadVersionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L857">    return loadVersionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -857,8 +888,8 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, Struct&gt; loadVersionAsync(String name) {
-<span class="fc" id="L860">    LoadVersionRequest request = LoadVersionRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L861">    return loadVersionAsync(request);</span>
+<span class="fc" id="L891">    LoadVersionRequest request = LoadVersionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L892">    return loadVersionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -895,7 +926,7 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, Struct&gt; loadVersionAsync(LoadVersionRequest request) {
-<span class="fc" id="L898">    return loadVersionOperationCallable().futureCall(request);</span>
+<span class="fc" id="L929">    return loadVersionOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -932,7 +963,7 @@ public class VersionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final OperationCallable&lt;LoadVersionRequest, Empty, Struct&gt; loadVersionOperationCallable() {
-<span class="fc" id="L935">    return stub.loadVersionOperationCallable();</span>
+<span class="fc" id="L966">    return stub.loadVersionOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -968,7 +999,7 @@ public class VersionsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;LoadVersionRequest, Operation&gt; loadVersionCallable() {
-<span class="nc" id="L971">    return stub.loadVersionCallable();</span>
+<span class="nc" id="L1002">    return stub.loadVersionCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -995,10 +1026,10 @@ public class VersionsClient implements BackgroundResource {
    */
   public final CompareVersionsResponse compareVersions(VersionName baseVersion) {
     CompareVersionsRequest request =
-<span class="fc" id="L998">        CompareVersionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L999" title="1 of 2 branches missed.">            .setBaseVersion(baseVersion == null ? null : baseVersion.toString())</span>
-<span class="fc" id="L1000">            .build();</span>
-<span class="fc" id="L1001">    return compareVersions(request);</span>
+<span class="fc" id="L1029">        CompareVersionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1030" title="1 of 2 branches missed.">            .setBaseVersion(baseVersion == null ? null : baseVersion.toString())</span>
+<span class="fc" id="L1031">            .build();</span>
+<span class="fc" id="L1032">    return compareVersions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1025,8 +1056,8 @@ public class VersionsClient implements BackgroundResource {
    */
   public final CompareVersionsResponse compareVersions(String baseVersion) {
     CompareVersionsRequest request =
-<span class="fc" id="L1028">        CompareVersionsRequest.newBuilder().setBaseVersion(baseVersion).build();</span>
-<span class="fc" id="L1029">    return compareVersions(request);</span>
+<span class="fc" id="L1059">        CompareVersionsRequest.newBuilder().setBaseVersion(baseVersion).build();</span>
+<span class="fc" id="L1060">    return compareVersions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1057,7 +1088,7 @@ public class VersionsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final CompareVersionsResponse compareVersions(CompareVersionsRequest request) {
-<span class="fc" id="L1060">    return compareVersionsCallable().call(request);</span>
+<span class="fc" id="L1091">    return compareVersionsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1089,37 +1120,176 @@ public class VersionsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CompareVersionsRequest, CompareVersionsResponse&gt;
       compareVersionsCallable() {
-<span class="fc" id="L1092">    return stub.compareVersionsCallable();</span>
+<span class="fc" id="L1123">    return stub.compareVersionsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (VersionsClient versionsClient = VersionsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : versionsClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L1153">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (VersionsClient versionsClient = VersionsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future = versionsClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L1183">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (VersionsClient versionsClient = VersionsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response = versionsClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L1219">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (VersionsClient versionsClient = VersionsClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = versionsClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L1241">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (VersionsClient versionsClient = VersionsClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = versionsClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L1262">    return stub.getLocationCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1097">    stub.close();</span>
-<span class="fc" id="L1098">  }</span>
+<span class="fc" id="L1267">    stub.close();</span>
+<span class="fc" id="L1268">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1102">    stub.shutdown();</span>
-<span class="nc" id="L1103">  }</span>
+<span class="nc" id="L1272">    stub.shutdown();</span>
+<span class="nc" id="L1273">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1107">    return stub.isShutdown();</span>
+<span class="nc" id="L1277">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1112">    return stub.isTerminated();</span>
+<span class="nc" id="L1282">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1117">    stub.shutdownNow();</span>
-<span class="nc" id="L1118">  }</span>
+<span class="nc" id="L1287">    stub.shutdownNow();</span>
+<span class="nc" id="L1288">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1122">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1292">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListVersionsPagedResponse
@@ -1134,16 +1304,16 @@ public class VersionsClient implements BackgroundResource {
         PageContext&lt;ListVersionsRequest, ListVersionsResponse, Version&gt; context,
         ApiFuture&lt;ListVersionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListVersionsPage&gt; futurePage =
-<span class="fc" id="L1137">          ListVersionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1138">      return ApiFutures.transform(</span>
+<span class="fc" id="L1307">          ListVersionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1308">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1140">          input -&gt; new ListVersionsPagedResponse(input),</span>
-<span class="fc" id="L1141">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1310">          input -&gt; new ListVersionsPagedResponse(input),</span>
+<span class="fc" id="L1311">          MoreExecutors.directExecutor());</span>
     }
 
     private ListVersionsPagedResponse(ListVersionsPage page) {
-<span class="fc" id="L1145">      super(page, ListVersionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1146">    }</span>
+<span class="fc" id="L1315">      super(page, ListVersionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1316">    }</span>
   }
 
   public static class ListVersionsPage
@@ -1152,25 +1322,25 @@ public class VersionsClient implements BackgroundResource {
     private ListVersionsPage(
         PageContext&lt;ListVersionsRequest, ListVersionsResponse, Version&gt; context,
         ListVersionsResponse response) {
-<span class="fc" id="L1155">      super(context, response);</span>
-<span class="fc" id="L1156">    }</span>
+<span class="fc" id="L1325">      super(context, response);</span>
+<span class="fc" id="L1326">    }</span>
 
     private static ListVersionsPage createEmptyPage() {
-<span class="fc" id="L1159">      return new ListVersionsPage(null, null);</span>
+<span class="fc" id="L1329">      return new ListVersionsPage(null, null);</span>
     }
 
     @Override
     protected ListVersionsPage createPage(
         PageContext&lt;ListVersionsRequest, ListVersionsResponse, Version&gt; context,
         ListVersionsResponse response) {
-<span class="fc" id="L1166">      return new ListVersionsPage(context, response);</span>
+<span class="fc" id="L1336">      return new ListVersionsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListVersionsPage&gt; createPageAsync(
         PageContext&lt;ListVersionsRequest, ListVersionsResponse, Version&gt; context,
         ApiFuture&lt;ListVersionsResponse&gt; futureResponse) {
-<span class="fc" id="L1173">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1343">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1183,17 +1353,93 @@ public class VersionsClient implements BackgroundResource {
           ListVersionsFixedSizeCollection&gt; {
 
     private ListVersionsFixedSizeCollection(List&lt;ListVersionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1186">      super(pages, collectionSize);</span>
-<span class="fc" id="L1187">    }</span>
+<span class="fc" id="L1356">      super(pages, collectionSize);</span>
+<span class="fc" id="L1357">    }</span>
 
     private static ListVersionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1190">      return new ListVersionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1360">      return new ListVersionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListVersionsFixedSizeCollection createCollection(
         List&lt;ListVersionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1196">      return new ListVersionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1366">      return new ListVersionsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L1382">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1383">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1385">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L1386">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L1390">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1391">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1401">      super(context, response);</span>
+<span class="fc" id="L1402">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L1405">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1412">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L1419">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1432">      super(pages, collectionSize);</span>
+<span class="fc" id="L1433">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1436">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1442">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

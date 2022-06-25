@@ -16,7 +16,10 @@
 
 package com.google.cloud.dialogflow.cx.v3beta1.stub;
 
+import static com.google.cloud.dialogflow.cx.v3beta1.SessionsClient.ListLocationsPagedResponse;
+
 import com.google.api.core.ApiFunction;
+import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.core.GoogleCredentialsProvider;
@@ -24,14 +27,23 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
+import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
 import com.google.api.gax.rpc.ClientContext;
+import com.google.api.gax.rpc.PageContext;
+import com.google.api.gax.rpc.PagedCallSettings;
+import com.google.api.gax.rpc.PagedListDescriptor;
+import com.google.api.gax.rpc.PagedListResponseFactory;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.StreamingCallSettings;
 import com.google.api.gax.rpc.StubSettings;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.api.gax.rpc.UnaryCallSettings;
+import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.dialogflow.cx.v3beta1.DetectIntentRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.DetectIntentResponse;
 import com.google.cloud.dialogflow.cx.v3beta1.FulfillIntentRequest;
@@ -40,6 +52,10 @@ import com.google.cloud.dialogflow.cx.v3beta1.MatchIntentRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.MatchIntentResponse;
 import com.google.cloud.dialogflow.cx.v3beta1.StreamingDetectIntentRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.StreamingDetectIntentResponse;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -86,11 +102,11 @@ import org.threeten.bp.Duration;
 @Generated(&quot;by gapic-generator-java&quot;)
 public class SessionsStubSettings extends StubSettings&lt;SessionsStubSettings&gt; {
   /** The default scopes of the service. */
-<span class="fc" id="L89">  private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =</span>
-<span class="fc" id="L90">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L91">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L92">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L93">          .build();</span>
+  private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
+<span class="fc" id="L106">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L107">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L108">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L109">          .build();</span>
 
   private final UnaryCallSettings&lt;DetectIntentRequest, DetectIntentResponse&gt; detectIntentSettings;
   private final StreamingCallSettings&lt;StreamingDetectIntentRequest, StreamingDetectIntentResponse&gt;
@@ -98,107 +114,207 @@ public class SessionsStubSettings extends StubSettings&lt;SessionsStubSettings&g
   private final UnaryCallSettings&lt;MatchIntentRequest, MatchIntentResponse&gt; matchIntentSettings;
   private final UnaryCallSettings&lt;FulfillIntentRequest, FulfillIntentResponse&gt;
       fulfillIntentSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L123">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L124">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L127">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L132">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L137">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L142">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L147">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L153">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L154">                  : payload.getLocationsList();</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L160">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L162">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L169">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L170">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L171">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
 
   /** Returns the object with the settings used for calls to detectIntent. */
   public UnaryCallSettings&lt;DetectIntentRequest, DetectIntentResponse&gt; detectIntentSettings() {
-<span class="fc" id="L104">    return detectIntentSettings;</span>
+<span class="fc" id="L177">    return detectIntentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to streamingDetectIntent. */
   public StreamingCallSettings&lt;StreamingDetectIntentRequest, StreamingDetectIntentResponse&gt;
       streamingDetectIntentSettings() {
-<span class="fc" id="L110">    return streamingDetectIntentSettings;</span>
+<span class="fc" id="L183">    return streamingDetectIntentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to matchIntent. */
   public UnaryCallSettings&lt;MatchIntentRequest, MatchIntentResponse&gt; matchIntentSettings() {
-<span class="fc" id="L115">    return matchIntentSettings;</span>
+<span class="fc" id="L188">    return matchIntentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to fulfillIntent. */
   public UnaryCallSettings&lt;FulfillIntentRequest, FulfillIntentResponse&gt; fulfillIntentSettings() {
-<span class="fc" id="L120">    return fulfillIntentSettings;</span>
+<span class="fc" id="L193">    return fulfillIntentSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L199">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L204">    return getLocationSettings;</span>
   }
 
   public SessionsStub createStub() throws IOException {
-<span class="fc" id="L124">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L125">        .getTransportName()</span>
-<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L127">      return GrpcSessionsStub.create(this);</span>
+<span class="fc" id="L208">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L209">        .getTransportName()</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L211">      return GrpcSessionsStub.create(this);</span>
     }
-<span class="nc" id="L129">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L130">        String.format(</span>
-<span class="nc" id="L131">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L213">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L214">        .getTransportName()</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L216">      return HttpJsonSessionsStub.create(this);</span>
+    }
+<span class="nc" id="L218">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L219">        String.format(</span>
+<span class="nc" id="L220">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L136">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L225">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L141">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L230">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L146">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L235">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L151">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L240">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L156">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L157">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L158">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L245">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L246">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L247">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L163">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L164">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L252">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L253">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L260">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L168">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L264">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L173">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L174">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(SessionsStubSettings.class))</span>
-<span class="fc" id="L175">        .setTransportToken(</span>
-<span class="fc" id="L176">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L269">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L270">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(SessionsStubSettings.class))</span>
+<span class="fc" id="L271">        .setTransportToken(</span>
+<span class="fc" id="L272">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L277">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L278">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(SessionsStubSettings.class))</span>
+<span class="fc" id="L279">        .setTransportToken(</span>
+<span class="fc" id="L280">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L281">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L285">    return SessionsStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L181">    return Builder.createDefault();</span>
+<span class="fc" id="L290">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L295">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L186">    return new Builder(clientContext);</span>
+<span class="nc" id="L300">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L191">    return new Builder(this);</span>
+<span class="nc" id="L305">    return new Builder(this);</span>
   }
 
   protected SessionsStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L195">    super(settingsBuilder);</span>
+<span class="fc" id="L309">    super(settingsBuilder);</span>
 
-<span class="fc" id="L197">    detectIntentSettings = settingsBuilder.detectIntentSettings().build();</span>
-<span class="fc" id="L198">    streamingDetectIntentSettings = settingsBuilder.streamingDetectIntentSettings().build();</span>
-<span class="fc" id="L199">    matchIntentSettings = settingsBuilder.matchIntentSettings().build();</span>
-<span class="fc" id="L200">    fulfillIntentSettings = settingsBuilder.fulfillIntentSettings().build();</span>
-<span class="fc" id="L201">  }</span>
+<span class="fc" id="L311">    detectIntentSettings = settingsBuilder.detectIntentSettings().build();</span>
+<span class="fc" id="L312">    streamingDetectIntentSettings = settingsBuilder.streamingDetectIntentSettings().build();</span>
+<span class="fc" id="L313">    matchIntentSettings = settingsBuilder.matchIntentSettings().build();</span>
+<span class="fc" id="L314">    fulfillIntentSettings = settingsBuilder.fulfillIntentSettings().build();</span>
+<span class="fc" id="L315">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L316">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L317">  }</span>
 
   /** Builder for SessionsStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;SessionsStubSettings, Builder&gt; {
@@ -212,122 +328,161 @@ public class SessionsStubSettings extends StubSettings&lt;SessionsStubSettings&g
         matchIntentSettings;
     private final UnaryCallSettings.Builder&lt;FulfillIntentRequest, FulfillIntentResponse&gt;
         fulfillIntentSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L220">          ImmutableMap.builder();</span>
-<span class="fc" id="L221">      definitions.put(</span>
+<span class="fc" id="L340">          ImmutableMap.builder();</span>
+<span class="fc" id="L341">      definitions.put(</span>
           &quot;retry_policy_1_codes&quot;,
-<span class="fc" id="L223">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L224">      definitions.put(</span>
-<span class="fc" id="L225">          &quot;no_retry_2_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L226">      definitions.put(</span>
+<span class="fc" id="L343">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L344">      definitions.put(</span>
+<span class="fc" id="L345">          &quot;no_retry_2_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L346">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L228">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L229">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L348">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L349">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L235">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L236">      RetrySettings settings = null;</span>
+<span class="fc" id="L355">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L356">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L238">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L239">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L240">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L241">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L242">              .setInitialRpcTimeout(Duration.ofMillis(220000L))</span>
-<span class="fc" id="L243">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L244">              .setMaxRpcTimeout(Duration.ofMillis(220000L))</span>
-<span class="fc" id="L245">              .setTotalTimeout(Duration.ofMillis(220000L))</span>
-<span class="fc" id="L246">              .build();</span>
-<span class="fc" id="L247">      definitions.put(&quot;retry_policy_1_params&quot;, settings);</span>
+<span class="fc" id="L358">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L359">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L360">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L361">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L362">              .setInitialRpcTimeout(Duration.ofMillis(220000L))</span>
+<span class="fc" id="L363">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L364">              .setMaxRpcTimeout(Duration.ofMillis(220000L))</span>
+<span class="fc" id="L365">              .setTotalTimeout(Duration.ofMillis(220000L))</span>
+<span class="fc" id="L366">              .build();</span>
+<span class="fc" id="L367">      definitions.put(&quot;retry_policy_1_params&quot;, settings);</span>
       settings =
-<span class="fc" id="L249">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L250">              .setInitialRpcTimeout(Duration.ofMillis(220000L))</span>
-<span class="fc" id="L251">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L252">              .setMaxRpcTimeout(Duration.ofMillis(220000L))</span>
-<span class="fc" id="L253">              .setTotalTimeout(Duration.ofMillis(220000L))</span>
-<span class="fc" id="L254">              .build();</span>
-<span class="fc" id="L255">      definitions.put(&quot;no_retry_2_params&quot;, settings);</span>
+<span class="fc" id="L369">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L370">              .setInitialRpcTimeout(Duration.ofMillis(220000L))</span>
+<span class="fc" id="L371">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L372">              .setMaxRpcTimeout(Duration.ofMillis(220000L))</span>
+<span class="fc" id="L373">              .setTotalTimeout(Duration.ofMillis(220000L))</span>
+<span class="fc" id="L374">              .build();</span>
+<span class="fc" id="L375">      definitions.put(&quot;no_retry_2_params&quot;, settings);</span>
       settings =
-<span class="fc" id="L257">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L258">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L259">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L260">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L261">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L262">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L263">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L264">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L265">              .build();</span>
-<span class="fc" id="L266">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L267">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L268">    }</span>
+<span class="fc" id="L377">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L378">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L379">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L380">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L381">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L382">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L383">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L384">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L385">              .build();</span>
+<span class="fc" id="L386">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L387">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L388">    }</span>
 
     protected Builder() {
-<span class="nc" id="L271">      this(((ClientContext) null));</span>
-<span class="nc" id="L272">    }</span>
+<span class="nc" id="L391">      this(((ClientContext) null));</span>
+<span class="nc" id="L392">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L275">      super(clientContext);</span>
+<span class="fc" id="L395">      super(clientContext);</span>
 
-<span class="fc" id="L277">      detectIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L278">      streamingDetectIntentSettings = StreamingCallSettings.newBuilder();</span>
-<span class="fc" id="L279">      matchIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L280">      fulfillIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L397">      detectIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L398">      streamingDetectIntentSettings = StreamingCallSettings.newBuilder();</span>
+<span class="fc" id="L399">      matchIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L400">      fulfillIntentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L401">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L402">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L282">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L283">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
-              detectIntentSettings, matchIntentSettings, fulfillIntentSettings);
-<span class="fc" id="L285">      initDefaults(this);</span>
-<span class="fc" id="L286">    }</span>
+<span class="fc" id="L404">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L405">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+              detectIntentSettings,
+              matchIntentSettings,
+              fulfillIntentSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L411">      initDefaults(this);</span>
+<span class="fc" id="L412">    }</span>
 
     protected Builder(SessionsStubSettings settings) {
-<span class="nc" id="L289">      super(settings);</span>
+<span class="nc" id="L415">      super(settings);</span>
 
-<span class="nc" id="L291">      detectIntentSettings = settings.detectIntentSettings.toBuilder();</span>
-<span class="nc" id="L292">      streamingDetectIntentSettings = settings.streamingDetectIntentSettings.toBuilder();</span>
-<span class="nc" id="L293">      matchIntentSettings = settings.matchIntentSettings.toBuilder();</span>
-<span class="nc" id="L294">      fulfillIntentSettings = settings.fulfillIntentSettings.toBuilder();</span>
+<span class="nc" id="L417">      detectIntentSettings = settings.detectIntentSettings.toBuilder();</span>
+<span class="nc" id="L418">      streamingDetectIntentSettings = settings.streamingDetectIntentSettings.toBuilder();</span>
+<span class="nc" id="L419">      matchIntentSettings = settings.matchIntentSettings.toBuilder();</span>
+<span class="nc" id="L420">      fulfillIntentSettings = settings.fulfillIntentSettings.toBuilder();</span>
+<span class="nc" id="L421">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L422">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L296">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L297">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
-              detectIntentSettings, matchIntentSettings, fulfillIntentSettings);
-<span class="nc" id="L299">    }</span>
+<span class="nc" id="L424">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L425">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+              detectIntentSettings,
+              matchIntentSettings,
+              fulfillIntentSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L431">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L302">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L434">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L304">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L305">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L306">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L307">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L308">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L309">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L436">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L437">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L438">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L439">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L440">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L441">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L311">      return initDefaults(builder);</span>
+<span class="fc" id="L443">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L447">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L449">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L450">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L451">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L452">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L453">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L454">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L456">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L315">      builder</span>
-<span class="fc" id="L316">          .detectIntentSettings()</span>
-<span class="fc" id="L317">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
-<span class="fc" id="L318">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
+<span class="fc" id="L460">      builder</span>
+<span class="fc" id="L461">          .detectIntentSettings()</span>
+<span class="fc" id="L462">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_1_codes&quot;))</span>
+<span class="fc" id="L463">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_1_params&quot;));</span>
 
-<span class="fc" id="L320">      builder</span>
-<span class="fc" id="L321">          .matchIntentSettings()</span>
-<span class="fc" id="L322">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L323">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L465">      builder</span>
+<span class="fc" id="L466">          .matchIntentSettings()</span>
+<span class="fc" id="L467">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L468">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L325">      builder</span>
-<span class="fc" id="L326">          .fulfillIntentSettings()</span>
-<span class="fc" id="L327">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L328">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L470">      builder</span>
+<span class="fc" id="L471">          .fulfillIntentSettings()</span>
+<span class="fc" id="L472">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L473">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L330">      return builder;</span>
+<span class="fc" id="L475">      builder</span>
+<span class="fc" id="L476">          .listLocationsSettings()</span>
+<span class="fc" id="L477">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L478">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L480">      builder</span>
+<span class="fc" id="L481">          .getLocationSettings()</span>
+<span class="fc" id="L482">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L483">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L485">      return builder;</span>
     }
 
     /**
@@ -337,42 +492,54 @@ public class SessionsStubSettings extends StubSettings&lt;SessionsStubSettings&g
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L340">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L341">      return this;</span>
+<span class="nc" id="L495">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L496">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L345">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L500">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to detectIntent. */
     public UnaryCallSettings.Builder&lt;DetectIntentRequest, DetectIntentResponse&gt;
         detectIntentSettings() {
-<span class="fc" id="L351">      return detectIntentSettings;</span>
+<span class="fc" id="L506">      return detectIntentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to streamingDetectIntent. */
     public StreamingCallSettings.Builder&lt;
             StreamingDetectIntentRequest, StreamingDetectIntentResponse&gt;
         streamingDetectIntentSettings() {
-<span class="fc" id="L358">      return streamingDetectIntentSettings;</span>
+<span class="fc" id="L513">      return streamingDetectIntentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to matchIntent. */
     public UnaryCallSettings.Builder&lt;MatchIntentRequest, MatchIntentResponse&gt;
         matchIntentSettings() {
-<span class="fc" id="L364">      return matchIntentSettings;</span>
+<span class="fc" id="L519">      return matchIntentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to fulfillIntent. */
     public UnaryCallSettings.Builder&lt;FulfillIntentRequest, FulfillIntentResponse&gt;
         fulfillIntentSettings() {
-<span class="fc" id="L370">      return fulfillIntentSettings;</span>
+<span class="fc" id="L525">      return fulfillIntentSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L532">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L537">      return getLocationSettings;</span>
     }
 
     @Override
     public SessionsStubSettings build() throws IOException {
-<span class="fc" id="L375">      return new SessionsStubSettings(this);</span>
+<span class="fc" id="L542">      return new SessionsStubSettings(this);</span>
     }
   }
 }

@@ -19,6 +19,7 @@ package com.google.cloud.dialogflow.v2;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.dialogflow.v2.stub.ConversationProfilesStub;
 import com.google.cloud.dialogflow.v2.stub.ConversationProfilesStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -109,17 +109,33 @@ import javax.annotation.Generated;
  *     ConversationProfilesClient.create(conversationProfilesSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ConversationProfilesSettings conversationProfilesSettings =
+ *     ConversationProfilesSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ConversationProfilesSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ConversationProfilesClient conversationProfilesClient =
+ *     ConversationProfilesClient.create(conversationProfilesSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class ConversationProfilesClient implements BackgroundResource {
   private final ConversationProfilesSettings settings;
   private final ConversationProfilesStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ConversationProfilesClient with default settings. */
   public static final ConversationProfilesClient create() throws IOException {
-<span class="nc" id="L122">    return create(ConversationProfilesSettings.newBuilder().build());</span>
+<span class="nc" id="L138">    return create(ConversationProfilesSettings.newBuilder().build());</span>
   }
 
   /**
@@ -128,7 +144,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public static final ConversationProfilesClient create(ConversationProfilesSettings settings)
       throws IOException {
-<span class="fc" id="L131">    return new ConversationProfilesClient(settings);</span>
+<span class="fc" id="L147">    return new ConversationProfilesClient(settings);</span>
   }
 
   /**
@@ -136,7 +152,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    * This is for advanced usage - prefer using create(ConversationProfilesSettings).
    */
   public static final ConversationProfilesClient create(ConversationProfilesStub stub) {
-<span class="nc" id="L139">    return new ConversationProfilesClient(stub);</span>
+<span class="nc" id="L155">    return new ConversationProfilesClient(stub);</span>
   }
 
   /**
@@ -144,32 +160,44 @@ public class ConversationProfilesClient implements BackgroundResource {
    * protected so that it is easy to make a subclass, but otherwise, the static factory methods
    * should be preferred.
    */
-<span class="fc" id="L147">  protected ConversationProfilesClient(ConversationProfilesSettings settings) throws IOException {</span>
-<span class="fc" id="L148">    this.settings = settings;</span>
-<span class="fc" id="L149">    this.stub = ((ConversationProfilesStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L151">  }</span>
+<span class="fc" id="L163">  protected ConversationProfilesClient(ConversationProfilesSettings settings) throws IOException {</span>
+<span class="fc" id="L164">    this.settings = settings;</span>
+<span class="fc" id="L165">    this.stub = ((ConversationProfilesStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L166">    this.operationsClient =</span>
+<span class="fc" id="L167">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L168">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L169">  }</span>
 
-<span class="nc" id="L153">  protected ConversationProfilesClient(ConversationProfilesStub stub) {</span>
-<span class="nc" id="L154">    this.settings = null;</span>
-<span class="nc" id="L155">    this.stub = stub;</span>
-<span class="nc" id="L156">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L157">  }</span>
+<span class="nc" id="L171">  protected ConversationProfilesClient(ConversationProfilesStub stub) {</span>
+<span class="nc" id="L172">    this.settings = null;</span>
+<span class="nc" id="L173">    this.stub = stub;</span>
+<span class="nc" id="L174">    this.operationsClient =</span>
+<span class="nc" id="L175">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L176">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L177">  }</span>
 
   public final ConversationProfilesSettings getSettings() {
-<span class="nc" id="L160">    return settings;</span>
+<span class="nc" id="L180">    return settings;</span>
   }
 
   public ConversationProfilesStub getStub() {
-<span class="nc" id="L164">    return stub;</span>
+<span class="nc" id="L184">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L172">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L192">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L200">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -197,10 +225,10 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final ListConversationProfilesPagedResponse listConversationProfiles(LocationName parent) {
     ListConversationProfilesRequest request =
-<span class="fc" id="L200">        ListConversationProfilesRequest.newBuilder()</span>
-<span class="pc bpc" id="L201" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L202">            .build();</span>
-<span class="fc" id="L203">    return listConversationProfiles(request);</span>
+<span class="fc" id="L228">        ListConversationProfilesRequest.newBuilder()</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L230">            .build();</span>
+<span class="fc" id="L231">    return listConversationProfiles(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -228,10 +256,10 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final ListConversationProfilesPagedResponse listConversationProfiles(ProjectName parent) {
     ListConversationProfilesRequest request =
-<span class="fc" id="L231">        ListConversationProfilesRequest.newBuilder()</span>
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L233">            .build();</span>
-<span class="fc" id="L234">    return listConversationProfiles(request);</span>
+<span class="fc" id="L259">        ListConversationProfilesRequest.newBuilder()</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L261">            .build();</span>
+<span class="fc" id="L262">    return listConversationProfiles(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -259,8 +287,8 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final ListConversationProfilesPagedResponse listConversationProfiles(String parent) {
     ListConversationProfilesRequest request =
-<span class="fc" id="L262">        ListConversationProfilesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L263">    return listConversationProfiles(request);</span>
+<span class="fc" id="L290">        ListConversationProfilesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L291">    return listConversationProfiles(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -292,7 +320,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final ListConversationProfilesPagedResponse listConversationProfiles(
       ListConversationProfilesRequest request) {
-<span class="fc" id="L295">    return listConversationProfilesPagedCallable().call(request);</span>
+<span class="fc" id="L323">    return listConversationProfilesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -323,7 +351,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConversationProfilesRequest, ListConversationProfilesPagedResponse&gt;
       listConversationProfilesPagedCallable() {
-<span class="fc" id="L326">    return stub.listConversationProfilesPagedCallable();</span>
+<span class="fc" id="L354">    return stub.listConversationProfilesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -361,7 +389,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConversationProfilesRequest, ListConversationProfilesResponse&gt;
       listConversationProfilesCallable() {
-<span class="nc" id="L364">    return stub.listConversationProfilesCallable();</span>
+<span class="nc" id="L392">    return stub.listConversationProfilesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -389,10 +417,10 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final ConversationProfile getConversationProfile(ConversationProfileName name) {
     GetConversationProfileRequest request =
-<span class="fc" id="L392">        GetConversationProfileRequest.newBuilder()</span>
-<span class="pc bpc" id="L393" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L394">            .build();</span>
-<span class="fc" id="L395">    return getConversationProfile(request);</span>
+<span class="fc" id="L420">        GetConversationProfileRequest.newBuilder()</span>
+<span class="pc bpc" id="L421" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L422">            .build();</span>
+<span class="fc" id="L423">    return getConversationProfile(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -421,8 +449,8 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final ConversationProfile getConversationProfile(String name) {
     GetConversationProfileRequest request =
-<span class="fc" id="L424">        GetConversationProfileRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L425">    return getConversationProfile(request);</span>
+<span class="fc" id="L452">        GetConversationProfileRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L453">    return getConversationProfile(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -451,7 +479,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ConversationProfile getConversationProfile(GetConversationProfileRequest request) {
-<span class="fc" id="L454">    return getConversationProfileCallable().call(request);</span>
+<span class="fc" id="L482">    return getConversationProfileCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -481,7 +509,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetConversationProfileRequest, ConversationProfile&gt;
       getConversationProfileCallable() {
-<span class="fc" id="L484">    return stub.getConversationProfileCallable();</span>
+<span class="fc" id="L512">    return stub.getConversationProfileCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -515,11 +543,11 @@ public class ConversationProfilesClient implements BackgroundResource {
   public final ConversationProfile createConversationProfile(
       LocationName parent, ConversationProfile conversationProfile) {
     CreateConversationProfileRequest request =
-<span class="fc" id="L518">        CreateConversationProfileRequest.newBuilder()</span>
-<span class="pc bpc" id="L519" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L520">            .setConversationProfile(conversationProfile)</span>
-<span class="fc" id="L521">            .build();</span>
-<span class="fc" id="L522">    return createConversationProfile(request);</span>
+<span class="fc" id="L546">        CreateConversationProfileRequest.newBuilder()</span>
+<span class="pc bpc" id="L547" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L548">            .setConversationProfile(conversationProfile)</span>
+<span class="fc" id="L549">            .build();</span>
+<span class="fc" id="L550">    return createConversationProfile(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -553,11 +581,11 @@ public class ConversationProfilesClient implements BackgroundResource {
   public final ConversationProfile createConversationProfile(
       ProjectName parent, ConversationProfile conversationProfile) {
     CreateConversationProfileRequest request =
-<span class="fc" id="L556">        CreateConversationProfileRequest.newBuilder()</span>
-<span class="pc bpc" id="L557" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L558">            .setConversationProfile(conversationProfile)</span>
-<span class="fc" id="L559">            .build();</span>
-<span class="fc" id="L560">    return createConversationProfile(request);</span>
+<span class="fc" id="L584">        CreateConversationProfileRequest.newBuilder()</span>
+<span class="pc bpc" id="L585" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L586">            .setConversationProfile(conversationProfile)</span>
+<span class="fc" id="L587">            .build();</span>
+<span class="fc" id="L588">    return createConversationProfile(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -591,11 +619,11 @@ public class ConversationProfilesClient implements BackgroundResource {
   public final ConversationProfile createConversationProfile(
       String parent, ConversationProfile conversationProfile) {
     CreateConversationProfileRequest request =
-<span class="fc" id="L594">        CreateConversationProfileRequest.newBuilder()</span>
-<span class="fc" id="L595">            .setParent(parent)</span>
-<span class="fc" id="L596">            .setConversationProfile(conversationProfile)</span>
-<span class="fc" id="L597">            .build();</span>
-<span class="fc" id="L598">    return createConversationProfile(request);</span>
+<span class="fc" id="L622">        CreateConversationProfileRequest.newBuilder()</span>
+<span class="fc" id="L623">            .setParent(parent)</span>
+<span class="fc" id="L624">            .setConversationProfile(conversationProfile)</span>
+<span class="fc" id="L625">            .build();</span>
+<span class="fc" id="L626">    return createConversationProfile(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -628,7 +656,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final ConversationProfile createConversationProfile(
       CreateConversationProfileRequest request) {
-<span class="fc" id="L631">    return createConversationProfileCallable().call(request);</span>
+<span class="fc" id="L659">    return createConversationProfileCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -661,7 +689,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateConversationProfileRequest, ConversationProfile&gt;
       createConversationProfileCallable() {
-<span class="fc" id="L664">    return stub.createConversationProfileCallable();</span>
+<span class="fc" id="L692">    return stub.createConversationProfileCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -694,11 +722,11 @@ public class ConversationProfilesClient implements BackgroundResource {
   public final ConversationProfile updateConversationProfile(
       ConversationProfile conversationProfile, FieldMask updateMask) {
     UpdateConversationProfileRequest request =
-<span class="fc" id="L697">        UpdateConversationProfileRequest.newBuilder()</span>
-<span class="fc" id="L698">            .setConversationProfile(conversationProfile)</span>
-<span class="fc" id="L699">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L700">            .build();</span>
-<span class="fc" id="L701">    return updateConversationProfile(request);</span>
+<span class="fc" id="L725">        UpdateConversationProfileRequest.newBuilder()</span>
+<span class="fc" id="L726">            .setConversationProfile(conversationProfile)</span>
+<span class="fc" id="L727">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L728">            .build();</span>
+<span class="fc" id="L729">    return updateConversationProfile(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -731,7 +759,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final ConversationProfile updateConversationProfile(
       UpdateConversationProfileRequest request) {
-<span class="fc" id="L734">    return updateConversationProfileCallable().call(request);</span>
+<span class="fc" id="L762">    return updateConversationProfileCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -764,7 +792,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateConversationProfileRequest, ConversationProfile&gt;
       updateConversationProfileCallable() {
-<span class="fc" id="L767">    return stub.updateConversationProfileCallable();</span>
+<span class="fc" id="L795">    return stub.updateConversationProfileCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -792,11 +820,11 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final void deleteConversationProfile(ConversationProfileName name) {
     DeleteConversationProfileRequest request =
-<span class="fc" id="L795">        DeleteConversationProfileRequest.newBuilder()</span>
-<span class="pc bpc" id="L796" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L797">            .build();</span>
-<span class="fc" id="L798">    deleteConversationProfile(request);</span>
-<span class="fc" id="L799">  }</span>
+<span class="fc" id="L823">        DeleteConversationProfileRequest.newBuilder()</span>
+<span class="pc bpc" id="L824" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L825">            .build();</span>
+<span class="fc" id="L826">    deleteConversationProfile(request);</span>
+<span class="fc" id="L827">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -824,9 +852,9 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final void deleteConversationProfile(String name) {
     DeleteConversationProfileRequest request =
-<span class="fc" id="L827">        DeleteConversationProfileRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L828">    deleteConversationProfile(request);</span>
-<span class="fc" id="L829">  }</span>
+<span class="fc" id="L855">        DeleteConversationProfileRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L856">    deleteConversationProfile(request);</span>
+<span class="fc" id="L857">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -854,8 +882,8 @@ public class ConversationProfilesClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteConversationProfile(DeleteConversationProfileRequest request) {
-<span class="fc" id="L857">    deleteConversationProfileCallable().call(request);</span>
-<span class="fc" id="L858">  }</span>
+<span class="fc" id="L885">    deleteConversationProfileCallable().call(request);</span>
+<span class="fc" id="L886">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -884,7 +912,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteConversationProfileRequest, Empty&gt;
       deleteConversationProfileCallable() {
-<span class="fc" id="L887">    return stub.deleteConversationProfileCallable();</span>
+<span class="fc" id="L915">    return stub.deleteConversationProfileCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -927,10 +955,10 @@ public class ConversationProfilesClient implements BackgroundResource {
   public final OperationFuture&lt;ConversationProfile, SetSuggestionFeatureConfigOperationMetadata&gt;
       setSuggestionFeatureConfigAsync(String conversationProfile) {
     SetSuggestionFeatureConfigRequest request =
-<span class="fc" id="L930">        SetSuggestionFeatureConfigRequest.newBuilder()</span>
-<span class="fc" id="L931">            .setConversationProfile(conversationProfile)</span>
-<span class="fc" id="L932">            .build();</span>
-<span class="fc" id="L933">    return setSuggestionFeatureConfigAsync(request);</span>
+<span class="fc" id="L958">        SetSuggestionFeatureConfigRequest.newBuilder()</span>
+<span class="fc" id="L959">            .setConversationProfile(conversationProfile)</span>
+<span class="fc" id="L960">            .build();</span>
+<span class="fc" id="L961">    return setSuggestionFeatureConfigAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -975,7 +1003,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ConversationProfile, SetSuggestionFeatureConfigOperationMetadata&gt;
       setSuggestionFeatureConfigAsync(SetSuggestionFeatureConfigRequest request) {
-<span class="fc" id="L978">    return setSuggestionFeatureConfigOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1006">    return setSuggestionFeatureConfigOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1024,7 +1052,7 @@ public class ConversationProfilesClient implements BackgroundResource {
           ConversationProfile,
           SetSuggestionFeatureConfigOperationMetadata&gt;
       setSuggestionFeatureConfigOperationCallable() {
-<span class="fc" id="L1027">    return stub.setSuggestionFeatureConfigOperationCallable();</span>
+<span class="fc" id="L1055">    return stub.setSuggestionFeatureConfigOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1068,7 +1096,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;SetSuggestionFeatureConfigRequest, Operation&gt;
       setSuggestionFeatureConfigCallable() {
-<span class="nc" id="L1071">    return stub.setSuggestionFeatureConfigCallable();</span>
+<span class="nc" id="L1099">    return stub.setSuggestionFeatureConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1104,10 +1132,10 @@ public class ConversationProfilesClient implements BackgroundResource {
   public final OperationFuture&lt;ConversationProfile, ClearSuggestionFeatureConfigOperationMetadata&gt;
       clearSuggestionFeatureConfigAsync(String conversationProfile) {
     ClearSuggestionFeatureConfigRequest request =
-<span class="fc" id="L1107">        ClearSuggestionFeatureConfigRequest.newBuilder()</span>
-<span class="fc" id="L1108">            .setConversationProfile(conversationProfile)</span>
-<span class="fc" id="L1109">            .build();</span>
-<span class="fc" id="L1110">    return clearSuggestionFeatureConfigAsync(request);</span>
+<span class="fc" id="L1135">        ClearSuggestionFeatureConfigRequest.newBuilder()</span>
+<span class="fc" id="L1136">            .setConversationProfile(conversationProfile)</span>
+<span class="fc" id="L1137">            .build();</span>
+<span class="fc" id="L1138">    return clearSuggestionFeatureConfigAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1143,7 +1171,7 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ConversationProfile, ClearSuggestionFeatureConfigOperationMetadata&gt;
       clearSuggestionFeatureConfigAsync(ClearSuggestionFeatureConfigRequest request) {
-<span class="fc" id="L1146">    return clearSuggestionFeatureConfigOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1174">    return clearSuggestionFeatureConfigOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1183,7 +1211,7 @@ public class ConversationProfilesClient implements BackgroundResource {
           ConversationProfile,
           ClearSuggestionFeatureConfigOperationMetadata&gt;
       clearSuggestionFeatureConfigOperationCallable() {
-<span class="fc" id="L1186">    return stub.clearSuggestionFeatureConfigOperationCallable();</span>
+<span class="fc" id="L1214">    return stub.clearSuggestionFeatureConfigOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1218,37 +1246,37 @@ public class ConversationProfilesClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ClearSuggestionFeatureConfigRequest, Operation&gt;
       clearSuggestionFeatureConfigCallable() {
-<span class="nc" id="L1221">    return stub.clearSuggestionFeatureConfigCallable();</span>
+<span class="nc" id="L1249">    return stub.clearSuggestionFeatureConfigCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1226">    stub.close();</span>
-<span class="fc" id="L1227">  }</span>
+<span class="fc" id="L1254">    stub.close();</span>
+<span class="fc" id="L1255">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1231">    stub.shutdown();</span>
-<span class="nc" id="L1232">  }</span>
+<span class="nc" id="L1259">    stub.shutdown();</span>
+<span class="nc" id="L1260">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1236">    return stub.isShutdown();</span>
+<span class="nc" id="L1264">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1241">    return stub.isTerminated();</span>
+<span class="nc" id="L1269">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1246">    stub.shutdownNow();</span>
-<span class="nc" id="L1247">  }</span>
+<span class="nc" id="L1274">    stub.shutdownNow();</span>
+<span class="nc" id="L1275">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1251">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1279">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListConversationProfilesPagedResponse
@@ -1267,16 +1295,16 @@ public class ConversationProfilesClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListConversationProfilesResponse&gt; futureResponse) {
       ApiFuture&lt;ListConversationProfilesPage&gt; futurePage =
-<span class="fc" id="L1270">          ListConversationProfilesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1271">      return ApiFutures.transform(</span>
+<span class="fc" id="L1298">          ListConversationProfilesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1299">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1273">          input -&gt; new ListConversationProfilesPagedResponse(input),</span>
-<span class="fc" id="L1274">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1301">          input -&gt; new ListConversationProfilesPagedResponse(input),</span>
+<span class="fc" id="L1302">          MoreExecutors.directExecutor());</span>
     }
 
     private ListConversationProfilesPagedResponse(ListConversationProfilesPage page) {
-<span class="fc" id="L1278">      super(page, ListConversationProfilesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1279">    }</span>
+<span class="fc" id="L1306">      super(page, ListConversationProfilesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1307">    }</span>
   }
 
   public static class ListConversationProfilesPage
@@ -1293,11 +1321,11 @@ public class ConversationProfilesClient implements BackgroundResource {
                 ConversationProfile&gt;
             context,
         ListConversationProfilesResponse response) {
-<span class="fc" id="L1296">      super(context, response);</span>
-<span class="fc" id="L1297">    }</span>
+<span class="fc" id="L1324">      super(context, response);</span>
+<span class="fc" id="L1325">    }</span>
 
     private static ListConversationProfilesPage createEmptyPage() {
-<span class="fc" id="L1300">      return new ListConversationProfilesPage(null, null);</span>
+<span class="fc" id="L1328">      return new ListConversationProfilesPage(null, null);</span>
     }
 
     @Override
@@ -1308,7 +1336,7 @@ public class ConversationProfilesClient implements BackgroundResource {
                 ConversationProfile&gt;
             context,
         ListConversationProfilesResponse response) {
-<span class="fc" id="L1311">      return new ListConversationProfilesPage(context, response);</span>
+<span class="fc" id="L1339">      return new ListConversationProfilesPage(context, response);</span>
     }
 
     @Override
@@ -1319,7 +1347,7 @@ public class ConversationProfilesClient implements BackgroundResource {
                 ConversationProfile&gt;
             context,
         ApiFuture&lt;ListConversationProfilesResponse&gt; futureResponse) {
-<span class="fc" id="L1322">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1350">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1333,17 +1361,17 @@ public class ConversationProfilesClient implements BackgroundResource {
 
     private ListConversationProfilesFixedSizeCollection(
         List&lt;ListConversationProfilesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1336">      super(pages, collectionSize);</span>
-<span class="fc" id="L1337">    }</span>
+<span class="fc" id="L1364">      super(pages, collectionSize);</span>
+<span class="fc" id="L1365">    }</span>
 
     private static ListConversationProfilesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1340">      return new ListConversationProfilesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1368">      return new ListConversationProfilesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListConversationProfilesFixedSizeCollection createCollection(
         List&lt;ListConversationProfilesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1346">      return new ListConversationProfilesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1374">      return new ListConversationProfilesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

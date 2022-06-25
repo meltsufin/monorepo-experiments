@@ -18,6 +18,7 @@ package com.google.cloud.dialogflow.cx.v3beta1.stub;
 
 import static com.google.cloud.dialogflow.cx.v3beta1.EnvironmentsClient.ListContinuousTestResultsPagedResponse;
 import static com.google.cloud.dialogflow.cx.v3beta1.EnvironmentsClient.ListEnvironmentsPagedResponse;
+import static com.google.cloud.dialogflow.cx.v3beta1.EnvironmentsClient.ListLocationsPagedResponse;
 import static com.google.cloud.dialogflow.cx.v3beta1.EnvironmentsClient.LookupEnvironmentHistoryPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -30,6 +31,9 @@ import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.grpc.ProtoOperationTransformers;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.longrunning.OperationSnapshot;
 import com.google.api.gax.longrunning.OperationTimedPollAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
@@ -64,6 +68,10 @@ import com.google.cloud.dialogflow.cx.v3beta1.RunContinuousTestMetadata;
 import com.google.cloud.dialogflow.cx.v3beta1.RunContinuousTestRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.RunContinuousTestResponse;
 import com.google.cloud.dialogflow.cx.v3beta1.UpdateEnvironmentRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -115,10 +123,10 @@ import org.threeten.bp.Duration;
 public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L118">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L119">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L120">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L121">          .build();</span>
+<span class="fc" id="L126">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L127">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L128">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L129">          .build();</span>
 
   private final PagedCallSettings&lt;
           ListEnvironmentsRequest, ListEnvironmentsResponse, ListEnvironmentsPagedResponse&gt;
@@ -148,144 +156,184 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
   private final UnaryCallSettings&lt;DeployFlowRequest, Operation&gt; deployFlowSettings;
   private final OperationCallSettings&lt;DeployFlowRequest, DeployFlowResponse, DeployFlowMetadata&gt;
       deployFlowOperationSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;
           ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt;
-<span class="fc" id="L154">      LIST_ENVIRONMENTS_PAGE_STR_DESC =</span>
+<span class="fc" id="L166">      LIST_ENVIRONMENTS_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L156">              ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt;() {</span>
+<span class="fc" id="L168">              ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L159">              return &quot;&quot;;</span>
+<span class="fc" id="L171">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListEnvironmentsRequest injectToken(
                 ListEnvironmentsRequest payload, String token) {
-<span class="nc" id="L165">              return ListEnvironmentsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L177">              return ListEnvironmentsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListEnvironmentsRequest injectPageSize(
                 ListEnvironmentsRequest payload, int pageSize) {
-<span class="nc" id="L171">              return ListEnvironmentsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L183">              return ListEnvironmentsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListEnvironmentsRequest payload) {
-<span class="nc" id="L176">              return payload.getPageSize();</span>
+<span class="nc" id="L188">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListEnvironmentsResponse payload) {
-<span class="fc" id="L181">              return payload.getNextPageToken();</span>
+<span class="fc" id="L193">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Environment&gt; extractResources(ListEnvironmentsResponse payload) {
-<span class="pc bpc" id="L186" title="1 of 2 branches missed.">              return payload.getEnvironmentsList() == null</span>
-<span class="nc" id="L187">                  ? ImmutableList.&lt;Environment&gt;of()</span>
-<span class="fc" id="L188">                  : payload.getEnvironmentsList();</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">              return payload.getEnvironmentsList() == null</span>
+<span class="nc" id="L199">                  ? ImmutableList.&lt;Environment&gt;of()</span>
+<span class="fc" id="L200">                  : payload.getEnvironmentsList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;
           LookupEnvironmentHistoryRequest, LookupEnvironmentHistoryResponse, Environment&gt;
-<span class="fc" id="L194">      LOOKUP_ENVIRONMENT_HISTORY_PAGE_STR_DESC =</span>
+<span class="fc" id="L206">      LOOKUP_ENVIRONMENT_HISTORY_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L196">              LookupEnvironmentHistoryRequest, LookupEnvironmentHistoryResponse, Environment&gt;() {</span>
+<span class="fc" id="L208">              LookupEnvironmentHistoryRequest, LookupEnvironmentHistoryResponse, Environment&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L199">              return &quot;&quot;;</span>
+<span class="fc" id="L211">              return &quot;&quot;;</span>
             }
 
             @Override
             public LookupEnvironmentHistoryRequest injectToken(
                 LookupEnvironmentHistoryRequest payload, String token) {
-<span class="nc" id="L205">              return LookupEnvironmentHistoryRequest.newBuilder(payload)</span>
-<span class="nc" id="L206">                  .setPageToken(token)</span>
-<span class="nc" id="L207">                  .build();</span>
+<span class="nc" id="L217">              return LookupEnvironmentHistoryRequest.newBuilder(payload)</span>
+<span class="nc" id="L218">                  .setPageToken(token)</span>
+<span class="nc" id="L219">                  .build();</span>
             }
 
             @Override
             public LookupEnvironmentHistoryRequest injectPageSize(
                 LookupEnvironmentHistoryRequest payload, int pageSize) {
-<span class="nc" id="L213">              return LookupEnvironmentHistoryRequest.newBuilder(payload)</span>
-<span class="nc" id="L214">                  .setPageSize(pageSize)</span>
-<span class="nc" id="L215">                  .build();</span>
+<span class="nc" id="L225">              return LookupEnvironmentHistoryRequest.newBuilder(payload)</span>
+<span class="nc" id="L226">                  .setPageSize(pageSize)</span>
+<span class="nc" id="L227">                  .build();</span>
             }
 
             @Override
             public Integer extractPageSize(LookupEnvironmentHistoryRequest payload) {
-<span class="nc" id="L220">              return payload.getPageSize();</span>
+<span class="nc" id="L232">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(LookupEnvironmentHistoryResponse payload) {
-<span class="fc" id="L225">              return payload.getNextPageToken();</span>
+<span class="fc" id="L237">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Environment&gt; extractResources(
                 LookupEnvironmentHistoryResponse payload) {
-<span class="pc bpc" id="L231" title="1 of 2 branches missed.">              return payload.getEnvironmentsList() == null</span>
-<span class="nc" id="L232">                  ? ImmutableList.&lt;Environment&gt;of()</span>
-<span class="fc" id="L233">                  : payload.getEnvironmentsList();</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">              return payload.getEnvironmentsList() == null</span>
+<span class="nc" id="L244">                  ? ImmutableList.&lt;Environment&gt;of()</span>
+<span class="fc" id="L245">                  : payload.getEnvironmentsList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;
           ListContinuousTestResultsRequest, ListContinuousTestResultsResponse, ContinuousTestResult&gt;
-<span class="fc" id="L239">      LIST_CONTINUOUS_TEST_RESULTS_PAGE_STR_DESC =</span>
+<span class="fc" id="L251">      LIST_CONTINUOUS_TEST_RESULTS_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
               ListContinuousTestResultsRequest,
               ListContinuousTestResultsResponse,
-<span class="fc" id="L243">              ContinuousTestResult&gt;() {</span>
+<span class="fc" id="L255">              ContinuousTestResult&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L246">              return &quot;&quot;;</span>
+<span class="fc" id="L258">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListContinuousTestResultsRequest injectToken(
                 ListContinuousTestResultsRequest payload, String token) {
-<span class="nc" id="L252">              return ListContinuousTestResultsRequest.newBuilder(payload)</span>
-<span class="nc" id="L253">                  .setPageToken(token)</span>
-<span class="nc" id="L254">                  .build();</span>
+<span class="nc" id="L264">              return ListContinuousTestResultsRequest.newBuilder(payload)</span>
+<span class="nc" id="L265">                  .setPageToken(token)</span>
+<span class="nc" id="L266">                  .build();</span>
             }
 
             @Override
             public ListContinuousTestResultsRequest injectPageSize(
                 ListContinuousTestResultsRequest payload, int pageSize) {
-<span class="nc" id="L260">              return ListContinuousTestResultsRequest.newBuilder(payload)</span>
-<span class="nc" id="L261">                  .setPageSize(pageSize)</span>
-<span class="nc" id="L262">                  .build();</span>
+<span class="nc" id="L272">              return ListContinuousTestResultsRequest.newBuilder(payload)</span>
+<span class="nc" id="L273">                  .setPageSize(pageSize)</span>
+<span class="nc" id="L274">                  .build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListContinuousTestResultsRequest payload) {
-<span class="nc" id="L267">              return payload.getPageSize();</span>
+<span class="nc" id="L279">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListContinuousTestResultsResponse payload) {
-<span class="fc" id="L272">              return payload.getNextPageToken();</span>
+<span class="fc" id="L284">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;ContinuousTestResult&gt; extractResources(
                 ListContinuousTestResultsResponse payload) {
-<span class="pc bpc" id="L278" title="1 of 2 branches missed.">              return payload.getContinuousTestResultsList() == null</span>
-<span class="nc" id="L279">                  ? ImmutableList.&lt;ContinuousTestResult&gt;of()</span>
-<span class="fc" id="L280">                  : payload.getContinuousTestResultsList();</span>
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">              return payload.getContinuousTestResultsList() == null</span>
+<span class="nc" id="L291">                  ? ImmutableList.&lt;ContinuousTestResult&gt;of()</span>
+<span class="fc" id="L292">                  : payload.getContinuousTestResultsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L297">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L298">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L301">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L306">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L311">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L316">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L321">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L327">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L328">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListEnvironmentsRequest, ListEnvironmentsResponse, ListEnvironmentsPagedResponse&gt;
-<span class="fc" id="L286">      LIST_ENVIRONMENTS_PAGE_STR_FACT =</span>
+<span class="fc" id="L334">      LIST_ENVIRONMENTS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L288">              ListEnvironmentsRequest, ListEnvironmentsResponse, ListEnvironmentsPagedResponse&gt;() {</span>
+<span class="fc" id="L336">              ListEnvironmentsRequest, ListEnvironmentsResponse, ListEnvironmentsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListEnvironmentsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListEnvironmentsRequest, ListEnvironmentsResponse&gt; callable,
@@ -293,10 +341,10 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
                 ApiCallContext context,
                 ApiFuture&lt;ListEnvironmentsResponse&gt; futureResponse) {
               PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt;
-<span class="fc" id="L296">                  pageContext =</span>
-<span class="fc" id="L297">                      PageContext.create(</span>
-<span class="fc" id="L298">                          callable, LIST_ENVIRONMENTS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L299">              return ListEnvironmentsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L344">                  pageContext =</span>
+<span class="fc" id="L345">                      PageContext.create(</span>
+<span class="fc" id="L346">                          callable, LIST_ENVIRONMENTS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L347">              return ListEnvironmentsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -304,11 +352,11 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
           LookupEnvironmentHistoryRequest,
           LookupEnvironmentHistoryResponse,
           LookupEnvironmentHistoryPagedResponse&gt;
-<span class="fc" id="L307">      LOOKUP_ENVIRONMENT_HISTORY_PAGE_STR_FACT =</span>
+<span class="fc" id="L355">      LOOKUP_ENVIRONMENT_HISTORY_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               LookupEnvironmentHistoryRequest,
               LookupEnvironmentHistoryResponse,
-<span class="fc" id="L311">              LookupEnvironmentHistoryPagedResponse&gt;() {</span>
+<span class="fc" id="L359">              LookupEnvironmentHistoryPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;LookupEnvironmentHistoryPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;LookupEnvironmentHistoryRequest, LookupEnvironmentHistoryResponse&gt;
@@ -320,10 +368,10 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
                       LookupEnvironmentHistoryRequest,
                       LookupEnvironmentHistoryResponse,
                       Environment&gt;
-<span class="fc" id="L323">                  pageContext =</span>
-<span class="fc" id="L324">                      PageContext.create(</span>
-<span class="fc" id="L325">                          callable, LOOKUP_ENVIRONMENT_HISTORY_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L326">              return LookupEnvironmentHistoryPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L371">                  pageContext =</span>
+<span class="fc" id="L372">                      PageContext.create(</span>
+<span class="fc" id="L373">                          callable, LOOKUP_ENVIRONMENT_HISTORY_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L374">              return LookupEnvironmentHistoryPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -331,11 +379,11 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
           ListContinuousTestResultsRequest,
           ListContinuousTestResultsResponse,
           ListContinuousTestResultsPagedResponse&gt;
-<span class="fc" id="L334">      LIST_CONTINUOUS_TEST_RESULTS_PAGE_STR_FACT =</span>
+<span class="fc" id="L382">      LIST_CONTINUOUS_TEST_RESULTS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListContinuousTestResultsRequest,
               ListContinuousTestResultsResponse,
-<span class="fc" id="L338">              ListContinuousTestResultsPagedResponse&gt;() {</span>
+<span class="fc" id="L386">              ListContinuousTestResultsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListContinuousTestResultsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListContinuousTestResultsRequest, ListContinuousTestResultsResponse&gt;
@@ -347,11 +395,28 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
                       ListContinuousTestResultsRequest,
                       ListContinuousTestResultsResponse,
                       ContinuousTestResult&gt;
-<span class="fc" id="L350">                  pageContext =</span>
-<span class="fc" id="L351">                      PageContext.create(</span>
-<span class="fc" id="L352">                          callable, LIST_CONTINUOUS_TEST_RESULTS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L353">              return ListContinuousTestResultsPagedResponse.createAsync(</span>
+<span class="fc" id="L398">                  pageContext =</span>
+<span class="fc" id="L399">                      PageContext.create(</span>
+<span class="fc" id="L400">                          callable, LIST_CONTINUOUS_TEST_RESULTS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L401">              return ListContinuousTestResultsPagedResponse.createAsync(</span>
                   pageContext, futureResponse);
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L408">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L410">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L417">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L418">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L419">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -359,39 +424,39 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
   public PagedCallSettings&lt;
           ListEnvironmentsRequest, ListEnvironmentsResponse, ListEnvironmentsPagedResponse&gt;
       listEnvironmentsSettings() {
-<span class="fc" id="L362">    return listEnvironmentsSettings;</span>
+<span class="fc" id="L427">    return listEnvironmentsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getEnvironment. */
   public UnaryCallSettings&lt;GetEnvironmentRequest, Environment&gt; getEnvironmentSettings() {
-<span class="fc" id="L367">    return getEnvironmentSettings;</span>
+<span class="fc" id="L432">    return getEnvironmentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createEnvironment. */
   public UnaryCallSettings&lt;CreateEnvironmentRequest, Operation&gt; createEnvironmentSettings() {
-<span class="fc" id="L372">    return createEnvironmentSettings;</span>
+<span class="fc" id="L437">    return createEnvironmentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createEnvironment. */
   public OperationCallSettings&lt;CreateEnvironmentRequest, Environment, Struct&gt;
       createEnvironmentOperationSettings() {
-<span class="fc" id="L378">    return createEnvironmentOperationSettings;</span>
+<span class="fc" id="L443">    return createEnvironmentOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateEnvironment. */
   public UnaryCallSettings&lt;UpdateEnvironmentRequest, Operation&gt; updateEnvironmentSettings() {
-<span class="fc" id="L383">    return updateEnvironmentSettings;</span>
+<span class="fc" id="L448">    return updateEnvironmentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateEnvironment. */
   public OperationCallSettings&lt;UpdateEnvironmentRequest, Environment, Struct&gt;
       updateEnvironmentOperationSettings() {
-<span class="fc" id="L389">    return updateEnvironmentOperationSettings;</span>
+<span class="fc" id="L454">    return updateEnvironmentOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteEnvironment. */
   public UnaryCallSettings&lt;DeleteEnvironmentRequest, Empty&gt; deleteEnvironmentSettings() {
-<span class="fc" id="L394">    return deleteEnvironmentSettings;</span>
+<span class="fc" id="L459">    return deleteEnvironmentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to lookupEnvironmentHistory. */
@@ -400,19 +465,19 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
           LookupEnvironmentHistoryResponse,
           LookupEnvironmentHistoryPagedResponse&gt;
       lookupEnvironmentHistorySettings() {
-<span class="fc" id="L403">    return lookupEnvironmentHistorySettings;</span>
+<span class="fc" id="L468">    return lookupEnvironmentHistorySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to runContinuousTest. */
   public UnaryCallSettings&lt;RunContinuousTestRequest, Operation&gt; runContinuousTestSettings() {
-<span class="fc" id="L408">    return runContinuousTestSettings;</span>
+<span class="fc" id="L473">    return runContinuousTestSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to runContinuousTest. */
   public OperationCallSettings&lt;
           RunContinuousTestRequest, RunContinuousTestResponse, RunContinuousTestMetadata&gt;
       runContinuousTestOperationSettings() {
-<span class="fc" id="L415">    return runContinuousTestOperationSettings;</span>
+<span class="fc" id="L480">    return runContinuousTestOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listContinuousTestResults. */
@@ -421,112 +486,156 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
           ListContinuousTestResultsResponse,
           ListContinuousTestResultsPagedResponse&gt;
       listContinuousTestResultsSettings() {
-<span class="fc" id="L424">    return listContinuousTestResultsSettings;</span>
+<span class="fc" id="L489">    return listContinuousTestResultsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deployFlow. */
   public UnaryCallSettings&lt;DeployFlowRequest, Operation&gt; deployFlowSettings() {
-<span class="fc" id="L429">    return deployFlowSettings;</span>
+<span class="fc" id="L494">    return deployFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deployFlow. */
   public OperationCallSettings&lt;DeployFlowRequest, DeployFlowResponse, DeployFlowMetadata&gt;
       deployFlowOperationSettings() {
-<span class="fc" id="L435">    return deployFlowOperationSettings;</span>
+<span class="fc" id="L500">    return deployFlowOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L506">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L511">    return getLocationSettings;</span>
   }
 
   public EnvironmentsStub createStub() throws IOException {
-<span class="fc" id="L439">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L440">        .getTransportName()</span>
-<span class="pc bpc" id="L441" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L442">      return GrpcEnvironmentsStub.create(this);</span>
+<span class="fc" id="L515">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L516">        .getTransportName()</span>
+<span class="fc bfc" id="L517" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L518">      return GrpcEnvironmentsStub.create(this);</span>
     }
-<span class="nc" id="L444">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L445">        String.format(</span>
-<span class="nc" id="L446">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L520">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L521">        .getTransportName()</span>
+<span class="pc bpc" id="L522" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L523">      return HttpJsonEnvironmentsStub.create(this);</span>
+    }
+<span class="nc" id="L525">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L526">        String.format(</span>
+<span class="nc" id="L527">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L451">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L532">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L456">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L537">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L461">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L542">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L466">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L547">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L471">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L472">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L473">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L552">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L553">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L554">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L478">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L479">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L559">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L560">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L567">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L483">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L571">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L488">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L489">        .setGeneratedLibToken(</span>
-<span class="fc" id="L490">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(EnvironmentsStubSettings.class))</span>
-<span class="fc" id="L491">        .setTransportToken(</span>
-<span class="fc" id="L492">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L576">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L577">        .setGeneratedLibToken(</span>
+<span class="fc" id="L578">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(EnvironmentsStubSettings.class))</span>
+<span class="fc" id="L579">        .setTransportToken(</span>
+<span class="fc" id="L580">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L585">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L586">        .setGeneratedLibToken(</span>
+<span class="fc" id="L587">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(EnvironmentsStubSettings.class))</span>
+<span class="fc" id="L588">        .setTransportToken(</span>
+<span class="fc" id="L589">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L590">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L594">    return EnvironmentsStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L497">    return Builder.createDefault();</span>
+<span class="fc" id="L599">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L604">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L502">    return new Builder(clientContext);</span>
+<span class="nc" id="L609">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L507">    return new Builder(this);</span>
+<span class="nc" id="L614">    return new Builder(this);</span>
   }
 
   protected EnvironmentsStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L511">    super(settingsBuilder);</span>
+<span class="fc" id="L618">    super(settingsBuilder);</span>
 
-<span class="fc" id="L513">    listEnvironmentsSettings = settingsBuilder.listEnvironmentsSettings().build();</span>
-<span class="fc" id="L514">    getEnvironmentSettings = settingsBuilder.getEnvironmentSettings().build();</span>
-<span class="fc" id="L515">    createEnvironmentSettings = settingsBuilder.createEnvironmentSettings().build();</span>
-<span class="fc" id="L516">    createEnvironmentOperationSettings =</span>
-<span class="fc" id="L517">        settingsBuilder.createEnvironmentOperationSettings().build();</span>
-<span class="fc" id="L518">    updateEnvironmentSettings = settingsBuilder.updateEnvironmentSettings().build();</span>
-<span class="fc" id="L519">    updateEnvironmentOperationSettings =</span>
-<span class="fc" id="L520">        settingsBuilder.updateEnvironmentOperationSettings().build();</span>
-<span class="fc" id="L521">    deleteEnvironmentSettings = settingsBuilder.deleteEnvironmentSettings().build();</span>
-<span class="fc" id="L522">    lookupEnvironmentHistorySettings = settingsBuilder.lookupEnvironmentHistorySettings().build();</span>
-<span class="fc" id="L523">    runContinuousTestSettings = settingsBuilder.runContinuousTestSettings().build();</span>
-<span class="fc" id="L524">    runContinuousTestOperationSettings =</span>
-<span class="fc" id="L525">        settingsBuilder.runContinuousTestOperationSettings().build();</span>
-<span class="fc" id="L526">    listContinuousTestResultsSettings = settingsBuilder.listContinuousTestResultsSettings().build();</span>
-<span class="fc" id="L527">    deployFlowSettings = settingsBuilder.deployFlowSettings().build();</span>
-<span class="fc" id="L528">    deployFlowOperationSettings = settingsBuilder.deployFlowOperationSettings().build();</span>
-<span class="fc" id="L529">  }</span>
+<span class="fc" id="L620">    listEnvironmentsSettings = settingsBuilder.listEnvironmentsSettings().build();</span>
+<span class="fc" id="L621">    getEnvironmentSettings = settingsBuilder.getEnvironmentSettings().build();</span>
+<span class="fc" id="L622">    createEnvironmentSettings = settingsBuilder.createEnvironmentSettings().build();</span>
+<span class="fc" id="L623">    createEnvironmentOperationSettings =</span>
+<span class="fc" id="L624">        settingsBuilder.createEnvironmentOperationSettings().build();</span>
+<span class="fc" id="L625">    updateEnvironmentSettings = settingsBuilder.updateEnvironmentSettings().build();</span>
+<span class="fc" id="L626">    updateEnvironmentOperationSettings =</span>
+<span class="fc" id="L627">        settingsBuilder.updateEnvironmentOperationSettings().build();</span>
+<span class="fc" id="L628">    deleteEnvironmentSettings = settingsBuilder.deleteEnvironmentSettings().build();</span>
+<span class="fc" id="L629">    lookupEnvironmentHistorySettings = settingsBuilder.lookupEnvironmentHistorySettings().build();</span>
+<span class="fc" id="L630">    runContinuousTestSettings = settingsBuilder.runContinuousTestSettings().build();</span>
+<span class="fc" id="L631">    runContinuousTestOperationSettings =</span>
+<span class="fc" id="L632">        settingsBuilder.runContinuousTestOperationSettings().build();</span>
+<span class="fc" id="L633">    listContinuousTestResultsSettings = settingsBuilder.listContinuousTestResultsSettings().build();</span>
+<span class="fc" id="L634">    deployFlowSettings = settingsBuilder.deployFlowSettings().build();</span>
+<span class="fc" id="L635">    deployFlowOperationSettings = settingsBuilder.deployFlowOperationSettings().build();</span>
+<span class="fc" id="L636">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L637">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L638">  }</span>
 
   /** Builder for EnvironmentsStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;EnvironmentsStubSettings, Builder&gt; {
@@ -565,62 +674,68 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
     private final OperationCallSettings.Builder&lt;
             DeployFlowRequest, DeployFlowResponse, DeployFlowMetadata&gt;
         deployFlowOperationSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L573">          ImmutableMap.builder();</span>
-<span class="fc" id="L574">      definitions.put(</span>
+<span class="fc" id="L686">          ImmutableMap.builder();</span>
+<span class="fc" id="L687">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L576">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L577">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L689">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L690">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L583">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L584">      RetrySettings settings = null;</span>
+<span class="fc" id="L696">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L697">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L586">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L587">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L588">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L589">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L590">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L591">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L592">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L593">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L594">              .build();</span>
-<span class="fc" id="L595">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L596">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L597">    }</span>
+<span class="fc" id="L699">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L700">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L701">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L702">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L703">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L704">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L705">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L706">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L707">              .build();</span>
+<span class="fc" id="L708">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L709">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L710">    }</span>
 
     protected Builder() {
-<span class="nc" id="L600">      this(((ClientContext) null));</span>
-<span class="nc" id="L601">    }</span>
+<span class="nc" id="L713">      this(((ClientContext) null));</span>
+<span class="nc" id="L714">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L604">      super(clientContext);</span>
+<span class="fc" id="L717">      super(clientContext);</span>
 
-<span class="fc" id="L606">      listEnvironmentsSettings = PagedCallSettings.newBuilder(LIST_ENVIRONMENTS_PAGE_STR_FACT);</span>
-<span class="fc" id="L607">      getEnvironmentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L608">      createEnvironmentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L609">      createEnvironmentOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L610">      updateEnvironmentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L611">      updateEnvironmentOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L612">      deleteEnvironmentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L613">      lookupEnvironmentHistorySettings =</span>
-<span class="fc" id="L614">          PagedCallSettings.newBuilder(LOOKUP_ENVIRONMENT_HISTORY_PAGE_STR_FACT);</span>
-<span class="fc" id="L615">      runContinuousTestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L616">      runContinuousTestOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L617">      listContinuousTestResultsSettings =</span>
-<span class="fc" id="L618">          PagedCallSettings.newBuilder(LIST_CONTINUOUS_TEST_RESULTS_PAGE_STR_FACT);</span>
-<span class="fc" id="L619">      deployFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L620">      deployFlowOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L719">      listEnvironmentsSettings = PagedCallSettings.newBuilder(LIST_ENVIRONMENTS_PAGE_STR_FACT);</span>
+<span class="fc" id="L720">      getEnvironmentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L721">      createEnvironmentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L722">      createEnvironmentOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L723">      updateEnvironmentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L724">      updateEnvironmentOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L725">      deleteEnvironmentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L726">      lookupEnvironmentHistorySettings =</span>
+<span class="fc" id="L727">          PagedCallSettings.newBuilder(LOOKUP_ENVIRONMENT_HISTORY_PAGE_STR_FACT);</span>
+<span class="fc" id="L728">      runContinuousTestSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L729">      runContinuousTestOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L730">      listContinuousTestResultsSettings =</span>
+<span class="fc" id="L731">          PagedCallSettings.newBuilder(LIST_CONTINUOUS_TEST_RESULTS_PAGE_STR_FACT);</span>
+<span class="fc" id="L732">      deployFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L733">      deployFlowOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L734">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L735">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L622">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L623">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L737">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L738">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listEnvironmentsSettings,
               getEnvironmentSettings,
               createEnvironmentSettings,
@@ -629,29 +744,33 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
               lookupEnvironmentHistorySettings,
               runContinuousTestSettings,
               listContinuousTestResultsSettings,
-              deployFlowSettings);
-<span class="fc" id="L633">      initDefaults(this);</span>
-<span class="fc" id="L634">    }</span>
+              deployFlowSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L750">      initDefaults(this);</span>
+<span class="fc" id="L751">    }</span>
 
     protected Builder(EnvironmentsStubSettings settings) {
-<span class="nc" id="L637">      super(settings);</span>
+<span class="nc" id="L754">      super(settings);</span>
 
-<span class="nc" id="L639">      listEnvironmentsSettings = settings.listEnvironmentsSettings.toBuilder();</span>
-<span class="nc" id="L640">      getEnvironmentSettings = settings.getEnvironmentSettings.toBuilder();</span>
-<span class="nc" id="L641">      createEnvironmentSettings = settings.createEnvironmentSettings.toBuilder();</span>
-<span class="nc" id="L642">      createEnvironmentOperationSettings = settings.createEnvironmentOperationSettings.toBuilder();</span>
-<span class="nc" id="L643">      updateEnvironmentSettings = settings.updateEnvironmentSettings.toBuilder();</span>
-<span class="nc" id="L644">      updateEnvironmentOperationSettings = settings.updateEnvironmentOperationSettings.toBuilder();</span>
-<span class="nc" id="L645">      deleteEnvironmentSettings = settings.deleteEnvironmentSettings.toBuilder();</span>
-<span class="nc" id="L646">      lookupEnvironmentHistorySettings = settings.lookupEnvironmentHistorySettings.toBuilder();</span>
-<span class="nc" id="L647">      runContinuousTestSettings = settings.runContinuousTestSettings.toBuilder();</span>
-<span class="nc" id="L648">      runContinuousTestOperationSettings = settings.runContinuousTestOperationSettings.toBuilder();</span>
-<span class="nc" id="L649">      listContinuousTestResultsSettings = settings.listContinuousTestResultsSettings.toBuilder();</span>
-<span class="nc" id="L650">      deployFlowSettings = settings.deployFlowSettings.toBuilder();</span>
-<span class="nc" id="L651">      deployFlowOperationSettings = settings.deployFlowOperationSettings.toBuilder();</span>
+<span class="nc" id="L756">      listEnvironmentsSettings = settings.listEnvironmentsSettings.toBuilder();</span>
+<span class="nc" id="L757">      getEnvironmentSettings = settings.getEnvironmentSettings.toBuilder();</span>
+<span class="nc" id="L758">      createEnvironmentSettings = settings.createEnvironmentSettings.toBuilder();</span>
+<span class="nc" id="L759">      createEnvironmentOperationSettings = settings.createEnvironmentOperationSettings.toBuilder();</span>
+<span class="nc" id="L760">      updateEnvironmentSettings = settings.updateEnvironmentSettings.toBuilder();</span>
+<span class="nc" id="L761">      updateEnvironmentOperationSettings = settings.updateEnvironmentOperationSettings.toBuilder();</span>
+<span class="nc" id="L762">      deleteEnvironmentSettings = settings.deleteEnvironmentSettings.toBuilder();</span>
+<span class="nc" id="L763">      lookupEnvironmentHistorySettings = settings.lookupEnvironmentHistorySettings.toBuilder();</span>
+<span class="nc" id="L764">      runContinuousTestSettings = settings.runContinuousTestSettings.toBuilder();</span>
+<span class="nc" id="L765">      runContinuousTestOperationSettings = settings.runContinuousTestOperationSettings.toBuilder();</span>
+<span class="nc" id="L766">      listContinuousTestResultsSettings = settings.listContinuousTestResultsSettings.toBuilder();</span>
+<span class="nc" id="L767">      deployFlowSettings = settings.deployFlowSettings.toBuilder();</span>
+<span class="nc" id="L768">      deployFlowOperationSettings = settings.deployFlowOperationSettings.toBuilder();</span>
+<span class="nc" id="L769">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L770">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L653">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L654">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L772">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L773">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listEnvironmentsSettings,
               getEnvironmentSettings,
               createEnvironmentSettings,
@@ -660,166 +779,191 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
               lookupEnvironmentHistorySettings,
               runContinuousTestSettings,
               listContinuousTestResultsSettings,
-              deployFlowSettings);
-<span class="nc" id="L664">    }</span>
+              deployFlowSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L785">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L667">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L788">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L669">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L670">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L671">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L672">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L673">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L674">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L790">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L791">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L792">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L793">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L794">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L795">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L676">      return initDefaults(builder);</span>
+<span class="fc" id="L797">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L801">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L803">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L804">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L805">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L806">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L807">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L808">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L810">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L680">      builder</span>
-<span class="fc" id="L681">          .listEnvironmentsSettings()</span>
-<span class="fc" id="L682">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L683">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L814">      builder</span>
+<span class="fc" id="L815">          .listEnvironmentsSettings()</span>
+<span class="fc" id="L816">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L817">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L685">      builder</span>
-<span class="fc" id="L686">          .getEnvironmentSettings()</span>
-<span class="fc" id="L687">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L688">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L819">      builder</span>
+<span class="fc" id="L820">          .getEnvironmentSettings()</span>
+<span class="fc" id="L821">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L822">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L690">      builder</span>
-<span class="fc" id="L691">          .createEnvironmentSettings()</span>
-<span class="fc" id="L692">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L693">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L824">      builder</span>
+<span class="fc" id="L825">          .createEnvironmentSettings()</span>
+<span class="fc" id="L826">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L827">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L695">      builder</span>
-<span class="fc" id="L696">          .updateEnvironmentSettings()</span>
-<span class="fc" id="L697">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L698">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L829">      builder</span>
+<span class="fc" id="L830">          .updateEnvironmentSettings()</span>
+<span class="fc" id="L831">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L832">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L700">      builder</span>
-<span class="fc" id="L701">          .deleteEnvironmentSettings()</span>
-<span class="fc" id="L702">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L703">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L834">      builder</span>
+<span class="fc" id="L835">          .deleteEnvironmentSettings()</span>
+<span class="fc" id="L836">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L837">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L705">      builder</span>
-<span class="fc" id="L706">          .lookupEnvironmentHistorySettings()</span>
-<span class="fc" id="L707">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L708">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L839">      builder</span>
+<span class="fc" id="L840">          .lookupEnvironmentHistorySettings()</span>
+<span class="fc" id="L841">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L842">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L710">      builder</span>
-<span class="fc" id="L711">          .runContinuousTestSettings()</span>
-<span class="fc" id="L712">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L713">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L844">      builder</span>
+<span class="fc" id="L845">          .runContinuousTestSettings()</span>
+<span class="fc" id="L846">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L847">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L715">      builder</span>
-<span class="fc" id="L716">          .listContinuousTestResultsSettings()</span>
-<span class="fc" id="L717">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L718">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L849">      builder</span>
+<span class="fc" id="L850">          .listContinuousTestResultsSettings()</span>
+<span class="fc" id="L851">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L852">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L720">      builder</span>
-<span class="fc" id="L721">          .deployFlowSettings()</span>
-<span class="fc" id="L722">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L723">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L854">      builder</span>
+<span class="fc" id="L855">          .deployFlowSettings()</span>
+<span class="fc" id="L856">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L857">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L725">      builder</span>
-<span class="fc" id="L726">          .createEnvironmentOperationSettings()</span>
-<span class="fc" id="L727">          .setInitialCallSettings(</span>
+<span class="fc" id="L859">      builder</span>
+<span class="fc" id="L860">          .listLocationsSettings()</span>
+<span class="fc" id="L861">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L862">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L864">      builder</span>
+<span class="fc" id="L865">          .getLocationSettings()</span>
+<span class="fc" id="L866">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L867">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L869">      builder</span>
+<span class="fc" id="L870">          .createEnvironmentOperationSettings()</span>
+<span class="fc" id="L871">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L729">                  .&lt;CreateEnvironmentRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L730">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L731">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L732">                  .build())</span>
-<span class="fc" id="L733">          .setResponseTransformer(</span>
-<span class="fc" id="L734">              ProtoOperationTransformers.ResponseTransformer.create(Environment.class))</span>
-<span class="fc" id="L735">          .setMetadataTransformer(</span>
-<span class="fc" id="L736">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
-<span class="fc" id="L737">          .setPollingAlgorithm(</span>
-<span class="fc" id="L738">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L739">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L740">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L741">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L742">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L743">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L744">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L745">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L746">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L747">                      .build()));</span>
+<span class="fc" id="L873">                  .&lt;CreateEnvironmentRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L874">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L875">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L876">                  .build())</span>
+<span class="fc" id="L877">          .setResponseTransformer(</span>
+<span class="fc" id="L878">              ProtoOperationTransformers.ResponseTransformer.create(Environment.class))</span>
+<span class="fc" id="L879">          .setMetadataTransformer(</span>
+<span class="fc" id="L880">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
+<span class="fc" id="L881">          .setPollingAlgorithm(</span>
+<span class="fc" id="L882">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L883">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L884">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L885">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L886">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L887">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L888">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L889">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L890">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L891">                      .build()));</span>
 
-<span class="fc" id="L749">      builder</span>
-<span class="fc" id="L750">          .updateEnvironmentOperationSettings()</span>
-<span class="fc" id="L751">          .setInitialCallSettings(</span>
+<span class="fc" id="L893">      builder</span>
+<span class="fc" id="L894">          .updateEnvironmentOperationSettings()</span>
+<span class="fc" id="L895">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L753">                  .&lt;UpdateEnvironmentRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L754">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L755">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L756">                  .build())</span>
-<span class="fc" id="L757">          .setResponseTransformer(</span>
-<span class="fc" id="L758">              ProtoOperationTransformers.ResponseTransformer.create(Environment.class))</span>
-<span class="fc" id="L759">          .setMetadataTransformer(</span>
-<span class="fc" id="L760">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
-<span class="fc" id="L761">          .setPollingAlgorithm(</span>
-<span class="fc" id="L762">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L763">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L764">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L765">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L766">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L767">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L768">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L769">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L770">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L771">                      .build()));</span>
+<span class="fc" id="L897">                  .&lt;UpdateEnvironmentRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L898">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L899">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L900">                  .build())</span>
+<span class="fc" id="L901">          .setResponseTransformer(</span>
+<span class="fc" id="L902">              ProtoOperationTransformers.ResponseTransformer.create(Environment.class))</span>
+<span class="fc" id="L903">          .setMetadataTransformer(</span>
+<span class="fc" id="L904">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
+<span class="fc" id="L905">          .setPollingAlgorithm(</span>
+<span class="fc" id="L906">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L907">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L908">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L909">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L910">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L911">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L912">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L913">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L914">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L915">                      .build()));</span>
 
-<span class="fc" id="L773">      builder</span>
-<span class="fc" id="L774">          .runContinuousTestOperationSettings()</span>
-<span class="fc" id="L775">          .setInitialCallSettings(</span>
+<span class="fc" id="L917">      builder</span>
+<span class="fc" id="L918">          .runContinuousTestOperationSettings()</span>
+<span class="fc" id="L919">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L777">                  .&lt;RunContinuousTestRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L778">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L779">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L780">                  .build())</span>
-<span class="fc" id="L781">          .setResponseTransformer(</span>
-<span class="fc" id="L782">              ProtoOperationTransformers.ResponseTransformer.create(</span>
+<span class="fc" id="L921">                  .&lt;RunContinuousTestRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L922">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L923">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L924">                  .build())</span>
+<span class="fc" id="L925">          .setResponseTransformer(</span>
+<span class="fc" id="L926">              ProtoOperationTransformers.ResponseTransformer.create(</span>
                   RunContinuousTestResponse.class))
-<span class="fc" id="L784">          .setMetadataTransformer(</span>
-<span class="fc" id="L785">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+<span class="fc" id="L928">          .setMetadataTransformer(</span>
+<span class="fc" id="L929">              ProtoOperationTransformers.MetadataTransformer.create(</span>
                   RunContinuousTestMetadata.class))
-<span class="fc" id="L787">          .setPollingAlgorithm(</span>
-<span class="fc" id="L788">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L789">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L790">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L791">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L792">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L793">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L794">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L795">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L796">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L797">                      .build()));</span>
+<span class="fc" id="L931">          .setPollingAlgorithm(</span>
+<span class="fc" id="L932">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L933">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L934">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L935">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L936">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L937">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L938">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L939">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L940">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L941">                      .build()));</span>
 
-<span class="fc" id="L799">      builder</span>
-<span class="fc" id="L800">          .deployFlowOperationSettings()</span>
-<span class="fc" id="L801">          .setInitialCallSettings(</span>
-<span class="fc" id="L802">              UnaryCallSettings.&lt;DeployFlowRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L803">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L804">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L805">                  .build())</span>
-<span class="fc" id="L806">          .setResponseTransformer(</span>
-<span class="fc" id="L807">              ProtoOperationTransformers.ResponseTransformer.create(DeployFlowResponse.class))</span>
-<span class="fc" id="L808">          .setMetadataTransformer(</span>
-<span class="fc" id="L809">              ProtoOperationTransformers.MetadataTransformer.create(DeployFlowMetadata.class))</span>
-<span class="fc" id="L810">          .setPollingAlgorithm(</span>
-<span class="fc" id="L811">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L812">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L813">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L814">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L815">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L816">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L817">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L818">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L819">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L820">                      .build()));</span>
+<span class="fc" id="L943">      builder</span>
+<span class="fc" id="L944">          .deployFlowOperationSettings()</span>
+<span class="fc" id="L945">          .setInitialCallSettings(</span>
+<span class="fc" id="L946">              UnaryCallSettings.&lt;DeployFlowRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L947">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L948">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L949">                  .build())</span>
+<span class="fc" id="L950">          .setResponseTransformer(</span>
+<span class="fc" id="L951">              ProtoOperationTransformers.ResponseTransformer.create(DeployFlowResponse.class))</span>
+<span class="fc" id="L952">          .setMetadataTransformer(</span>
+<span class="fc" id="L953">              ProtoOperationTransformers.MetadataTransformer.create(DeployFlowMetadata.class))</span>
+<span class="fc" id="L954">          .setPollingAlgorithm(</span>
+<span class="fc" id="L955">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L956">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L957">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L958">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L959">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L960">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L961">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L962">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L963">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L964">                      .build()));</span>
 
-<span class="fc" id="L822">      return builder;</span>
+<span class="fc" id="L966">      return builder;</span>
     }
 
     /**
@@ -829,30 +973,30 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L832">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L833">      return this;</span>
+<span class="nc" id="L976">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L977">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L837">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L981">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listEnvironments. */
     public PagedCallSettings.Builder&lt;
             ListEnvironmentsRequest, ListEnvironmentsResponse, ListEnvironmentsPagedResponse&gt;
         listEnvironmentsSettings() {
-<span class="fc" id="L844">      return listEnvironmentsSettings;</span>
+<span class="fc" id="L988">      return listEnvironmentsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getEnvironment. */
     public UnaryCallSettings.Builder&lt;GetEnvironmentRequest, Environment&gt; getEnvironmentSettings() {
-<span class="fc" id="L849">      return getEnvironmentSettings;</span>
+<span class="fc" id="L993">      return getEnvironmentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createEnvironment. */
     public UnaryCallSettings.Builder&lt;CreateEnvironmentRequest, Operation&gt;
         createEnvironmentSettings() {
-<span class="fc" id="L855">      return createEnvironmentSettings;</span>
+<span class="fc" id="L999">      return createEnvironmentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createEnvironment. */
@@ -860,13 +1004,13 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;CreateEnvironmentRequest, Environment, Struct&gt;
         createEnvironmentOperationSettings() {
-<span class="fc" id="L863">      return createEnvironmentOperationSettings;</span>
+<span class="fc" id="L1007">      return createEnvironmentOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateEnvironment. */
     public UnaryCallSettings.Builder&lt;UpdateEnvironmentRequest, Operation&gt;
         updateEnvironmentSettings() {
-<span class="fc" id="L869">      return updateEnvironmentSettings;</span>
+<span class="fc" id="L1013">      return updateEnvironmentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateEnvironment. */
@@ -874,12 +1018,12 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;UpdateEnvironmentRequest, Environment, Struct&gt;
         updateEnvironmentOperationSettings() {
-<span class="fc" id="L877">      return updateEnvironmentOperationSettings;</span>
+<span class="fc" id="L1021">      return updateEnvironmentOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteEnvironment. */
     public UnaryCallSettings.Builder&lt;DeleteEnvironmentRequest, Empty&gt; deleteEnvironmentSettings() {
-<span class="fc" id="L882">      return deleteEnvironmentSettings;</span>
+<span class="fc" id="L1026">      return deleteEnvironmentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to lookupEnvironmentHistory. */
@@ -888,13 +1032,13 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
             LookupEnvironmentHistoryResponse,
             LookupEnvironmentHistoryPagedResponse&gt;
         lookupEnvironmentHistorySettings() {
-<span class="fc" id="L891">      return lookupEnvironmentHistorySettings;</span>
+<span class="fc" id="L1035">      return lookupEnvironmentHistorySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to runContinuousTest. */
     public UnaryCallSettings.Builder&lt;RunContinuousTestRequest, Operation&gt;
         runContinuousTestSettings() {
-<span class="fc" id="L897">      return runContinuousTestSettings;</span>
+<span class="fc" id="L1041">      return runContinuousTestSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to runContinuousTest. */
@@ -903,7 +1047,7 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
     public OperationCallSettings.Builder&lt;
             RunContinuousTestRequest, RunContinuousTestResponse, RunContinuousTestMetadata&gt;
         runContinuousTestOperationSettings() {
-<span class="fc" id="L906">      return runContinuousTestOperationSettings;</span>
+<span class="fc" id="L1050">      return runContinuousTestOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listContinuousTestResults. */
@@ -912,12 +1056,12 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
             ListContinuousTestResultsResponse,
             ListContinuousTestResultsPagedResponse&gt;
         listContinuousTestResultsSettings() {
-<span class="fc" id="L915">      return listContinuousTestResultsSettings;</span>
+<span class="fc" id="L1059">      return listContinuousTestResultsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deployFlow. */
     public UnaryCallSettings.Builder&lt;DeployFlowRequest, Operation&gt; deployFlowSettings() {
-<span class="fc" id="L920">      return deployFlowSettings;</span>
+<span class="fc" id="L1064">      return deployFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deployFlow. */
@@ -925,12 +1069,24 @@ public class EnvironmentsStubSettings extends StubSettings&lt;EnvironmentsStubSe
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeployFlowRequest, DeployFlowResponse, DeployFlowMetadata&gt;
         deployFlowOperationSettings() {
-<span class="fc" id="L928">      return deployFlowOperationSettings;</span>
+<span class="fc" id="L1072">      return deployFlowOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L1079">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L1084">      return getLocationSettings;</span>
     }
 
     @Override
     public EnvironmentsStubSettings build() throws IOException {
-<span class="fc" id="L933">      return new EnvironmentsStubSettings(this);</span>
+<span class="fc" id="L1089">      return new EnvironmentsStubSettings(this);</span>
     }
   }
 }

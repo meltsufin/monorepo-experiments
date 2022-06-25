@@ -17,6 +17,7 @@
 package com.google.cloud.dialogflow.cx.v3.stub;
 
 import static com.google.cloud.dialogflow.cx.v3.FlowsClient.ListFlowsPagedResponse;
+import static com.google.cloud.dialogflow.cx.v3.FlowsClient.ListLocationsPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
@@ -28,6 +29,9 @@ import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.grpc.ProtoOperationTransformers;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.longrunning.OperationSnapshot;
 import com.google.api.gax.longrunning.OperationTimedPollAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
@@ -59,6 +63,10 @@ import com.google.cloud.dialogflow.cx.v3.ListFlowsResponse;
 import com.google.cloud.dialogflow.cx.v3.TrainFlowRequest;
 import com.google.cloud.dialogflow.cx.v3.UpdateFlowRequest;
 import com.google.cloud.dialogflow.cx.v3.ValidateFlowRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -108,10 +116,10 @@ import org.threeten.bp.Duration;
 public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L111">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L112">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L113">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L114">          .build();</span>
+<span class="fc" id="L119">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L120">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L121">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L122">          .build();</span>
 
   private final UnaryCallSettings&lt;CreateFlowRequest, Flow&gt; createFlowSettings;
   private final UnaryCallSettings&lt;DeleteFlowRequest, Empty&gt; deleteFlowSettings;
@@ -130,217 +138,317 @@ public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
   private final UnaryCallSettings&lt;ExportFlowRequest, Operation&gt; exportFlowSettings;
   private final OperationCallSettings&lt;ExportFlowRequest, ExportFlowResponse, Struct&gt;
       exportFlowOperationSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt;
-<span class="fc" id="L135">      LIST_FLOWS_PAGE_STR_DESC =</span>
-<span class="fc" id="L136">          new PagedListDescriptor&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt;() {</span>
+<span class="fc" id="L147">      LIST_FLOWS_PAGE_STR_DESC =</span>
+<span class="fc" id="L148">          new PagedListDescriptor&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L139">              return &quot;&quot;;</span>
+<span class="fc" id="L151">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListFlowsRequest injectToken(ListFlowsRequest payload, String token) {
-<span class="nc" id="L144">              return ListFlowsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L156">              return ListFlowsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListFlowsRequest injectPageSize(ListFlowsRequest payload, int pageSize) {
-<span class="nc" id="L149">              return ListFlowsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L161">              return ListFlowsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListFlowsRequest payload) {
-<span class="nc" id="L154">              return payload.getPageSize();</span>
+<span class="nc" id="L166">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListFlowsResponse payload) {
-<span class="fc" id="L159">              return payload.getNextPageToken();</span>
+<span class="fc" id="L171">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Flow&gt; extractResources(ListFlowsResponse payload) {
-<span class="pc bpc" id="L164" title="1 of 2 branches missed.">              return payload.getFlowsList() == null</span>
-<span class="nc" id="L165">                  ? ImmutableList.&lt;Flow&gt;of()</span>
-<span class="fc" id="L166">                  : payload.getFlowsList();</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">              return payload.getFlowsList() == null</span>
+<span class="nc" id="L177">                  ? ImmutableList.&lt;Flow&gt;of()</span>
+<span class="fc" id="L178">                  : payload.getFlowsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L183">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L184">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L187">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L192">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L197">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L202">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L207">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L213">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L214">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListFlowsRequest, ListFlowsResponse, ListFlowsPagedResponse&gt;
-<span class="fc" id="L172">      LIST_FLOWS_PAGE_STR_FACT =</span>
+<span class="fc" id="L220">      LIST_FLOWS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L174">              ListFlowsRequest, ListFlowsResponse, ListFlowsPagedResponse&gt;() {</span>
+<span class="fc" id="L222">              ListFlowsRequest, ListFlowsResponse, ListFlowsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListFlowsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListFlowsRequest, ListFlowsResponse&gt; callable,
                 ListFlowsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListFlowsResponse&gt; futureResponse) {
-<span class="fc" id="L181">              PageContext&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt; pageContext =</span>
-<span class="fc" id="L182">                  PageContext.create(callable, LIST_FLOWS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L183">              return ListFlowsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L229">              PageContext&lt;ListFlowsRequest, ListFlowsResponse, Flow&gt; pageContext =</span>
+<span class="fc" id="L230">                  PageContext.create(callable, LIST_FLOWS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L231">              return ListFlowsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L237">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L239">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L246">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L247">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L248">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to createFlow. */
   public UnaryCallSettings&lt;CreateFlowRequest, Flow&gt; createFlowSettings() {
-<span class="fc" id="L189">    return createFlowSettings;</span>
+<span class="fc" id="L254">    return createFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteFlow. */
   public UnaryCallSettings&lt;DeleteFlowRequest, Empty&gt; deleteFlowSettings() {
-<span class="fc" id="L194">    return deleteFlowSettings;</span>
+<span class="fc" id="L259">    return deleteFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listFlows. */
   public PagedCallSettings&lt;ListFlowsRequest, ListFlowsResponse, ListFlowsPagedResponse&gt;
       listFlowsSettings() {
-<span class="fc" id="L200">    return listFlowsSettings;</span>
+<span class="fc" id="L265">    return listFlowsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getFlow. */
   public UnaryCallSettings&lt;GetFlowRequest, Flow&gt; getFlowSettings() {
-<span class="fc" id="L205">    return getFlowSettings;</span>
+<span class="fc" id="L270">    return getFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateFlow. */
   public UnaryCallSettings&lt;UpdateFlowRequest, Flow&gt; updateFlowSettings() {
-<span class="fc" id="L210">    return updateFlowSettings;</span>
+<span class="fc" id="L275">    return updateFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to trainFlow. */
   public UnaryCallSettings&lt;TrainFlowRequest, Operation&gt; trainFlowSettings() {
-<span class="fc" id="L215">    return trainFlowSettings;</span>
+<span class="fc" id="L280">    return trainFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to trainFlow. */
   public OperationCallSettings&lt;TrainFlowRequest, Empty, Struct&gt; trainFlowOperationSettings() {
-<span class="fc" id="L220">    return trainFlowOperationSettings;</span>
+<span class="fc" id="L285">    return trainFlowOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to validateFlow. */
   public UnaryCallSettings&lt;ValidateFlowRequest, FlowValidationResult&gt; validateFlowSettings() {
-<span class="fc" id="L225">    return validateFlowSettings;</span>
+<span class="fc" id="L290">    return validateFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getFlowValidationResult. */
   public UnaryCallSettings&lt;GetFlowValidationResultRequest, FlowValidationResult&gt;
       getFlowValidationResultSettings() {
-<span class="fc" id="L231">    return getFlowValidationResultSettings;</span>
+<span class="fc" id="L296">    return getFlowValidationResultSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to importFlow. */
   public UnaryCallSettings&lt;ImportFlowRequest, Operation&gt; importFlowSettings() {
-<span class="fc" id="L236">    return importFlowSettings;</span>
+<span class="fc" id="L301">    return importFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to importFlow. */
   public OperationCallSettings&lt;ImportFlowRequest, ImportFlowResponse, Struct&gt;
       importFlowOperationSettings() {
-<span class="fc" id="L242">    return importFlowOperationSettings;</span>
+<span class="fc" id="L307">    return importFlowOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to exportFlow. */
   public UnaryCallSettings&lt;ExportFlowRequest, Operation&gt; exportFlowSettings() {
-<span class="fc" id="L247">    return exportFlowSettings;</span>
+<span class="fc" id="L312">    return exportFlowSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to exportFlow. */
   public OperationCallSettings&lt;ExportFlowRequest, ExportFlowResponse, Struct&gt;
       exportFlowOperationSettings() {
-<span class="fc" id="L253">    return exportFlowOperationSettings;</span>
+<span class="fc" id="L318">    return exportFlowOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L324">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L329">    return getLocationSettings;</span>
   }
 
   public FlowsStub createStub() throws IOException {
-<span class="fc" id="L257">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L258">        .getTransportName()</span>
-<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L260">      return GrpcFlowsStub.create(this);</span>
+<span class="fc" id="L333">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L334">        .getTransportName()</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L336">      return GrpcFlowsStub.create(this);</span>
     }
-<span class="nc" id="L262">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L263">        String.format(</span>
-<span class="nc" id="L264">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L338">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L339">        .getTransportName()</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L341">      return HttpJsonFlowsStub.create(this);</span>
+    }
+<span class="nc" id="L343">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L344">        String.format(</span>
+<span class="nc" id="L345">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L269">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L350">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L274">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L355">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L279">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L360">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L284">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L365">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L289">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L290">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L291">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L370">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L371">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L372">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L296">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L297">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L377">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L378">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L385">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L301">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L389">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L306">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L307">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(FlowsStubSettings.class))</span>
-<span class="fc" id="L308">        .setTransportToken(</span>
-<span class="fc" id="L309">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L394">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L395">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(FlowsStubSettings.class))</span>
+<span class="fc" id="L396">        .setTransportToken(</span>
+<span class="fc" id="L397">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L402">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L403">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(FlowsStubSettings.class))</span>
+<span class="fc" id="L404">        .setTransportToken(</span>
+<span class="fc" id="L405">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L406">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L410">    return FlowsStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L314">    return Builder.createDefault();</span>
+<span class="fc" id="L415">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L420">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L319">    return new Builder(clientContext);</span>
+<span class="nc" id="L425">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L324">    return new Builder(this);</span>
+<span class="nc" id="L430">    return new Builder(this);</span>
   }
 
   protected FlowsStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L328">    super(settingsBuilder);</span>
+<span class="fc" id="L434">    super(settingsBuilder);</span>
 
-<span class="fc" id="L330">    createFlowSettings = settingsBuilder.createFlowSettings().build();</span>
-<span class="fc" id="L331">    deleteFlowSettings = settingsBuilder.deleteFlowSettings().build();</span>
-<span class="fc" id="L332">    listFlowsSettings = settingsBuilder.listFlowsSettings().build();</span>
-<span class="fc" id="L333">    getFlowSettings = settingsBuilder.getFlowSettings().build();</span>
-<span class="fc" id="L334">    updateFlowSettings = settingsBuilder.updateFlowSettings().build();</span>
-<span class="fc" id="L335">    trainFlowSettings = settingsBuilder.trainFlowSettings().build();</span>
-<span class="fc" id="L336">    trainFlowOperationSettings = settingsBuilder.trainFlowOperationSettings().build();</span>
-<span class="fc" id="L337">    validateFlowSettings = settingsBuilder.validateFlowSettings().build();</span>
-<span class="fc" id="L338">    getFlowValidationResultSettings = settingsBuilder.getFlowValidationResultSettings().build();</span>
-<span class="fc" id="L339">    importFlowSettings = settingsBuilder.importFlowSettings().build();</span>
-<span class="fc" id="L340">    importFlowOperationSettings = settingsBuilder.importFlowOperationSettings().build();</span>
-<span class="fc" id="L341">    exportFlowSettings = settingsBuilder.exportFlowSettings().build();</span>
-<span class="fc" id="L342">    exportFlowOperationSettings = settingsBuilder.exportFlowOperationSettings().build();</span>
-<span class="fc" id="L343">  }</span>
+<span class="fc" id="L436">    createFlowSettings = settingsBuilder.createFlowSettings().build();</span>
+<span class="fc" id="L437">    deleteFlowSettings = settingsBuilder.deleteFlowSettings().build();</span>
+<span class="fc" id="L438">    listFlowsSettings = settingsBuilder.listFlowsSettings().build();</span>
+<span class="fc" id="L439">    getFlowSettings = settingsBuilder.getFlowSettings().build();</span>
+<span class="fc" id="L440">    updateFlowSettings = settingsBuilder.updateFlowSettings().build();</span>
+<span class="fc" id="L441">    trainFlowSettings = settingsBuilder.trainFlowSettings().build();</span>
+<span class="fc" id="L442">    trainFlowOperationSettings = settingsBuilder.trainFlowOperationSettings().build();</span>
+<span class="fc" id="L443">    validateFlowSettings = settingsBuilder.validateFlowSettings().build();</span>
+<span class="fc" id="L444">    getFlowValidationResultSettings = settingsBuilder.getFlowValidationResultSettings().build();</span>
+<span class="fc" id="L445">    importFlowSettings = settingsBuilder.importFlowSettings().build();</span>
+<span class="fc" id="L446">    importFlowOperationSettings = settingsBuilder.importFlowOperationSettings().build();</span>
+<span class="fc" id="L447">    exportFlowSettings = settingsBuilder.exportFlowSettings().build();</span>
+<span class="fc" id="L448">    exportFlowOperationSettings = settingsBuilder.exportFlowOperationSettings().build();</span>
+<span class="fc" id="L449">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L450">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L451">  }</span>
 
   /** Builder for FlowsStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;FlowsStubSettings, Builder&gt; {
@@ -365,60 +473,66 @@ public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
     private final UnaryCallSettings.Builder&lt;ExportFlowRequest, Operation&gt; exportFlowSettings;
     private final OperationCallSettings.Builder&lt;ExportFlowRequest, ExportFlowResponse, Struct&gt;
         exportFlowOperationSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L373">          ImmutableMap.builder();</span>
-<span class="fc" id="L374">      definitions.put(</span>
+<span class="fc" id="L485">          ImmutableMap.builder();</span>
+<span class="fc" id="L486">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L376">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L377">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L488">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L489">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L383">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L384">      RetrySettings settings = null;</span>
+<span class="fc" id="L495">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L496">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L386">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L387">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L388">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L389">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L390">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L391">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L392">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L393">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L394">              .build();</span>
-<span class="fc" id="L395">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L396">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L397">    }</span>
+<span class="fc" id="L498">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L499">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L500">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L501">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L502">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L503">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L504">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L505">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L506">              .build();</span>
+<span class="fc" id="L507">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L508">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L509">    }</span>
 
     protected Builder() {
-<span class="nc" id="L400">      this(((ClientContext) null));</span>
-<span class="nc" id="L401">    }</span>
+<span class="nc" id="L512">      this(((ClientContext) null));</span>
+<span class="nc" id="L513">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L404">      super(clientContext);</span>
+<span class="fc" id="L516">      super(clientContext);</span>
 
-<span class="fc" id="L406">      createFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L407">      deleteFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L408">      listFlowsSettings = PagedCallSettings.newBuilder(LIST_FLOWS_PAGE_STR_FACT);</span>
-<span class="fc" id="L409">      getFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L410">      updateFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L411">      trainFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L412">      trainFlowOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L413">      validateFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L414">      getFlowValidationResultSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L415">      importFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L416">      importFlowOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L417">      exportFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L418">      exportFlowOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L518">      createFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L519">      deleteFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L520">      listFlowsSettings = PagedCallSettings.newBuilder(LIST_FLOWS_PAGE_STR_FACT);</span>
+<span class="fc" id="L521">      getFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L522">      updateFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L523">      trainFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L524">      trainFlowOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L525">      validateFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L526">      getFlowValidationResultSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L527">      importFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L528">      importFlowOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L529">      exportFlowSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L530">      exportFlowOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L531">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L532">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L420">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L421">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L534">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L535">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createFlowSettings,
               deleteFlowSettings,
               listFlowsSettings,
@@ -428,29 +542,33 @@ public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
               validateFlowSettings,
               getFlowValidationResultSettings,
               importFlowSettings,
-              exportFlowSettings);
-<span class="fc" id="L432">      initDefaults(this);</span>
-<span class="fc" id="L433">    }</span>
+              exportFlowSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L548">      initDefaults(this);</span>
+<span class="fc" id="L549">    }</span>
 
     protected Builder(FlowsStubSettings settings) {
-<span class="nc" id="L436">      super(settings);</span>
+<span class="nc" id="L552">      super(settings);</span>
 
-<span class="nc" id="L438">      createFlowSettings = settings.createFlowSettings.toBuilder();</span>
-<span class="nc" id="L439">      deleteFlowSettings = settings.deleteFlowSettings.toBuilder();</span>
-<span class="nc" id="L440">      listFlowsSettings = settings.listFlowsSettings.toBuilder();</span>
-<span class="nc" id="L441">      getFlowSettings = settings.getFlowSettings.toBuilder();</span>
-<span class="nc" id="L442">      updateFlowSettings = settings.updateFlowSettings.toBuilder();</span>
-<span class="nc" id="L443">      trainFlowSettings = settings.trainFlowSettings.toBuilder();</span>
-<span class="nc" id="L444">      trainFlowOperationSettings = settings.trainFlowOperationSettings.toBuilder();</span>
-<span class="nc" id="L445">      validateFlowSettings = settings.validateFlowSettings.toBuilder();</span>
-<span class="nc" id="L446">      getFlowValidationResultSettings = settings.getFlowValidationResultSettings.toBuilder();</span>
-<span class="nc" id="L447">      importFlowSettings = settings.importFlowSettings.toBuilder();</span>
-<span class="nc" id="L448">      importFlowOperationSettings = settings.importFlowOperationSettings.toBuilder();</span>
-<span class="nc" id="L449">      exportFlowSettings = settings.exportFlowSettings.toBuilder();</span>
-<span class="nc" id="L450">      exportFlowOperationSettings = settings.exportFlowOperationSettings.toBuilder();</span>
+<span class="nc" id="L554">      createFlowSettings = settings.createFlowSettings.toBuilder();</span>
+<span class="nc" id="L555">      deleteFlowSettings = settings.deleteFlowSettings.toBuilder();</span>
+<span class="nc" id="L556">      listFlowsSettings = settings.listFlowsSettings.toBuilder();</span>
+<span class="nc" id="L557">      getFlowSettings = settings.getFlowSettings.toBuilder();</span>
+<span class="nc" id="L558">      updateFlowSettings = settings.updateFlowSettings.toBuilder();</span>
+<span class="nc" id="L559">      trainFlowSettings = settings.trainFlowSettings.toBuilder();</span>
+<span class="nc" id="L560">      trainFlowOperationSettings = settings.trainFlowOperationSettings.toBuilder();</span>
+<span class="nc" id="L561">      validateFlowSettings = settings.validateFlowSettings.toBuilder();</span>
+<span class="nc" id="L562">      getFlowValidationResultSettings = settings.getFlowValidationResultSettings.toBuilder();</span>
+<span class="nc" id="L563">      importFlowSettings = settings.importFlowSettings.toBuilder();</span>
+<span class="nc" id="L564">      importFlowOperationSettings = settings.importFlowOperationSettings.toBuilder();</span>
+<span class="nc" id="L565">      exportFlowSettings = settings.exportFlowSettings.toBuilder();</span>
+<span class="nc" id="L566">      exportFlowOperationSettings = settings.exportFlowOperationSettings.toBuilder();</span>
+<span class="nc" id="L567">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L568">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L452">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L453">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L570">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L571">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createFlowSettings,
               deleteFlowSettings,
               listFlowsSettings,
@@ -460,143 +578,168 @@ public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
               validateFlowSettings,
               getFlowValidationResultSettings,
               importFlowSettings,
-              exportFlowSettings);
-<span class="nc" id="L464">    }</span>
+              exportFlowSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L584">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L467">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L587">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L469">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L470">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L471">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L472">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L473">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L474">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L589">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L590">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L591">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L592">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L593">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L594">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L476">      return initDefaults(builder);</span>
+<span class="fc" id="L596">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L600">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L602">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L603">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L604">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L605">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L606">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L607">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L609">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L480">      builder</span>
-<span class="fc" id="L481">          .createFlowSettings()</span>
-<span class="fc" id="L482">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L483">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L613">      builder</span>
+<span class="fc" id="L614">          .createFlowSettings()</span>
+<span class="fc" id="L615">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L616">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L485">      builder</span>
-<span class="fc" id="L486">          .deleteFlowSettings()</span>
-<span class="fc" id="L487">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L488">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L618">      builder</span>
+<span class="fc" id="L619">          .deleteFlowSettings()</span>
+<span class="fc" id="L620">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L621">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L490">      builder</span>
-<span class="fc" id="L491">          .listFlowsSettings()</span>
-<span class="fc" id="L492">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L493">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L623">      builder</span>
+<span class="fc" id="L624">          .listFlowsSettings()</span>
+<span class="fc" id="L625">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L626">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L495">      builder</span>
-<span class="fc" id="L496">          .getFlowSettings()</span>
-<span class="fc" id="L497">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L498">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L628">      builder</span>
+<span class="fc" id="L629">          .getFlowSettings()</span>
+<span class="fc" id="L630">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L631">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L500">      builder</span>
-<span class="fc" id="L501">          .updateFlowSettings()</span>
-<span class="fc" id="L502">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L503">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L633">      builder</span>
+<span class="fc" id="L634">          .updateFlowSettings()</span>
+<span class="fc" id="L635">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L636">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L505">      builder</span>
-<span class="fc" id="L506">          .trainFlowSettings()</span>
-<span class="fc" id="L507">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L508">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L638">      builder</span>
+<span class="fc" id="L639">          .trainFlowSettings()</span>
+<span class="fc" id="L640">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L641">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L510">      builder</span>
-<span class="fc" id="L511">          .validateFlowSettings()</span>
-<span class="fc" id="L512">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L513">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L643">      builder</span>
+<span class="fc" id="L644">          .validateFlowSettings()</span>
+<span class="fc" id="L645">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L646">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L515">      builder</span>
-<span class="fc" id="L516">          .getFlowValidationResultSettings()</span>
-<span class="fc" id="L517">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L518">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L648">      builder</span>
+<span class="fc" id="L649">          .getFlowValidationResultSettings()</span>
+<span class="fc" id="L650">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L651">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L520">      builder</span>
-<span class="fc" id="L521">          .importFlowSettings()</span>
-<span class="fc" id="L522">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L523">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L653">      builder</span>
+<span class="fc" id="L654">          .importFlowSettings()</span>
+<span class="fc" id="L655">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L656">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L525">      builder</span>
-<span class="fc" id="L526">          .exportFlowSettings()</span>
-<span class="fc" id="L527">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L528">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L658">      builder</span>
+<span class="fc" id="L659">          .exportFlowSettings()</span>
+<span class="fc" id="L660">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L661">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L530">      builder</span>
-<span class="fc" id="L531">          .trainFlowOperationSettings()</span>
-<span class="fc" id="L532">          .setInitialCallSettings(</span>
-<span class="fc" id="L533">              UnaryCallSettings.&lt;TrainFlowRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L534">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L535">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L536">                  .build())</span>
-<span class="fc" id="L537">          .setResponseTransformer(</span>
-<span class="fc" id="L538">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
-<span class="fc" id="L539">          .setMetadataTransformer(</span>
-<span class="fc" id="L540">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
-<span class="fc" id="L541">          .setPollingAlgorithm(</span>
-<span class="fc" id="L542">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L543">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L544">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L545">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L546">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L547">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L548">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L549">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L550">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L551">                      .build()));</span>
+<span class="fc" id="L663">      builder</span>
+<span class="fc" id="L664">          .listLocationsSettings()</span>
+<span class="fc" id="L665">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L666">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L553">      builder</span>
-<span class="fc" id="L554">          .importFlowOperationSettings()</span>
-<span class="fc" id="L555">          .setInitialCallSettings(</span>
-<span class="fc" id="L556">              UnaryCallSettings.&lt;ImportFlowRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L557">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L558">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L559">                  .build())</span>
-<span class="fc" id="L560">          .setResponseTransformer(</span>
-<span class="fc" id="L561">              ProtoOperationTransformers.ResponseTransformer.create(ImportFlowResponse.class))</span>
-<span class="fc" id="L562">          .setMetadataTransformer(</span>
-<span class="fc" id="L563">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
-<span class="fc" id="L564">          .setPollingAlgorithm(</span>
-<span class="fc" id="L565">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L566">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L567">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L568">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L569">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L570">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L571">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L572">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L573">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L574">                      .build()));</span>
+<span class="fc" id="L668">      builder</span>
+<span class="fc" id="L669">          .getLocationSettings()</span>
+<span class="fc" id="L670">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L671">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L576">      builder</span>
-<span class="fc" id="L577">          .exportFlowOperationSettings()</span>
-<span class="fc" id="L578">          .setInitialCallSettings(</span>
-<span class="fc" id="L579">              UnaryCallSettings.&lt;ExportFlowRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L580">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L581">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L582">                  .build())</span>
-<span class="fc" id="L583">          .setResponseTransformer(</span>
-<span class="fc" id="L584">              ProtoOperationTransformers.ResponseTransformer.create(ExportFlowResponse.class))</span>
-<span class="fc" id="L585">          .setMetadataTransformer(</span>
-<span class="fc" id="L586">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
-<span class="fc" id="L587">          .setPollingAlgorithm(</span>
-<span class="fc" id="L588">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L589">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L590">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L591">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L592">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L593">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L594">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L595">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L596">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L597">                      .build()));</span>
+<span class="fc" id="L673">      builder</span>
+<span class="fc" id="L674">          .trainFlowOperationSettings()</span>
+<span class="fc" id="L675">          .setInitialCallSettings(</span>
+<span class="fc" id="L676">              UnaryCallSettings.&lt;TrainFlowRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L677">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L678">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L679">                  .build())</span>
+<span class="fc" id="L680">          .setResponseTransformer(</span>
+<span class="fc" id="L681">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
+<span class="fc" id="L682">          .setMetadataTransformer(</span>
+<span class="fc" id="L683">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
+<span class="fc" id="L684">          .setPollingAlgorithm(</span>
+<span class="fc" id="L685">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L686">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L687">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L688">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L689">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L690">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L691">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L692">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L693">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L694">                      .build()));</span>
 
-<span class="fc" id="L599">      return builder;</span>
+<span class="fc" id="L696">      builder</span>
+<span class="fc" id="L697">          .importFlowOperationSettings()</span>
+<span class="fc" id="L698">          .setInitialCallSettings(</span>
+<span class="fc" id="L699">              UnaryCallSettings.&lt;ImportFlowRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L700">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L701">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L702">                  .build())</span>
+<span class="fc" id="L703">          .setResponseTransformer(</span>
+<span class="fc" id="L704">              ProtoOperationTransformers.ResponseTransformer.create(ImportFlowResponse.class))</span>
+<span class="fc" id="L705">          .setMetadataTransformer(</span>
+<span class="fc" id="L706">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
+<span class="fc" id="L707">          .setPollingAlgorithm(</span>
+<span class="fc" id="L708">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L709">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L710">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L711">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L712">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L713">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L714">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L715">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L716">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L717">                      .build()));</span>
+
+<span class="fc" id="L719">      builder</span>
+<span class="fc" id="L720">          .exportFlowOperationSettings()</span>
+<span class="fc" id="L721">          .setInitialCallSettings(</span>
+<span class="fc" id="L722">              UnaryCallSettings.&lt;ExportFlowRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L723">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L724">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L725">                  .build())</span>
+<span class="fc" id="L726">          .setResponseTransformer(</span>
+<span class="fc" id="L727">              ProtoOperationTransformers.ResponseTransformer.create(ExportFlowResponse.class))</span>
+<span class="fc" id="L728">          .setMetadataTransformer(</span>
+<span class="fc" id="L729">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
+<span class="fc" id="L730">          .setPollingAlgorithm(</span>
+<span class="fc" id="L731">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L732">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L733">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L734">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L735">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L736">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L737">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L738">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L739">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L740">                      .build()));</span>
+
+<span class="fc" id="L742">      return builder;</span>
     }
 
     /**
@@ -606,43 +749,43 @@ public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L609">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L610">      return this;</span>
+<span class="nc" id="L752">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L753">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L614">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L757">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to createFlow. */
     public UnaryCallSettings.Builder&lt;CreateFlowRequest, Flow&gt; createFlowSettings() {
-<span class="fc" id="L619">      return createFlowSettings;</span>
+<span class="fc" id="L762">      return createFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteFlow. */
     public UnaryCallSettings.Builder&lt;DeleteFlowRequest, Empty&gt; deleteFlowSettings() {
-<span class="fc" id="L624">      return deleteFlowSettings;</span>
+<span class="fc" id="L767">      return deleteFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listFlows. */
     public PagedCallSettings.Builder&lt;ListFlowsRequest, ListFlowsResponse, ListFlowsPagedResponse&gt;
         listFlowsSettings() {
-<span class="fc" id="L630">      return listFlowsSettings;</span>
+<span class="fc" id="L773">      return listFlowsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getFlow. */
     public UnaryCallSettings.Builder&lt;GetFlowRequest, Flow&gt; getFlowSettings() {
-<span class="fc" id="L635">      return getFlowSettings;</span>
+<span class="fc" id="L778">      return getFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateFlow. */
     public UnaryCallSettings.Builder&lt;UpdateFlowRequest, Flow&gt; updateFlowSettings() {
-<span class="fc" id="L640">      return updateFlowSettings;</span>
+<span class="fc" id="L783">      return updateFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to trainFlow. */
     public UnaryCallSettings.Builder&lt;TrainFlowRequest, Operation&gt; trainFlowSettings() {
-<span class="fc" id="L645">      return trainFlowSettings;</span>
+<span class="fc" id="L788">      return trainFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to trainFlow. */
@@ -650,24 +793,24 @@ public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;TrainFlowRequest, Empty, Struct&gt;
         trainFlowOperationSettings() {
-<span class="fc" id="L653">      return trainFlowOperationSettings;</span>
+<span class="fc" id="L796">      return trainFlowOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to validateFlow. */
     public UnaryCallSettings.Builder&lt;ValidateFlowRequest, FlowValidationResult&gt;
         validateFlowSettings() {
-<span class="fc" id="L659">      return validateFlowSettings;</span>
+<span class="fc" id="L802">      return validateFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getFlowValidationResult. */
     public UnaryCallSettings.Builder&lt;GetFlowValidationResultRequest, FlowValidationResult&gt;
         getFlowValidationResultSettings() {
-<span class="fc" id="L665">      return getFlowValidationResultSettings;</span>
+<span class="fc" id="L808">      return getFlowValidationResultSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to importFlow. */
     public UnaryCallSettings.Builder&lt;ImportFlowRequest, Operation&gt; importFlowSettings() {
-<span class="fc" id="L670">      return importFlowSettings;</span>
+<span class="fc" id="L813">      return importFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to importFlow. */
@@ -675,12 +818,12 @@ public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;ImportFlowRequest, ImportFlowResponse, Struct&gt;
         importFlowOperationSettings() {
-<span class="fc" id="L678">      return importFlowOperationSettings;</span>
+<span class="fc" id="L821">      return importFlowOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to exportFlow. */
     public UnaryCallSettings.Builder&lt;ExportFlowRequest, Operation&gt; exportFlowSettings() {
-<span class="fc" id="L683">      return exportFlowSettings;</span>
+<span class="fc" id="L826">      return exportFlowSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to exportFlow. */
@@ -688,12 +831,24 @@ public class FlowsStubSettings extends StubSettings&lt;FlowsStubSettings&gt; {
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;ExportFlowRequest, ExportFlowResponse, Struct&gt;
         exportFlowOperationSettings() {
-<span class="fc" id="L691">      return exportFlowOperationSettings;</span>
+<span class="fc" id="L834">      return exportFlowOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L841">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L846">      return getLocationSettings;</span>
     }
 
     @Override
     public FlowsStubSettings build() throws IOException {
-<span class="fc" id="L696">      return new FlowsStubSettings(this);</span>
+<span class="fc" id="L851">      return new FlowsStubSettings(this);</span>
     }
   }
 }

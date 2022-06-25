@@ -19,6 +19,7 @@ package com.google.cloud.dialogflow.v2;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.dialogflow.v2.stub.ConversationModelsStub;
 import com.google.cloud.dialogflow.v2.stub.ConversationModelsStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import java.io.IOException;
 import java.util.List;
@@ -104,17 +104,33 @@ import javax.annotation.Generated;
  *     ConversationModelsClient.create(conversationModelsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ConversationModelsSettings conversationModelsSettings =
+ *     ConversationModelsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ConversationModelsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ConversationModelsClient conversationModelsClient =
+ *     ConversationModelsClient.create(conversationModelsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class ConversationModelsClient implements BackgroundResource {
   private final ConversationModelsSettings settings;
   private final ConversationModelsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ConversationModelsClient with default settings. */
   public static final ConversationModelsClient create() throws IOException {
-<span class="nc" id="L117">    return create(ConversationModelsSettings.newBuilder().build());</span>
+<span class="nc" id="L133">    return create(ConversationModelsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -123,7 +139,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public static final ConversationModelsClient create(ConversationModelsSettings settings)
       throws IOException {
-<span class="fc" id="L126">    return new ConversationModelsClient(settings);</span>
+<span class="fc" id="L142">    return new ConversationModelsClient(settings);</span>
   }
 
   /**
@@ -131,7 +147,7 @@ public class ConversationModelsClient implements BackgroundResource {
    * is for advanced usage - prefer using create(ConversationModelsSettings).
    */
   public static final ConversationModelsClient create(ConversationModelsStub stub) {
-<span class="nc" id="L134">    return new ConversationModelsClient(stub);</span>
+<span class="nc" id="L150">    return new ConversationModelsClient(stub);</span>
   }
 
   /**
@@ -139,32 +155,44 @@ public class ConversationModelsClient implements BackgroundResource {
    * so that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L142">  protected ConversationModelsClient(ConversationModelsSettings settings) throws IOException {</span>
-<span class="fc" id="L143">    this.settings = settings;</span>
-<span class="fc" id="L144">    this.stub = ((ConversationModelsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L145">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L146">  }</span>
+<span class="fc" id="L158">  protected ConversationModelsClient(ConversationModelsSettings settings) throws IOException {</span>
+<span class="fc" id="L159">    this.settings = settings;</span>
+<span class="fc" id="L160">    this.stub = ((ConversationModelsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L161">    this.operationsClient =</span>
+<span class="fc" id="L162">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L163">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L164">  }</span>
 
-<span class="nc" id="L148">  protected ConversationModelsClient(ConversationModelsStub stub) {</span>
-<span class="nc" id="L149">    this.settings = null;</span>
-<span class="nc" id="L150">    this.stub = stub;</span>
-<span class="nc" id="L151">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L152">  }</span>
+<span class="nc" id="L166">  protected ConversationModelsClient(ConversationModelsStub stub) {</span>
+<span class="nc" id="L167">    this.settings = null;</span>
+<span class="nc" id="L168">    this.stub = stub;</span>
+<span class="nc" id="L169">    this.operationsClient =</span>
+<span class="nc" id="L170">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L171">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L172">  }</span>
 
   public final ConversationModelsSettings getSettings() {
-<span class="nc" id="L155">    return settings;</span>
+<span class="nc" id="L175">    return settings;</span>
   }
 
   public ConversationModelsStub getStub() {
-<span class="nc" id="L159">    return stub;</span>
+<span class="nc" id="L179">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L167">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L187">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L195">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -200,11 +228,11 @@ public class ConversationModelsClient implements BackgroundResource {
   public final OperationFuture&lt;ConversationModel, CreateConversationModelOperationMetadata&gt;
       createConversationModelAsync(String parent, ConversationModel conversationModel) {
     CreateConversationModelRequest request =
-<span class="fc" id="L203">        CreateConversationModelRequest.newBuilder()</span>
-<span class="fc" id="L204">            .setParent(parent)</span>
-<span class="fc" id="L205">            .setConversationModel(conversationModel)</span>
-<span class="fc" id="L206">            .build();</span>
-<span class="fc" id="L207">    return createConversationModelAsync(request);</span>
+<span class="fc" id="L231">        CreateConversationModelRequest.newBuilder()</span>
+<span class="fc" id="L232">            .setParent(parent)</span>
+<span class="fc" id="L233">            .setConversationModel(conversationModel)</span>
+<span class="fc" id="L234">            .build();</span>
+<span class="fc" id="L235">    return createConversationModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -240,7 +268,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ConversationModel, CreateConversationModelOperationMetadata&gt;
       createConversationModelAsync(CreateConversationModelRequest request) {
-<span class="fc" id="L243">    return createConversationModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L271">    return createConversationModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -278,7 +306,7 @@ public class ConversationModelsClient implements BackgroundResource {
           ConversationModel,
           CreateConversationModelOperationMetadata&gt;
       createConversationModelOperationCallable() {
-<span class="fc" id="L281">    return stub.createConversationModelOperationCallable();</span>
+<span class="fc" id="L309">    return stub.createConversationModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -313,7 +341,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateConversationModelRequest, Operation&gt;
       createConversationModelCallable() {
-<span class="nc" id="L316">    return stub.createConversationModelCallable();</span>
+<span class="nc" id="L344">    return stub.createConversationModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -337,8 +365,8 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final ConversationModel getConversationModel(String name) {
     GetConversationModelRequest request =
-<span class="fc" id="L340">        GetConversationModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L341">    return getConversationModel(request);</span>
+<span class="fc" id="L368">        GetConversationModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L369">    return getConversationModel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -361,7 +389,7 @@ public class ConversationModelsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ConversationModel getConversationModel(GetConversationModelRequest request) {
-<span class="fc" id="L364">    return getConversationModelCallable().call(request);</span>
+<span class="fc" id="L392">    return getConversationModelCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -385,7 +413,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetConversationModelRequest, ConversationModel&gt;
       getConversationModelCallable() {
-<span class="fc" id="L388">    return stub.getConversationModelCallable();</span>
+<span class="fc" id="L416">    return stub.getConversationModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -412,8 +440,8 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final ListConversationModelsPagedResponse listConversationModels(String parent) {
     ListConversationModelsRequest request =
-<span class="fc" id="L415">        ListConversationModelsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L416">    return listConversationModels(request);</span>
+<span class="fc" id="L443">        ListConversationModelsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L444">    return listConversationModels(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -444,7 +472,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final ListConversationModelsPagedResponse listConversationModels(
       ListConversationModelsRequest request) {
-<span class="fc" id="L447">    return listConversationModelsPagedCallable().call(request);</span>
+<span class="fc" id="L475">    return listConversationModelsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -474,7 +502,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConversationModelsRequest, ListConversationModelsPagedResponse&gt;
       listConversationModelsPagedCallable() {
-<span class="fc" id="L477">    return stub.listConversationModelsPagedCallable();</span>
+<span class="fc" id="L505">    return stub.listConversationModelsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -511,7 +539,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConversationModelsRequest, ListConversationModelsResponse&gt;
       listConversationModelsCallable() {
-<span class="nc" id="L514">    return stub.listConversationModelsCallable();</span>
+<span class="nc" id="L542">    return stub.listConversationModelsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -545,8 +573,8 @@ public class ConversationModelsClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteConversationModelOperationMetadata&gt;
       deleteConversationModelAsync(String name) {
     DeleteConversationModelRequest request =
-<span class="fc" id="L548">        DeleteConversationModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L549">    return deleteConversationModelAsync(request);</span>
+<span class="fc" id="L576">        DeleteConversationModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L577">    return deleteConversationModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -579,7 +607,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteConversationModelOperationMetadata&gt;
       deleteConversationModelAsync(DeleteConversationModelRequest request) {
-<span class="fc" id="L582">    return deleteConversationModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L610">    return deleteConversationModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -613,7 +641,7 @@ public class ConversationModelsClient implements BackgroundResource {
   public final OperationCallable&lt;
           DeleteConversationModelRequest, Empty, DeleteConversationModelOperationMetadata&gt;
       deleteConversationModelOperationCallable() {
-<span class="fc" id="L616">    return stub.deleteConversationModelOperationCallable();</span>
+<span class="fc" id="L644">    return stub.deleteConversationModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -646,7 +674,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteConversationModelRequest, Operation&gt;
       deleteConversationModelCallable() {
-<span class="nc" id="L649">    return stub.deleteConversationModelCallable();</span>
+<span class="nc" id="L677">    return stub.deleteConversationModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -681,7 +709,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeployConversationModelOperationMetadata&gt;
       deployConversationModelAsync(DeployConversationModelRequest request) {
-<span class="fc" id="L684">    return deployConversationModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L712">    return deployConversationModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -717,7 +745,7 @@ public class ConversationModelsClient implements BackgroundResource {
   public final OperationCallable&lt;
           DeployConversationModelRequest, Empty, DeployConversationModelOperationMetadata&gt;
       deployConversationModelOperationCallable() {
-<span class="fc" id="L720">    return stub.deployConversationModelOperationCallable();</span>
+<span class="fc" id="L748">    return stub.deployConversationModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -752,7 +780,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeployConversationModelRequest, Operation&gt;
       deployConversationModelCallable() {
-<span class="nc" id="L755">    return stub.deployConversationModelCallable();</span>
+<span class="nc" id="L783">    return stub.deployConversationModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -787,7 +815,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, UndeployConversationModelOperationMetadata&gt;
       undeployConversationModelAsync(UndeployConversationModelRequest request) {
-<span class="fc" id="L790">    return undeployConversationModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L818">    return undeployConversationModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -823,7 +851,7 @@ public class ConversationModelsClient implements BackgroundResource {
   public final OperationCallable&lt;
           UndeployConversationModelRequest, Empty, UndeployConversationModelOperationMetadata&gt;
       undeployConversationModelOperationCallable() {
-<span class="fc" id="L826">    return stub.undeployConversationModelOperationCallable();</span>
+<span class="fc" id="L854">    return stub.undeployConversationModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -858,7 +886,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UndeployConversationModelRequest, Operation&gt;
       undeployConversationModelCallable() {
-<span class="nc" id="L861">    return stub.undeployConversationModelCallable();</span>
+<span class="nc" id="L889">    return stub.undeployConversationModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -884,8 +912,8 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final ConversationModelEvaluation getConversationModelEvaluation(String name) {
     GetConversationModelEvaluationRequest request =
-<span class="fc" id="L887">        GetConversationModelEvaluationRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L888">    return getConversationModelEvaluation(request);</span>
+<span class="fc" id="L915">        GetConversationModelEvaluationRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L916">    return getConversationModelEvaluation(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -910,7 +938,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final ConversationModelEvaluation getConversationModelEvaluation(
       GetConversationModelEvaluationRequest request) {
-<span class="fc" id="L913">    return getConversationModelEvaluationCallable().call(request);</span>
+<span class="fc" id="L941">    return getConversationModelEvaluationCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -934,7 +962,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetConversationModelEvaluationRequest, ConversationModelEvaluation&gt;
       getConversationModelEvaluationCallable() {
-<span class="fc" id="L937">    return stub.getConversationModelEvaluationCallable();</span>
+<span class="fc" id="L965">    return stub.getConversationModelEvaluationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -962,8 +990,8 @@ public class ConversationModelsClient implements BackgroundResource {
   public final ListConversationModelEvaluationsPagedResponse listConversationModelEvaluations(
       String parent) {
     ListConversationModelEvaluationsRequest request =
-<span class="fc" id="L965">        ListConversationModelEvaluationsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L966">    return listConversationModelEvaluations(request);</span>
+<span class="fc" id="L993">        ListConversationModelEvaluationsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L994">    return listConversationModelEvaluations(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -994,7 +1022,7 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final ListConversationModelEvaluationsPagedResponse listConversationModelEvaluations(
       ListConversationModelEvaluationsRequest request) {
-<span class="fc" id="L997">    return listConversationModelEvaluationsPagedCallable().call(request);</span>
+<span class="fc" id="L1025">    return listConversationModelEvaluationsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1027,7 +1055,7 @@ public class ConversationModelsClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListConversationModelEvaluationsRequest, ListConversationModelEvaluationsPagedResponse&gt;
       listConversationModelEvaluationsPagedCallable() {
-<span class="fc" id="L1030">    return stub.listConversationModelEvaluationsPagedCallable();</span>
+<span class="fc" id="L1058">    return stub.listConversationModelEvaluationsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1065,7 +1093,7 @@ public class ConversationModelsClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListConversationModelEvaluationsRequest, ListConversationModelEvaluationsResponse&gt;
       listConversationModelEvaluationsCallable() {
-<span class="nc" id="L1068">    return stub.listConversationModelEvaluationsCallable();</span>
+<span class="nc" id="L1096">    return stub.listConversationModelEvaluationsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1100,11 +1128,11 @@ public class ConversationModelsClient implements BackgroundResource {
       createConversationModelEvaluationAsync(
           ConversationModelName parent, ConversationModelEvaluation conversationModelEvaluation) {
     CreateConversationModelEvaluationRequest request =
-<span class="fc" id="L1103">        CreateConversationModelEvaluationRequest.newBuilder()</span>
-<span class="pc bpc" id="L1104" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1105">            .setConversationModelEvaluation(conversationModelEvaluation)</span>
-<span class="fc" id="L1106">            .build();</span>
-<span class="fc" id="L1107">    return createConversationModelEvaluationAsync(request);</span>
+<span class="fc" id="L1131">        CreateConversationModelEvaluationRequest.newBuilder()</span>
+<span class="pc bpc" id="L1132" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1133">            .setConversationModelEvaluation(conversationModelEvaluation)</span>
+<span class="fc" id="L1134">            .build();</span>
+<span class="fc" id="L1135">    return createConversationModelEvaluationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1140,11 +1168,11 @@ public class ConversationModelsClient implements BackgroundResource {
       createConversationModelEvaluationAsync(
           String parent, ConversationModelEvaluation conversationModelEvaluation) {
     CreateConversationModelEvaluationRequest request =
-<span class="fc" id="L1143">        CreateConversationModelEvaluationRequest.newBuilder()</span>
-<span class="fc" id="L1144">            .setParent(parent)</span>
-<span class="fc" id="L1145">            .setConversationModelEvaluation(conversationModelEvaluation)</span>
-<span class="fc" id="L1146">            .build();</span>
-<span class="fc" id="L1147">    return createConversationModelEvaluationAsync(request);</span>
+<span class="fc" id="L1171">        CreateConversationModelEvaluationRequest.newBuilder()</span>
+<span class="fc" id="L1172">            .setParent(parent)</span>
+<span class="fc" id="L1173">            .setConversationModelEvaluation(conversationModelEvaluation)</span>
+<span class="fc" id="L1174">            .build();</span>
+<span class="fc" id="L1175">    return createConversationModelEvaluationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1176,7 +1204,7 @@ public class ConversationModelsClient implements BackgroundResource {
   public final OperationFuture&lt;
           ConversationModelEvaluation, CreateConversationModelEvaluationOperationMetadata&gt;
       createConversationModelEvaluationAsync(CreateConversationModelEvaluationRequest request) {
-<span class="fc" id="L1179">    return createConversationModelEvaluationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1207">    return createConversationModelEvaluationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1213,7 +1241,7 @@ public class ConversationModelsClient implements BackgroundResource {
           ConversationModelEvaluation,
           CreateConversationModelEvaluationOperationMetadata&gt;
       createConversationModelEvaluationOperationCallable() {
-<span class="fc" id="L1216">    return stub.createConversationModelEvaluationOperationCallable();</span>
+<span class="fc" id="L1244">    return stub.createConversationModelEvaluationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1243,37 +1271,37 @@ public class ConversationModelsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateConversationModelEvaluationRequest, Operation&gt;
       createConversationModelEvaluationCallable() {
-<span class="nc" id="L1246">    return stub.createConversationModelEvaluationCallable();</span>
+<span class="nc" id="L1274">    return stub.createConversationModelEvaluationCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1251">    stub.close();</span>
-<span class="fc" id="L1252">  }</span>
+<span class="fc" id="L1279">    stub.close();</span>
+<span class="fc" id="L1280">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1256">    stub.shutdown();</span>
-<span class="nc" id="L1257">  }</span>
+<span class="nc" id="L1284">    stub.shutdown();</span>
+<span class="nc" id="L1285">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1261">    return stub.isShutdown();</span>
+<span class="nc" id="L1289">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1266">    return stub.isTerminated();</span>
+<span class="nc" id="L1294">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1271">    stub.shutdownNow();</span>
-<span class="nc" id="L1272">  }</span>
+<span class="nc" id="L1299">    stub.shutdownNow();</span>
+<span class="nc" id="L1300">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1276">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1304">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListConversationModelsPagedResponse
@@ -1290,16 +1318,16 @@ public class ConversationModelsClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListConversationModelsResponse&gt; futureResponse) {
       ApiFuture&lt;ListConversationModelsPage&gt; futurePage =
-<span class="fc" id="L1293">          ListConversationModelsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1294">      return ApiFutures.transform(</span>
+<span class="fc" id="L1321">          ListConversationModelsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1322">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1296">          input -&gt; new ListConversationModelsPagedResponse(input),</span>
-<span class="fc" id="L1297">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1324">          input -&gt; new ListConversationModelsPagedResponse(input),</span>
+<span class="fc" id="L1325">          MoreExecutors.directExecutor());</span>
     }
 
     private ListConversationModelsPagedResponse(ListConversationModelsPage page) {
-<span class="fc" id="L1301">      super(page, ListConversationModelsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1302">    }</span>
+<span class="fc" id="L1329">      super(page, ListConversationModelsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1330">    }</span>
   }
 
   public static class ListConversationModelsPage
@@ -1314,11 +1342,11 @@ public class ConversationModelsClient implements BackgroundResource {
                 ListConversationModelsRequest, ListConversationModelsResponse, ConversationModel&gt;
             context,
         ListConversationModelsResponse response) {
-<span class="fc" id="L1317">      super(context, response);</span>
-<span class="fc" id="L1318">    }</span>
+<span class="fc" id="L1345">      super(context, response);</span>
+<span class="fc" id="L1346">    }</span>
 
     private static ListConversationModelsPage createEmptyPage() {
-<span class="fc" id="L1321">      return new ListConversationModelsPage(null, null);</span>
+<span class="fc" id="L1349">      return new ListConversationModelsPage(null, null);</span>
     }
 
     @Override
@@ -1327,7 +1355,7 @@ public class ConversationModelsClient implements BackgroundResource {
                 ListConversationModelsRequest, ListConversationModelsResponse, ConversationModel&gt;
             context,
         ListConversationModelsResponse response) {
-<span class="fc" id="L1330">      return new ListConversationModelsPage(context, response);</span>
+<span class="fc" id="L1358">      return new ListConversationModelsPage(context, response);</span>
     }
 
     @Override
@@ -1336,7 +1364,7 @@ public class ConversationModelsClient implements BackgroundResource {
                 ListConversationModelsRequest, ListConversationModelsResponse, ConversationModel&gt;
             context,
         ApiFuture&lt;ListConversationModelsResponse&gt; futureResponse) {
-<span class="fc" id="L1339">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1367">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1350,17 +1378,17 @@ public class ConversationModelsClient implements BackgroundResource {
 
     private ListConversationModelsFixedSizeCollection(
         List&lt;ListConversationModelsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1353">      super(pages, collectionSize);</span>
-<span class="fc" id="L1354">    }</span>
+<span class="fc" id="L1381">      super(pages, collectionSize);</span>
+<span class="fc" id="L1382">    }</span>
 
     private static ListConversationModelsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1357">      return new ListConversationModelsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1385">      return new ListConversationModelsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListConversationModelsFixedSizeCollection createCollection(
         List&lt;ListConversationModelsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1363">      return new ListConversationModelsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1391">      return new ListConversationModelsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -1380,18 +1408,18 @@ public class ConversationModelsClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListConversationModelEvaluationsResponse&gt; futureResponse) {
       ApiFuture&lt;ListConversationModelEvaluationsPage&gt; futurePage =
-<span class="fc" id="L1383">          ListConversationModelEvaluationsPage.createEmptyPage()</span>
-<span class="fc" id="L1384">              .createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1385">      return ApiFutures.transform(</span>
+<span class="fc" id="L1411">          ListConversationModelEvaluationsPage.createEmptyPage()</span>
+<span class="fc" id="L1412">              .createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1413">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1387">          input -&gt; new ListConversationModelEvaluationsPagedResponse(input),</span>
-<span class="fc" id="L1388">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1415">          input -&gt; new ListConversationModelEvaluationsPagedResponse(input),</span>
+<span class="fc" id="L1416">          MoreExecutors.directExecutor());</span>
     }
 
     private ListConversationModelEvaluationsPagedResponse(
         ListConversationModelEvaluationsPage page) {
-<span class="fc" id="L1393">      super(page, ListConversationModelEvaluationsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1394">    }</span>
+<span class="fc" id="L1421">      super(page, ListConversationModelEvaluationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1422">    }</span>
   }
 
   public static class ListConversationModelEvaluationsPage
@@ -1408,11 +1436,11 @@ public class ConversationModelsClient implements BackgroundResource {
                 ConversationModelEvaluation&gt;
             context,
         ListConversationModelEvaluationsResponse response) {
-<span class="fc" id="L1411">      super(context, response);</span>
-<span class="fc" id="L1412">    }</span>
+<span class="fc" id="L1439">      super(context, response);</span>
+<span class="fc" id="L1440">    }</span>
 
     private static ListConversationModelEvaluationsPage createEmptyPage() {
-<span class="fc" id="L1415">      return new ListConversationModelEvaluationsPage(null, null);</span>
+<span class="fc" id="L1443">      return new ListConversationModelEvaluationsPage(null, null);</span>
     }
 
     @Override
@@ -1423,7 +1451,7 @@ public class ConversationModelsClient implements BackgroundResource {
                 ConversationModelEvaluation&gt;
             context,
         ListConversationModelEvaluationsResponse response) {
-<span class="fc" id="L1426">      return new ListConversationModelEvaluationsPage(context, response);</span>
+<span class="fc" id="L1454">      return new ListConversationModelEvaluationsPage(context, response);</span>
     }
 
     @Override
@@ -1434,7 +1462,7 @@ public class ConversationModelsClient implements BackgroundResource {
                 ConversationModelEvaluation&gt;
             context,
         ApiFuture&lt;ListConversationModelEvaluationsResponse&gt; futureResponse) {
-<span class="fc" id="L1437">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1465">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1448,17 +1476,17 @@ public class ConversationModelsClient implements BackgroundResource {
 
     private ListConversationModelEvaluationsFixedSizeCollection(
         List&lt;ListConversationModelEvaluationsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1451">      super(pages, collectionSize);</span>
-<span class="fc" id="L1452">    }</span>
+<span class="fc" id="L1479">      super(pages, collectionSize);</span>
+<span class="fc" id="L1480">    }</span>
 
     private static ListConversationModelEvaluationsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1455">      return new ListConversationModelEvaluationsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1483">      return new ListConversationModelEvaluationsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListConversationModelEvaluationsFixedSizeCollection createCollection(
         List&lt;ListConversationModelEvaluationsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1461">      return new ListConversationModelEvaluationsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1489">      return new ListConversationModelEvaluationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

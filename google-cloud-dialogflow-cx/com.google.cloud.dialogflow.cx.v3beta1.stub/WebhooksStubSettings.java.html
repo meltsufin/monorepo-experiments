@@ -16,6 +16,7 @@
 
 package com.google.cloud.dialogflow.cx.v3beta1.stub;
 
+import static com.google.cloud.dialogflow.cx.v3beta1.WebhooksClient.ListLocationsPagedResponse;
 import static com.google.cloud.dialogflow.cx.v3beta1.WebhooksClient.ListWebhooksPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -27,6 +28,9 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
@@ -47,6 +51,10 @@ import com.google.cloud.dialogflow.cx.v3beta1.ListWebhooksRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.ListWebhooksResponse;
 import com.google.cloud.dialogflow.cx.v3beta1.UpdateWebhookRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.Webhook;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -95,10 +103,10 @@ import org.threeten.bp.Duration;
 public class WebhooksStubSettings extends StubSettings&lt;WebhooksStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L98">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L99">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L100">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L101">          .build();</span>
+<span class="fc" id="L106">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L107">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L108">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L109">          .build();</span>
 
   private final PagedCallSettings&lt;
           ListWebhooksRequest, ListWebhooksResponse, ListWebhooksPagedResponse&gt;
@@ -107,166 +115,266 @@ public class WebhooksStubSettings extends StubSettings&lt;WebhooksStubSettings&g
   private final UnaryCallSettings&lt;CreateWebhookRequest, Webhook&gt; createWebhookSettings;
   private final UnaryCallSettings&lt;UpdateWebhookRequest, Webhook&gt; updateWebhookSettings;
   private final UnaryCallSettings&lt;DeleteWebhookRequest, Empty&gt; deleteWebhookSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;ListWebhooksRequest, ListWebhooksResponse, Webhook&gt;
-<span class="fc" id="L112">      LIST_WEBHOOKS_PAGE_STR_DESC =</span>
-<span class="fc" id="L113">          new PagedListDescriptor&lt;ListWebhooksRequest, ListWebhooksResponse, Webhook&gt;() {</span>
+<span class="fc" id="L124">      LIST_WEBHOOKS_PAGE_STR_DESC =</span>
+<span class="fc" id="L125">          new PagedListDescriptor&lt;ListWebhooksRequest, ListWebhooksResponse, Webhook&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L116">              return &quot;&quot;;</span>
+<span class="fc" id="L128">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListWebhooksRequest injectToken(ListWebhooksRequest payload, String token) {
-<span class="nc" id="L121">              return ListWebhooksRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L133">              return ListWebhooksRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListWebhooksRequest injectPageSize(ListWebhooksRequest payload, int pageSize) {
-<span class="nc" id="L126">              return ListWebhooksRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L138">              return ListWebhooksRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListWebhooksRequest payload) {
-<span class="nc" id="L131">              return payload.getPageSize();</span>
+<span class="nc" id="L143">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListWebhooksResponse payload) {
-<span class="fc" id="L136">              return payload.getNextPageToken();</span>
+<span class="fc" id="L148">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Webhook&gt; extractResources(ListWebhooksResponse payload) {
-<span class="pc bpc" id="L141" title="1 of 2 branches missed.">              return payload.getWebhooksList() == null</span>
-<span class="nc" id="L142">                  ? ImmutableList.&lt;Webhook&gt;of()</span>
-<span class="fc" id="L143">                  : payload.getWebhooksList();</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">              return payload.getWebhooksList() == null</span>
+<span class="nc" id="L154">                  ? ImmutableList.&lt;Webhook&gt;of()</span>
+<span class="fc" id="L155">                  : payload.getWebhooksList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L160">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L161">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L164">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L169">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L174">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L179">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L184">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L190">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L191">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListWebhooksRequest, ListWebhooksResponse, ListWebhooksPagedResponse&gt;
-<span class="fc" id="L149">      LIST_WEBHOOKS_PAGE_STR_FACT =</span>
+<span class="fc" id="L197">      LIST_WEBHOOKS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L151">              ListWebhooksRequest, ListWebhooksResponse, ListWebhooksPagedResponse&gt;() {</span>
+<span class="fc" id="L199">              ListWebhooksRequest, ListWebhooksResponse, ListWebhooksPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListWebhooksPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListWebhooksRequest, ListWebhooksResponse&gt; callable,
                 ListWebhooksRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListWebhooksResponse&gt; futureResponse) {
-<span class="fc" id="L158">              PageContext&lt;ListWebhooksRequest, ListWebhooksResponse, Webhook&gt; pageContext =</span>
-<span class="fc" id="L159">                  PageContext.create(callable, LIST_WEBHOOKS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L160">              return ListWebhooksPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L206">              PageContext&lt;ListWebhooksRequest, ListWebhooksResponse, Webhook&gt; pageContext =</span>
+<span class="fc" id="L207">                  PageContext.create(callable, LIST_WEBHOOKS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L208">              return ListWebhooksPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L214">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L216">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L223">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L224">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L225">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to listWebhooks. */
   public PagedCallSettings&lt;ListWebhooksRequest, ListWebhooksResponse, ListWebhooksPagedResponse&gt;
       listWebhooksSettings() {
-<span class="fc" id="L167">    return listWebhooksSettings;</span>
+<span class="fc" id="L232">    return listWebhooksSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getWebhook. */
   public UnaryCallSettings&lt;GetWebhookRequest, Webhook&gt; getWebhookSettings() {
-<span class="fc" id="L172">    return getWebhookSettings;</span>
+<span class="fc" id="L237">    return getWebhookSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createWebhook. */
   public UnaryCallSettings&lt;CreateWebhookRequest, Webhook&gt; createWebhookSettings() {
-<span class="fc" id="L177">    return createWebhookSettings;</span>
+<span class="fc" id="L242">    return createWebhookSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateWebhook. */
   public UnaryCallSettings&lt;UpdateWebhookRequest, Webhook&gt; updateWebhookSettings() {
-<span class="fc" id="L182">    return updateWebhookSettings;</span>
+<span class="fc" id="L247">    return updateWebhookSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteWebhook. */
   public UnaryCallSettings&lt;DeleteWebhookRequest, Empty&gt; deleteWebhookSettings() {
-<span class="fc" id="L187">    return deleteWebhookSettings;</span>
+<span class="fc" id="L252">    return deleteWebhookSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L258">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L263">    return getLocationSettings;</span>
   }
 
   public WebhooksStub createStub() throws IOException {
-<span class="fc" id="L191">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L192">        .getTransportName()</span>
-<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L194">      return GrpcWebhooksStub.create(this);</span>
+<span class="fc" id="L267">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L268">        .getTransportName()</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L270">      return GrpcWebhooksStub.create(this);</span>
     }
-<span class="nc" id="L196">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L197">        String.format(</span>
-<span class="nc" id="L198">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L272">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L273">        .getTransportName()</span>
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L275">      return HttpJsonWebhooksStub.create(this);</span>
+    }
+<span class="nc" id="L277">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L278">        String.format(</span>
+<span class="nc" id="L279">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L203">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L284">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L208">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L289">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L213">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L294">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L218">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L299">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L223">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L224">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L225">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L304">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L305">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L306">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L230">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L231">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L311">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L312">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L319">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L235">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L323">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L240">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L241">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(WebhooksStubSettings.class))</span>
-<span class="fc" id="L242">        .setTransportToken(</span>
-<span class="fc" id="L243">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L328">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L329">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(WebhooksStubSettings.class))</span>
+<span class="fc" id="L330">        .setTransportToken(</span>
+<span class="fc" id="L331">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L336">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L337">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(WebhooksStubSettings.class))</span>
+<span class="fc" id="L338">        .setTransportToken(</span>
+<span class="fc" id="L339">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L340">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L344">    return WebhooksStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L248">    return Builder.createDefault();</span>
+<span class="fc" id="L349">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L354">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L253">    return new Builder(clientContext);</span>
+<span class="nc" id="L359">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L258">    return new Builder(this);</span>
+<span class="nc" id="L364">    return new Builder(this);</span>
   }
 
   protected WebhooksStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L262">    super(settingsBuilder);</span>
+<span class="fc" id="L368">    super(settingsBuilder);</span>
 
-<span class="fc" id="L264">    listWebhooksSettings = settingsBuilder.listWebhooksSettings().build();</span>
-<span class="fc" id="L265">    getWebhookSettings = settingsBuilder.getWebhookSettings().build();</span>
-<span class="fc" id="L266">    createWebhookSettings = settingsBuilder.createWebhookSettings().build();</span>
-<span class="fc" id="L267">    updateWebhookSettings = settingsBuilder.updateWebhookSettings().build();</span>
-<span class="fc" id="L268">    deleteWebhookSettings = settingsBuilder.deleteWebhookSettings().build();</span>
-<span class="fc" id="L269">  }</span>
+<span class="fc" id="L370">    listWebhooksSettings = settingsBuilder.listWebhooksSettings().build();</span>
+<span class="fc" id="L371">    getWebhookSettings = settingsBuilder.getWebhookSettings().build();</span>
+<span class="fc" id="L372">    createWebhookSettings = settingsBuilder.createWebhookSettings().build();</span>
+<span class="fc" id="L373">    updateWebhookSettings = settingsBuilder.updateWebhookSettings().build();</span>
+<span class="fc" id="L374">    deleteWebhookSettings = settingsBuilder.deleteWebhookSettings().build();</span>
+<span class="fc" id="L375">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L376">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L377">  }</span>
 
   /** Builder for WebhooksStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;WebhooksStubSettings, Builder&gt; {
@@ -278,118 +386,153 @@ public class WebhooksStubSettings extends StubSettings&lt;WebhooksStubSettings&g
     private final UnaryCallSettings.Builder&lt;CreateWebhookRequest, Webhook&gt; createWebhookSettings;
     private final UnaryCallSettings.Builder&lt;UpdateWebhookRequest, Webhook&gt; updateWebhookSettings;
     private final UnaryCallSettings.Builder&lt;DeleteWebhookRequest, Empty&gt; deleteWebhookSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L286">          ImmutableMap.builder();</span>
-<span class="fc" id="L287">      definitions.put(</span>
+<span class="fc" id="L398">          ImmutableMap.builder();</span>
+<span class="fc" id="L399">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L289">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L290">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L401">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L402">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L296">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L297">      RetrySettings settings = null;</span>
+<span class="fc" id="L408">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L409">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L299">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L300">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L301">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L302">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L303">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L304">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L305">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L306">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L307">              .build();</span>
-<span class="fc" id="L308">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L309">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L310">    }</span>
+<span class="fc" id="L411">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L412">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L413">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L414">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L415">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L416">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L417">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L418">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L419">              .build();</span>
+<span class="fc" id="L420">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L421">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L422">    }</span>
 
     protected Builder() {
-<span class="nc" id="L313">      this(((ClientContext) null));</span>
-<span class="nc" id="L314">    }</span>
+<span class="nc" id="L425">      this(((ClientContext) null));</span>
+<span class="nc" id="L426">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L317">      super(clientContext);</span>
+<span class="fc" id="L429">      super(clientContext);</span>
 
-<span class="fc" id="L319">      listWebhooksSettings = PagedCallSettings.newBuilder(LIST_WEBHOOKS_PAGE_STR_FACT);</span>
-<span class="fc" id="L320">      getWebhookSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L321">      createWebhookSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L322">      updateWebhookSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L323">      deleteWebhookSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L431">      listWebhooksSettings = PagedCallSettings.newBuilder(LIST_WEBHOOKS_PAGE_STR_FACT);</span>
+<span class="fc" id="L432">      getWebhookSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L433">      createWebhookSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L434">      updateWebhookSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L435">      deleteWebhookSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L436">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L437">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L325">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L326">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L439">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L440">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listWebhooksSettings,
               getWebhookSettings,
               createWebhookSettings,
               updateWebhookSettings,
-              deleteWebhookSettings);
-<span class="fc" id="L332">      initDefaults(this);</span>
-<span class="fc" id="L333">    }</span>
+              deleteWebhookSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L448">      initDefaults(this);</span>
+<span class="fc" id="L449">    }</span>
 
     protected Builder(WebhooksStubSettings settings) {
-<span class="nc" id="L336">      super(settings);</span>
+<span class="nc" id="L452">      super(settings);</span>
 
-<span class="nc" id="L338">      listWebhooksSettings = settings.listWebhooksSettings.toBuilder();</span>
-<span class="nc" id="L339">      getWebhookSettings = settings.getWebhookSettings.toBuilder();</span>
-<span class="nc" id="L340">      createWebhookSettings = settings.createWebhookSettings.toBuilder();</span>
-<span class="nc" id="L341">      updateWebhookSettings = settings.updateWebhookSettings.toBuilder();</span>
-<span class="nc" id="L342">      deleteWebhookSettings = settings.deleteWebhookSettings.toBuilder();</span>
+<span class="nc" id="L454">      listWebhooksSettings = settings.listWebhooksSettings.toBuilder();</span>
+<span class="nc" id="L455">      getWebhookSettings = settings.getWebhookSettings.toBuilder();</span>
+<span class="nc" id="L456">      createWebhookSettings = settings.createWebhookSettings.toBuilder();</span>
+<span class="nc" id="L457">      updateWebhookSettings = settings.updateWebhookSettings.toBuilder();</span>
+<span class="nc" id="L458">      deleteWebhookSettings = settings.deleteWebhookSettings.toBuilder();</span>
+<span class="nc" id="L459">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L460">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L344">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L345">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L462">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L463">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listWebhooksSettings,
               getWebhookSettings,
               createWebhookSettings,
               updateWebhookSettings,
-              deleteWebhookSettings);
-<span class="nc" id="L351">    }</span>
+              deleteWebhookSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L471">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L354">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L474">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L356">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L357">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L358">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L359">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L360">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L361">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L476">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L477">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L478">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L479">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L480">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L481">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L363">      return initDefaults(builder);</span>
+<span class="fc" id="L483">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L487">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L489">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L490">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L491">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L492">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L493">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L494">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L496">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L367">      builder</span>
-<span class="fc" id="L368">          .listWebhooksSettings()</span>
-<span class="fc" id="L369">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L370">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L500">      builder</span>
+<span class="fc" id="L501">          .listWebhooksSettings()</span>
+<span class="fc" id="L502">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L503">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L372">      builder</span>
-<span class="fc" id="L373">          .getWebhookSettings()</span>
-<span class="fc" id="L374">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L375">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L505">      builder</span>
+<span class="fc" id="L506">          .getWebhookSettings()</span>
+<span class="fc" id="L507">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L508">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L377">      builder</span>
-<span class="fc" id="L378">          .createWebhookSettings()</span>
-<span class="fc" id="L379">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L380">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L510">      builder</span>
+<span class="fc" id="L511">          .createWebhookSettings()</span>
+<span class="fc" id="L512">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L513">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L382">      builder</span>
-<span class="fc" id="L383">          .updateWebhookSettings()</span>
-<span class="fc" id="L384">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L385">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L515">      builder</span>
+<span class="fc" id="L516">          .updateWebhookSettings()</span>
+<span class="fc" id="L517">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L518">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L387">      builder</span>
-<span class="fc" id="L388">          .deleteWebhookSettings()</span>
-<span class="fc" id="L389">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L390">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L520">      builder</span>
+<span class="fc" id="L521">          .deleteWebhookSettings()</span>
+<span class="fc" id="L522">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L523">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L392">      return builder;</span>
+<span class="fc" id="L525">      builder</span>
+<span class="fc" id="L526">          .listLocationsSettings()</span>
+<span class="fc" id="L527">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L528">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L530">      builder</span>
+<span class="fc" id="L531">          .getLocationSettings()</span>
+<span class="fc" id="L532">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L533">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L535">      return builder;</span>
     }
 
     /**
@@ -399,44 +542,56 @@ public class WebhooksStubSettings extends StubSettings&lt;WebhooksStubSettings&g
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L402">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L403">      return this;</span>
+<span class="nc" id="L545">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L546">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L407">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L550">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listWebhooks. */
     public PagedCallSettings.Builder&lt;
             ListWebhooksRequest, ListWebhooksResponse, ListWebhooksPagedResponse&gt;
         listWebhooksSettings() {
-<span class="fc" id="L414">      return listWebhooksSettings;</span>
+<span class="fc" id="L557">      return listWebhooksSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getWebhook. */
     public UnaryCallSettings.Builder&lt;GetWebhookRequest, Webhook&gt; getWebhookSettings() {
-<span class="fc" id="L419">      return getWebhookSettings;</span>
+<span class="fc" id="L562">      return getWebhookSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createWebhook. */
     public UnaryCallSettings.Builder&lt;CreateWebhookRequest, Webhook&gt; createWebhookSettings() {
-<span class="fc" id="L424">      return createWebhookSettings;</span>
+<span class="fc" id="L567">      return createWebhookSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateWebhook. */
     public UnaryCallSettings.Builder&lt;UpdateWebhookRequest, Webhook&gt; updateWebhookSettings() {
-<span class="fc" id="L429">      return updateWebhookSettings;</span>
+<span class="fc" id="L572">      return updateWebhookSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteWebhook. */
     public UnaryCallSettings.Builder&lt;DeleteWebhookRequest, Empty&gt; deleteWebhookSettings() {
-<span class="fc" id="L434">      return deleteWebhookSettings;</span>
+<span class="fc" id="L577">      return deleteWebhookSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L584">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L589">      return getLocationSettings;</span>
     }
 
     @Override
     public WebhooksStubSettings build() throws IOException {
-<span class="fc" id="L439">      return new WebhooksStubSettings(this);</span>
+<span class="fc" id="L594">      return new WebhooksStubSettings(this);</span>
     }
   }
 }

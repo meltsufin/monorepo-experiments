@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.dialogflow.v2beta1.stub.DocumentsStub;
 import com.google.cloud.dialogflow.v2beta1.stub.DocumentsStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -106,6 +106,20 @@ import javax.annotation.Generated;
  * DocumentsClient documentsClient = DocumentsClient.create(documentsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * DocumentsSettings documentsSettings =
+ *     DocumentsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             DocumentsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * DocumentsClient documentsClient = DocumentsClient.create(documentsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -113,11 +127,12 @@ import javax.annotation.Generated;
 public class DocumentsClient implements BackgroundResource {
   private final DocumentsSettings settings;
   private final DocumentsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of DocumentsClient with default settings. */
   public static final DocumentsClient create() throws IOException {
-<span class="nc" id="L120">    return create(DocumentsSettings.newBuilder().build());</span>
+<span class="nc" id="L135">    return create(DocumentsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -125,7 +140,7 @@ public class DocumentsClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final DocumentsClient create(DocumentsSettings settings) throws IOException {
-<span class="fc" id="L128">    return new DocumentsClient(settings);</span>
+<span class="fc" id="L143">    return new DocumentsClient(settings);</span>
   }
 
   /**
@@ -133,39 +148,51 @@ public class DocumentsClient implements BackgroundResource {
    * advanced usage - prefer using create(DocumentsSettings).
    */
   public static final DocumentsClient create(DocumentsStub stub) {
-<span class="nc" id="L136">    return new DocumentsClient(stub);</span>
+<span class="nc" id="L151">    return new DocumentsClient(stub);</span>
   }
 
   /**
    * Constructs an instance of DocumentsClient, using the given settings. This is protected so that
    * it is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L143">  protected DocumentsClient(DocumentsSettings settings) throws IOException {</span>
-<span class="fc" id="L144">    this.settings = settings;</span>
-<span class="fc" id="L145">    this.stub = ((DocumentsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L146">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L147">  }</span>
+<span class="fc" id="L158">  protected DocumentsClient(DocumentsSettings settings) throws IOException {</span>
+<span class="fc" id="L159">    this.settings = settings;</span>
+<span class="fc" id="L160">    this.stub = ((DocumentsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L161">    this.operationsClient =</span>
+<span class="fc" id="L162">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L163">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L164">  }</span>
 
-<span class="nc" id="L149">  protected DocumentsClient(DocumentsStub stub) {</span>
-<span class="nc" id="L150">    this.settings = null;</span>
-<span class="nc" id="L151">    this.stub = stub;</span>
-<span class="nc" id="L152">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L153">  }</span>
+<span class="nc" id="L166">  protected DocumentsClient(DocumentsStub stub) {</span>
+<span class="nc" id="L167">    this.settings = null;</span>
+<span class="nc" id="L168">    this.stub = stub;</span>
+<span class="nc" id="L169">    this.operationsClient =</span>
+<span class="nc" id="L170">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L171">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L172">  }</span>
 
   public final DocumentsSettings getSettings() {
-<span class="nc" id="L156">    return settings;</span>
+<span class="nc" id="L175">    return settings;</span>
   }
 
   public DocumentsStub getStub() {
-<span class="nc" id="L160">    return stub;</span>
+<span class="nc" id="L179">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L168">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L187">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L195">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -196,10 +223,10 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final ListDocumentsPagedResponse listDocuments(KnowledgeBaseName parent) {
     ListDocumentsRequest request =
-<span class="fc" id="L199">        ListDocumentsRequest.newBuilder()</span>
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L201">            .build();</span>
-<span class="fc" id="L202">    return listDocuments(request);</span>
+<span class="fc" id="L226">        ListDocumentsRequest.newBuilder()</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L228">            .build();</span>
+<span class="fc" id="L229">    return listDocuments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -229,8 +256,8 @@ public class DocumentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListDocumentsPagedResponse listDocuments(String parent) {
-<span class="fc" id="L232">    ListDocumentsRequest request = ListDocumentsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L233">    return listDocuments(request);</span>
+<span class="fc" id="L259">    ListDocumentsRequest request = ListDocumentsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L260">    return listDocuments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -265,7 +292,7 @@ public class DocumentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListDocumentsPagedResponse listDocuments(ListDocumentsRequest request) {
-<span class="fc" id="L268">    return listDocumentsPagedCallable().call(request);</span>
+<span class="fc" id="L295">    return listDocumentsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -300,7 +327,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDocumentsRequest, ListDocumentsPagedResponse&gt;
       listDocumentsPagedCallable() {
-<span class="fc" id="L303">    return stub.listDocumentsPagedCallable();</span>
+<span class="fc" id="L330">    return stub.listDocumentsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -341,7 +368,7 @@ public class DocumentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListDocumentsRequest, ListDocumentsResponse&gt; listDocumentsCallable() {
-<span class="nc" id="L344">    return stub.listDocumentsCallable();</span>
+<span class="nc" id="L371">    return stub.listDocumentsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -371,8 +398,8 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final Document getDocument(DocumentName name) {
     GetDocumentRequest request =
-<span class="pc bpc" id="L374" title="1 of 2 branches missed.">        GetDocumentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L375">    return getDocument(request);</span>
+<span class="pc bpc" id="L401" title="1 of 2 branches missed.">        GetDocumentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L402">    return getDocument(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -402,8 +429,8 @@ public class DocumentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Document getDocument(String name) {
-<span class="fc" id="L405">    GetDocumentRequest request = GetDocumentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L406">    return getDocument(request);</span>
+<span class="fc" id="L432">    GetDocumentRequest request = GetDocumentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L433">    return getDocument(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -434,7 +461,7 @@ public class DocumentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Document getDocument(GetDocumentRequest request) {
-<span class="fc" id="L437">    return getDocumentCallable().call(request);</span>
+<span class="fc" id="L464">    return getDocumentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -464,7 +491,7 @@ public class DocumentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetDocumentRequest, Document&gt; getDocumentCallable() {
-<span class="fc" id="L467">    return stub.getDocumentCallable();</span>
+<span class="fc" id="L494">    return stub.getDocumentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -504,11 +531,11 @@ public class DocumentsClient implements BackgroundResource {
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; createDocumentAsync(
       KnowledgeBaseName parent, Document document) {
     CreateDocumentRequest request =
-<span class="fc" id="L507">        CreateDocumentRequest.newBuilder()</span>
-<span class="pc bpc" id="L508" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L509">            .setDocument(document)</span>
-<span class="fc" id="L510">            .build();</span>
-<span class="fc" id="L511">    return createDocumentAsync(request);</span>
+<span class="fc" id="L534">        CreateDocumentRequest.newBuilder()</span>
+<span class="pc bpc" id="L535" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L536">            .setDocument(document)</span>
+<span class="fc" id="L537">            .build();</span>
+<span class="fc" id="L538">    return createDocumentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -548,8 +575,8 @@ public class DocumentsClient implements BackgroundResource {
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; createDocumentAsync(
       String parent, Document document) {
     CreateDocumentRequest request =
-<span class="fc" id="L551">        CreateDocumentRequest.newBuilder().setParent(parent).setDocument(document).build();</span>
-<span class="fc" id="L552">    return createDocumentAsync(request);</span>
+<span class="fc" id="L578">        CreateDocumentRequest.newBuilder().setParent(parent).setDocument(document).build();</span>
+<span class="fc" id="L579">    return createDocumentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -590,7 +617,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; createDocumentAsync(
       CreateDocumentRequest request) {
-<span class="fc" id="L593">    return createDocumentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L620">    return createDocumentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -631,7 +658,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateDocumentRequest, Document, KnowledgeOperationMetadata&gt;
       createDocumentOperationCallable() {
-<span class="fc" id="L634">    return stub.createDocumentOperationCallable();</span>
+<span class="fc" id="L661">    return stub.createDocumentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -670,7 +697,7 @@ public class DocumentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateDocumentRequest, Operation&gt; createDocumentCallable() {
-<span class="nc" id="L673">    return stub.createDocumentCallable();</span>
+<span class="nc" id="L700">    return stub.createDocumentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -709,7 +736,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ImportDocumentsResponse, KnowledgeOperationMetadata&gt;
       importDocumentsAsync(ImportDocumentsRequest request) {
-<span class="fc" id="L712">    return importDocumentsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L739">    return importDocumentsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -749,7 +776,7 @@ public class DocumentsClient implements BackgroundResource {
   public final OperationCallable&lt;
           ImportDocumentsRequest, ImportDocumentsResponse, KnowledgeOperationMetadata&gt;
       importDocumentsOperationCallable() {
-<span class="fc" id="L752">    return stub.importDocumentsOperationCallable();</span>
+<span class="fc" id="L779">    return stub.importDocumentsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -786,7 +813,7 @@ public class DocumentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ImportDocumentsRequest, Operation&gt; importDocumentsCallable() {
-<span class="nc" id="L789">    return stub.importDocumentsCallable();</span>
+<span class="nc" id="L816">    return stub.importDocumentsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -826,8 +853,8 @@ public class DocumentsClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, KnowledgeOperationMetadata&gt; deleteDocumentAsync(
       DocumentName name) {
     DeleteDocumentRequest request =
-<span class="pc bpc" id="L829" title="1 of 2 branches missed.">        DeleteDocumentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L830">    return deleteDocumentAsync(request);</span>
+<span class="pc bpc" id="L856" title="1 of 2 branches missed.">        DeleteDocumentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L857">    return deleteDocumentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -866,8 +893,8 @@ public class DocumentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, KnowledgeOperationMetadata&gt; deleteDocumentAsync(String name) {
-<span class="fc" id="L869">    DeleteDocumentRequest request = DeleteDocumentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L870">    return deleteDocumentAsync(request);</span>
+<span class="fc" id="L896">    DeleteDocumentRequest request = DeleteDocumentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L897">    return deleteDocumentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -908,7 +935,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, KnowledgeOperationMetadata&gt; deleteDocumentAsync(
       DeleteDocumentRequest request) {
-<span class="fc" id="L911">    return deleteDocumentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L938">    return deleteDocumentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -949,7 +976,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteDocumentRequest, Empty, KnowledgeOperationMetadata&gt;
       deleteDocumentOperationCallable() {
-<span class="fc" id="L952">    return stub.deleteDocumentOperationCallable();</span>
+<span class="fc" id="L979">    return stub.deleteDocumentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -988,7 +1015,7 @@ public class DocumentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteDocumentRequest, Operation&gt; deleteDocumentCallable() {
-<span class="nc" id="L991">    return stub.deleteDocumentCallable();</span>
+<span class="nc" id="L1018">    return stub.deleteDocumentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1023,8 +1050,8 @@ public class DocumentsClient implements BackgroundResource {
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; updateDocumentAsync(
       Document document) {
     UpdateDocumentRequest request =
-<span class="fc" id="L1026">        UpdateDocumentRequest.newBuilder().setDocument(document).build();</span>
-<span class="fc" id="L1027">    return updateDocumentAsync(request);</span>
+<span class="fc" id="L1053">        UpdateDocumentRequest.newBuilder().setDocument(document).build();</span>
+<span class="fc" id="L1054">    return updateDocumentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1062,8 +1089,8 @@ public class DocumentsClient implements BackgroundResource {
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; updateDocumentAsync(
       Document document, FieldMask updateMask) {
     UpdateDocumentRequest request =
-<span class="fc" id="L1065">        UpdateDocumentRequest.newBuilder().setDocument(document).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L1066">    return updateDocumentAsync(request);</span>
+<span class="fc" id="L1092">        UpdateDocumentRequest.newBuilder().setDocument(document).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L1093">    return updateDocumentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1101,7 +1128,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; updateDocumentAsync(
       UpdateDocumentRequest request) {
-<span class="fc" id="L1104">    return updateDocumentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1131">    return updateDocumentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1139,7 +1166,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateDocumentRequest, Document, KnowledgeOperationMetadata&gt;
       updateDocumentOperationCallable() {
-<span class="fc" id="L1142">    return stub.updateDocumentOperationCallable();</span>
+<span class="fc" id="L1169">    return stub.updateDocumentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1175,7 +1202,7 @@ public class DocumentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateDocumentRequest, Operation&gt; updateDocumentCallable() {
-<span class="nc" id="L1178">    return stub.updateDocumentCallable();</span>
+<span class="nc" id="L1205">    return stub.updateDocumentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1222,11 +1249,11 @@ public class DocumentsClient implements BackgroundResource {
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; reloadDocumentAsync(
       DocumentName name, GcsSource gcsSource) {
     ReloadDocumentRequest request =
-<span class="fc" id="L1225">        ReloadDocumentRequest.newBuilder()</span>
-<span class="pc bpc" id="L1226" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1227">            .setGcsSource(gcsSource)</span>
-<span class="fc" id="L1228">            .build();</span>
-<span class="fc" id="L1229">    return reloadDocumentAsync(request);</span>
+<span class="fc" id="L1252">        ReloadDocumentRequest.newBuilder()</span>
+<span class="pc bpc" id="L1253" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1254">            .setGcsSource(gcsSource)</span>
+<span class="fc" id="L1255">            .build();</span>
+<span class="fc" id="L1256">    return reloadDocumentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1274,8 +1301,8 @@ public class DocumentsClient implements BackgroundResource {
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; reloadDocumentAsync(
       String name, GcsSource gcsSource) {
     ReloadDocumentRequest request =
-<span class="fc" id="L1277">        ReloadDocumentRequest.newBuilder().setName(name).setGcsSource(gcsSource).build();</span>
-<span class="fc" id="L1278">    return reloadDocumentAsync(request);</span>
+<span class="fc" id="L1304">        ReloadDocumentRequest.newBuilder().setName(name).setGcsSource(gcsSource).build();</span>
+<span class="fc" id="L1305">    return reloadDocumentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1321,7 +1348,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Document, KnowledgeOperationMetadata&gt; reloadDocumentAsync(
       ReloadDocumentRequest request) {
-<span class="fc" id="L1324">    return reloadDocumentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1351">    return reloadDocumentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1367,7 +1394,7 @@ public class DocumentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ReloadDocumentRequest, Document, KnowledgeOperationMetadata&gt;
       reloadDocumentOperationCallable() {
-<span class="fc" id="L1370">    return stub.reloadDocumentOperationCallable();</span>
+<span class="fc" id="L1397">    return stub.reloadDocumentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1411,37 +1438,37 @@ public class DocumentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ReloadDocumentRequest, Operation&gt; reloadDocumentCallable() {
-<span class="nc" id="L1414">    return stub.reloadDocumentCallable();</span>
+<span class="nc" id="L1441">    return stub.reloadDocumentCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1419">    stub.close();</span>
-<span class="fc" id="L1420">  }</span>
+<span class="fc" id="L1446">    stub.close();</span>
+<span class="fc" id="L1447">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1424">    stub.shutdown();</span>
-<span class="nc" id="L1425">  }</span>
+<span class="nc" id="L1451">    stub.shutdown();</span>
+<span class="nc" id="L1452">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1429">    return stub.isShutdown();</span>
+<span class="nc" id="L1456">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1434">    return stub.isTerminated();</span>
+<span class="nc" id="L1461">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1439">    stub.shutdownNow();</span>
-<span class="nc" id="L1440">  }</span>
+<span class="nc" id="L1466">    stub.shutdownNow();</span>
+<span class="nc" id="L1467">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1444">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1471">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListDocumentsPagedResponse
@@ -1456,16 +1483,16 @@ public class DocumentsClient implements BackgroundResource {
         PageContext&lt;ListDocumentsRequest, ListDocumentsResponse, Document&gt; context,
         ApiFuture&lt;ListDocumentsResponse&gt; futureResponse) {
       ApiFuture&lt;ListDocumentsPage&gt; futurePage =
-<span class="fc" id="L1459">          ListDocumentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1460">      return ApiFutures.transform(</span>
+<span class="fc" id="L1486">          ListDocumentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1487">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1462">          input -&gt; new ListDocumentsPagedResponse(input),</span>
-<span class="fc" id="L1463">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1489">          input -&gt; new ListDocumentsPagedResponse(input),</span>
+<span class="fc" id="L1490">          MoreExecutors.directExecutor());</span>
     }
 
     private ListDocumentsPagedResponse(ListDocumentsPage page) {
-<span class="fc" id="L1467">      super(page, ListDocumentsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1468">    }</span>
+<span class="fc" id="L1494">      super(page, ListDocumentsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1495">    }</span>
   }
 
   public static class ListDocumentsPage
@@ -1475,25 +1502,25 @@ public class DocumentsClient implements BackgroundResource {
     private ListDocumentsPage(
         PageContext&lt;ListDocumentsRequest, ListDocumentsResponse, Document&gt; context,
         ListDocumentsResponse response) {
-<span class="fc" id="L1478">      super(context, response);</span>
-<span class="fc" id="L1479">    }</span>
+<span class="fc" id="L1505">      super(context, response);</span>
+<span class="fc" id="L1506">    }</span>
 
     private static ListDocumentsPage createEmptyPage() {
-<span class="fc" id="L1482">      return new ListDocumentsPage(null, null);</span>
+<span class="fc" id="L1509">      return new ListDocumentsPage(null, null);</span>
     }
 
     @Override
     protected ListDocumentsPage createPage(
         PageContext&lt;ListDocumentsRequest, ListDocumentsResponse, Document&gt; context,
         ListDocumentsResponse response) {
-<span class="fc" id="L1489">      return new ListDocumentsPage(context, response);</span>
+<span class="fc" id="L1516">      return new ListDocumentsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListDocumentsPage&gt; createPageAsync(
         PageContext&lt;ListDocumentsRequest, ListDocumentsResponse, Document&gt; context,
         ApiFuture&lt;ListDocumentsResponse&gt; futureResponse) {
-<span class="fc" id="L1496">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1523">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1506,17 +1533,17 @@ public class DocumentsClient implements BackgroundResource {
           ListDocumentsFixedSizeCollection&gt; {
 
     private ListDocumentsFixedSizeCollection(List&lt;ListDocumentsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1509">      super(pages, collectionSize);</span>
-<span class="fc" id="L1510">    }</span>
+<span class="fc" id="L1536">      super(pages, collectionSize);</span>
+<span class="fc" id="L1537">    }</span>
 
     private static ListDocumentsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1513">      return new ListDocumentsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1540">      return new ListDocumentsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListDocumentsFixedSizeCollection createCollection(
         List&lt;ListDocumentsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1519">      return new ListDocumentsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1546">      return new ListDocumentsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

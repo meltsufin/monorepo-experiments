@@ -19,6 +19,7 @@ package com.google.cloud.apigateway.v1;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.apigateway.v1.stub.ApiGatewayServiceStub;
 import com.google.cloud.apigateway.v1.stub.ApiGatewayServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -105,17 +105,33 @@ import javax.annotation.Generated;
  *     ApiGatewayServiceClient.create(apiGatewayServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ApiGatewayServiceSettings apiGatewayServiceSettings =
+ *     ApiGatewayServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ApiGatewayServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ApiGatewayServiceClient apiGatewayServiceClient =
+ *     ApiGatewayServiceClient.create(apiGatewayServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class ApiGatewayServiceClient implements BackgroundResource {
   private final ApiGatewayServiceSettings settings;
   private final ApiGatewayServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ApiGatewayServiceClient with default settings. */
   public static final ApiGatewayServiceClient create() throws IOException {
-<span class="nc" id="L118">    return create(ApiGatewayServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L134">    return create(ApiGatewayServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -124,7 +140,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public static final ApiGatewayServiceClient create(ApiGatewayServiceSettings settings)
       throws IOException {
-<span class="fc" id="L127">    return new ApiGatewayServiceClient(settings);</span>
+<span class="fc" id="L143">    return new ApiGatewayServiceClient(settings);</span>
   }
 
   /**
@@ -132,7 +148,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * is for advanced usage - prefer using create(ApiGatewayServiceSettings).
    */
   public static final ApiGatewayServiceClient create(ApiGatewayServiceStub stub) {
-<span class="nc" id="L135">    return new ApiGatewayServiceClient(stub);</span>
+<span class="nc" id="L151">    return new ApiGatewayServiceClient(stub);</span>
   }
 
   /**
@@ -140,32 +156,44 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * so that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L143">  protected ApiGatewayServiceClient(ApiGatewayServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L144">    this.settings = settings;</span>
-<span class="fc" id="L145">    this.stub = ((ApiGatewayServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L146">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L147">  }</span>
+<span class="fc" id="L159">  protected ApiGatewayServiceClient(ApiGatewayServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L160">    this.settings = settings;</span>
+<span class="fc" id="L161">    this.stub = ((ApiGatewayServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L162">    this.operationsClient =</span>
+<span class="fc" id="L163">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L164">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L165">  }</span>
 
-<span class="nc" id="L149">  protected ApiGatewayServiceClient(ApiGatewayServiceStub stub) {</span>
-<span class="nc" id="L150">    this.settings = null;</span>
-<span class="nc" id="L151">    this.stub = stub;</span>
-<span class="nc" id="L152">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L153">  }</span>
+<span class="nc" id="L167">  protected ApiGatewayServiceClient(ApiGatewayServiceStub stub) {</span>
+<span class="nc" id="L168">    this.settings = null;</span>
+<span class="nc" id="L169">    this.stub = stub;</span>
+<span class="nc" id="L170">    this.operationsClient =</span>
+<span class="nc" id="L171">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L172">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L173">  }</span>
 
   public final ApiGatewayServiceSettings getSettings() {
-<span class="nc" id="L156">    return settings;</span>
+<span class="nc" id="L176">    return settings;</span>
   }
 
   public ApiGatewayServiceStub getStub() {
-<span class="nc" id="L160">    return stub;</span>
+<span class="nc" id="L180">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L168">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L188">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L196">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -191,10 +219,10 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final ListGatewaysPagedResponse listGateways(LocationName parent) {
     ListGatewaysRequest request =
-<span class="fc" id="L194">        ListGatewaysRequest.newBuilder()</span>
-<span class="pc bpc" id="L195" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L196">            .build();</span>
-<span class="fc" id="L197">    return listGateways(request);</span>
+<span class="fc" id="L222">        ListGatewaysRequest.newBuilder()</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L224">            .build();</span>
+<span class="fc" id="L225">    return listGateways(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -219,8 +247,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListGatewaysPagedResponse listGateways(String parent) {
-<span class="fc" id="L222">    ListGatewaysRequest request = ListGatewaysRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L223">    return listGateways(request);</span>
+<span class="fc" id="L250">    ListGatewaysRequest request = ListGatewaysRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L251">    return listGateways(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -251,7 +279,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListGatewaysPagedResponse listGateways(ListGatewaysRequest request) {
-<span class="fc" id="L254">    return listGatewaysPagedCallable().call(request);</span>
+<span class="fc" id="L282">    return listGatewaysPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -283,7 +311,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListGatewaysRequest, ListGatewaysPagedResponse&gt;
       listGatewaysPagedCallable() {
-<span class="fc" id="L286">    return stub.listGatewaysPagedCallable();</span>
+<span class="fc" id="L314">    return stub.listGatewaysPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -321,7 +349,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListGatewaysRequest, ListGatewaysResponse&gt; listGatewaysCallable() {
-<span class="nc" id="L324">    return stub.listGatewaysCallable();</span>
+<span class="nc" id="L352">    return stub.listGatewaysCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -345,8 +373,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final Gateway getGateway(GatewayName name) {
     GetGatewayRequest request =
-<span class="pc bpc" id="L348" title="1 of 2 branches missed.">        GetGatewayRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L349">    return getGateway(request);</span>
+<span class="pc bpc" id="L376" title="1 of 2 branches missed.">        GetGatewayRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L377">    return getGateway(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -369,8 +397,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Gateway getGateway(String name) {
-<span class="fc" id="L372">    GetGatewayRequest request = GetGatewayRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L373">    return getGateway(request);</span>
+<span class="fc" id="L400">    GetGatewayRequest request = GetGatewayRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L401">    return getGateway(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -395,7 +423,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Gateway getGateway(GetGatewayRequest request) {
-<span class="fc" id="L398">    return getGatewayCallable().call(request);</span>
+<span class="fc" id="L426">    return getGatewayCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -419,7 +447,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetGatewayRequest, Gateway&gt; getGatewayCallable() {
-<span class="fc" id="L422">    return stub.getGatewayCallable();</span>
+<span class="fc" id="L450">    return stub.getGatewayCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -450,12 +478,12 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Gateway, OperationMetadata&gt; createGatewayAsync(
       LocationName parent, Gateway gateway, String gatewayId) {
     CreateGatewayRequest request =
-<span class="fc" id="L453">        CreateGatewayRequest.newBuilder()</span>
-<span class="pc bpc" id="L454" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L455">            .setGateway(gateway)</span>
-<span class="fc" id="L456">            .setGatewayId(gatewayId)</span>
-<span class="fc" id="L457">            .build();</span>
-<span class="fc" id="L458">    return createGatewayAsync(request);</span>
+<span class="fc" id="L481">        CreateGatewayRequest.newBuilder()</span>
+<span class="pc bpc" id="L482" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L483">            .setGateway(gateway)</span>
+<span class="fc" id="L484">            .setGatewayId(gatewayId)</span>
+<span class="fc" id="L485">            .build();</span>
+<span class="fc" id="L486">    return createGatewayAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -486,12 +514,12 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Gateway, OperationMetadata&gt; createGatewayAsync(
       String parent, Gateway gateway, String gatewayId) {
     CreateGatewayRequest request =
-<span class="fc" id="L489">        CreateGatewayRequest.newBuilder()</span>
-<span class="fc" id="L490">            .setParent(parent)</span>
-<span class="fc" id="L491">            .setGateway(gateway)</span>
-<span class="fc" id="L492">            .setGatewayId(gatewayId)</span>
-<span class="fc" id="L493">            .build();</span>
-<span class="fc" id="L494">    return createGatewayAsync(request);</span>
+<span class="fc" id="L517">        CreateGatewayRequest.newBuilder()</span>
+<span class="fc" id="L518">            .setParent(parent)</span>
+<span class="fc" id="L519">            .setGateway(gateway)</span>
+<span class="fc" id="L520">            .setGatewayId(gatewayId)</span>
+<span class="fc" id="L521">            .build();</span>
+<span class="fc" id="L522">    return createGatewayAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -519,7 +547,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Gateway, OperationMetadata&gt; createGatewayAsync(
       CreateGatewayRequest request) {
-<span class="fc" id="L522">    return createGatewayOperationCallable().futureCall(request);</span>
+<span class="fc" id="L550">    return createGatewayOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -547,7 +575,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateGatewayRequest, Gateway, OperationMetadata&gt;
       createGatewayOperationCallable() {
-<span class="fc" id="L550">    return stub.createGatewayOperationCallable();</span>
+<span class="fc" id="L578">    return stub.createGatewayOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -574,7 +602,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateGatewayRequest, Operation&gt; createGatewayCallable() {
-<span class="nc" id="L577">    return stub.createGatewayCallable();</span>
+<span class="nc" id="L605">    return stub.createGatewayCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -603,8 +631,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Gateway, OperationMetadata&gt; updateGatewayAsync(
       Gateway gateway, FieldMask updateMask) {
     UpdateGatewayRequest request =
-<span class="fc" id="L606">        UpdateGatewayRequest.newBuilder().setGateway(gateway).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L607">    return updateGatewayAsync(request);</span>
+<span class="fc" id="L634">        UpdateGatewayRequest.newBuilder().setGateway(gateway).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L635">    return updateGatewayAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -631,7 +659,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Gateway, OperationMetadata&gt; updateGatewayAsync(
       UpdateGatewayRequest request) {
-<span class="fc" id="L634">    return updateGatewayOperationCallable().futureCall(request);</span>
+<span class="fc" id="L662">    return updateGatewayOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -658,7 +686,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateGatewayRequest, Gateway, OperationMetadata&gt;
       updateGatewayOperationCallable() {
-<span class="fc" id="L661">    return stub.updateGatewayOperationCallable();</span>
+<span class="fc" id="L689">    return stub.updateGatewayOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -684,7 +712,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateGatewayRequest, Operation&gt; updateGatewayCallable() {
-<span class="nc" id="L687">    return stub.updateGatewayCallable();</span>
+<span class="nc" id="L715">    return stub.updateGatewayCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -708,8 +736,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGatewayAsync(GatewayName name) {
     DeleteGatewayRequest request =
-<span class="pc bpc" id="L711" title="1 of 2 branches missed.">        DeleteGatewayRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L712">    return deleteGatewayAsync(request);</span>
+<span class="pc bpc" id="L739" title="1 of 2 branches missed.">        DeleteGatewayRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L740">    return deleteGatewayAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -732,8 +760,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGatewayAsync(String name) {
-<span class="fc" id="L735">    DeleteGatewayRequest request = DeleteGatewayRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L736">    return deleteGatewayAsync(request);</span>
+<span class="fc" id="L763">    DeleteGatewayRequest request = DeleteGatewayRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L764">    return deleteGatewayAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -759,7 +787,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGatewayAsync(
       DeleteGatewayRequest request) {
-<span class="fc" id="L762">    return deleteGatewayOperationCallable().futureCall(request);</span>
+<span class="fc" id="L790">    return deleteGatewayOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -785,7 +813,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteGatewayRequest, Empty, OperationMetadata&gt;
       deleteGatewayOperationCallable() {
-<span class="fc" id="L788">    return stub.deleteGatewayOperationCallable();</span>
+<span class="fc" id="L816">    return stub.deleteGatewayOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -810,7 +838,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteGatewayRequest, Operation&gt; deleteGatewayCallable() {
-<span class="nc" id="L813">    return stub.deleteGatewayCallable();</span>
+<span class="nc" id="L841">    return stub.deleteGatewayCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -836,8 +864,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final ListApisPagedResponse listApis(LocationName parent) {
     ListApisRequest request =
-<span class="pc bpc" id="L839" title="1 of 2 branches missed.">        ListApisRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L840">    return listApis(request);</span>
+<span class="pc bpc" id="L867" title="1 of 2 branches missed.">        ListApisRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L868">    return listApis(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -862,8 +890,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListApisPagedResponse listApis(String parent) {
-<span class="fc" id="L865">    ListApisRequest request = ListApisRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L866">    return listApis(request);</span>
+<span class="fc" id="L893">    ListApisRequest request = ListApisRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L894">    return listApis(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -894,7 +922,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListApisPagedResponse listApis(ListApisRequest request) {
-<span class="fc" id="L897">    return listApisPagedCallable().call(request);</span>
+<span class="fc" id="L925">    return listApisPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -924,7 +952,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListApisRequest, ListApisPagedResponse&gt; listApisPagedCallable() {
-<span class="fc" id="L927">    return stub.listApisPagedCallable();</span>
+<span class="fc" id="L955">    return stub.listApisPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -961,7 +989,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListApisRequest, ListApisResponse&gt; listApisCallable() {
-<span class="nc" id="L964">    return stub.listApisCallable();</span>
+<span class="nc" id="L992">    return stub.listApisCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -984,8 +1012,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final Api getApi(ApiName name) {
     GetApiRequest request =
-<span class="pc bpc" id="L987" title="1 of 2 branches missed.">        GetApiRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L988">    return getApi(request);</span>
+<span class="pc bpc" id="L1015" title="1 of 2 branches missed.">        GetApiRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1016">    return getApi(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1007,8 +1035,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Api getApi(String name) {
-<span class="fc" id="L1010">    GetApiRequest request = GetApiRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1011">    return getApi(request);</span>
+<span class="fc" id="L1038">    GetApiRequest request = GetApiRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1039">    return getApi(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1031,7 +1059,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Api getApi(GetApiRequest request) {
-<span class="fc" id="L1034">    return getApiCallable().call(request);</span>
+<span class="fc" id="L1062">    return getApiCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1053,7 +1081,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetApiRequest, Api&gt; getApiCallable() {
-<span class="fc" id="L1056">    return stub.getApiCallable();</span>
+<span class="fc" id="L1084">    return stub.getApiCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1083,12 +1111,12 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Api, OperationMetadata&gt; createApiAsync(
       LocationName parent, Api api, String apiId) {
     CreateApiRequest request =
-<span class="fc" id="L1086">        CreateApiRequest.newBuilder()</span>
-<span class="pc bpc" id="L1087" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1088">            .setApi(api)</span>
-<span class="fc" id="L1089">            .setApiId(apiId)</span>
-<span class="fc" id="L1090">            .build();</span>
-<span class="fc" id="L1091">    return createApiAsync(request);</span>
+<span class="fc" id="L1114">        CreateApiRequest.newBuilder()</span>
+<span class="pc bpc" id="L1115" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1116">            .setApi(api)</span>
+<span class="fc" id="L1117">            .setApiId(apiId)</span>
+<span class="fc" id="L1118">            .build();</span>
+<span class="fc" id="L1119">    return createApiAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1118,8 +1146,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Api, OperationMetadata&gt; createApiAsync(
       String parent, Api api, String apiId) {
     CreateApiRequest request =
-<span class="fc" id="L1121">        CreateApiRequest.newBuilder().setParent(parent).setApi(api).setApiId(apiId).build();</span>
-<span class="fc" id="L1122">    return createApiAsync(request);</span>
+<span class="fc" id="L1149">        CreateApiRequest.newBuilder().setParent(parent).setApi(api).setApiId(apiId).build();</span>
+<span class="fc" id="L1150">    return createApiAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1146,7 +1174,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Api, OperationMetadata&gt; createApiAsync(CreateApiRequest request) {
-<span class="fc" id="L1149">    return createApiOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1177">    return createApiOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1174,7 +1202,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateApiRequest, Api, OperationMetadata&gt;
       createApiOperationCallable() {
-<span class="fc" id="L1177">    return stub.createApiOperationCallable();</span>
+<span class="fc" id="L1205">    return stub.createApiOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1200,7 +1228,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateApiRequest, Operation&gt; createApiCallable() {
-<span class="nc" id="L1203">    return stub.createApiCallable();</span>
+<span class="nc" id="L1231">    return stub.createApiCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1229,8 +1257,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Api, OperationMetadata&gt; updateApiAsync(
       Api api, FieldMask updateMask) {
     UpdateApiRequest request =
-<span class="fc" id="L1232">        UpdateApiRequest.newBuilder().setApi(api).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L1233">    return updateApiAsync(request);</span>
+<span class="fc" id="L1260">        UpdateApiRequest.newBuilder().setApi(api).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L1261">    return updateApiAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1256,7 +1284,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Api, OperationMetadata&gt; updateApiAsync(UpdateApiRequest request) {
-<span class="fc" id="L1259">    return updateApiOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1287">    return updateApiOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1283,7 +1311,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateApiRequest, Api, OperationMetadata&gt;
       updateApiOperationCallable() {
-<span class="fc" id="L1286">    return stub.updateApiOperationCallable();</span>
+<span class="fc" id="L1314">    return stub.updateApiOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1308,7 +1336,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateApiRequest, Operation&gt; updateApiCallable() {
-<span class="nc" id="L1311">    return stub.updateApiCallable();</span>
+<span class="nc" id="L1339">    return stub.updateApiCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1331,8 +1359,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteApiAsync(ApiName name) {
     DeleteApiRequest request =
-<span class="pc bpc" id="L1334" title="1 of 2 branches missed.">        DeleteApiRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1335">    return deleteApiAsync(request);</span>
+<span class="pc bpc" id="L1362" title="1 of 2 branches missed.">        DeleteApiRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1363">    return deleteApiAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1354,8 +1382,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteApiAsync(String name) {
-<span class="fc" id="L1357">    DeleteApiRequest request = DeleteApiRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1358">    return deleteApiAsync(request);</span>
+<span class="fc" id="L1385">    DeleteApiRequest request = DeleteApiRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1386">    return deleteApiAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1380,7 +1408,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteApiAsync(DeleteApiRequest request) {
-<span class="fc" id="L1383">    return deleteApiOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1411">    return deleteApiOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1406,7 +1434,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteApiRequest, Empty, OperationMetadata&gt;
       deleteApiOperationCallable() {
-<span class="fc" id="L1409">    return stub.deleteApiOperationCallable();</span>
+<span class="fc" id="L1437">    return stub.deleteApiOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1430,7 +1458,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteApiRequest, Operation&gt; deleteApiCallable() {
-<span class="nc" id="L1433">    return stub.deleteApiCallable();</span>
+<span class="nc" id="L1461">    return stub.deleteApiCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1456,10 +1484,10 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final ListApiConfigsPagedResponse listApiConfigs(ApiName parent) {
     ListApiConfigsRequest request =
-<span class="fc" id="L1459">        ListApiConfigsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1460" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1461">            .build();</span>
-<span class="fc" id="L1462">    return listApiConfigs(request);</span>
+<span class="fc" id="L1487">        ListApiConfigsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1488" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1489">            .build();</span>
+<span class="fc" id="L1490">    return listApiConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1484,8 +1512,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListApiConfigsPagedResponse listApiConfigs(String parent) {
-<span class="fc" id="L1487">    ListApiConfigsRequest request = ListApiConfigsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1488">    return listApiConfigs(request);</span>
+<span class="fc" id="L1515">    ListApiConfigsRequest request = ListApiConfigsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1516">    return listApiConfigs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1516,7 +1544,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListApiConfigsPagedResponse listApiConfigs(ListApiConfigsRequest request) {
-<span class="fc" id="L1519">    return listApiConfigsPagedCallable().call(request);</span>
+<span class="fc" id="L1547">    return listApiConfigsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1548,7 +1576,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListApiConfigsRequest, ListApiConfigsPagedResponse&gt;
       listApiConfigsPagedCallable() {
-<span class="fc" id="L1551">    return stub.listApiConfigsPagedCallable();</span>
+<span class="fc" id="L1579">    return stub.listApiConfigsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1587,7 +1615,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListApiConfigsRequest, ListApiConfigsResponse&gt;
       listApiConfigsCallable() {
-<span class="nc" id="L1590">    return stub.listApiConfigsCallable();</span>
+<span class="nc" id="L1618">    return stub.listApiConfigsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1611,8 +1639,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final ApiConfig getApiConfig(ApiConfigName name) {
     GetApiConfigRequest request =
-<span class="pc bpc" id="L1614" title="1 of 2 branches missed.">        GetApiConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1615">    return getApiConfig(request);</span>
+<span class="pc bpc" id="L1642" title="1 of 2 branches missed.">        GetApiConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1643">    return getApiConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1635,8 +1663,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ApiConfig getApiConfig(String name) {
-<span class="fc" id="L1638">    GetApiConfigRequest request = GetApiConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1639">    return getApiConfig(request);</span>
+<span class="fc" id="L1666">    GetApiConfigRequest request = GetApiConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1667">    return getApiConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1661,7 +1689,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ApiConfig getApiConfig(GetApiConfigRequest request) {
-<span class="fc" id="L1664">    return getApiConfigCallable().call(request);</span>
+<span class="fc" id="L1692">    return getApiConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1686,7 +1714,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetApiConfigRequest, ApiConfig&gt; getApiConfigCallable() {
-<span class="fc" id="L1689">    return stub.getApiConfigCallable();</span>
+<span class="fc" id="L1717">    return stub.getApiConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1717,12 +1745,12 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;ApiConfig, OperationMetadata&gt; createApiConfigAsync(
       ApiName parent, ApiConfig apiConfig, String apiConfigId) {
     CreateApiConfigRequest request =
-<span class="fc" id="L1720">        CreateApiConfigRequest.newBuilder()</span>
-<span class="pc bpc" id="L1721" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1722">            .setApiConfig(apiConfig)</span>
-<span class="fc" id="L1723">            .setApiConfigId(apiConfigId)</span>
-<span class="fc" id="L1724">            .build();</span>
-<span class="fc" id="L1725">    return createApiConfigAsync(request);</span>
+<span class="fc" id="L1748">        CreateApiConfigRequest.newBuilder()</span>
+<span class="pc bpc" id="L1749" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1750">            .setApiConfig(apiConfig)</span>
+<span class="fc" id="L1751">            .setApiConfigId(apiConfigId)</span>
+<span class="fc" id="L1752">            .build();</span>
+<span class="fc" id="L1753">    return createApiConfigAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1753,12 +1781,12 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;ApiConfig, OperationMetadata&gt; createApiConfigAsync(
       String parent, ApiConfig apiConfig, String apiConfigId) {
     CreateApiConfigRequest request =
-<span class="fc" id="L1756">        CreateApiConfigRequest.newBuilder()</span>
-<span class="fc" id="L1757">            .setParent(parent)</span>
-<span class="fc" id="L1758">            .setApiConfig(apiConfig)</span>
-<span class="fc" id="L1759">            .setApiConfigId(apiConfigId)</span>
-<span class="fc" id="L1760">            .build();</span>
-<span class="fc" id="L1761">    return createApiConfigAsync(request);</span>
+<span class="fc" id="L1784">        CreateApiConfigRequest.newBuilder()</span>
+<span class="fc" id="L1785">            .setParent(parent)</span>
+<span class="fc" id="L1786">            .setApiConfig(apiConfig)</span>
+<span class="fc" id="L1787">            .setApiConfigId(apiConfigId)</span>
+<span class="fc" id="L1788">            .build();</span>
+<span class="fc" id="L1789">    return createApiConfigAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1786,7 +1814,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ApiConfig, OperationMetadata&gt; createApiConfigAsync(
       CreateApiConfigRequest request) {
-<span class="fc" id="L1789">    return createApiConfigOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1817">    return createApiConfigOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1814,7 +1842,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateApiConfigRequest, ApiConfig, OperationMetadata&gt;
       createApiConfigOperationCallable() {
-<span class="fc" id="L1817">    return stub.createApiConfigOperationCallable();</span>
+<span class="fc" id="L1845">    return stub.createApiConfigOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1841,7 +1869,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateApiConfigRequest, Operation&gt; createApiConfigCallable() {
-<span class="nc" id="L1844">    return stub.createApiConfigCallable();</span>
+<span class="nc" id="L1872">    return stub.createApiConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1871,11 +1899,11 @@ public class ApiGatewayServiceClient implements BackgroundResource {
   public final OperationFuture&lt;ApiConfig, OperationMetadata&gt; updateApiConfigAsync(
       ApiConfig apiConfig, FieldMask updateMask) {
     UpdateApiConfigRequest request =
-<span class="fc" id="L1874">        UpdateApiConfigRequest.newBuilder()</span>
-<span class="fc" id="L1875">            .setApiConfig(apiConfig)</span>
-<span class="fc" id="L1876">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1877">            .build();</span>
-<span class="fc" id="L1878">    return updateApiConfigAsync(request);</span>
+<span class="fc" id="L1902">        UpdateApiConfigRequest.newBuilder()</span>
+<span class="fc" id="L1903">            .setApiConfig(apiConfig)</span>
+<span class="fc" id="L1904">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1905">            .build();</span>
+<span class="fc" id="L1906">    return updateApiConfigAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1902,7 +1930,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ApiConfig, OperationMetadata&gt; updateApiConfigAsync(
       UpdateApiConfigRequest request) {
-<span class="fc" id="L1905">    return updateApiConfigOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1933">    return updateApiConfigOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1929,7 +1957,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateApiConfigRequest, ApiConfig, OperationMetadata&gt;
       updateApiConfigOperationCallable() {
-<span class="fc" id="L1932">    return stub.updateApiConfigOperationCallable();</span>
+<span class="fc" id="L1960">    return stub.updateApiConfigOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1955,7 +1983,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateApiConfigRequest, Operation&gt; updateApiConfigCallable() {
-<span class="nc" id="L1958">    return stub.updateApiConfigCallable();</span>
+<span class="nc" id="L1986">    return stub.updateApiConfigCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1979,8 +2007,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteApiConfigAsync(ApiConfigName name) {
     DeleteApiConfigRequest request =
-<span class="pc bpc" id="L1982" title="1 of 2 branches missed.">        DeleteApiConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1983">    return deleteApiConfigAsync(request);</span>
+<span class="pc bpc" id="L2010" title="1 of 2 branches missed.">        DeleteApiConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2011">    return deleteApiConfigAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2003,8 +2031,8 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteApiConfigAsync(String name) {
-<span class="fc" id="L2006">    DeleteApiConfigRequest request = DeleteApiConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2007">    return deleteApiConfigAsync(request);</span>
+<span class="fc" id="L2034">    DeleteApiConfigRequest request = DeleteApiConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2035">    return deleteApiConfigAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2030,7 +2058,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteApiConfigAsync(
       DeleteApiConfigRequest request) {
-<span class="fc" id="L2033">    return deleteApiConfigOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2061">    return deleteApiConfigOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2056,7 +2084,7 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteApiConfigRequest, Empty, OperationMetadata&gt;
       deleteApiConfigOperationCallable() {
-<span class="fc" id="L2059">    return stub.deleteApiConfigOperationCallable();</span>
+<span class="fc" id="L2087">    return stub.deleteApiConfigOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2081,37 +2109,37 @@ public class ApiGatewayServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteApiConfigRequest, Operation&gt; deleteApiConfigCallable() {
-<span class="nc" id="L2084">    return stub.deleteApiConfigCallable();</span>
+<span class="nc" id="L2112">    return stub.deleteApiConfigCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2089">    stub.close();</span>
-<span class="fc" id="L2090">  }</span>
+<span class="fc" id="L2117">    stub.close();</span>
+<span class="fc" id="L2118">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2094">    stub.shutdown();</span>
-<span class="nc" id="L2095">  }</span>
+<span class="nc" id="L2122">    stub.shutdown();</span>
+<span class="nc" id="L2123">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2099">    return stub.isShutdown();</span>
+<span class="nc" id="L2127">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2104">    return stub.isTerminated();</span>
+<span class="nc" id="L2132">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2109">    stub.shutdownNow();</span>
-<span class="nc" id="L2110">  }</span>
+<span class="nc" id="L2137">    stub.shutdownNow();</span>
+<span class="nc" id="L2138">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2114">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2142">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListGatewaysPagedResponse
@@ -2126,16 +2154,16 @@ public class ApiGatewayServiceClient implements BackgroundResource {
         PageContext&lt;ListGatewaysRequest, ListGatewaysResponse, Gateway&gt; context,
         ApiFuture&lt;ListGatewaysResponse&gt; futureResponse) {
       ApiFuture&lt;ListGatewaysPage&gt; futurePage =
-<span class="fc" id="L2129">          ListGatewaysPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2130">      return ApiFutures.transform(</span>
+<span class="fc" id="L2157">          ListGatewaysPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2158">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2132">          input -&gt; new ListGatewaysPagedResponse(input),</span>
-<span class="fc" id="L2133">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2160">          input -&gt; new ListGatewaysPagedResponse(input),</span>
+<span class="fc" id="L2161">          MoreExecutors.directExecutor());</span>
     }
 
     private ListGatewaysPagedResponse(ListGatewaysPage page) {
-<span class="fc" id="L2137">      super(page, ListGatewaysFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2138">    }</span>
+<span class="fc" id="L2165">      super(page, ListGatewaysFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2166">    }</span>
   }
 
   public static class ListGatewaysPage
@@ -2144,25 +2172,25 @@ public class ApiGatewayServiceClient implements BackgroundResource {
     private ListGatewaysPage(
         PageContext&lt;ListGatewaysRequest, ListGatewaysResponse, Gateway&gt; context,
         ListGatewaysResponse response) {
-<span class="fc" id="L2147">      super(context, response);</span>
-<span class="fc" id="L2148">    }</span>
+<span class="fc" id="L2175">      super(context, response);</span>
+<span class="fc" id="L2176">    }</span>
 
     private static ListGatewaysPage createEmptyPage() {
-<span class="fc" id="L2151">      return new ListGatewaysPage(null, null);</span>
+<span class="fc" id="L2179">      return new ListGatewaysPage(null, null);</span>
     }
 
     @Override
     protected ListGatewaysPage createPage(
         PageContext&lt;ListGatewaysRequest, ListGatewaysResponse, Gateway&gt; context,
         ListGatewaysResponse response) {
-<span class="fc" id="L2158">      return new ListGatewaysPage(context, response);</span>
+<span class="fc" id="L2186">      return new ListGatewaysPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListGatewaysPage&gt; createPageAsync(
         PageContext&lt;ListGatewaysRequest, ListGatewaysResponse, Gateway&gt; context,
         ApiFuture&lt;ListGatewaysResponse&gt; futureResponse) {
-<span class="fc" id="L2165">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2193">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2175,17 +2203,17 @@ public class ApiGatewayServiceClient implements BackgroundResource {
           ListGatewaysFixedSizeCollection&gt; {
 
     private ListGatewaysFixedSizeCollection(List&lt;ListGatewaysPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2178">      super(pages, collectionSize);</span>
-<span class="fc" id="L2179">    }</span>
+<span class="fc" id="L2206">      super(pages, collectionSize);</span>
+<span class="fc" id="L2207">    }</span>
 
     private static ListGatewaysFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2182">      return new ListGatewaysFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2210">      return new ListGatewaysFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListGatewaysFixedSizeCollection createCollection(
         List&lt;ListGatewaysPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2188">      return new ListGatewaysFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2216">      return new ListGatewaysFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2197,14 +2225,14 @@ public class ApiGatewayServiceClient implements BackgroundResource {
         PageContext&lt;ListApisRequest, ListApisResponse, Api&gt; context,
         ApiFuture&lt;ListApisResponse&gt; futureResponse) {
       ApiFuture&lt;ListApisPage&gt; futurePage =
-<span class="fc" id="L2200">          ListApisPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2201">      return ApiFutures.transform(</span>
-<span class="fc" id="L2202">          futurePage, input -&gt; new ListApisPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2228">          ListApisPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2229">      return ApiFutures.transform(</span>
+<span class="fc" id="L2230">          futurePage, input -&gt; new ListApisPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListApisPagedResponse(ListApisPage page) {
-<span class="fc" id="L2206">      super(page, ListApisFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2207">    }</span>
+<span class="fc" id="L2234">      super(page, ListApisFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2235">    }</span>
   }
 
   public static class ListApisPage
@@ -2212,24 +2240,24 @@ public class ApiGatewayServiceClient implements BackgroundResource {
 
     private ListApisPage(
         PageContext&lt;ListApisRequest, ListApisResponse, Api&gt; context, ListApisResponse response) {
-<span class="fc" id="L2215">      super(context, response);</span>
-<span class="fc" id="L2216">    }</span>
+<span class="fc" id="L2243">      super(context, response);</span>
+<span class="fc" id="L2244">    }</span>
 
     private static ListApisPage createEmptyPage() {
-<span class="fc" id="L2219">      return new ListApisPage(null, null);</span>
+<span class="fc" id="L2247">      return new ListApisPage(null, null);</span>
     }
 
     @Override
     protected ListApisPage createPage(
         PageContext&lt;ListApisRequest, ListApisResponse, Api&gt; context, ListApisResponse response) {
-<span class="fc" id="L2225">      return new ListApisPage(context, response);</span>
+<span class="fc" id="L2253">      return new ListApisPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListApisPage&gt; createPageAsync(
         PageContext&lt;ListApisRequest, ListApisResponse, Api&gt; context,
         ApiFuture&lt;ListApisResponse&gt; futureResponse) {
-<span class="fc" id="L2232">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2260">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2238,17 +2266,17 @@ public class ApiGatewayServiceClient implements BackgroundResource {
           ListApisRequest, ListApisResponse, Api, ListApisPage, ListApisFixedSizeCollection&gt; {
 
     private ListApisFixedSizeCollection(List&lt;ListApisPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2241">      super(pages, collectionSize);</span>
-<span class="fc" id="L2242">    }</span>
+<span class="fc" id="L2269">      super(pages, collectionSize);</span>
+<span class="fc" id="L2270">    }</span>
 
     private static ListApisFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2245">      return new ListApisFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2273">      return new ListApisFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListApisFixedSizeCollection createCollection(
         List&lt;ListApisPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2251">      return new ListApisFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2279">      return new ListApisFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2264,16 +2292,16 @@ public class ApiGatewayServiceClient implements BackgroundResource {
         PageContext&lt;ListApiConfigsRequest, ListApiConfigsResponse, ApiConfig&gt; context,
         ApiFuture&lt;ListApiConfigsResponse&gt; futureResponse) {
       ApiFuture&lt;ListApiConfigsPage&gt; futurePage =
-<span class="fc" id="L2267">          ListApiConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2268">      return ApiFutures.transform(</span>
+<span class="fc" id="L2295">          ListApiConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2296">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2270">          input -&gt; new ListApiConfigsPagedResponse(input),</span>
-<span class="fc" id="L2271">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2298">          input -&gt; new ListApiConfigsPagedResponse(input),</span>
+<span class="fc" id="L2299">          MoreExecutors.directExecutor());</span>
     }
 
     private ListApiConfigsPagedResponse(ListApiConfigsPage page) {
-<span class="fc" id="L2275">      super(page, ListApiConfigsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2276">    }</span>
+<span class="fc" id="L2303">      super(page, ListApiConfigsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2304">    }</span>
   }
 
   public static class ListApiConfigsPage
@@ -2283,25 +2311,25 @@ public class ApiGatewayServiceClient implements BackgroundResource {
     private ListApiConfigsPage(
         PageContext&lt;ListApiConfigsRequest, ListApiConfigsResponse, ApiConfig&gt; context,
         ListApiConfigsResponse response) {
-<span class="fc" id="L2286">      super(context, response);</span>
-<span class="fc" id="L2287">    }</span>
+<span class="fc" id="L2314">      super(context, response);</span>
+<span class="fc" id="L2315">    }</span>
 
     private static ListApiConfigsPage createEmptyPage() {
-<span class="fc" id="L2290">      return new ListApiConfigsPage(null, null);</span>
+<span class="fc" id="L2318">      return new ListApiConfigsPage(null, null);</span>
     }
 
     @Override
     protected ListApiConfigsPage createPage(
         PageContext&lt;ListApiConfigsRequest, ListApiConfigsResponse, ApiConfig&gt; context,
         ListApiConfigsResponse response) {
-<span class="fc" id="L2297">      return new ListApiConfigsPage(context, response);</span>
+<span class="fc" id="L2325">      return new ListApiConfigsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListApiConfigsPage&gt; createPageAsync(
         PageContext&lt;ListApiConfigsRequest, ListApiConfigsResponse, ApiConfig&gt; context,
         ApiFuture&lt;ListApiConfigsResponse&gt; futureResponse) {
-<span class="fc" id="L2304">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2332">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2314,17 +2342,17 @@ public class ApiGatewayServiceClient implements BackgroundResource {
           ListApiConfigsFixedSizeCollection&gt; {
 
     private ListApiConfigsFixedSizeCollection(List&lt;ListApiConfigsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2317">      super(pages, collectionSize);</span>
-<span class="fc" id="L2318">    }</span>
+<span class="fc" id="L2345">      super(pages, collectionSize);</span>
+<span class="fc" id="L2346">    }</span>
 
     private static ListApiConfigsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2321">      return new ListApiConfigsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2349">      return new ListApiConfigsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListApiConfigsFixedSizeCollection createCollection(
         List&lt;ListApiConfigsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2327">      return new ListApiConfigsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2355">      return new ListApiConfigsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

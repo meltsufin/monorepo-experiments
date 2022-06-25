@@ -20,6 +20,7 @@ import static com.google.cloud.aiplatform.v1.DatasetServiceClient.ListAnnotation
 import static com.google.cloud.aiplatform.v1.DatasetServiceClient.ListDataItemsPagedResponse;
 import static com.google.cloud.aiplatform.v1.DatasetServiceClient.ListDatasetsPagedResponse;
 import static com.google.cloud.aiplatform.v1.DatasetServiceClient.ListLocationsPagedResponse;
+import static com.google.cloud.aiplatform.v1.DatasetServiceClient.ListSavedQueriesPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
@@ -69,6 +70,9 @@ import com.google.cloud.aiplatform.v1.ListDataItemsRequest;
 import com.google.cloud.aiplatform.v1.ListDataItemsResponse;
 import com.google.cloud.aiplatform.v1.ListDatasetsRequest;
 import com.google.cloud.aiplatform.v1.ListDatasetsResponse;
+import com.google.cloud.aiplatform.v1.ListSavedQueriesRequest;
+import com.google.cloud.aiplatform.v1.ListSavedQueriesResponse;
+import com.google.cloud.aiplatform.v1.SavedQuery;
 import com.google.cloud.aiplatform.v1.UpdateDatasetRequest;
 import com.google.cloud.location.GetLocationRequest;
 import com.google.cloud.location.ListLocationsRequest;
@@ -128,7 +132,7 @@ import org.threeten.bp.Duration;
 public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L131">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
+<span class="fc" id="L135">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
 
   private final UnaryCallSettings&lt;CreateDatasetRequest, Operation&gt; createDatasetSettings;
   private final OperationCallSettings&lt;CreateDatasetRequest, Dataset, CreateDatasetOperationMetadata&gt;
@@ -152,6 +156,9 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
   private final PagedCallSettings&lt;
           ListDataItemsRequest, ListDataItemsResponse, ListDataItemsPagedResponse&gt;
       listDataItemsSettings;
+  private final PagedCallSettings&lt;
+          ListSavedQueriesRequest, ListSavedQueriesResponse, ListSavedQueriesPagedResponse&gt;
+      listSavedQueriesSettings;
   private final UnaryCallSettings&lt;GetAnnotationSpecRequest, AnnotationSpec&gt;
       getAnnotationSpecSettings;
   private final PagedCallSettings&lt;
@@ -167,420 +174,486 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
       testIamPermissionsSettings;
 
   private static final PagedListDescriptor&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt;
-<span class="fc" id="L170">      LIST_DATASETS_PAGE_STR_DESC =</span>
-<span class="fc" id="L171">          new PagedListDescriptor&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt;() {</span>
+<span class="fc" id="L177">      LIST_DATASETS_PAGE_STR_DESC =</span>
+<span class="fc" id="L178">          new PagedListDescriptor&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L174">              return &quot;&quot;;</span>
+<span class="fc" id="L181">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListDatasetsRequest injectToken(ListDatasetsRequest payload, String token) {
-<span class="nc" id="L179">              return ListDatasetsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L186">              return ListDatasetsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListDatasetsRequest injectPageSize(ListDatasetsRequest payload, int pageSize) {
-<span class="nc" id="L184">              return ListDatasetsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L191">              return ListDatasetsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListDatasetsRequest payload) {
-<span class="nc" id="L189">              return payload.getPageSize();</span>
+<span class="nc" id="L196">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListDatasetsResponse payload) {
-<span class="fc" id="L194">              return payload.getNextPageToken();</span>
+<span class="fc" id="L201">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Dataset&gt; extractResources(ListDatasetsResponse payload) {
-<span class="pc bpc" id="L199" title="1 of 2 branches missed.">              return payload.getDatasetsList() == null</span>
-<span class="nc" id="L200">                  ? ImmutableList.&lt;Dataset&gt;of()</span>
-<span class="fc" id="L201">                  : payload.getDatasetsList();</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">              return payload.getDatasetsList() == null</span>
+<span class="nc" id="L207">                  ? ImmutableList.&lt;Dataset&gt;of()</span>
+<span class="fc" id="L208">                  : payload.getDatasetsList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;ListDataItemsRequest, ListDataItemsResponse, DataItem&gt;
-<span class="fc" id="L206">      LIST_DATA_ITEMS_PAGE_STR_DESC =</span>
-<span class="fc" id="L207">          new PagedListDescriptor&lt;ListDataItemsRequest, ListDataItemsResponse, DataItem&gt;() {</span>
+<span class="fc" id="L213">      LIST_DATA_ITEMS_PAGE_STR_DESC =</span>
+<span class="fc" id="L214">          new PagedListDescriptor&lt;ListDataItemsRequest, ListDataItemsResponse, DataItem&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L210">              return &quot;&quot;;</span>
+<span class="fc" id="L217">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListDataItemsRequest injectToken(ListDataItemsRequest payload, String token) {
-<span class="nc" id="L215">              return ListDataItemsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L222">              return ListDataItemsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListDataItemsRequest injectPageSize(ListDataItemsRequest payload, int pageSize) {
-<span class="nc" id="L220">              return ListDataItemsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L227">              return ListDataItemsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListDataItemsRequest payload) {
-<span class="nc" id="L225">              return payload.getPageSize();</span>
+<span class="nc" id="L232">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListDataItemsResponse payload) {
-<span class="fc" id="L230">              return payload.getNextPageToken();</span>
+<span class="fc" id="L237">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;DataItem&gt; extractResources(ListDataItemsResponse payload) {
-<span class="pc bpc" id="L235" title="1 of 2 branches missed.">              return payload.getDataItemsList() == null</span>
-<span class="nc" id="L236">                  ? ImmutableList.&lt;DataItem&gt;of()</span>
-<span class="fc" id="L237">                  : payload.getDataItemsList();</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">              return payload.getDataItemsList() == null</span>
+<span class="nc" id="L243">                  ? ImmutableList.&lt;DataItem&gt;of()</span>
+<span class="fc" id="L244">                  : payload.getDataItemsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;
+          ListSavedQueriesRequest, ListSavedQueriesResponse, SavedQuery&gt;
+<span class="fc" id="L250">      LIST_SAVED_QUERIES_PAGE_STR_DESC =</span>
+<span class="fc" id="L251">          new PagedListDescriptor&lt;ListSavedQueriesRequest, ListSavedQueriesResponse, SavedQuery&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L254">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListSavedQueriesRequest injectToken(
+                ListSavedQueriesRequest payload, String token) {
+<span class="nc" id="L260">              return ListSavedQueriesRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListSavedQueriesRequest injectPageSize(
+                ListSavedQueriesRequest payload, int pageSize) {
+<span class="nc" id="L266">              return ListSavedQueriesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListSavedQueriesRequest payload) {
+<span class="nc" id="L271">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListSavedQueriesResponse payload) {
+<span class="fc" id="L276">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;SavedQuery&gt; extractResources(ListSavedQueriesResponse payload) {
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">              return payload.getSavedQueriesList() == null</span>
+<span class="nc" id="L282">                  ? ImmutableList.&lt;SavedQuery&gt;of()</span>
+<span class="fc" id="L283">                  : payload.getSavedQueriesList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;
           ListAnnotationsRequest, ListAnnotationsResponse, Annotation&gt;
-<span class="fc" id="L243">      LIST_ANNOTATIONS_PAGE_STR_DESC =</span>
-<span class="fc" id="L244">          new PagedListDescriptor&lt;ListAnnotationsRequest, ListAnnotationsResponse, Annotation&gt;() {</span>
+<span class="fc" id="L289">      LIST_ANNOTATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L290">          new PagedListDescriptor&lt;ListAnnotationsRequest, ListAnnotationsResponse, Annotation&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L247">              return &quot;&quot;;</span>
+<span class="fc" id="L293">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListAnnotationsRequest injectToken(
                 ListAnnotationsRequest payload, String token) {
-<span class="nc" id="L253">              return ListAnnotationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L299">              return ListAnnotationsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListAnnotationsRequest injectPageSize(
                 ListAnnotationsRequest payload, int pageSize) {
-<span class="nc" id="L259">              return ListAnnotationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L305">              return ListAnnotationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListAnnotationsRequest payload) {
-<span class="nc" id="L264">              return payload.getPageSize();</span>
+<span class="nc" id="L310">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListAnnotationsResponse payload) {
-<span class="fc" id="L269">              return payload.getNextPageToken();</span>
+<span class="fc" id="L315">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Annotation&gt; extractResources(ListAnnotationsResponse payload) {
-<span class="pc bpc" id="L274" title="1 of 2 branches missed.">              return payload.getAnnotationsList() == null</span>
-<span class="nc" id="L275">                  ? ImmutableList.&lt;Annotation&gt;of()</span>
-<span class="fc" id="L276">                  : payload.getAnnotationsList();</span>
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">              return payload.getAnnotationsList() == null</span>
+<span class="nc" id="L321">                  ? ImmutableList.&lt;Annotation&gt;of()</span>
+<span class="fc" id="L322">                  : payload.getAnnotationsList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
-<span class="fc" id="L281">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
-<span class="fc" id="L282">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+<span class="fc" id="L327">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L328">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L285">              return &quot;&quot;;</span>
+<span class="fc" id="L331">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
-<span class="nc" id="L290">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L336">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
-<span class="nc" id="L295">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L341">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListLocationsRequest payload) {
-<span class="nc" id="L300">              return payload.getPageSize();</span>
+<span class="nc" id="L346">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListLocationsResponse payload) {
-<span class="fc" id="L305">              return payload.getNextPageToken();</span>
+<span class="fc" id="L351">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
-<span class="pc bpc" id="L310" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
-<span class="nc" id="L311">                  ? ImmutableList.&lt;Location&gt;of()</span>
-<span class="fc" id="L312">                  : payload.getLocationsList();</span>
+<span class="pc bpc" id="L356" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L357">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L358">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListDatasetsRequest, ListDatasetsResponse, ListDatasetsPagedResponse&gt;
-<span class="fc" id="L318">      LIST_DATASETS_PAGE_STR_FACT =</span>
+<span class="fc" id="L364">      LIST_DATASETS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L320">              ListDatasetsRequest, ListDatasetsResponse, ListDatasetsPagedResponse&gt;() {</span>
+<span class="fc" id="L366">              ListDatasetsRequest, ListDatasetsResponse, ListDatasetsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListDatasetsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListDatasetsRequest, ListDatasetsResponse&gt; callable,
                 ListDatasetsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListDatasetsResponse&gt; futureResponse) {
-<span class="fc" id="L327">              PageContext&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt; pageContext =</span>
-<span class="fc" id="L328">                  PageContext.create(callable, LIST_DATASETS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L329">              return ListDatasetsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L373">              PageContext&lt;ListDatasetsRequest, ListDatasetsResponse, Dataset&gt; pageContext =</span>
+<span class="fc" id="L374">                  PageContext.create(callable, LIST_DATASETS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L375">              return ListDatasetsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListDataItemsRequest, ListDataItemsResponse, ListDataItemsPagedResponse&gt;
-<span class="fc" id="L335">      LIST_DATA_ITEMS_PAGE_STR_FACT =</span>
+<span class="fc" id="L381">      LIST_DATA_ITEMS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L337">              ListDataItemsRequest, ListDataItemsResponse, ListDataItemsPagedResponse&gt;() {</span>
+<span class="fc" id="L383">              ListDataItemsRequest, ListDataItemsResponse, ListDataItemsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListDataItemsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListDataItemsRequest, ListDataItemsResponse&gt; callable,
                 ListDataItemsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListDataItemsResponse&gt; futureResponse) {
-<span class="fc" id="L344">              PageContext&lt;ListDataItemsRequest, ListDataItemsResponse, DataItem&gt; pageContext =</span>
-<span class="fc" id="L345">                  PageContext.create(callable, LIST_DATA_ITEMS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L346">              return ListDataItemsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L390">              PageContext&lt;ListDataItemsRequest, ListDataItemsResponse, DataItem&gt; pageContext =</span>
+<span class="fc" id="L391">                  PageContext.create(callable, LIST_DATA_ITEMS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L392">              return ListDataItemsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListSavedQueriesRequest, ListSavedQueriesResponse, ListSavedQueriesPagedResponse&gt;
+<span class="fc" id="L398">      LIST_SAVED_QUERIES_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L400">              ListSavedQueriesRequest, ListSavedQueriesResponse, ListSavedQueriesPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListSavedQueriesPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListSavedQueriesRequest, ListSavedQueriesResponse&gt; callable,
+                ListSavedQueriesRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListSavedQueriesResponse&gt; futureResponse) {
+              PageContext&lt;ListSavedQueriesRequest, ListSavedQueriesResponse, SavedQuery&gt;
+<span class="fc" id="L408">                  pageContext =</span>
+<span class="fc" id="L409">                      PageContext.create(</span>
+<span class="fc" id="L410">                          callable, LIST_SAVED_QUERIES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L411">              return ListSavedQueriesPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListAnnotationsRequest, ListAnnotationsResponse, ListAnnotationsPagedResponse&gt;
-<span class="fc" id="L352">      LIST_ANNOTATIONS_PAGE_STR_FACT =</span>
+<span class="fc" id="L417">      LIST_ANNOTATIONS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L354">              ListAnnotationsRequest, ListAnnotationsResponse, ListAnnotationsPagedResponse&gt;() {</span>
+<span class="fc" id="L419">              ListAnnotationsRequest, ListAnnotationsResponse, ListAnnotationsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListAnnotationsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListAnnotationsRequest, ListAnnotationsResponse&gt; callable,
                 ListAnnotationsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListAnnotationsResponse&gt; futureResponse) {
-<span class="fc" id="L361">              PageContext&lt;ListAnnotationsRequest, ListAnnotationsResponse, Annotation&gt; pageContext =</span>
-<span class="fc" id="L362">                  PageContext.create(callable, LIST_ANNOTATIONS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L363">              return ListAnnotationsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L426">              PageContext&lt;ListAnnotationsRequest, ListAnnotationsResponse, Annotation&gt; pageContext =</span>
+<span class="fc" id="L427">                  PageContext.create(callable, LIST_ANNOTATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L428">              return ListAnnotationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
-<span class="fc" id="L369">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+<span class="fc" id="L434">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L371">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+<span class="fc" id="L436">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
                 ListLocationsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
-<span class="fc" id="L378">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
-<span class="fc" id="L379">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L380">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L443">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L444">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L445">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to createDataset. */
   public UnaryCallSettings&lt;CreateDatasetRequest, Operation&gt; createDatasetSettings() {
-<span class="fc" id="L386">    return createDatasetSettings;</span>
+<span class="fc" id="L451">    return createDatasetSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createDataset. */
   public OperationCallSettings&lt;CreateDatasetRequest, Dataset, CreateDatasetOperationMetadata&gt;
       createDatasetOperationSettings() {
-<span class="fc" id="L392">    return createDatasetOperationSettings;</span>
+<span class="fc" id="L457">    return createDatasetOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getDataset. */
   public UnaryCallSettings&lt;GetDatasetRequest, Dataset&gt; getDatasetSettings() {
-<span class="fc" id="L397">    return getDatasetSettings;</span>
+<span class="fc" id="L462">    return getDatasetSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateDataset. */
   public UnaryCallSettings&lt;UpdateDatasetRequest, Dataset&gt; updateDatasetSettings() {
-<span class="fc" id="L402">    return updateDatasetSettings;</span>
+<span class="fc" id="L467">    return updateDatasetSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listDatasets. */
   public PagedCallSettings&lt;ListDatasetsRequest, ListDatasetsResponse, ListDatasetsPagedResponse&gt;
       listDatasetsSettings() {
-<span class="fc" id="L408">    return listDatasetsSettings;</span>
+<span class="fc" id="L473">    return listDatasetsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteDataset. */
   public UnaryCallSettings&lt;DeleteDatasetRequest, Operation&gt; deleteDatasetSettings() {
-<span class="fc" id="L413">    return deleteDatasetSettings;</span>
+<span class="fc" id="L478">    return deleteDatasetSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteDataset. */
   public OperationCallSettings&lt;DeleteDatasetRequest, Empty, DeleteOperationMetadata&gt;
       deleteDatasetOperationSettings() {
-<span class="fc" id="L419">    return deleteDatasetOperationSettings;</span>
+<span class="fc" id="L484">    return deleteDatasetOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to importData. */
   public UnaryCallSettings&lt;ImportDataRequest, Operation&gt; importDataSettings() {
-<span class="fc" id="L424">    return importDataSettings;</span>
+<span class="fc" id="L489">    return importDataSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to importData. */
   public OperationCallSettings&lt;ImportDataRequest, ImportDataResponse, ImportDataOperationMetadata&gt;
       importDataOperationSettings() {
-<span class="fc" id="L430">    return importDataOperationSettings;</span>
+<span class="fc" id="L495">    return importDataOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to exportData. */
   public UnaryCallSettings&lt;ExportDataRequest, Operation&gt; exportDataSettings() {
-<span class="fc" id="L435">    return exportDataSettings;</span>
+<span class="fc" id="L500">    return exportDataSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to exportData. */
   public OperationCallSettings&lt;ExportDataRequest, ExportDataResponse, ExportDataOperationMetadata&gt;
       exportDataOperationSettings() {
-<span class="fc" id="L441">    return exportDataOperationSettings;</span>
+<span class="fc" id="L506">    return exportDataOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listDataItems. */
   public PagedCallSettings&lt;ListDataItemsRequest, ListDataItemsResponse, ListDataItemsPagedResponse&gt;
       listDataItemsSettings() {
-<span class="fc" id="L447">    return listDataItemsSettings;</span>
+<span class="fc" id="L512">    return listDataItemsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listSavedQueries. */
+  public PagedCallSettings&lt;
+          ListSavedQueriesRequest, ListSavedQueriesResponse, ListSavedQueriesPagedResponse&gt;
+      listSavedQueriesSettings() {
+<span class="fc" id="L519">    return listSavedQueriesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getAnnotationSpec. */
   public UnaryCallSettings&lt;GetAnnotationSpecRequest, AnnotationSpec&gt; getAnnotationSpecSettings() {
-<span class="fc" id="L452">    return getAnnotationSpecSettings;</span>
+<span class="fc" id="L524">    return getAnnotationSpecSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listAnnotations. */
   public PagedCallSettings&lt;
           ListAnnotationsRequest, ListAnnotationsResponse, ListAnnotationsPagedResponse&gt;
       listAnnotationsSettings() {
-<span class="fc" id="L459">    return listAnnotationsSettings;</span>
+<span class="fc" id="L531">    return listAnnotationsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listLocations. */
   public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
       listLocationsSettings() {
-<span class="fc" id="L465">    return listLocationsSettings;</span>
+<span class="fc" id="L537">    return listLocationsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getLocation. */
   public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
-<span class="fc" id="L470">    return getLocationSettings;</span>
+<span class="fc" id="L542">    return getLocationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to setIamPolicy. */
   public UnaryCallSettings&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings() {
-<span class="fc" id="L475">    return setIamPolicySettings;</span>
+<span class="fc" id="L547">    return setIamPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getIamPolicy. */
   public UnaryCallSettings&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings() {
-<span class="fc" id="L480">    return getIamPolicySettings;</span>
+<span class="fc" id="L552">    return getIamPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to testIamPermissions. */
   public UnaryCallSettings&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
       testIamPermissionsSettings() {
-<span class="fc" id="L486">    return testIamPermissionsSettings;</span>
+<span class="fc" id="L558">    return testIamPermissionsSettings;</span>
   }
 
   public DatasetServiceStub createStub() throws IOException {
-<span class="fc" id="L490">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L491">        .getTransportName()</span>
-<span class="pc bpc" id="L492" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L493">      return GrpcDatasetServiceStub.create(this);</span>
+<span class="fc" id="L562">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L563">        .getTransportName()</span>
+<span class="pc bpc" id="L564" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L565">      return GrpcDatasetServiceStub.create(this);</span>
     }
-<span class="nc" id="L495">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L496">        String.format(</span>
-<span class="nc" id="L497">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="nc" id="L567">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L568">        String.format(</span>
+<span class="nc" id="L569">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L502">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L574">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L507">    return &quot;aiplatform.googleapis.com:443&quot;;</span>
+<span class="fc" id="L579">    return &quot;aiplatform.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L512">    return &quot;aiplatform.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L584">    return &quot;aiplatform.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L517">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L589">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L522">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L523">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L524">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L594">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L595">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L596">        .setUseJwtAccessWithScope(true);</span>
   }
 
   /** Returns a builder for the default ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L529">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L530">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L601">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L602">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L534">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L606">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
   public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L539">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L540">        .setGeneratedLibToken(</span>
-<span class="fc" id="L541">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(DatasetServiceStubSettings.class))</span>
-<span class="fc" id="L542">        .setTransportToken(</span>
-<span class="fc" id="L543">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+<span class="fc" id="L611">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L612">        .setGeneratedLibToken(</span>
+<span class="fc" id="L613">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(DatasetServiceStubSettings.class))</span>
+<span class="fc" id="L614">        .setTransportToken(</span>
+<span class="fc" id="L615">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L548">    return Builder.createDefault();</span>
+<span class="fc" id="L620">    return Builder.createDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L553">    return new Builder(clientContext);</span>
+<span class="nc" id="L625">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L558">    return new Builder(this);</span>
+<span class="nc" id="L630">    return new Builder(this);</span>
   }
 
   protected DatasetServiceStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L562">    super(settingsBuilder);</span>
+<span class="fc" id="L634">    super(settingsBuilder);</span>
 
-<span class="fc" id="L564">    createDatasetSettings = settingsBuilder.createDatasetSettings().build();</span>
-<span class="fc" id="L565">    createDatasetOperationSettings = settingsBuilder.createDatasetOperationSettings().build();</span>
-<span class="fc" id="L566">    getDatasetSettings = settingsBuilder.getDatasetSettings().build();</span>
-<span class="fc" id="L567">    updateDatasetSettings = settingsBuilder.updateDatasetSettings().build();</span>
-<span class="fc" id="L568">    listDatasetsSettings = settingsBuilder.listDatasetsSettings().build();</span>
-<span class="fc" id="L569">    deleteDatasetSettings = settingsBuilder.deleteDatasetSettings().build();</span>
-<span class="fc" id="L570">    deleteDatasetOperationSettings = settingsBuilder.deleteDatasetOperationSettings().build();</span>
-<span class="fc" id="L571">    importDataSettings = settingsBuilder.importDataSettings().build();</span>
-<span class="fc" id="L572">    importDataOperationSettings = settingsBuilder.importDataOperationSettings().build();</span>
-<span class="fc" id="L573">    exportDataSettings = settingsBuilder.exportDataSettings().build();</span>
-<span class="fc" id="L574">    exportDataOperationSettings = settingsBuilder.exportDataOperationSettings().build();</span>
-<span class="fc" id="L575">    listDataItemsSettings = settingsBuilder.listDataItemsSettings().build();</span>
-<span class="fc" id="L576">    getAnnotationSpecSettings = settingsBuilder.getAnnotationSpecSettings().build();</span>
-<span class="fc" id="L577">    listAnnotationsSettings = settingsBuilder.listAnnotationsSettings().build();</span>
-<span class="fc" id="L578">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
-<span class="fc" id="L579">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
-<span class="fc" id="L580">    setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();</span>
-<span class="fc" id="L581">    getIamPolicySettings = settingsBuilder.getIamPolicySettings().build();</span>
-<span class="fc" id="L582">    testIamPermissionsSettings = settingsBuilder.testIamPermissionsSettings().build();</span>
-<span class="fc" id="L583">  }</span>
+<span class="fc" id="L636">    createDatasetSettings = settingsBuilder.createDatasetSettings().build();</span>
+<span class="fc" id="L637">    createDatasetOperationSettings = settingsBuilder.createDatasetOperationSettings().build();</span>
+<span class="fc" id="L638">    getDatasetSettings = settingsBuilder.getDatasetSettings().build();</span>
+<span class="fc" id="L639">    updateDatasetSettings = settingsBuilder.updateDatasetSettings().build();</span>
+<span class="fc" id="L640">    listDatasetsSettings = settingsBuilder.listDatasetsSettings().build();</span>
+<span class="fc" id="L641">    deleteDatasetSettings = settingsBuilder.deleteDatasetSettings().build();</span>
+<span class="fc" id="L642">    deleteDatasetOperationSettings = settingsBuilder.deleteDatasetOperationSettings().build();</span>
+<span class="fc" id="L643">    importDataSettings = settingsBuilder.importDataSettings().build();</span>
+<span class="fc" id="L644">    importDataOperationSettings = settingsBuilder.importDataOperationSettings().build();</span>
+<span class="fc" id="L645">    exportDataSettings = settingsBuilder.exportDataSettings().build();</span>
+<span class="fc" id="L646">    exportDataOperationSettings = settingsBuilder.exportDataOperationSettings().build();</span>
+<span class="fc" id="L647">    listDataItemsSettings = settingsBuilder.listDataItemsSettings().build();</span>
+<span class="fc" id="L648">    listSavedQueriesSettings = settingsBuilder.listSavedQueriesSettings().build();</span>
+<span class="fc" id="L649">    getAnnotationSpecSettings = settingsBuilder.getAnnotationSpecSettings().build();</span>
+<span class="fc" id="L650">    listAnnotationsSettings = settingsBuilder.listAnnotationsSettings().build();</span>
+<span class="fc" id="L651">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L652">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L653">    setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();</span>
+<span class="fc" id="L654">    getIamPolicySettings = settingsBuilder.getIamPolicySettings().build();</span>
+<span class="fc" id="L655">    testIamPermissionsSettings = settingsBuilder.testIamPermissionsSettings().build();</span>
+<span class="fc" id="L656">  }</span>
 
   /** Builder for DatasetServiceStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;DatasetServiceStubSettings, Builder&gt; {
@@ -609,6 +682,9 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
     private final PagedCallSettings.Builder&lt;
             ListDataItemsRequest, ListDataItemsResponse, ListDataItemsPagedResponse&gt;
         listDataItemsSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListSavedQueriesRequest, ListSavedQueriesResponse, ListSavedQueriesPagedResponse&gt;
+        listSavedQueriesSettings;
     private final UnaryCallSettings.Builder&lt;GetAnnotationSpecRequest, AnnotationSpec&gt;
         getAnnotationSpecSettings;
     private final PagedCallSettings.Builder&lt;
@@ -627,50 +703,51 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L630">          ImmutableMap.builder();</span>
-<span class="fc" id="L631">      definitions.put(&quot;no_retry_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L632">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L706">          ImmutableMap.builder();</span>
+<span class="fc" id="L707">      definitions.put(&quot;no_retry_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L708">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L638">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L639">      RetrySettings settings = null;</span>
-<span class="fc" id="L640">      settings = RetrySettings.newBuilder().setRpcTimeoutMultiplier(1.0).build();</span>
-<span class="fc" id="L641">      definitions.put(&quot;no_retry_params&quot;, settings);</span>
-<span class="fc" id="L642">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L643">    }</span>
+<span class="fc" id="L714">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L715">      RetrySettings settings = null;</span>
+<span class="fc" id="L716">      settings = RetrySettings.newBuilder().setRpcTimeoutMultiplier(1.0).build();</span>
+<span class="fc" id="L717">      definitions.put(&quot;no_retry_params&quot;, settings);</span>
+<span class="fc" id="L718">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L719">    }</span>
 
     protected Builder() {
-<span class="nc" id="L646">      this(((ClientContext) null));</span>
-<span class="nc" id="L647">    }</span>
+<span class="nc" id="L722">      this(((ClientContext) null));</span>
+<span class="nc" id="L723">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L650">      super(clientContext);</span>
+<span class="fc" id="L726">      super(clientContext);</span>
 
-<span class="fc" id="L652">      createDatasetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L653">      createDatasetOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L654">      getDatasetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L655">      updateDatasetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L656">      listDatasetsSettings = PagedCallSettings.newBuilder(LIST_DATASETS_PAGE_STR_FACT);</span>
-<span class="fc" id="L657">      deleteDatasetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L658">      deleteDatasetOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L659">      importDataSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L660">      importDataOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L661">      exportDataSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L662">      exportDataOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L663">      listDataItemsSettings = PagedCallSettings.newBuilder(LIST_DATA_ITEMS_PAGE_STR_FACT);</span>
-<span class="fc" id="L664">      getAnnotationSpecSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L665">      listAnnotationsSettings = PagedCallSettings.newBuilder(LIST_ANNOTATIONS_PAGE_STR_FACT);</span>
-<span class="fc" id="L666">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
-<span class="fc" id="L667">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L668">      setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L669">      getIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L670">      testIamPermissionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L728">      createDatasetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L729">      createDatasetOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L730">      getDatasetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L731">      updateDatasetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L732">      listDatasetsSettings = PagedCallSettings.newBuilder(LIST_DATASETS_PAGE_STR_FACT);</span>
+<span class="fc" id="L733">      deleteDatasetSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L734">      deleteDatasetOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L735">      importDataSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L736">      importDataOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L737">      exportDataSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L738">      exportDataOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L739">      listDataItemsSettings = PagedCallSettings.newBuilder(LIST_DATA_ITEMS_PAGE_STR_FACT);</span>
+<span class="fc" id="L740">      listSavedQueriesSettings = PagedCallSettings.newBuilder(LIST_SAVED_QUERIES_PAGE_STR_FACT);</span>
+<span class="fc" id="L741">      getAnnotationSpecSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L742">      listAnnotationsSettings = PagedCallSettings.newBuilder(LIST_ANNOTATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L743">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L744">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L745">      setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L746">      getIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L747">      testIamPermissionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L672">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L673">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L749">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L750">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createDatasetSettings,
               getDatasetSettings,
               updateDatasetSettings,
@@ -679,6 +756,7 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
               importDataSettings,
               exportDataSettings,
               listDataItemsSettings,
+              listSavedQueriesSettings,
               getAnnotationSpecSettings,
               listAnnotationsSettings,
               listLocationsSettings,
@@ -686,34 +764,35 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
               setIamPolicySettings,
               getIamPolicySettings,
               testIamPermissionsSettings);
-<span class="fc" id="L689">      initDefaults(this);</span>
-<span class="fc" id="L690">    }</span>
+<span class="fc" id="L767">      initDefaults(this);</span>
+<span class="fc" id="L768">    }</span>
 
     protected Builder(DatasetServiceStubSettings settings) {
-<span class="nc" id="L693">      super(settings);</span>
+<span class="nc" id="L771">      super(settings);</span>
 
-<span class="nc" id="L695">      createDatasetSettings = settings.createDatasetSettings.toBuilder();</span>
-<span class="nc" id="L696">      createDatasetOperationSettings = settings.createDatasetOperationSettings.toBuilder();</span>
-<span class="nc" id="L697">      getDatasetSettings = settings.getDatasetSettings.toBuilder();</span>
-<span class="nc" id="L698">      updateDatasetSettings = settings.updateDatasetSettings.toBuilder();</span>
-<span class="nc" id="L699">      listDatasetsSettings = settings.listDatasetsSettings.toBuilder();</span>
-<span class="nc" id="L700">      deleteDatasetSettings = settings.deleteDatasetSettings.toBuilder();</span>
-<span class="nc" id="L701">      deleteDatasetOperationSettings = settings.deleteDatasetOperationSettings.toBuilder();</span>
-<span class="nc" id="L702">      importDataSettings = settings.importDataSettings.toBuilder();</span>
-<span class="nc" id="L703">      importDataOperationSettings = settings.importDataOperationSettings.toBuilder();</span>
-<span class="nc" id="L704">      exportDataSettings = settings.exportDataSettings.toBuilder();</span>
-<span class="nc" id="L705">      exportDataOperationSettings = settings.exportDataOperationSettings.toBuilder();</span>
-<span class="nc" id="L706">      listDataItemsSettings = settings.listDataItemsSettings.toBuilder();</span>
-<span class="nc" id="L707">      getAnnotationSpecSettings = settings.getAnnotationSpecSettings.toBuilder();</span>
-<span class="nc" id="L708">      listAnnotationsSettings = settings.listAnnotationsSettings.toBuilder();</span>
-<span class="nc" id="L709">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
-<span class="nc" id="L710">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
-<span class="nc" id="L711">      setIamPolicySettings = settings.setIamPolicySettings.toBuilder();</span>
-<span class="nc" id="L712">      getIamPolicySettings = settings.getIamPolicySettings.toBuilder();</span>
-<span class="nc" id="L713">      testIamPermissionsSettings = settings.testIamPermissionsSettings.toBuilder();</span>
+<span class="nc" id="L773">      createDatasetSettings = settings.createDatasetSettings.toBuilder();</span>
+<span class="nc" id="L774">      createDatasetOperationSettings = settings.createDatasetOperationSettings.toBuilder();</span>
+<span class="nc" id="L775">      getDatasetSettings = settings.getDatasetSettings.toBuilder();</span>
+<span class="nc" id="L776">      updateDatasetSettings = settings.updateDatasetSettings.toBuilder();</span>
+<span class="nc" id="L777">      listDatasetsSettings = settings.listDatasetsSettings.toBuilder();</span>
+<span class="nc" id="L778">      deleteDatasetSettings = settings.deleteDatasetSettings.toBuilder();</span>
+<span class="nc" id="L779">      deleteDatasetOperationSettings = settings.deleteDatasetOperationSettings.toBuilder();</span>
+<span class="nc" id="L780">      importDataSettings = settings.importDataSettings.toBuilder();</span>
+<span class="nc" id="L781">      importDataOperationSettings = settings.importDataOperationSettings.toBuilder();</span>
+<span class="nc" id="L782">      exportDataSettings = settings.exportDataSettings.toBuilder();</span>
+<span class="nc" id="L783">      exportDataOperationSettings = settings.exportDataOperationSettings.toBuilder();</span>
+<span class="nc" id="L784">      listDataItemsSettings = settings.listDataItemsSettings.toBuilder();</span>
+<span class="nc" id="L785">      listSavedQueriesSettings = settings.listSavedQueriesSettings.toBuilder();</span>
+<span class="nc" id="L786">      getAnnotationSpecSettings = settings.getAnnotationSpecSettings.toBuilder();</span>
+<span class="nc" id="L787">      listAnnotationsSettings = settings.listAnnotationsSettings.toBuilder();</span>
+<span class="nc" id="L788">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L789">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
+<span class="nc" id="L790">      setIamPolicySettings = settings.setIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L791">      getIamPolicySettings = settings.getIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L792">      testIamPermissionsSettings = settings.testIamPermissionsSettings.toBuilder();</span>
 
-<span class="nc" id="L715">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L716">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L794">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L795">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createDatasetSettings,
               getDatasetSettings,
               updateDatasetSettings,
@@ -722,6 +801,7 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
               importDataSettings,
               exportDataSettings,
               listDataItemsSettings,
+              listSavedQueriesSettings,
               getAnnotationSpecSettings,
               listAnnotationsSettings,
               listLocationsSettings,
@@ -729,195 +809,200 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
               setIamPolicySettings,
               getIamPolicySettings,
               testIamPermissionsSettings);
-<span class="nc" id="L732">    }</span>
+<span class="nc" id="L812">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L735">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L815">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L737">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L738">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L739">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L740">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L741">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L742">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L817">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L818">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L819">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L820">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L821">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L822">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L744">      return initDefaults(builder);</span>
+<span class="fc" id="L824">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L748">      builder</span>
-<span class="fc" id="L749">          .createDatasetSettings()</span>
-<span class="fc" id="L750">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L751">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+<span class="fc" id="L828">      builder</span>
+<span class="fc" id="L829">          .createDatasetSettings()</span>
+<span class="fc" id="L830">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L831">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L753">      builder</span>
-<span class="fc" id="L754">          .getDatasetSettings()</span>
-<span class="fc" id="L755">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L756">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+<span class="fc" id="L833">      builder</span>
+<span class="fc" id="L834">          .getDatasetSettings()</span>
+<span class="fc" id="L835">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L836">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L758">      builder</span>
-<span class="fc" id="L759">          .updateDatasetSettings()</span>
-<span class="fc" id="L760">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L761">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+<span class="fc" id="L838">      builder</span>
+<span class="fc" id="L839">          .updateDatasetSettings()</span>
+<span class="fc" id="L840">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L841">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L763">      builder</span>
-<span class="fc" id="L764">          .listDatasetsSettings()</span>
-<span class="fc" id="L765">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L766">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L768">      builder</span>
-<span class="fc" id="L769">          .deleteDatasetSettings()</span>
-<span class="fc" id="L770">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L771">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L773">      builder</span>
-<span class="fc" id="L774">          .importDataSettings()</span>
-<span class="fc" id="L775">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L776">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L778">      builder</span>
-<span class="fc" id="L779">          .exportDataSettings()</span>
-<span class="fc" id="L780">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L781">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L783">      builder</span>
-<span class="fc" id="L784">          .listDataItemsSettings()</span>
-<span class="fc" id="L785">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L786">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L788">      builder</span>
-<span class="fc" id="L789">          .getAnnotationSpecSettings()</span>
-<span class="fc" id="L790">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L791">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L793">      builder</span>
-<span class="fc" id="L794">          .listAnnotationsSettings()</span>
-<span class="fc" id="L795">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L796">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L798">      builder</span>
-<span class="fc" id="L799">          .listLocationsSettings()</span>
-<span class="fc" id="L800">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L801">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L803">      builder</span>
-<span class="fc" id="L804">          .getLocationSettings()</span>
-<span class="fc" id="L805">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L806">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L808">      builder</span>
-<span class="fc" id="L809">          .setIamPolicySettings()</span>
-<span class="fc" id="L810">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L811">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L813">      builder</span>
-<span class="fc" id="L814">          .getIamPolicySettings()</span>
-<span class="fc" id="L815">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L816">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L818">      builder</span>
-<span class="fc" id="L819">          .testIamPermissionsSettings()</span>
-<span class="fc" id="L820">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L821">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L823">      builder</span>
-<span class="fc" id="L824">          .createDatasetOperationSettings()</span>
-<span class="fc" id="L825">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L827">                  .&lt;CreateDatasetRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L828">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L829">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L830">                  .build())</span>
-<span class="fc" id="L831">          .setResponseTransformer(</span>
-<span class="fc" id="L832">              ProtoOperationTransformers.ResponseTransformer.create(Dataset.class))</span>
-<span class="fc" id="L833">          .setMetadataTransformer(</span>
-<span class="fc" id="L834">              ProtoOperationTransformers.MetadataTransformer.create(</span>
-                  CreateDatasetOperationMetadata.class))
-<span class="fc" id="L836">          .setPollingAlgorithm(</span>
-<span class="fc" id="L837">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L838">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L839">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L840">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L841">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L842">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L843">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L844">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L845">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L846">                      .build()));</span>
+<span class="fc" id="L843">      builder</span>
+<span class="fc" id="L844">          .listDatasetsSettings()</span>
+<span class="fc" id="L845">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L846">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
 <span class="fc" id="L848">      builder</span>
-<span class="fc" id="L849">          .deleteDatasetOperationSettings()</span>
-<span class="fc" id="L850">          .setInitialCallSettings(</span>
+<span class="fc" id="L849">          .deleteDatasetSettings()</span>
+<span class="fc" id="L850">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L851">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L853">      builder</span>
+<span class="fc" id="L854">          .importDataSettings()</span>
+<span class="fc" id="L855">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L856">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L858">      builder</span>
+<span class="fc" id="L859">          .exportDataSettings()</span>
+<span class="fc" id="L860">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L861">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L863">      builder</span>
+<span class="fc" id="L864">          .listDataItemsSettings()</span>
+<span class="fc" id="L865">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L866">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L868">      builder</span>
+<span class="fc" id="L869">          .listSavedQueriesSettings()</span>
+<span class="fc" id="L870">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L871">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L873">      builder</span>
+<span class="fc" id="L874">          .getAnnotationSpecSettings()</span>
+<span class="fc" id="L875">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L876">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L878">      builder</span>
+<span class="fc" id="L879">          .listAnnotationsSettings()</span>
+<span class="fc" id="L880">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L881">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L883">      builder</span>
+<span class="fc" id="L884">          .listLocationsSettings()</span>
+<span class="fc" id="L885">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L886">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L888">      builder</span>
+<span class="fc" id="L889">          .getLocationSettings()</span>
+<span class="fc" id="L890">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L891">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L893">      builder</span>
+<span class="fc" id="L894">          .setIamPolicySettings()</span>
+<span class="fc" id="L895">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L896">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L898">      builder</span>
+<span class="fc" id="L899">          .getIamPolicySettings()</span>
+<span class="fc" id="L900">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L901">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L903">      builder</span>
+<span class="fc" id="L904">          .testIamPermissionsSettings()</span>
+<span class="fc" id="L905">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L906">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L908">      builder</span>
+<span class="fc" id="L909">          .createDatasetOperationSettings()</span>
+<span class="fc" id="L910">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L852">                  .&lt;DeleteDatasetRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L853">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L854">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L855">                  .build())</span>
-<span class="fc" id="L856">          .setResponseTransformer(</span>
-<span class="fc" id="L857">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
-<span class="fc" id="L858">          .setMetadataTransformer(</span>
-<span class="fc" id="L859">              ProtoOperationTransformers.MetadataTransformer.create(DeleteOperationMetadata.class))</span>
-<span class="fc" id="L860">          .setPollingAlgorithm(</span>
-<span class="fc" id="L861">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L862">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L863">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L864">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L865">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L866">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L867">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L868">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L869">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L870">                      .build()));</span>
+<span class="fc" id="L912">                  .&lt;CreateDatasetRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L913">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L914">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L915">                  .build())</span>
+<span class="fc" id="L916">          .setResponseTransformer(</span>
+<span class="fc" id="L917">              ProtoOperationTransformers.ResponseTransformer.create(Dataset.class))</span>
+<span class="fc" id="L918">          .setMetadataTransformer(</span>
+<span class="fc" id="L919">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+                  CreateDatasetOperationMetadata.class))
+<span class="fc" id="L921">          .setPollingAlgorithm(</span>
+<span class="fc" id="L922">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L923">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L924">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L925">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L926">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L927">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L928">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L929">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L930">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L931">                      .build()));</span>
 
-<span class="fc" id="L872">      builder</span>
-<span class="fc" id="L873">          .importDataOperationSettings()</span>
-<span class="fc" id="L874">          .setInitialCallSettings(</span>
-<span class="fc" id="L875">              UnaryCallSettings.&lt;ImportDataRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L876">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L877">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L878">                  .build())</span>
-<span class="fc" id="L879">          .setResponseTransformer(</span>
-<span class="fc" id="L880">              ProtoOperationTransformers.ResponseTransformer.create(ImportDataResponse.class))</span>
-<span class="fc" id="L881">          .setMetadataTransformer(</span>
-<span class="fc" id="L882">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+<span class="fc" id="L933">      builder</span>
+<span class="fc" id="L934">          .deleteDatasetOperationSettings()</span>
+<span class="fc" id="L935">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L937">                  .&lt;DeleteDatasetRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L938">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L939">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L940">                  .build())</span>
+<span class="fc" id="L941">          .setResponseTransformer(</span>
+<span class="fc" id="L942">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
+<span class="fc" id="L943">          .setMetadataTransformer(</span>
+<span class="fc" id="L944">              ProtoOperationTransformers.MetadataTransformer.create(DeleteOperationMetadata.class))</span>
+<span class="fc" id="L945">          .setPollingAlgorithm(</span>
+<span class="fc" id="L946">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L947">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L948">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L949">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L950">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L951">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L952">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L953">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L954">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L955">                      .build()));</span>
+
+<span class="fc" id="L957">      builder</span>
+<span class="fc" id="L958">          .importDataOperationSettings()</span>
+<span class="fc" id="L959">          .setInitialCallSettings(</span>
+<span class="fc" id="L960">              UnaryCallSettings.&lt;ImportDataRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L961">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L962">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L963">                  .build())</span>
+<span class="fc" id="L964">          .setResponseTransformer(</span>
+<span class="fc" id="L965">              ProtoOperationTransformers.ResponseTransformer.create(ImportDataResponse.class))</span>
+<span class="fc" id="L966">          .setMetadataTransformer(</span>
+<span class="fc" id="L967">              ProtoOperationTransformers.MetadataTransformer.create(</span>
                   ImportDataOperationMetadata.class))
-<span class="fc" id="L884">          .setPollingAlgorithm(</span>
-<span class="fc" id="L885">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L886">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L887">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L888">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L889">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L890">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L891">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L892">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L893">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L894">                      .build()));</span>
+<span class="fc" id="L969">          .setPollingAlgorithm(</span>
+<span class="fc" id="L970">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L971">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L972">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L973">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L974">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L975">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L976">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L977">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L978">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L979">                      .build()));</span>
 
-<span class="fc" id="L896">      builder</span>
-<span class="fc" id="L897">          .exportDataOperationSettings()</span>
-<span class="fc" id="L898">          .setInitialCallSettings(</span>
-<span class="fc" id="L899">              UnaryCallSettings.&lt;ExportDataRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L900">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L901">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L902">                  .build())</span>
-<span class="fc" id="L903">          .setResponseTransformer(</span>
-<span class="fc" id="L904">              ProtoOperationTransformers.ResponseTransformer.create(ExportDataResponse.class))</span>
-<span class="fc" id="L905">          .setMetadataTransformer(</span>
-<span class="fc" id="L906">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+<span class="fc" id="L981">      builder</span>
+<span class="fc" id="L982">          .exportDataOperationSettings()</span>
+<span class="fc" id="L983">          .setInitialCallSettings(</span>
+<span class="fc" id="L984">              UnaryCallSettings.&lt;ExportDataRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L985">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L986">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L987">                  .build())</span>
+<span class="fc" id="L988">          .setResponseTransformer(</span>
+<span class="fc" id="L989">              ProtoOperationTransformers.ResponseTransformer.create(ExportDataResponse.class))</span>
+<span class="fc" id="L990">          .setMetadataTransformer(</span>
+<span class="fc" id="L991">              ProtoOperationTransformers.MetadataTransformer.create(</span>
                   ExportDataOperationMetadata.class))
-<span class="fc" id="L908">          .setPollingAlgorithm(</span>
-<span class="fc" id="L909">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L910">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L911">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L912">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L913">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L914">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L915">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L916">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L917">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L918">                      .build()));</span>
+<span class="fc" id="L993">          .setPollingAlgorithm(</span>
+<span class="fc" id="L994">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L995">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L996">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L997">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L998">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L999">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1000">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1001">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1002">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1003">                      .build()));</span>
 
-<span class="fc" id="L920">      return builder;</span>
+<span class="fc" id="L1005">      return builder;</span>
     }
 
     /**
@@ -927,17 +1012,17 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L930">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L931">      return this;</span>
+<span class="nc" id="L1015">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L1016">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L935">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L1020">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to createDataset. */
     public UnaryCallSettings.Builder&lt;CreateDatasetRequest, Operation&gt; createDatasetSettings() {
-<span class="fc" id="L940">      return createDatasetSettings;</span>
+<span class="fc" id="L1025">      return createDatasetSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createDataset. */
@@ -946,29 +1031,29 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
     public OperationCallSettings.Builder&lt;
             CreateDatasetRequest, Dataset, CreateDatasetOperationMetadata&gt;
         createDatasetOperationSettings() {
-<span class="fc" id="L949">      return createDatasetOperationSettings;</span>
+<span class="fc" id="L1034">      return createDatasetOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getDataset. */
     public UnaryCallSettings.Builder&lt;GetDatasetRequest, Dataset&gt; getDatasetSettings() {
-<span class="fc" id="L954">      return getDatasetSettings;</span>
+<span class="fc" id="L1039">      return getDatasetSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateDataset. */
     public UnaryCallSettings.Builder&lt;UpdateDatasetRequest, Dataset&gt; updateDatasetSettings() {
-<span class="fc" id="L959">      return updateDatasetSettings;</span>
+<span class="fc" id="L1044">      return updateDatasetSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listDatasets. */
     public PagedCallSettings.Builder&lt;
             ListDatasetsRequest, ListDatasetsResponse, ListDatasetsPagedResponse&gt;
         listDatasetsSettings() {
-<span class="fc" id="L966">      return listDatasetsSettings;</span>
+<span class="fc" id="L1051">      return listDatasetsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteDataset. */
     public UnaryCallSettings.Builder&lt;DeleteDatasetRequest, Operation&gt; deleteDatasetSettings() {
-<span class="fc" id="L971">      return deleteDatasetSettings;</span>
+<span class="fc" id="L1056">      return deleteDatasetSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteDataset. */
@@ -976,12 +1061,12 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeleteDatasetRequest, Empty, DeleteOperationMetadata&gt;
         deleteDatasetOperationSettings() {
-<span class="fc" id="L979">      return deleteDatasetOperationSettings;</span>
+<span class="fc" id="L1064">      return deleteDatasetOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to importData. */
     public UnaryCallSettings.Builder&lt;ImportDataRequest, Operation&gt; importDataSettings() {
-<span class="fc" id="L984">      return importDataSettings;</span>
+<span class="fc" id="L1069">      return importDataSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to importData. */
@@ -990,12 +1075,12 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
     public OperationCallSettings.Builder&lt;
             ImportDataRequest, ImportDataResponse, ImportDataOperationMetadata&gt;
         importDataOperationSettings() {
-<span class="fc" id="L993">      return importDataOperationSettings;</span>
+<span class="fc" id="L1078">      return importDataOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to exportData. */
     public UnaryCallSettings.Builder&lt;ExportDataRequest, Operation&gt; exportDataSettings() {
-<span class="fc" id="L998">      return exportDataSettings;</span>
+<span class="fc" id="L1083">      return exportDataSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to exportData. */
@@ -1004,60 +1089,67 @@ public class DatasetServiceStubSettings extends StubSettings&lt;DatasetServiceSt
     public OperationCallSettings.Builder&lt;
             ExportDataRequest, ExportDataResponse, ExportDataOperationMetadata&gt;
         exportDataOperationSettings() {
-<span class="fc" id="L1007">      return exportDataOperationSettings;</span>
+<span class="fc" id="L1092">      return exportDataOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listDataItems. */
     public PagedCallSettings.Builder&lt;
             ListDataItemsRequest, ListDataItemsResponse, ListDataItemsPagedResponse&gt;
         listDataItemsSettings() {
-<span class="fc" id="L1014">      return listDataItemsSettings;</span>
+<span class="fc" id="L1099">      return listDataItemsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listSavedQueries. */
+    public PagedCallSettings.Builder&lt;
+            ListSavedQueriesRequest, ListSavedQueriesResponse, ListSavedQueriesPagedResponse&gt;
+        listSavedQueriesSettings() {
+<span class="fc" id="L1106">      return listSavedQueriesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getAnnotationSpec. */
     public UnaryCallSettings.Builder&lt;GetAnnotationSpecRequest, AnnotationSpec&gt;
         getAnnotationSpecSettings() {
-<span class="fc" id="L1020">      return getAnnotationSpecSettings;</span>
+<span class="fc" id="L1112">      return getAnnotationSpecSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listAnnotations. */
     public PagedCallSettings.Builder&lt;
             ListAnnotationsRequest, ListAnnotationsResponse, ListAnnotationsPagedResponse&gt;
         listAnnotationsSettings() {
-<span class="fc" id="L1027">      return listAnnotationsSettings;</span>
+<span class="fc" id="L1119">      return listAnnotationsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listLocations. */
     public PagedCallSettings.Builder&lt;
             ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
         listLocationsSettings() {
-<span class="fc" id="L1034">      return listLocationsSettings;</span>
+<span class="fc" id="L1126">      return listLocationsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getLocation. */
     public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
-<span class="fc" id="L1039">      return getLocationSettings;</span>
+<span class="fc" id="L1131">      return getLocationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to setIamPolicy. */
     public UnaryCallSettings.Builder&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings() {
-<span class="fc" id="L1044">      return setIamPolicySettings;</span>
+<span class="fc" id="L1136">      return setIamPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getIamPolicy. */
     public UnaryCallSettings.Builder&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings() {
-<span class="fc" id="L1049">      return getIamPolicySettings;</span>
+<span class="fc" id="L1141">      return getIamPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to testIamPermissions. */
     public UnaryCallSettings.Builder&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
         testIamPermissionsSettings() {
-<span class="fc" id="L1055">      return testIamPermissionsSettings;</span>
+<span class="fc" id="L1147">      return testIamPermissionsSettings;</span>
     }
 
     @Override
     public DatasetServiceStubSettings build() throws IOException {
-<span class="fc" id="L1060">      return new DatasetServiceStubSettings(this);</span>
+<span class="fc" id="L1152">      return new DatasetServiceStubSettings(this);</span>
     }
   }
 }

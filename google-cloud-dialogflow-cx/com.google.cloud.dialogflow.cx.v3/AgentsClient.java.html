@@ -19,6 +19,7 @@ package com.google.cloud.dialogflow.cx.v3;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -28,9 +29,12 @@ import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.dialogflow.cx.v3.stub.AgentsStub;
 import com.google.cloud.dialogflow.cx.v3.stub.AgentsStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Struct;
@@ -102,17 +106,32 @@ import javax.annotation.Generated;
  * AgentsClient agentsClient = AgentsClient.create(agentsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * AgentsSettings agentsSettings =
+ *     AgentsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             AgentsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * AgentsClient agentsClient = AgentsClient.create(agentsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class AgentsClient implements BackgroundResource {
   private final AgentsSettings settings;
   private final AgentsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of AgentsClient with default settings. */
   public static final AgentsClient create() throws IOException {
-<span class="nc" id="L115">    return create(AgentsSettings.newBuilder().build());</span>
+<span class="nc" id="L134">    return create(AgentsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -120,7 +139,7 @@ public class AgentsClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final AgentsClient create(AgentsSettings settings) throws IOException {
-<span class="fc" id="L123">    return new AgentsClient(settings);</span>
+<span class="fc" id="L142">    return new AgentsClient(settings);</span>
   }
 
   /**
@@ -128,39 +147,51 @@ public class AgentsClient implements BackgroundResource {
    * advanced usage - prefer using create(AgentsSettings).
    */
   public static final AgentsClient create(AgentsStub stub) {
-<span class="nc" id="L131">    return new AgentsClient(stub);</span>
+<span class="nc" id="L150">    return new AgentsClient(stub);</span>
   }
 
   /**
    * Constructs an instance of AgentsClient, using the given settings. This is protected so that it
    * is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L138">  protected AgentsClient(AgentsSettings settings) throws IOException {</span>
-<span class="fc" id="L139">    this.settings = settings;</span>
-<span class="fc" id="L140">    this.stub = ((AgentsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L141">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L142">  }</span>
+<span class="fc" id="L157">  protected AgentsClient(AgentsSettings settings) throws IOException {</span>
+<span class="fc" id="L158">    this.settings = settings;</span>
+<span class="fc" id="L159">    this.stub = ((AgentsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L160">    this.operationsClient =</span>
+<span class="fc" id="L161">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L162">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L163">  }</span>
 
-<span class="nc" id="L144">  protected AgentsClient(AgentsStub stub) {</span>
-<span class="nc" id="L145">    this.settings = null;</span>
-<span class="nc" id="L146">    this.stub = stub;</span>
-<span class="nc" id="L147">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L148">  }</span>
+<span class="nc" id="L165">  protected AgentsClient(AgentsStub stub) {</span>
+<span class="nc" id="L166">    this.settings = null;</span>
+<span class="nc" id="L167">    this.stub = stub;</span>
+<span class="nc" id="L168">    this.operationsClient =</span>
+<span class="nc" id="L169">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L170">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L171">  }</span>
 
   public final AgentsSettings getSettings() {
-<span class="nc" id="L151">    return settings;</span>
+<span class="nc" id="L174">    return settings;</span>
   }
 
   public AgentsStub getStub() {
-<span class="nc" id="L155">    return stub;</span>
+<span class="nc" id="L178">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L163">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L186">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L194">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -186,8 +217,8 @@ public class AgentsClient implements BackgroundResource {
    */
   public final ListAgentsPagedResponse listAgents(LocationName parent) {
     ListAgentsRequest request =
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        ListAgentsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L190">    return listAgents(request);</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        ListAgentsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L221">    return listAgents(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -212,8 +243,8 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListAgentsPagedResponse listAgents(String parent) {
-<span class="fc" id="L215">    ListAgentsRequest request = ListAgentsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L216">    return listAgents(request);</span>
+<span class="fc" id="L246">    ListAgentsRequest request = ListAgentsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L247">    return listAgents(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -242,7 +273,7 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListAgentsPagedResponse listAgents(ListAgentsRequest request) {
-<span class="fc" id="L245">    return listAgentsPagedCallable().call(request);</span>
+<span class="fc" id="L276">    return listAgentsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -270,7 +301,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListAgentsRequest, ListAgentsPagedResponse&gt; listAgentsPagedCallable() {
-<span class="fc" id="L273">    return stub.listAgentsPagedCallable();</span>
+<span class="fc" id="L304">    return stub.listAgentsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -291,7 +322,7 @@ public class AgentsClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListAgentsResponse response = agentsClient.listAgentsCallable().call(request);
-   *     for (Agent element : response.getResponsesList()) {
+   *     for (Agent element : response.getAgentsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -305,7 +336,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListAgentsRequest, ListAgentsResponse&gt; listAgentsCallable() {
-<span class="nc" id="L308">    return stub.listAgentsCallable();</span>
+<span class="nc" id="L339">    return stub.listAgentsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -329,8 +360,8 @@ public class AgentsClient implements BackgroundResource {
    */
   public final Agent getAgent(AgentName name) {
     GetAgentRequest request =
-<span class="pc bpc" id="L332" title="1 of 2 branches missed.">        GetAgentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L333">    return getAgent(request);</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">        GetAgentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L364">    return getAgent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -353,8 +384,8 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Agent getAgent(String name) {
-<span class="fc" id="L356">    GetAgentRequest request = GetAgentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L357">    return getAgent(request);</span>
+<span class="fc" id="L387">    GetAgentRequest request = GetAgentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L388">    return getAgent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -379,7 +410,7 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Agent getAgent(GetAgentRequest request) {
-<span class="fc" id="L382">    return getAgentCallable().call(request);</span>
+<span class="fc" id="L413">    return getAgentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -403,7 +434,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetAgentRequest, Agent&gt; getAgentCallable() {
-<span class="fc" id="L406">    return stub.getAgentCallable();</span>
+<span class="fc" id="L437">    return stub.getAgentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -432,11 +463,11 @@ public class AgentsClient implements BackgroundResource {
    */
   public final Agent createAgent(LocationName parent, Agent agent) {
     CreateAgentRequest request =
-<span class="fc" id="L435">        CreateAgentRequest.newBuilder()</span>
-<span class="pc bpc" id="L436" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L437">            .setAgent(agent)</span>
-<span class="fc" id="L438">            .build();</span>
-<span class="fc" id="L439">    return createAgent(request);</span>
+<span class="fc" id="L466">        CreateAgentRequest.newBuilder()</span>
+<span class="pc bpc" id="L467" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L468">            .setAgent(agent)</span>
+<span class="fc" id="L469">            .build();</span>
+<span class="fc" id="L470">    return createAgent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -465,8 +496,8 @@ public class AgentsClient implements BackgroundResource {
    */
   public final Agent createAgent(String parent, Agent agent) {
     CreateAgentRequest request =
-<span class="fc" id="L468">        CreateAgentRequest.newBuilder().setParent(parent).setAgent(agent).build();</span>
-<span class="fc" id="L469">    return createAgent(request);</span>
+<span class="fc" id="L499">        CreateAgentRequest.newBuilder().setParent(parent).setAgent(agent).build();</span>
+<span class="fc" id="L500">    return createAgent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -495,7 +526,7 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Agent createAgent(CreateAgentRequest request) {
-<span class="fc" id="L498">    return createAgentCallable().call(request);</span>
+<span class="fc" id="L529">    return createAgentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -523,7 +554,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateAgentRequest, Agent&gt; createAgentCallable() {
-<span class="fc" id="L526">    return stub.createAgentCallable();</span>
+<span class="fc" id="L557">    return stub.createAgentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -552,8 +583,8 @@ public class AgentsClient implements BackgroundResource {
    */
   public final Agent updateAgent(Agent agent, FieldMask updateMask) {
     UpdateAgentRequest request =
-<span class="fc" id="L555">        UpdateAgentRequest.newBuilder().setAgent(agent).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L556">    return updateAgent(request);</span>
+<span class="fc" id="L586">        UpdateAgentRequest.newBuilder().setAgent(agent).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L587">    return updateAgent(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -582,7 +613,7 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Agent updateAgent(UpdateAgentRequest request) {
-<span class="fc" id="L585">    return updateAgentCallable().call(request);</span>
+<span class="fc" id="L616">    return updateAgentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -610,7 +641,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateAgentRequest, Agent&gt; updateAgentCallable() {
-<span class="fc" id="L613">    return stub.updateAgentCallable();</span>
+<span class="fc" id="L644">    return stub.updateAgentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -634,9 +665,9 @@ public class AgentsClient implements BackgroundResource {
    */
   public final void deleteAgent(AgentName name) {
     DeleteAgentRequest request =
-<span class="pc bpc" id="L637" title="1 of 2 branches missed.">        DeleteAgentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L638">    deleteAgent(request);</span>
-<span class="fc" id="L639">  }</span>
+<span class="pc bpc" id="L668" title="1 of 2 branches missed.">        DeleteAgentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L669">    deleteAgent(request);</span>
+<span class="fc" id="L670">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -658,9 +689,9 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteAgent(String name) {
-<span class="fc" id="L661">    DeleteAgentRequest request = DeleteAgentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L662">    deleteAgent(request);</span>
-<span class="fc" id="L663">  }</span>
+<span class="fc" id="L692">    DeleteAgentRequest request = DeleteAgentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L693">    deleteAgent(request);</span>
+<span class="fc" id="L694">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -684,8 +715,8 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteAgent(DeleteAgentRequest request) {
-<span class="fc" id="L687">    deleteAgentCallable().call(request);</span>
-<span class="fc" id="L688">  }</span>
+<span class="fc" id="L718">    deleteAgentCallable().call(request);</span>
+<span class="fc" id="L719">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -708,7 +739,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteAgentRequest, Empty&gt; deleteAgentCallable() {
-<span class="fc" id="L711">    return stub.deleteAgentCallable();</span>
+<span class="fc" id="L742">    return stub.deleteAgentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -746,7 +777,7 @@ public class AgentsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ExportAgentResponse, Struct&gt; exportAgentAsync(
       ExportAgentRequest request) {
-<span class="fc" id="L749">    return exportAgentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L780">    return exportAgentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -784,7 +815,7 @@ public class AgentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ExportAgentRequest, ExportAgentResponse, Struct&gt;
       exportAgentOperationCallable() {
-<span class="fc" id="L787">    return stub.exportAgentOperationCallable();</span>
+<span class="fc" id="L818">    return stub.exportAgentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -820,7 +851,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExportAgentRequest, Operation&gt; exportAgentCallable() {
-<span class="nc" id="L823">    return stub.exportAgentCallable();</span>
+<span class="nc" id="L854">    return stub.exportAgentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -860,7 +891,7 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, Struct&gt; restoreAgentAsync(RestoreAgentRequest request) {
-<span class="fc" id="L863">    return restoreAgentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L894">    return restoreAgentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -901,7 +932,7 @@ public class AgentsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RestoreAgentRequest, Empty, Struct&gt;
       restoreAgentOperationCallable() {
-<span class="fc" id="L904">    return stub.restoreAgentOperationCallable();</span>
+<span class="fc" id="L935">    return stub.restoreAgentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -940,7 +971,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RestoreAgentRequest, Operation&gt; restoreAgentCallable() {
-<span class="nc" id="L943">    return stub.restoreAgentCallable();</span>
+<span class="nc" id="L974">    return stub.restoreAgentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -968,7 +999,7 @@ public class AgentsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final AgentValidationResult validateAgent(ValidateAgentRequest request) {
-<span class="fc" id="L971">    return validateAgentCallable().call(request);</span>
+<span class="fc" id="L1002">    return validateAgentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -996,7 +1027,7 @@ public class AgentsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ValidateAgentRequest, AgentValidationResult&gt; validateAgentCallable() {
-<span class="fc" id="L999">    return stub.validateAgentCallable();</span>
+<span class="fc" id="L1030">    return stub.validateAgentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1022,10 +1053,10 @@ public class AgentsClient implements BackgroundResource {
    */
   public final AgentValidationResult getAgentValidationResult(AgentValidationResultName name) {
     GetAgentValidationResultRequest request =
-<span class="fc" id="L1025">        GetAgentValidationResultRequest.newBuilder()</span>
-<span class="pc bpc" id="L1026" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1027">            .build();</span>
-<span class="fc" id="L1028">    return getAgentValidationResult(request);</span>
+<span class="fc" id="L1056">        GetAgentValidationResultRequest.newBuilder()</span>
+<span class="pc bpc" id="L1057" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1058">            .build();</span>
+<span class="fc" id="L1059">    return getAgentValidationResult(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1050,8 +1081,8 @@ public class AgentsClient implements BackgroundResource {
    */
   public final AgentValidationResult getAgentValidationResult(String name) {
     GetAgentValidationResultRequest request =
-<span class="fc" id="L1053">        GetAgentValidationResultRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1054">    return getAgentValidationResult(request);</span>
+<span class="fc" id="L1084">        GetAgentValidationResultRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1085">    return getAgentValidationResult(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1080,7 +1111,7 @@ public class AgentsClient implements BackgroundResource {
    */
   public final AgentValidationResult getAgentValidationResult(
       GetAgentValidationResultRequest request) {
-<span class="fc" id="L1083">    return getAgentValidationResultCallable().call(request);</span>
+<span class="fc" id="L1114">    return getAgentValidationResultCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1109,37 +1140,176 @@ public class AgentsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetAgentValidationResultRequest, AgentValidationResult&gt;
       getAgentValidationResultCallable() {
-<span class="fc" id="L1112">    return stub.getAgentValidationResultCallable();</span>
+<span class="fc" id="L1143">    return stub.getAgentValidationResultCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (AgentsClient agentsClient = AgentsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : agentsClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L1173">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (AgentsClient agentsClient = AgentsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future = agentsClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L1203">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (AgentsClient agentsClient = AgentsClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response = agentsClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L1239">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (AgentsClient agentsClient = AgentsClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = agentsClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L1261">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (AgentsClient agentsClient = AgentsClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = agentsClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L1282">    return stub.getLocationCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1117">    stub.close();</span>
-<span class="fc" id="L1118">  }</span>
+<span class="fc" id="L1287">    stub.close();</span>
+<span class="fc" id="L1288">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1122">    stub.shutdown();</span>
-<span class="nc" id="L1123">  }</span>
+<span class="nc" id="L1292">    stub.shutdown();</span>
+<span class="nc" id="L1293">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1127">    return stub.isShutdown();</span>
+<span class="nc" id="L1297">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1132">    return stub.isTerminated();</span>
+<span class="nc" id="L1302">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1137">    stub.shutdownNow();</span>
-<span class="nc" id="L1138">  }</span>
+<span class="nc" id="L1307">    stub.shutdownNow();</span>
+<span class="nc" id="L1308">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1142">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1312">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListAgentsPagedResponse
@@ -1154,14 +1324,14 @@ public class AgentsClient implements BackgroundResource {
         PageContext&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt; context,
         ApiFuture&lt;ListAgentsResponse&gt; futureResponse) {
       ApiFuture&lt;ListAgentsPage&gt; futurePage =
-<span class="fc" id="L1157">          ListAgentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1158">      return ApiFutures.transform(</span>
-<span class="fc" id="L1159">          futurePage, input -&gt; new ListAgentsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1327">          ListAgentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1328">      return ApiFutures.transform(</span>
+<span class="fc" id="L1329">          futurePage, input -&gt; new ListAgentsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListAgentsPagedResponse(ListAgentsPage page) {
-<span class="fc" id="L1163">      super(page, ListAgentsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1164">    }</span>
+<span class="fc" id="L1333">      super(page, ListAgentsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1334">    }</span>
   }
 
   public static class ListAgentsPage
@@ -1170,25 +1340,25 @@ public class AgentsClient implements BackgroundResource {
     private ListAgentsPage(
         PageContext&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt; context,
         ListAgentsResponse response) {
-<span class="fc" id="L1173">      super(context, response);</span>
-<span class="fc" id="L1174">    }</span>
+<span class="fc" id="L1343">      super(context, response);</span>
+<span class="fc" id="L1344">    }</span>
 
     private static ListAgentsPage createEmptyPage() {
-<span class="fc" id="L1177">      return new ListAgentsPage(null, null);</span>
+<span class="fc" id="L1347">      return new ListAgentsPage(null, null);</span>
     }
 
     @Override
     protected ListAgentsPage createPage(
         PageContext&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt; context,
         ListAgentsResponse response) {
-<span class="fc" id="L1184">      return new ListAgentsPage(context, response);</span>
+<span class="fc" id="L1354">      return new ListAgentsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListAgentsPage&gt; createPageAsync(
         PageContext&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt; context,
         ApiFuture&lt;ListAgentsResponse&gt; futureResponse) {
-<span class="fc" id="L1191">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1361">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1201,17 +1371,93 @@ public class AgentsClient implements BackgroundResource {
           ListAgentsFixedSizeCollection&gt; {
 
     private ListAgentsFixedSizeCollection(List&lt;ListAgentsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1204">      super(pages, collectionSize);</span>
-<span class="fc" id="L1205">    }</span>
+<span class="fc" id="L1374">      super(pages, collectionSize);</span>
+<span class="fc" id="L1375">    }</span>
 
     private static ListAgentsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1208">      return new ListAgentsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1378">      return new ListAgentsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListAgentsFixedSizeCollection createCollection(
         List&lt;ListAgentsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1214">      return new ListAgentsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1384">      return new ListAgentsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L1400">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1401">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1403">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L1404">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L1408">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1409">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1419">      super(context, response);</span>
+<span class="fc" id="L1420">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L1423">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1430">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L1437">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1450">      super(pages, collectionSize);</span>
+<span class="fc" id="L1451">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1454">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1460">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

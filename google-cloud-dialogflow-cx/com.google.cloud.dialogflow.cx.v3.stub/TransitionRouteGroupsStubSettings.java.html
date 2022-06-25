@@ -16,6 +16,7 @@
 
 package com.google.cloud.dialogflow.cx.v3.stub;
 
+import static com.google.cloud.dialogflow.cx.v3.TransitionRouteGroupsClient.ListLocationsPagedResponse;
 import static com.google.cloud.dialogflow.cx.v3.TransitionRouteGroupsClient.ListTransitionRouteGroupsPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -27,6 +28,9 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
@@ -47,6 +51,10 @@ import com.google.cloud.dialogflow.cx.v3.ListTransitionRouteGroupsRequest;
 import com.google.cloud.dialogflow.cx.v3.ListTransitionRouteGroupsResponse;
 import com.google.cloud.dialogflow.cx.v3.TransitionRouteGroup;
 import com.google.cloud.dialogflow.cx.v3.UpdateTransitionRouteGroupRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -97,10 +105,10 @@ public class TransitionRouteGroupsStubSettings
     extends StubSettings&lt;TransitionRouteGroupsStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L100">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L101">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L102">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L103">          .build();</span>
+<span class="fc" id="L108">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L109">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L110">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L111">          .build();</span>
 
   private final PagedCallSettings&lt;
           ListTransitionRouteGroupsRequest,
@@ -115,51 +123,91 @@ public class TransitionRouteGroupsStubSettings
       updateTransitionRouteGroupSettings;
   private final UnaryCallSettings&lt;DeleteTransitionRouteGroupRequest, Empty&gt;
       deleteTransitionRouteGroupSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;
           ListTransitionRouteGroupsRequest, ListTransitionRouteGroupsResponse, TransitionRouteGroup&gt;
-<span class="fc" id="L121">      LIST_TRANSITION_ROUTE_GROUPS_PAGE_STR_DESC =</span>
+<span class="fc" id="L133">      LIST_TRANSITION_ROUTE_GROUPS_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
               ListTransitionRouteGroupsRequest,
               ListTransitionRouteGroupsResponse,
-<span class="fc" id="L125">              TransitionRouteGroup&gt;() {</span>
+<span class="fc" id="L137">              TransitionRouteGroup&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L128">              return &quot;&quot;;</span>
+<span class="fc" id="L140">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListTransitionRouteGroupsRequest injectToken(
                 ListTransitionRouteGroupsRequest payload, String token) {
-<span class="nc" id="L134">              return ListTransitionRouteGroupsRequest.newBuilder(payload)</span>
-<span class="nc" id="L135">                  .setPageToken(token)</span>
-<span class="nc" id="L136">                  .build();</span>
+<span class="nc" id="L146">              return ListTransitionRouteGroupsRequest.newBuilder(payload)</span>
+<span class="nc" id="L147">                  .setPageToken(token)</span>
+<span class="nc" id="L148">                  .build();</span>
             }
 
             @Override
             public ListTransitionRouteGroupsRequest injectPageSize(
                 ListTransitionRouteGroupsRequest payload, int pageSize) {
-<span class="nc" id="L142">              return ListTransitionRouteGroupsRequest.newBuilder(payload)</span>
-<span class="nc" id="L143">                  .setPageSize(pageSize)</span>
-<span class="nc" id="L144">                  .build();</span>
+<span class="nc" id="L154">              return ListTransitionRouteGroupsRequest.newBuilder(payload)</span>
+<span class="nc" id="L155">                  .setPageSize(pageSize)</span>
+<span class="nc" id="L156">                  .build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListTransitionRouteGroupsRequest payload) {
-<span class="nc" id="L149">              return payload.getPageSize();</span>
+<span class="nc" id="L161">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListTransitionRouteGroupsResponse payload) {
-<span class="fc" id="L154">              return payload.getNextPageToken();</span>
+<span class="fc" id="L166">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;TransitionRouteGroup&gt; extractResources(
                 ListTransitionRouteGroupsResponse payload) {
-<span class="pc bpc" id="L160" title="1 of 2 branches missed.">              return payload.getTransitionRouteGroupsList() == null</span>
-<span class="nc" id="L161">                  ? ImmutableList.&lt;TransitionRouteGroup&gt;of()</span>
-<span class="fc" id="L162">                  : payload.getTransitionRouteGroupsList();</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">              return payload.getTransitionRouteGroupsList() == null</span>
+<span class="nc" id="L173">                  ? ImmutableList.&lt;TransitionRouteGroup&gt;of()</span>
+<span class="fc" id="L174">                  : payload.getTransitionRouteGroupsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L179">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L180">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L183">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L188">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L193">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L198">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L203">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L209">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L210">                  : payload.getLocationsList();</span>
             }
           };
 
@@ -167,11 +215,11 @@ public class TransitionRouteGroupsStubSettings
           ListTransitionRouteGroupsRequest,
           ListTransitionRouteGroupsResponse,
           ListTransitionRouteGroupsPagedResponse&gt;
-<span class="fc" id="L170">      LIST_TRANSITION_ROUTE_GROUPS_PAGE_STR_FACT =</span>
+<span class="fc" id="L218">      LIST_TRANSITION_ROUTE_GROUPS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListTransitionRouteGroupsRequest,
               ListTransitionRouteGroupsResponse,
-<span class="fc" id="L174">              ListTransitionRouteGroupsPagedResponse&gt;() {</span>
+<span class="fc" id="L222">              ListTransitionRouteGroupsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListTransitionRouteGroupsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListTransitionRouteGroupsRequest, ListTransitionRouteGroupsResponse&gt;
@@ -183,11 +231,28 @@ public class TransitionRouteGroupsStubSettings
                       ListTransitionRouteGroupsRequest,
                       ListTransitionRouteGroupsResponse,
                       TransitionRouteGroup&gt;
-<span class="fc" id="L186">                  pageContext =</span>
-<span class="fc" id="L187">                      PageContext.create(</span>
-<span class="fc" id="L188">                          callable, LIST_TRANSITION_ROUTE_GROUPS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L189">              return ListTransitionRouteGroupsPagedResponse.createAsync(</span>
+<span class="fc" id="L234">                  pageContext =</span>
+<span class="fc" id="L235">                      PageContext.create(</span>
+<span class="fc" id="L236">                          callable, LIST_TRANSITION_ROUTE_GROUPS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L237">              return ListTransitionRouteGroupsPagedResponse.createAsync(</span>
                   pageContext, futureResponse);
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L244">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L246">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L253">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L254">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L255">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -197,117 +262,161 @@ public class TransitionRouteGroupsStubSettings
           ListTransitionRouteGroupsResponse,
           ListTransitionRouteGroupsPagedResponse&gt;
       listTransitionRouteGroupsSettings() {
-<span class="fc" id="L200">    return listTransitionRouteGroupsSettings;</span>
+<span class="fc" id="L265">    return listTransitionRouteGroupsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getTransitionRouteGroup. */
   public UnaryCallSettings&lt;GetTransitionRouteGroupRequest, TransitionRouteGroup&gt;
       getTransitionRouteGroupSettings() {
-<span class="fc" id="L206">    return getTransitionRouteGroupSettings;</span>
+<span class="fc" id="L271">    return getTransitionRouteGroupSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createTransitionRouteGroup. */
   public UnaryCallSettings&lt;CreateTransitionRouteGroupRequest, TransitionRouteGroup&gt;
       createTransitionRouteGroupSettings() {
-<span class="fc" id="L212">    return createTransitionRouteGroupSettings;</span>
+<span class="fc" id="L277">    return createTransitionRouteGroupSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateTransitionRouteGroup. */
   public UnaryCallSettings&lt;UpdateTransitionRouteGroupRequest, TransitionRouteGroup&gt;
       updateTransitionRouteGroupSettings() {
-<span class="fc" id="L218">    return updateTransitionRouteGroupSettings;</span>
+<span class="fc" id="L283">    return updateTransitionRouteGroupSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteTransitionRouteGroup. */
   public UnaryCallSettings&lt;DeleteTransitionRouteGroupRequest, Empty&gt;
       deleteTransitionRouteGroupSettings() {
-<span class="fc" id="L224">    return deleteTransitionRouteGroupSettings;</span>
+<span class="fc" id="L289">    return deleteTransitionRouteGroupSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L295">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L300">    return getLocationSettings;</span>
   }
 
   public TransitionRouteGroupsStub createStub() throws IOException {
-<span class="fc" id="L228">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L229">        .getTransportName()</span>
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L231">      return GrpcTransitionRouteGroupsStub.create(this);</span>
+<span class="fc" id="L304">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L305">        .getTransportName()</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L307">      return GrpcTransitionRouteGroupsStub.create(this);</span>
     }
-<span class="nc" id="L233">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L234">        String.format(</span>
-<span class="nc" id="L235">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L309">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L310">        .getTransportName()</span>
+<span class="pc bpc" id="L311" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L312">      return HttpJsonTransitionRouteGroupsStub.create(this);</span>
+    }
+<span class="nc" id="L314">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L315">        String.format(</span>
+<span class="nc" id="L316">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L240">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L321">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L245">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L326">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L250">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L331">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L255">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L336">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L260">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L261">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L262">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L341">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L342">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L343">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L267">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L268">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L348">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L349">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L356">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L272">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L360">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L277">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L278">        .setGeneratedLibToken(</span>
-<span class="fc" id="L279">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(TransitionRouteGroupsStubSettings.class))</span>
-<span class="fc" id="L280">        .setTransportToken(</span>
-<span class="fc" id="L281">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L365">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L366">        .setGeneratedLibToken(</span>
+<span class="fc" id="L367">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(TransitionRouteGroupsStubSettings.class))</span>
+<span class="fc" id="L368">        .setTransportToken(</span>
+<span class="fc" id="L369">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L374">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L375">        .setGeneratedLibToken(</span>
+<span class="fc" id="L376">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(TransitionRouteGroupsStubSettings.class))</span>
+<span class="fc" id="L377">        .setTransportToken(</span>
+<span class="fc" id="L378">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L379">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L383">    return TransitionRouteGroupsStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L286">    return Builder.createDefault();</span>
+<span class="fc" id="L388">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L393">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L291">    return new Builder(clientContext);</span>
+<span class="nc" id="L398">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L296">    return new Builder(this);</span>
+<span class="nc" id="L403">    return new Builder(this);</span>
   }
 
   protected TransitionRouteGroupsStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L300">    super(settingsBuilder);</span>
+<span class="fc" id="L407">    super(settingsBuilder);</span>
 
-<span class="fc" id="L302">    listTransitionRouteGroupsSettings = settingsBuilder.listTransitionRouteGroupsSettings().build();</span>
-<span class="fc" id="L303">    getTransitionRouteGroupSettings = settingsBuilder.getTransitionRouteGroupSettings().build();</span>
-<span class="fc" id="L304">    createTransitionRouteGroupSettings =</span>
-<span class="fc" id="L305">        settingsBuilder.createTransitionRouteGroupSettings().build();</span>
-<span class="fc" id="L306">    updateTransitionRouteGroupSettings =</span>
-<span class="fc" id="L307">        settingsBuilder.updateTransitionRouteGroupSettings().build();</span>
-<span class="fc" id="L308">    deleteTransitionRouteGroupSettings =</span>
-<span class="fc" id="L309">        settingsBuilder.deleteTransitionRouteGroupSettings().build();</span>
-<span class="fc" id="L310">  }</span>
+<span class="fc" id="L409">    listTransitionRouteGroupsSettings = settingsBuilder.listTransitionRouteGroupsSettings().build();</span>
+<span class="fc" id="L410">    getTransitionRouteGroupSettings = settingsBuilder.getTransitionRouteGroupSettings().build();</span>
+<span class="fc" id="L411">    createTransitionRouteGroupSettings =</span>
+<span class="fc" id="L412">        settingsBuilder.createTransitionRouteGroupSettings().build();</span>
+<span class="fc" id="L413">    updateTransitionRouteGroupSettings =</span>
+<span class="fc" id="L414">        settingsBuilder.updateTransitionRouteGroupSettings().build();</span>
+<span class="fc" id="L415">    deleteTransitionRouteGroupSettings =</span>
+<span class="fc" id="L416">        settingsBuilder.deleteTransitionRouteGroupSettings().build();</span>
+<span class="fc" id="L417">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L418">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L419">  }</span>
 
   /** Builder for TransitionRouteGroupsStubSettings. */
   public static class Builder
@@ -326,119 +435,154 @@ public class TransitionRouteGroupsStubSettings
         updateTransitionRouteGroupSettings;
     private final UnaryCallSettings.Builder&lt;DeleteTransitionRouteGroupRequest, Empty&gt;
         deleteTransitionRouteGroupSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L334">          ImmutableMap.builder();</span>
-<span class="fc" id="L335">      definitions.put(</span>
+<span class="fc" id="L447">          ImmutableMap.builder();</span>
+<span class="fc" id="L448">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L337">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L338">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L450">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L451">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L344">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L345">      RetrySettings settings = null;</span>
+<span class="fc" id="L457">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L458">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L347">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L348">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L349">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L350">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L351">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L352">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L353">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L354">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L355">              .build();</span>
-<span class="fc" id="L356">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L357">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L358">    }</span>
+<span class="fc" id="L460">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L461">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L462">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L463">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L464">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L465">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L466">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L467">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L468">              .build();</span>
+<span class="fc" id="L469">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L470">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L471">    }</span>
 
     protected Builder() {
-<span class="nc" id="L361">      this(((ClientContext) null));</span>
-<span class="nc" id="L362">    }</span>
+<span class="nc" id="L474">      this(((ClientContext) null));</span>
+<span class="nc" id="L475">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L365">      super(clientContext);</span>
+<span class="fc" id="L478">      super(clientContext);</span>
 
-<span class="fc" id="L367">      listTransitionRouteGroupsSettings =</span>
-<span class="fc" id="L368">          PagedCallSettings.newBuilder(LIST_TRANSITION_ROUTE_GROUPS_PAGE_STR_FACT);</span>
-<span class="fc" id="L369">      getTransitionRouteGroupSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L370">      createTransitionRouteGroupSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L371">      updateTransitionRouteGroupSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L372">      deleteTransitionRouteGroupSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L480">      listTransitionRouteGroupsSettings =</span>
+<span class="fc" id="L481">          PagedCallSettings.newBuilder(LIST_TRANSITION_ROUTE_GROUPS_PAGE_STR_FACT);</span>
+<span class="fc" id="L482">      getTransitionRouteGroupSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L483">      createTransitionRouteGroupSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L484">      updateTransitionRouteGroupSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L485">      deleteTransitionRouteGroupSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L486">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L487">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L374">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L375">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L489">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L490">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listTransitionRouteGroupsSettings,
               getTransitionRouteGroupSettings,
               createTransitionRouteGroupSettings,
               updateTransitionRouteGroupSettings,
-              deleteTransitionRouteGroupSettings);
-<span class="fc" id="L381">      initDefaults(this);</span>
-<span class="fc" id="L382">    }</span>
+              deleteTransitionRouteGroupSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L498">      initDefaults(this);</span>
+<span class="fc" id="L499">    }</span>
 
     protected Builder(TransitionRouteGroupsStubSettings settings) {
-<span class="nc" id="L385">      super(settings);</span>
+<span class="nc" id="L502">      super(settings);</span>
 
-<span class="nc" id="L387">      listTransitionRouteGroupsSettings = settings.listTransitionRouteGroupsSettings.toBuilder();</span>
-<span class="nc" id="L388">      getTransitionRouteGroupSettings = settings.getTransitionRouteGroupSettings.toBuilder();</span>
-<span class="nc" id="L389">      createTransitionRouteGroupSettings = settings.createTransitionRouteGroupSettings.toBuilder();</span>
-<span class="nc" id="L390">      updateTransitionRouteGroupSettings = settings.updateTransitionRouteGroupSettings.toBuilder();</span>
-<span class="nc" id="L391">      deleteTransitionRouteGroupSettings = settings.deleteTransitionRouteGroupSettings.toBuilder();</span>
+<span class="nc" id="L504">      listTransitionRouteGroupsSettings = settings.listTransitionRouteGroupsSettings.toBuilder();</span>
+<span class="nc" id="L505">      getTransitionRouteGroupSettings = settings.getTransitionRouteGroupSettings.toBuilder();</span>
+<span class="nc" id="L506">      createTransitionRouteGroupSettings = settings.createTransitionRouteGroupSettings.toBuilder();</span>
+<span class="nc" id="L507">      updateTransitionRouteGroupSettings = settings.updateTransitionRouteGroupSettings.toBuilder();</span>
+<span class="nc" id="L508">      deleteTransitionRouteGroupSettings = settings.deleteTransitionRouteGroupSettings.toBuilder();</span>
+<span class="nc" id="L509">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L510">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L393">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L394">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L512">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L513">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listTransitionRouteGroupsSettings,
               getTransitionRouteGroupSettings,
               createTransitionRouteGroupSettings,
               updateTransitionRouteGroupSettings,
-              deleteTransitionRouteGroupSettings);
-<span class="nc" id="L400">    }</span>
+              deleteTransitionRouteGroupSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L521">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L403">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L524">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L405">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L406">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L407">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L408">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L409">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L410">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L526">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L527">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L528">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L529">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L530">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L531">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L412">      return initDefaults(builder);</span>
+<span class="fc" id="L533">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L537">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L539">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L540">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L541">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L542">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L543">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L544">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L546">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L416">      builder</span>
-<span class="fc" id="L417">          .listTransitionRouteGroupsSettings()</span>
-<span class="fc" id="L418">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L419">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L550">      builder</span>
+<span class="fc" id="L551">          .listTransitionRouteGroupsSettings()</span>
+<span class="fc" id="L552">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L553">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L421">      builder</span>
-<span class="fc" id="L422">          .getTransitionRouteGroupSettings()</span>
-<span class="fc" id="L423">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L424">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L555">      builder</span>
+<span class="fc" id="L556">          .getTransitionRouteGroupSettings()</span>
+<span class="fc" id="L557">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L558">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L426">      builder</span>
-<span class="fc" id="L427">          .createTransitionRouteGroupSettings()</span>
-<span class="fc" id="L428">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L429">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L560">      builder</span>
+<span class="fc" id="L561">          .createTransitionRouteGroupSettings()</span>
+<span class="fc" id="L562">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L563">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L431">      builder</span>
-<span class="fc" id="L432">          .updateTransitionRouteGroupSettings()</span>
-<span class="fc" id="L433">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L434">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L565">      builder</span>
+<span class="fc" id="L566">          .updateTransitionRouteGroupSettings()</span>
+<span class="fc" id="L567">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L568">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L436">      builder</span>
-<span class="fc" id="L437">          .deleteTransitionRouteGroupSettings()</span>
-<span class="fc" id="L438">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L439">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L570">      builder</span>
+<span class="fc" id="L571">          .deleteTransitionRouteGroupSettings()</span>
+<span class="fc" id="L572">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L573">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L441">      return builder;</span>
+<span class="fc" id="L575">      builder</span>
+<span class="fc" id="L576">          .listLocationsSettings()</span>
+<span class="fc" id="L577">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L578">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L580">      builder</span>
+<span class="fc" id="L581">          .getLocationSettings()</span>
+<span class="fc" id="L582">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L583">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L585">      return builder;</span>
     }
 
     /**
@@ -448,12 +592,12 @@ public class TransitionRouteGroupsStubSettings
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L451">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L452">      return this;</span>
+<span class="nc" id="L595">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L596">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L456">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L600">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listTransitionRouteGroups. */
@@ -462,36 +606,48 @@ public class TransitionRouteGroupsStubSettings
             ListTransitionRouteGroupsResponse,
             ListTransitionRouteGroupsPagedResponse&gt;
         listTransitionRouteGroupsSettings() {
-<span class="fc" id="L465">      return listTransitionRouteGroupsSettings;</span>
+<span class="fc" id="L609">      return listTransitionRouteGroupsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getTransitionRouteGroup. */
     public UnaryCallSettings.Builder&lt;GetTransitionRouteGroupRequest, TransitionRouteGroup&gt;
         getTransitionRouteGroupSettings() {
-<span class="fc" id="L471">      return getTransitionRouteGroupSettings;</span>
+<span class="fc" id="L615">      return getTransitionRouteGroupSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createTransitionRouteGroup. */
     public UnaryCallSettings.Builder&lt;CreateTransitionRouteGroupRequest, TransitionRouteGroup&gt;
         createTransitionRouteGroupSettings() {
-<span class="fc" id="L477">      return createTransitionRouteGroupSettings;</span>
+<span class="fc" id="L621">      return createTransitionRouteGroupSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateTransitionRouteGroup. */
     public UnaryCallSettings.Builder&lt;UpdateTransitionRouteGroupRequest, TransitionRouteGroup&gt;
         updateTransitionRouteGroupSettings() {
-<span class="fc" id="L483">      return updateTransitionRouteGroupSettings;</span>
+<span class="fc" id="L627">      return updateTransitionRouteGroupSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteTransitionRouteGroup. */
     public UnaryCallSettings.Builder&lt;DeleteTransitionRouteGroupRequest, Empty&gt;
         deleteTransitionRouteGroupSettings() {
-<span class="fc" id="L489">      return deleteTransitionRouteGroupSettings;</span>
+<span class="fc" id="L633">      return deleteTransitionRouteGroupSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L640">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L645">      return getLocationSettings;</span>
     }
 
     @Override
     public TransitionRouteGroupsStubSettings build() throws IOException {
-<span class="fc" id="L494">      return new TransitionRouteGroupsStubSettings(this);</span>
+<span class="fc" id="L650">      return new TransitionRouteGroupsStubSettings(this);</span>
     }
   }
 }

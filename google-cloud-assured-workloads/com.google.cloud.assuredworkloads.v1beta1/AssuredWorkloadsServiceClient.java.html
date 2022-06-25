@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.assuredworkloads.v1beta1.stub.AssuredWorkloadsServiceStu
 import com.google.cloud.assuredworkloads.v1beta1.stub.AssuredWorkloadsServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -108,6 +108,21 @@ import javax.annotation.Generated;
  *     AssuredWorkloadsServiceClient.create(assuredWorkloadsServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * AssuredWorkloadsServiceSettings assuredWorkloadsServiceSettings =
+ *     AssuredWorkloadsServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             AssuredWorkloadsServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * AssuredWorkloadsServiceClient assuredWorkloadsServiceClient =
+ *     AssuredWorkloadsServiceClient.create(assuredWorkloadsServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -115,11 +130,12 @@ import javax.annotation.Generated;
 public class AssuredWorkloadsServiceClient implements BackgroundResource {
   private final AssuredWorkloadsServiceSettings settings;
   private final AssuredWorkloadsServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of AssuredWorkloadsServiceClient with default settings. */
   public static final AssuredWorkloadsServiceClient create() throws IOException {
-<span class="nc" id="L122">    return create(AssuredWorkloadsServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L138">    return create(AssuredWorkloadsServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -128,7 +144,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    */
   public static final AssuredWorkloadsServiceClient create(AssuredWorkloadsServiceSettings settings)
       throws IOException {
-<span class="fc" id="L131">    return new AssuredWorkloadsServiceClient(settings);</span>
+<span class="fc" id="L147">    return new AssuredWorkloadsServiceClient(settings);</span>
   }
 
   /**
@@ -136,7 +152,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * This is for advanced usage - prefer using create(AssuredWorkloadsServiceSettings).
    */
   public static final AssuredWorkloadsServiceClient create(AssuredWorkloadsServiceStub stub) {
-<span class="nc" id="L139">    return new AssuredWorkloadsServiceClient(stub);</span>
+<span class="nc" id="L155">    return new AssuredWorkloadsServiceClient(stub);</span>
   }
 
   /**
@@ -145,32 +161,44 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * should be preferred.
    */
   protected AssuredWorkloadsServiceClient(AssuredWorkloadsServiceSettings settings)
-<span class="fc" id="L148">      throws IOException {</span>
-<span class="fc" id="L149">    this.settings = settings;</span>
-<span class="fc" id="L150">    this.stub = ((AssuredWorkloadsServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L151">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L152">  }</span>
+<span class="fc" id="L164">      throws IOException {</span>
+<span class="fc" id="L165">    this.settings = settings;</span>
+<span class="fc" id="L166">    this.stub = ((AssuredWorkloadsServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L167">    this.operationsClient =</span>
+<span class="fc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L170">  }</span>
 
-<span class="nc" id="L154">  protected AssuredWorkloadsServiceClient(AssuredWorkloadsServiceStub stub) {</span>
-<span class="nc" id="L155">    this.settings = null;</span>
-<span class="nc" id="L156">    this.stub = stub;</span>
-<span class="nc" id="L157">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L158">  }</span>
+<span class="nc" id="L172">  protected AssuredWorkloadsServiceClient(AssuredWorkloadsServiceStub stub) {</span>
+<span class="nc" id="L173">    this.settings = null;</span>
+<span class="nc" id="L174">    this.stub = stub;</span>
+<span class="nc" id="L175">    this.operationsClient =</span>
+<span class="nc" id="L176">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L177">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L178">  }</span>
 
   public final AssuredWorkloadsServiceSettings getSettings() {
-<span class="nc" id="L161">    return settings;</span>
+<span class="nc" id="L181">    return settings;</span>
   }
 
   public AssuredWorkloadsServiceStub getStub() {
-<span class="nc" id="L165">    return stub;</span>
+<span class="nc" id="L185">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L173">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L193">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L201">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -198,11 +226,11 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Workload, CreateWorkloadOperationMetadata&gt; createWorkloadAsync(
       LocationName parent, Workload workload) {
     CreateWorkloadRequest request =
-<span class="fc" id="L201">        CreateWorkloadRequest.newBuilder()</span>
-<span class="pc bpc" id="L202" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L203">            .setWorkload(workload)</span>
-<span class="fc" id="L204">            .build();</span>
-<span class="fc" id="L205">    return createWorkloadAsync(request);</span>
+<span class="fc" id="L229">        CreateWorkloadRequest.newBuilder()</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L231">            .setWorkload(workload)</span>
+<span class="fc" id="L232">            .build();</span>
+<span class="fc" id="L233">    return createWorkloadAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -230,8 +258,8 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Workload, CreateWorkloadOperationMetadata&gt; createWorkloadAsync(
       String parent, Workload workload) {
     CreateWorkloadRequest request =
-<span class="fc" id="L233">        CreateWorkloadRequest.newBuilder().setParent(parent).setWorkload(workload).build();</span>
-<span class="fc" id="L234">    return createWorkloadAsync(request);</span>
+<span class="fc" id="L261">        CreateWorkloadRequest.newBuilder().setParent(parent).setWorkload(workload).build();</span>
+<span class="fc" id="L262">    return createWorkloadAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -260,7 +288,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Workload, CreateWorkloadOperationMetadata&gt; createWorkloadAsync(
       CreateWorkloadRequest request) {
-<span class="fc" id="L263">    return createWorkloadOperationCallable().futureCall(request);</span>
+<span class="fc" id="L291">    return createWorkloadOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -289,7 +317,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateWorkloadRequest, Workload, CreateWorkloadOperationMetadata&gt;
       createWorkloadOperationCallable() {
-<span class="fc" id="L292">    return stub.createWorkloadOperationCallable();</span>
+<span class="fc" id="L320">    return stub.createWorkloadOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -317,7 +345,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateWorkloadRequest, Operation&gt; createWorkloadCallable() {
-<span class="nc" id="L320">    return stub.createWorkloadCallable();</span>
+<span class="nc" id="L348">    return stub.createWorkloadCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -347,8 +375,8 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    */
   public final Workload updateWorkload(Workload workload, FieldMask updateMask) {
     UpdateWorkloadRequest request =
-<span class="fc" id="L350">        UpdateWorkloadRequest.newBuilder().setWorkload(workload).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L351">    return updateWorkload(request);</span>
+<span class="fc" id="L378">        UpdateWorkloadRequest.newBuilder().setWorkload(workload).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L379">    return updateWorkload(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -377,7 +405,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Workload updateWorkload(UpdateWorkloadRequest request) {
-<span class="fc" id="L380">    return updateWorkloadCallable().call(request);</span>
+<span class="fc" id="L408">    return updateWorkloadCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -406,7 +434,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateWorkloadRequest, Workload&gt; updateWorkloadCallable() {
-<span class="fc" id="L409">    return stub.updateWorkloadCallable();</span>
+<span class="fc" id="L437">    return stub.updateWorkloadCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -432,9 +460,9 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    */
   public final void deleteWorkload(WorkloadName name) {
     DeleteWorkloadRequest request =
-<span class="pc bpc" id="L435" title="1 of 2 branches missed.">        DeleteWorkloadRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L436">    deleteWorkload(request);</span>
-<span class="fc" id="L437">  }</span>
+<span class="pc bpc" id="L463" title="1 of 2 branches missed.">        DeleteWorkloadRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L464">    deleteWorkload(request);</span>
+<span class="fc" id="L465">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -458,9 +486,9 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteWorkload(String name) {
-<span class="fc" id="L461">    DeleteWorkloadRequest request = DeleteWorkloadRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L462">    deleteWorkload(request);</span>
-<span class="fc" id="L463">  }</span>
+<span class="fc" id="L489">    DeleteWorkloadRequest request = DeleteWorkloadRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L490">    deleteWorkload(request);</span>
+<span class="fc" id="L491">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -487,8 +515,8 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteWorkload(DeleteWorkloadRequest request) {
-<span class="fc" id="L490">    deleteWorkloadCallable().call(request);</span>
-<span class="fc" id="L491">  }</span>
+<span class="fc" id="L518">    deleteWorkloadCallable().call(request);</span>
+<span class="fc" id="L519">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -515,7 +543,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteWorkloadRequest, Empty&gt; deleteWorkloadCallable() {
-<span class="fc" id="L518">    return stub.deleteWorkloadCallable();</span>
+<span class="fc" id="L546">    return stub.deleteWorkloadCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -542,8 +570,8 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    */
   public final Workload getWorkload(WorkloadName name) {
     GetWorkloadRequest request =
-<span class="pc bpc" id="L545" title="1 of 2 branches missed.">        GetWorkloadRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L546">    return getWorkload(request);</span>
+<span class="pc bpc" id="L573" title="1 of 2 branches missed.">        GetWorkloadRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L574">    return getWorkload(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -569,8 +597,8 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Workload getWorkload(String name) {
-<span class="fc" id="L572">    GetWorkloadRequest request = GetWorkloadRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L573">    return getWorkload(request);</span>
+<span class="fc" id="L600">    GetWorkloadRequest request = GetWorkloadRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L601">    return getWorkload(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -596,7 +624,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Workload getWorkload(GetWorkloadRequest request) {
-<span class="fc" id="L599">    return getWorkloadCallable().call(request);</span>
+<span class="fc" id="L627">    return getWorkloadCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -622,7 +650,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetWorkloadRequest, Workload&gt; getWorkloadCallable() {
-<span class="fc" id="L625">    return stub.getWorkloadCallable();</span>
+<span class="fc" id="L653">    return stub.getWorkloadCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -649,10 +677,10 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    */
   public final ListWorkloadsPagedResponse listWorkloads(LocationName parent) {
     ListWorkloadsRequest request =
-<span class="fc" id="L652">        ListWorkloadsRequest.newBuilder()</span>
-<span class="pc bpc" id="L653" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L654">            .build();</span>
-<span class="fc" id="L655">    return listWorkloads(request);</span>
+<span class="fc" id="L680">        ListWorkloadsRequest.newBuilder()</span>
+<span class="pc bpc" id="L681" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L682">            .build();</span>
+<span class="fc" id="L683">    return listWorkloads(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -678,8 +706,8 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListWorkloadsPagedResponse listWorkloads(String parent) {
-<span class="fc" id="L681">    ListWorkloadsRequest request = ListWorkloadsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L682">    return listWorkloads(request);</span>
+<span class="fc" id="L709">    ListWorkloadsRequest request = ListWorkloadsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L710">    return listWorkloads(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -710,7 +738,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListWorkloadsPagedResponse listWorkloads(ListWorkloadsRequest request) {
-<span class="fc" id="L713">    return listWorkloadsPagedCallable().call(request);</span>
+<span class="fc" id="L741">    return listWorkloadsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -742,7 +770,7 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListWorkloadsRequest, ListWorkloadsPagedResponse&gt;
       listWorkloadsPagedCallable() {
-<span class="fc" id="L745">    return stub.listWorkloadsPagedCallable();</span>
+<span class="fc" id="L773">    return stub.listWorkloadsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -780,37 +808,37 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListWorkloadsRequest, ListWorkloadsResponse&gt; listWorkloadsCallable() {
-<span class="nc" id="L783">    return stub.listWorkloadsCallable();</span>
+<span class="nc" id="L811">    return stub.listWorkloadsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L788">    stub.close();</span>
-<span class="fc" id="L789">  }</span>
+<span class="fc" id="L816">    stub.close();</span>
+<span class="fc" id="L817">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L793">    stub.shutdown();</span>
-<span class="nc" id="L794">  }</span>
+<span class="nc" id="L821">    stub.shutdown();</span>
+<span class="nc" id="L822">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L798">    return stub.isShutdown();</span>
+<span class="nc" id="L826">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L803">    return stub.isTerminated();</span>
+<span class="nc" id="L831">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L808">    stub.shutdownNow();</span>
-<span class="nc" id="L809">  }</span>
+<span class="nc" id="L836">    stub.shutdownNow();</span>
+<span class="nc" id="L837">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L813">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L841">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListWorkloadsPagedResponse
@@ -825,16 +853,16 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
         PageContext&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt; context,
         ApiFuture&lt;ListWorkloadsResponse&gt; futureResponse) {
       ApiFuture&lt;ListWorkloadsPage&gt; futurePage =
-<span class="fc" id="L828">          ListWorkloadsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L829">      return ApiFutures.transform(</span>
+<span class="fc" id="L856">          ListWorkloadsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L857">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L831">          input -&gt; new ListWorkloadsPagedResponse(input),</span>
-<span class="fc" id="L832">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L859">          input -&gt; new ListWorkloadsPagedResponse(input),</span>
+<span class="fc" id="L860">          MoreExecutors.directExecutor());</span>
     }
 
     private ListWorkloadsPagedResponse(ListWorkloadsPage page) {
-<span class="fc" id="L836">      super(page, ListWorkloadsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L837">    }</span>
+<span class="fc" id="L864">      super(page, ListWorkloadsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L865">    }</span>
   }
 
   public static class ListWorkloadsPage
@@ -844,25 +872,25 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
     private ListWorkloadsPage(
         PageContext&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt; context,
         ListWorkloadsResponse response) {
-<span class="fc" id="L847">      super(context, response);</span>
-<span class="fc" id="L848">    }</span>
+<span class="fc" id="L875">      super(context, response);</span>
+<span class="fc" id="L876">    }</span>
 
     private static ListWorkloadsPage createEmptyPage() {
-<span class="fc" id="L851">      return new ListWorkloadsPage(null, null);</span>
+<span class="fc" id="L879">      return new ListWorkloadsPage(null, null);</span>
     }
 
     @Override
     protected ListWorkloadsPage createPage(
         PageContext&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt; context,
         ListWorkloadsResponse response) {
-<span class="fc" id="L858">      return new ListWorkloadsPage(context, response);</span>
+<span class="fc" id="L886">      return new ListWorkloadsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListWorkloadsPage&gt; createPageAsync(
         PageContext&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt; context,
         ApiFuture&lt;ListWorkloadsResponse&gt; futureResponse) {
-<span class="fc" id="L865">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L893">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -875,17 +903,17 @@ public class AssuredWorkloadsServiceClient implements BackgroundResource {
           ListWorkloadsFixedSizeCollection&gt; {
 
     private ListWorkloadsFixedSizeCollection(List&lt;ListWorkloadsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L878">      super(pages, collectionSize);</span>
-<span class="fc" id="L879">    }</span>
+<span class="fc" id="L906">      super(pages, collectionSize);</span>
+<span class="fc" id="L907">    }</span>
 
     private static ListWorkloadsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L882">      return new ListWorkloadsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L910">      return new ListWorkloadsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListWorkloadsFixedSizeCollection createCollection(
         List&lt;ListWorkloadsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L888">      return new ListWorkloadsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L916">      return new ListWorkloadsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

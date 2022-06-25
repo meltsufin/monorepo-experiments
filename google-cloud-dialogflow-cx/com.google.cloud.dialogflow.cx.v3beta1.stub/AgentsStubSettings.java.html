@@ -17,6 +17,7 @@
 package com.google.cloud.dialogflow.cx.v3beta1.stub;
 
 import static com.google.cloud.dialogflow.cx.v3beta1.AgentsClient.ListAgentsPagedResponse;
+import static com.google.cloud.dialogflow.cx.v3beta1.AgentsClient.ListLocationsPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
@@ -28,6 +29,9 @@ import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.grpc.ProtoOperationTransformers;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.longrunning.OperationSnapshot;
 import com.google.api.gax.longrunning.OperationTimedPollAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
@@ -57,6 +61,10 @@ import com.google.cloud.dialogflow.cx.v3beta1.ListAgentsResponse;
 import com.google.cloud.dialogflow.cx.v3beta1.RestoreAgentRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.UpdateAgentRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.ValidateAgentRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -107,10 +115,10 @@ import org.threeten.bp.Duration;
 public class AgentsStubSettings extends StubSettings&lt;AgentsStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L110">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L111">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L112">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L113">          .build();</span>
+<span class="fc" id="L118">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L119">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L120">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L121">          .build();</span>
 
   private final PagedCallSettings&lt;ListAgentsRequest, ListAgentsResponse, ListAgentsPagedResponse&gt;
       listAgentsSettings;
@@ -128,204 +136,304 @@ public class AgentsStubSettings extends StubSettings&lt;AgentsStubSettings&gt; {
       validateAgentSettings;
   private final UnaryCallSettings&lt;GetAgentValidationResultRequest, AgentValidationResult&gt;
       getAgentValidationResultSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt;
-<span class="fc" id="L133">      LIST_AGENTS_PAGE_STR_DESC =</span>
-<span class="fc" id="L134">          new PagedListDescriptor&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt;() {</span>
+<span class="fc" id="L145">      LIST_AGENTS_PAGE_STR_DESC =</span>
+<span class="fc" id="L146">          new PagedListDescriptor&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L137">              return &quot;&quot;;</span>
+<span class="fc" id="L149">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListAgentsRequest injectToken(ListAgentsRequest payload, String token) {
-<span class="nc" id="L142">              return ListAgentsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L154">              return ListAgentsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListAgentsRequest injectPageSize(ListAgentsRequest payload, int pageSize) {
-<span class="nc" id="L147">              return ListAgentsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L159">              return ListAgentsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListAgentsRequest payload) {
-<span class="nc" id="L152">              return payload.getPageSize();</span>
+<span class="nc" id="L164">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListAgentsResponse payload) {
-<span class="fc" id="L157">              return payload.getNextPageToken();</span>
+<span class="fc" id="L169">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Agent&gt; extractResources(ListAgentsResponse payload) {
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">              return payload.getAgentsList() == null</span>
-<span class="nc" id="L163">                  ? ImmutableList.&lt;Agent&gt;of()</span>
-<span class="fc" id="L164">                  : payload.getAgentsList();</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">              return payload.getAgentsList() == null</span>
+<span class="nc" id="L175">                  ? ImmutableList.&lt;Agent&gt;of()</span>
+<span class="fc" id="L176">                  : payload.getAgentsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L181">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L182">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L185">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L190">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L195">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L200">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L205">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L211">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L212">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListAgentsRequest, ListAgentsResponse, ListAgentsPagedResponse&gt;
-<span class="fc" id="L170">      LIST_AGENTS_PAGE_STR_FACT =</span>
+<span class="fc" id="L218">      LIST_AGENTS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L172">              ListAgentsRequest, ListAgentsResponse, ListAgentsPagedResponse&gt;() {</span>
+<span class="fc" id="L220">              ListAgentsRequest, ListAgentsResponse, ListAgentsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListAgentsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListAgentsRequest, ListAgentsResponse&gt; callable,
                 ListAgentsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListAgentsResponse&gt; futureResponse) {
-<span class="fc" id="L179">              PageContext&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt; pageContext =</span>
-<span class="fc" id="L180">                  PageContext.create(callable, LIST_AGENTS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L181">              return ListAgentsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L227">              PageContext&lt;ListAgentsRequest, ListAgentsResponse, Agent&gt; pageContext =</span>
+<span class="fc" id="L228">                  PageContext.create(callable, LIST_AGENTS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L229">              return ListAgentsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L235">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L237">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L244">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L245">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L246">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to listAgents. */
   public PagedCallSettings&lt;ListAgentsRequest, ListAgentsResponse, ListAgentsPagedResponse&gt;
       listAgentsSettings() {
-<span class="fc" id="L188">    return listAgentsSettings;</span>
+<span class="fc" id="L253">    return listAgentsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getAgent. */
   public UnaryCallSettings&lt;GetAgentRequest, Agent&gt; getAgentSettings() {
-<span class="fc" id="L193">    return getAgentSettings;</span>
+<span class="fc" id="L258">    return getAgentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createAgent. */
   public UnaryCallSettings&lt;CreateAgentRequest, Agent&gt; createAgentSettings() {
-<span class="fc" id="L198">    return createAgentSettings;</span>
+<span class="fc" id="L263">    return createAgentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateAgent. */
   public UnaryCallSettings&lt;UpdateAgentRequest, Agent&gt; updateAgentSettings() {
-<span class="fc" id="L203">    return updateAgentSettings;</span>
+<span class="fc" id="L268">    return updateAgentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteAgent. */
   public UnaryCallSettings&lt;DeleteAgentRequest, Empty&gt; deleteAgentSettings() {
-<span class="fc" id="L208">    return deleteAgentSettings;</span>
+<span class="fc" id="L273">    return deleteAgentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to exportAgent. */
   public UnaryCallSettings&lt;ExportAgentRequest, Operation&gt; exportAgentSettings() {
-<span class="fc" id="L213">    return exportAgentSettings;</span>
+<span class="fc" id="L278">    return exportAgentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to exportAgent. */
   public OperationCallSettings&lt;ExportAgentRequest, ExportAgentResponse, Struct&gt;
       exportAgentOperationSettings() {
-<span class="fc" id="L219">    return exportAgentOperationSettings;</span>
+<span class="fc" id="L284">    return exportAgentOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to restoreAgent. */
   public UnaryCallSettings&lt;RestoreAgentRequest, Operation&gt; restoreAgentSettings() {
-<span class="fc" id="L224">    return restoreAgentSettings;</span>
+<span class="fc" id="L289">    return restoreAgentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to restoreAgent. */
   public OperationCallSettings&lt;RestoreAgentRequest, Empty, Struct&gt; restoreAgentOperationSettings() {
-<span class="fc" id="L229">    return restoreAgentOperationSettings;</span>
+<span class="fc" id="L294">    return restoreAgentOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to validateAgent. */
   public UnaryCallSettings&lt;ValidateAgentRequest, AgentValidationResult&gt; validateAgentSettings() {
-<span class="fc" id="L234">    return validateAgentSettings;</span>
+<span class="fc" id="L299">    return validateAgentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getAgentValidationResult. */
   public UnaryCallSettings&lt;GetAgentValidationResultRequest, AgentValidationResult&gt;
       getAgentValidationResultSettings() {
-<span class="fc" id="L240">    return getAgentValidationResultSettings;</span>
+<span class="fc" id="L305">    return getAgentValidationResultSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L311">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L316">    return getLocationSettings;</span>
   }
 
   public AgentsStub createStub() throws IOException {
-<span class="fc" id="L244">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L245">        .getTransportName()</span>
-<span class="pc bpc" id="L246" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L247">      return GrpcAgentsStub.create(this);</span>
+<span class="fc" id="L320">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L321">        .getTransportName()</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L323">      return GrpcAgentsStub.create(this);</span>
     }
-<span class="nc" id="L249">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L250">        String.format(</span>
-<span class="nc" id="L251">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L325">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L326">        .getTransportName()</span>
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L328">      return HttpJsonAgentsStub.create(this);</span>
+    }
+<span class="nc" id="L330">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L331">        String.format(</span>
+<span class="nc" id="L332">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L256">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L337">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L261">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L342">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L266">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L347">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L271">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L352">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L276">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L277">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L278">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L357">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L358">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L359">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L283">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L284">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L364">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L365">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L372">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L288">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L376">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L293">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L294">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(AgentsStubSettings.class))</span>
-<span class="fc" id="L295">        .setTransportToken(</span>
-<span class="fc" id="L296">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L381">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L382">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(AgentsStubSettings.class))</span>
+<span class="fc" id="L383">        .setTransportToken(</span>
+<span class="fc" id="L384">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L389">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L390">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(AgentsStubSettings.class))</span>
+<span class="fc" id="L391">        .setTransportToken(</span>
+<span class="fc" id="L392">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L393">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L397">    return AgentsStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L301">    return Builder.createDefault();</span>
+<span class="fc" id="L402">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L407">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L306">    return new Builder(clientContext);</span>
+<span class="nc" id="L412">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L311">    return new Builder(this);</span>
+<span class="nc" id="L417">    return new Builder(this);</span>
   }
 
   protected AgentsStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L315">    super(settingsBuilder);</span>
+<span class="fc" id="L421">    super(settingsBuilder);</span>
 
-<span class="fc" id="L317">    listAgentsSettings = settingsBuilder.listAgentsSettings().build();</span>
-<span class="fc" id="L318">    getAgentSettings = settingsBuilder.getAgentSettings().build();</span>
-<span class="fc" id="L319">    createAgentSettings = settingsBuilder.createAgentSettings().build();</span>
-<span class="fc" id="L320">    updateAgentSettings = settingsBuilder.updateAgentSettings().build();</span>
-<span class="fc" id="L321">    deleteAgentSettings = settingsBuilder.deleteAgentSettings().build();</span>
-<span class="fc" id="L322">    exportAgentSettings = settingsBuilder.exportAgentSettings().build();</span>
-<span class="fc" id="L323">    exportAgentOperationSettings = settingsBuilder.exportAgentOperationSettings().build();</span>
-<span class="fc" id="L324">    restoreAgentSettings = settingsBuilder.restoreAgentSettings().build();</span>
-<span class="fc" id="L325">    restoreAgentOperationSettings = settingsBuilder.restoreAgentOperationSettings().build();</span>
-<span class="fc" id="L326">    validateAgentSettings = settingsBuilder.validateAgentSettings().build();</span>
-<span class="fc" id="L327">    getAgentValidationResultSettings = settingsBuilder.getAgentValidationResultSettings().build();</span>
-<span class="fc" id="L328">  }</span>
+<span class="fc" id="L423">    listAgentsSettings = settingsBuilder.listAgentsSettings().build();</span>
+<span class="fc" id="L424">    getAgentSettings = settingsBuilder.getAgentSettings().build();</span>
+<span class="fc" id="L425">    createAgentSettings = settingsBuilder.createAgentSettings().build();</span>
+<span class="fc" id="L426">    updateAgentSettings = settingsBuilder.updateAgentSettings().build();</span>
+<span class="fc" id="L427">    deleteAgentSettings = settingsBuilder.deleteAgentSettings().build();</span>
+<span class="fc" id="L428">    exportAgentSettings = settingsBuilder.exportAgentSettings().build();</span>
+<span class="fc" id="L429">    exportAgentOperationSettings = settingsBuilder.exportAgentOperationSettings().build();</span>
+<span class="fc" id="L430">    restoreAgentSettings = settingsBuilder.restoreAgentSettings().build();</span>
+<span class="fc" id="L431">    restoreAgentOperationSettings = settingsBuilder.restoreAgentOperationSettings().build();</span>
+<span class="fc" id="L432">    validateAgentSettings = settingsBuilder.validateAgentSettings().build();</span>
+<span class="fc" id="L433">    getAgentValidationResultSettings = settingsBuilder.getAgentValidationResultSettings().build();</span>
+<span class="fc" id="L434">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L435">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L436">  }</span>
 
   /** Builder for AgentsStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;AgentsStubSettings, Builder&gt; {
@@ -347,58 +455,64 @@ public class AgentsStubSettings extends StubSettings&lt;AgentsStubSettings&gt; {
         validateAgentSettings;
     private final UnaryCallSettings.Builder&lt;GetAgentValidationResultRequest, AgentValidationResult&gt;
         getAgentValidationResultSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L355">          ImmutableMap.builder();</span>
-<span class="fc" id="L356">      definitions.put(</span>
+<span class="fc" id="L467">          ImmutableMap.builder();</span>
+<span class="fc" id="L468">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L358">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L359">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L470">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L471">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L365">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L366">      RetrySettings settings = null;</span>
+<span class="fc" id="L477">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L478">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L368">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L369">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L370">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L371">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L372">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L373">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L374">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L375">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L376">              .build();</span>
-<span class="fc" id="L377">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L378">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L379">    }</span>
+<span class="fc" id="L480">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L481">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L482">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L483">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L484">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L485">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L486">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L487">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L488">              .build();</span>
+<span class="fc" id="L489">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L490">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L491">    }</span>
 
     protected Builder() {
-<span class="nc" id="L382">      this(((ClientContext) null));</span>
-<span class="nc" id="L383">    }</span>
+<span class="nc" id="L494">      this(((ClientContext) null));</span>
+<span class="nc" id="L495">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L386">      super(clientContext);</span>
+<span class="fc" id="L498">      super(clientContext);</span>
 
-<span class="fc" id="L388">      listAgentsSettings = PagedCallSettings.newBuilder(LIST_AGENTS_PAGE_STR_FACT);</span>
-<span class="fc" id="L389">      getAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L390">      createAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L391">      updateAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L392">      deleteAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L393">      exportAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L394">      exportAgentOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L395">      restoreAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L396">      restoreAgentOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L397">      validateAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L398">      getAgentValidationResultSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L500">      listAgentsSettings = PagedCallSettings.newBuilder(LIST_AGENTS_PAGE_STR_FACT);</span>
+<span class="fc" id="L501">      getAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L502">      createAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L503">      updateAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L504">      deleteAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L505">      exportAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L506">      exportAgentOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L507">      restoreAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L508">      restoreAgentOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L509">      validateAgentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L510">      getAgentValidationResultSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L511">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L512">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L400">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L401">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L514">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L515">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listAgentsSettings,
               getAgentSettings,
               createAgentSettings,
@@ -407,27 +521,31 @@ public class AgentsStubSettings extends StubSettings&lt;AgentsStubSettings&gt; {
               exportAgentSettings,
               restoreAgentSettings,
               validateAgentSettings,
-              getAgentValidationResultSettings);
-<span class="fc" id="L411">      initDefaults(this);</span>
-<span class="fc" id="L412">    }</span>
+              getAgentValidationResultSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L527">      initDefaults(this);</span>
+<span class="fc" id="L528">    }</span>
 
     protected Builder(AgentsStubSettings settings) {
-<span class="nc" id="L415">      super(settings);</span>
+<span class="nc" id="L531">      super(settings);</span>
 
-<span class="nc" id="L417">      listAgentsSettings = settings.listAgentsSettings.toBuilder();</span>
-<span class="nc" id="L418">      getAgentSettings = settings.getAgentSettings.toBuilder();</span>
-<span class="nc" id="L419">      createAgentSettings = settings.createAgentSettings.toBuilder();</span>
-<span class="nc" id="L420">      updateAgentSettings = settings.updateAgentSettings.toBuilder();</span>
-<span class="nc" id="L421">      deleteAgentSettings = settings.deleteAgentSettings.toBuilder();</span>
-<span class="nc" id="L422">      exportAgentSettings = settings.exportAgentSettings.toBuilder();</span>
-<span class="nc" id="L423">      exportAgentOperationSettings = settings.exportAgentOperationSettings.toBuilder();</span>
-<span class="nc" id="L424">      restoreAgentSettings = settings.restoreAgentSettings.toBuilder();</span>
-<span class="nc" id="L425">      restoreAgentOperationSettings = settings.restoreAgentOperationSettings.toBuilder();</span>
-<span class="nc" id="L426">      validateAgentSettings = settings.validateAgentSettings.toBuilder();</span>
-<span class="nc" id="L427">      getAgentValidationResultSettings = settings.getAgentValidationResultSettings.toBuilder();</span>
+<span class="nc" id="L533">      listAgentsSettings = settings.listAgentsSettings.toBuilder();</span>
+<span class="nc" id="L534">      getAgentSettings = settings.getAgentSettings.toBuilder();</span>
+<span class="nc" id="L535">      createAgentSettings = settings.createAgentSettings.toBuilder();</span>
+<span class="nc" id="L536">      updateAgentSettings = settings.updateAgentSettings.toBuilder();</span>
+<span class="nc" id="L537">      deleteAgentSettings = settings.deleteAgentSettings.toBuilder();</span>
+<span class="nc" id="L538">      exportAgentSettings = settings.exportAgentSettings.toBuilder();</span>
+<span class="nc" id="L539">      exportAgentOperationSettings = settings.exportAgentOperationSettings.toBuilder();</span>
+<span class="nc" id="L540">      restoreAgentSettings = settings.restoreAgentSettings.toBuilder();</span>
+<span class="nc" id="L541">      restoreAgentOperationSettings = settings.restoreAgentOperationSettings.toBuilder();</span>
+<span class="nc" id="L542">      validateAgentSettings = settings.validateAgentSettings.toBuilder();</span>
+<span class="nc" id="L543">      getAgentValidationResultSettings = settings.getAgentValidationResultSettings.toBuilder();</span>
+<span class="nc" id="L544">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L545">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L429">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L430">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L547">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L548">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listAgentsSettings,
               getAgentSettings,
               createAgentSettings,
@@ -436,116 +554,141 @@ public class AgentsStubSettings extends StubSettings&lt;AgentsStubSettings&gt; {
               exportAgentSettings,
               restoreAgentSettings,
               validateAgentSettings,
-              getAgentValidationResultSettings);
-<span class="nc" id="L440">    }</span>
+              getAgentValidationResultSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L560">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L443">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L563">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L445">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L446">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L447">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L448">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L449">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L450">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L565">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L566">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L567">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L568">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L569">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L570">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L452">      return initDefaults(builder);</span>
+<span class="fc" id="L572">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L576">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L578">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L579">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L580">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L581">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L582">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L583">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L585">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L456">      builder</span>
-<span class="fc" id="L457">          .listAgentsSettings()</span>
-<span class="fc" id="L458">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L459">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L589">      builder</span>
+<span class="fc" id="L590">          .listAgentsSettings()</span>
+<span class="fc" id="L591">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L592">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L461">      builder</span>
-<span class="fc" id="L462">          .getAgentSettings()</span>
-<span class="fc" id="L463">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L464">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L594">      builder</span>
+<span class="fc" id="L595">          .getAgentSettings()</span>
+<span class="fc" id="L596">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L597">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L466">      builder</span>
-<span class="fc" id="L467">          .createAgentSettings()</span>
-<span class="fc" id="L468">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L469">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L599">      builder</span>
+<span class="fc" id="L600">          .createAgentSettings()</span>
+<span class="fc" id="L601">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L602">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L471">      builder</span>
-<span class="fc" id="L472">          .updateAgentSettings()</span>
-<span class="fc" id="L473">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L474">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L604">      builder</span>
+<span class="fc" id="L605">          .updateAgentSettings()</span>
+<span class="fc" id="L606">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L607">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L476">      builder</span>
-<span class="fc" id="L477">          .deleteAgentSettings()</span>
-<span class="fc" id="L478">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L479">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L609">      builder</span>
+<span class="fc" id="L610">          .deleteAgentSettings()</span>
+<span class="fc" id="L611">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L612">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L481">      builder</span>
-<span class="fc" id="L482">          .exportAgentSettings()</span>
-<span class="fc" id="L483">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L484">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L614">      builder</span>
+<span class="fc" id="L615">          .exportAgentSettings()</span>
+<span class="fc" id="L616">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L617">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L486">      builder</span>
-<span class="fc" id="L487">          .restoreAgentSettings()</span>
-<span class="fc" id="L488">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L489">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L619">      builder</span>
+<span class="fc" id="L620">          .restoreAgentSettings()</span>
+<span class="fc" id="L621">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L622">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L491">      builder</span>
-<span class="fc" id="L492">          .validateAgentSettings()</span>
-<span class="fc" id="L493">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L494">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L624">      builder</span>
+<span class="fc" id="L625">          .validateAgentSettings()</span>
+<span class="fc" id="L626">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L627">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L496">      builder</span>
-<span class="fc" id="L497">          .getAgentValidationResultSettings()</span>
-<span class="fc" id="L498">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L499">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L629">      builder</span>
+<span class="fc" id="L630">          .getAgentValidationResultSettings()</span>
+<span class="fc" id="L631">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L632">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L501">      builder</span>
-<span class="fc" id="L502">          .exportAgentOperationSettings()</span>
-<span class="fc" id="L503">          .setInitialCallSettings(</span>
-<span class="fc" id="L504">              UnaryCallSettings.&lt;ExportAgentRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L505">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L506">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L507">                  .build())</span>
-<span class="fc" id="L508">          .setResponseTransformer(</span>
-<span class="fc" id="L509">              ProtoOperationTransformers.ResponseTransformer.create(ExportAgentResponse.class))</span>
-<span class="fc" id="L510">          .setMetadataTransformer(</span>
-<span class="fc" id="L511">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
-<span class="fc" id="L512">          .setPollingAlgorithm(</span>
-<span class="fc" id="L513">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L514">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L515">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L516">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L517">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L518">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L519">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L520">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L521">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L522">                      .build()));</span>
+<span class="fc" id="L634">      builder</span>
+<span class="fc" id="L635">          .listLocationsSettings()</span>
+<span class="fc" id="L636">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L637">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L524">      builder</span>
-<span class="fc" id="L525">          .restoreAgentOperationSettings()</span>
-<span class="fc" id="L526">          .setInitialCallSettings(</span>
+<span class="fc" id="L639">      builder</span>
+<span class="fc" id="L640">          .getLocationSettings()</span>
+<span class="fc" id="L641">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L642">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L644">      builder</span>
+<span class="fc" id="L645">          .exportAgentOperationSettings()</span>
+<span class="fc" id="L646">          .setInitialCallSettings(</span>
+<span class="fc" id="L647">              UnaryCallSettings.&lt;ExportAgentRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L648">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L649">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L650">                  .build())</span>
+<span class="fc" id="L651">          .setResponseTransformer(</span>
+<span class="fc" id="L652">              ProtoOperationTransformers.ResponseTransformer.create(ExportAgentResponse.class))</span>
+<span class="fc" id="L653">          .setMetadataTransformer(</span>
+<span class="fc" id="L654">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
+<span class="fc" id="L655">          .setPollingAlgorithm(</span>
+<span class="fc" id="L656">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L657">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L658">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L659">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L660">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L661">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L662">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L663">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L664">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L665">                      .build()));</span>
+
+<span class="fc" id="L667">      builder</span>
+<span class="fc" id="L668">          .restoreAgentOperationSettings()</span>
+<span class="fc" id="L669">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L528">                  .&lt;RestoreAgentRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L529">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L530">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L531">                  .build())</span>
-<span class="fc" id="L532">          .setResponseTransformer(</span>
-<span class="fc" id="L533">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
-<span class="fc" id="L534">          .setMetadataTransformer(</span>
-<span class="fc" id="L535">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
-<span class="fc" id="L536">          .setPollingAlgorithm(</span>
-<span class="fc" id="L537">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L538">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L539">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L540">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L541">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L542">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L543">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L544">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L545">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L546">                      .build()));</span>
+<span class="fc" id="L671">                  .&lt;RestoreAgentRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L672">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L673">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L674">                  .build())</span>
+<span class="fc" id="L675">          .setResponseTransformer(</span>
+<span class="fc" id="L676">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
+<span class="fc" id="L677">          .setMetadataTransformer(</span>
+<span class="fc" id="L678">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
+<span class="fc" id="L679">          .setPollingAlgorithm(</span>
+<span class="fc" id="L680">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L681">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L682">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L683">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L684">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L685">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L686">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L687">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L688">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L689">                      .build()));</span>
 
-<span class="fc" id="L548">      return builder;</span>
+<span class="fc" id="L691">      return builder;</span>
     }
 
     /**
@@ -555,43 +698,43 @@ public class AgentsStubSettings extends StubSettings&lt;AgentsStubSettings&gt; {
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L558">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L559">      return this;</span>
+<span class="nc" id="L701">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L702">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L563">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L706">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listAgents. */
     public PagedCallSettings.Builder&lt;ListAgentsRequest, ListAgentsResponse, ListAgentsPagedResponse&gt;
         listAgentsSettings() {
-<span class="fc" id="L569">      return listAgentsSettings;</span>
+<span class="fc" id="L712">      return listAgentsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getAgent. */
     public UnaryCallSettings.Builder&lt;GetAgentRequest, Agent&gt; getAgentSettings() {
-<span class="fc" id="L574">      return getAgentSettings;</span>
+<span class="fc" id="L717">      return getAgentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createAgent. */
     public UnaryCallSettings.Builder&lt;CreateAgentRequest, Agent&gt; createAgentSettings() {
-<span class="fc" id="L579">      return createAgentSettings;</span>
+<span class="fc" id="L722">      return createAgentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateAgent. */
     public UnaryCallSettings.Builder&lt;UpdateAgentRequest, Agent&gt; updateAgentSettings() {
-<span class="fc" id="L584">      return updateAgentSettings;</span>
+<span class="fc" id="L727">      return updateAgentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteAgent. */
     public UnaryCallSettings.Builder&lt;DeleteAgentRequest, Empty&gt; deleteAgentSettings() {
-<span class="fc" id="L589">      return deleteAgentSettings;</span>
+<span class="fc" id="L732">      return deleteAgentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to exportAgent. */
     public UnaryCallSettings.Builder&lt;ExportAgentRequest, Operation&gt; exportAgentSettings() {
-<span class="fc" id="L594">      return exportAgentSettings;</span>
+<span class="fc" id="L737">      return exportAgentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to exportAgent. */
@@ -599,12 +742,12 @@ public class AgentsStubSettings extends StubSettings&lt;AgentsStubSettings&gt; {
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;ExportAgentRequest, ExportAgentResponse, Struct&gt;
         exportAgentOperationSettings() {
-<span class="fc" id="L602">      return exportAgentOperationSettings;</span>
+<span class="fc" id="L745">      return exportAgentOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to restoreAgent. */
     public UnaryCallSettings.Builder&lt;RestoreAgentRequest, Operation&gt; restoreAgentSettings() {
-<span class="fc" id="L607">      return restoreAgentSettings;</span>
+<span class="fc" id="L750">      return restoreAgentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to restoreAgent. */
@@ -612,24 +755,36 @@ public class AgentsStubSettings extends StubSettings&lt;AgentsStubSettings&gt; {
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;RestoreAgentRequest, Empty, Struct&gt;
         restoreAgentOperationSettings() {
-<span class="fc" id="L615">      return restoreAgentOperationSettings;</span>
+<span class="fc" id="L758">      return restoreAgentOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to validateAgent. */
     public UnaryCallSettings.Builder&lt;ValidateAgentRequest, AgentValidationResult&gt;
         validateAgentSettings() {
-<span class="fc" id="L621">      return validateAgentSettings;</span>
+<span class="fc" id="L764">      return validateAgentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getAgentValidationResult. */
     public UnaryCallSettings.Builder&lt;GetAgentValidationResultRequest, AgentValidationResult&gt;
         getAgentValidationResultSettings() {
-<span class="fc" id="L627">      return getAgentValidationResultSettings;</span>
+<span class="fc" id="L770">      return getAgentValidationResultSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L777">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L782">      return getLocationSettings;</span>
     }
 
     @Override
     public AgentsStubSettings build() throws IOException {
-<span class="fc" id="L632">      return new AgentsStubSettings(this);</span>
+<span class="fc" id="L787">      return new AgentsStubSettings(this);</span>
     }
   }
 }

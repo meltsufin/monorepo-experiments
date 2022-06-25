@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.gkehub.v1alpha.stub.GkeHubStub;
 import com.google.cloud.gkehub.v1alpha.stub.GkeHubStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -116,6 +116,20 @@ import javax.annotation.Generated;
  * GkeHubClient gkeHubClient = GkeHubClient.create(gkeHubSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * GkeHubSettings gkeHubSettings =
+ *     GkeHubSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             GkeHubSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * GkeHubClient gkeHubClient = GkeHubClient.create(gkeHubSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -123,11 +137,12 @@ import javax.annotation.Generated;
 public class GkeHubClient implements BackgroundResource {
   private final GkeHubSettings settings;
   private final GkeHubStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of GkeHubClient with default settings. */
   public static final GkeHubClient create() throws IOException {
-<span class="nc" id="L130">    return create(GkeHubSettings.newBuilder().build());</span>
+<span class="nc" id="L145">    return create(GkeHubSettings.newBuilder().build());</span>
   }
 
   /**
@@ -135,50 +150,59 @@ public class GkeHubClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final GkeHubClient create(GkeHubSettings settings) throws IOException {
-<span class="fc" id="L138">    return new GkeHubClient(settings);</span>
+<span class="fc" id="L153">    return new GkeHubClient(settings);</span>
   }
 
   /**
    * Constructs an instance of GkeHubClient, using the given stub for making calls. This is for
    * advanced usage - prefer using create(GkeHubSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final GkeHubClient create(GkeHubStub stub) {
-<span class="nc" id="L147">    return new GkeHubClient(stub);</span>
+<span class="nc" id="L161">    return new GkeHubClient(stub);</span>
   }
 
   /**
    * Constructs an instance of GkeHubClient, using the given settings. This is protected so that it
    * is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L154">  protected GkeHubClient(GkeHubSettings settings) throws IOException {</span>
-<span class="fc" id="L155">    this.settings = settings;</span>
-<span class="fc" id="L156">    this.stub = ((GkeHubStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L157">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L158">  }</span>
+<span class="fc" id="L168">  protected GkeHubClient(GkeHubSettings settings) throws IOException {</span>
+<span class="fc" id="L169">    this.settings = settings;</span>
+<span class="fc" id="L170">    this.stub = ((GkeHubStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L171">    this.operationsClient =</span>
+<span class="fc" id="L172">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L173">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L174">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L161">  protected GkeHubClient(GkeHubStub stub) {</span>
-<span class="nc" id="L162">    this.settings = null;</span>
-<span class="nc" id="L163">    this.stub = stub;</span>
-<span class="nc" id="L164">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L165">  }</span>
+<span class="nc" id="L176">  protected GkeHubClient(GkeHubStub stub) {</span>
+<span class="nc" id="L177">    this.settings = null;</span>
+<span class="nc" id="L178">    this.stub = stub;</span>
+<span class="nc" id="L179">    this.operationsClient =</span>
+<span class="nc" id="L180">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L181">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L182">  }</span>
 
   public final GkeHubSettings getSettings() {
-<span class="nc" id="L168">    return settings;</span>
+<span class="nc" id="L185">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public GkeHubStub getStub() {
-<span class="nc" id="L173">    return stub;</span>
+<span class="nc" id="L189">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L181">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L197">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L205">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -203,8 +227,8 @@ public class GkeHubClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListFeaturesPagedResponse listFeatures(String parent) {
-<span class="fc" id="L206">    ListFeaturesRequest request = ListFeaturesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L207">    return listFeatures(request);</span>
+<span class="fc" id="L230">    ListFeaturesRequest request = ListFeaturesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L231">    return listFeatures(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -235,7 +259,7 @@ public class GkeHubClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListFeaturesPagedResponse listFeatures(ListFeaturesRequest request) {
-<span class="fc" id="L238">    return listFeaturesPagedCallable().call(request);</span>
+<span class="fc" id="L262">    return listFeaturesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -266,7 +290,7 @@ public class GkeHubClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListFeaturesRequest, ListFeaturesPagedResponse&gt;
       listFeaturesPagedCallable() {
-<span class="fc" id="L269">    return stub.listFeaturesPagedCallable();</span>
+<span class="fc" id="L293">    return stub.listFeaturesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -289,7 +313,7 @@ public class GkeHubClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListFeaturesResponse response = gkeHubClient.listFeaturesCallable().call(request);
-   *     for (Feature element : response.getResponsesList()) {
+   *     for (Feature element : response.getResourcesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -303,7 +327,7 @@ public class GkeHubClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListFeaturesRequest, ListFeaturesResponse&gt; listFeaturesCallable() {
-<span class="nc" id="L306">    return stub.listFeaturesCallable();</span>
+<span class="nc" id="L330">    return stub.listFeaturesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -326,8 +350,8 @@ public class GkeHubClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Feature getFeature(String name) {
-<span class="fc" id="L329">    GetFeatureRequest request = GetFeatureRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L330">    return getFeature(request);</span>
+<span class="fc" id="L353">    GetFeatureRequest request = GetFeatureRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L354">    return getFeature(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -349,7 +373,7 @@ public class GkeHubClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Feature getFeature(GetFeatureRequest request) {
-<span class="fc" id="L352">    return getFeatureCallable().call(request);</span>
+<span class="fc" id="L376">    return getFeatureCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -370,7 +394,7 @@ public class GkeHubClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetFeatureRequest, Feature&gt; getFeatureCallable() {
-<span class="fc" id="L373">    return stub.getFeatureCallable();</span>
+<span class="fc" id="L397">    return stub.getFeatureCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -399,12 +423,12 @@ public class GkeHubClient implements BackgroundResource {
   public final OperationFuture&lt;Feature, OperationMetadata&gt; createFeatureAsync(
       String parent, Feature resource, String featureId) {
     CreateFeatureRequest request =
-<span class="fc" id="L402">        CreateFeatureRequest.newBuilder()</span>
-<span class="fc" id="L403">            .setParent(parent)</span>
-<span class="fc" id="L404">            .setResource(resource)</span>
-<span class="fc" id="L405">            .setFeatureId(featureId)</span>
-<span class="fc" id="L406">            .build();</span>
-<span class="fc" id="L407">    return createFeatureAsync(request);</span>
+<span class="fc" id="L426">        CreateFeatureRequest.newBuilder()</span>
+<span class="fc" id="L427">            .setParent(parent)</span>
+<span class="fc" id="L428">            .setResource(resource)</span>
+<span class="fc" id="L429">            .setFeatureId(featureId)</span>
+<span class="fc" id="L430">            .build();</span>
+<span class="fc" id="L431">    return createFeatureAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -433,7 +457,7 @@ public class GkeHubClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Feature, OperationMetadata&gt; createFeatureAsync(
       CreateFeatureRequest request) {
-<span class="fc" id="L436">    return createFeatureOperationCallable().futureCall(request);</span>
+<span class="fc" id="L460">    return createFeatureOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -462,7 +486,7 @@ public class GkeHubClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateFeatureRequest, Feature, OperationMetadata&gt;
       createFeatureOperationCallable() {
-<span class="fc" id="L465">    return stub.createFeatureOperationCallable();</span>
+<span class="fc" id="L489">    return stub.createFeatureOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -489,7 +513,7 @@ public class GkeHubClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateFeatureRequest, Operation&gt; createFeatureCallable() {
-<span class="nc" id="L492">    return stub.createFeatureCallable();</span>
+<span class="nc" id="L516">    return stub.createFeatureCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -512,8 +536,8 @@ public class GkeHubClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteFeatureAsync(String name) {
-<span class="fc" id="L515">    DeleteFeatureRequest request = DeleteFeatureRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L516">    return deleteFeatureAsync(request);</span>
+<span class="fc" id="L539">    DeleteFeatureRequest request = DeleteFeatureRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L540">    return deleteFeatureAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -541,7 +565,7 @@ public class GkeHubClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteFeatureAsync(
       DeleteFeatureRequest request) {
-<span class="fc" id="L544">    return deleteFeatureOperationCallable().futureCall(request);</span>
+<span class="fc" id="L568">    return deleteFeatureOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -569,7 +593,7 @@ public class GkeHubClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteFeatureRequest, Empty, OperationMetadata&gt;
       deleteFeatureOperationCallable() {
-<span class="fc" id="L572">    return stub.deleteFeatureOperationCallable();</span>
+<span class="fc" id="L596">    return stub.deleteFeatureOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -595,7 +619,7 @@ public class GkeHubClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteFeatureRequest, Operation&gt; deleteFeatureCallable() {
-<span class="nc" id="L598">    return stub.deleteFeatureCallable();</span>
+<span class="nc" id="L622">    return stub.deleteFeatureCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -629,12 +653,12 @@ public class GkeHubClient implements BackgroundResource {
   public final OperationFuture&lt;Feature, OperationMetadata&gt; updateFeatureAsync(
       String name, Feature resource, FieldMask updateMask) {
     UpdateFeatureRequest request =
-<span class="fc" id="L632">        UpdateFeatureRequest.newBuilder()</span>
-<span class="fc" id="L633">            .setName(name)</span>
-<span class="fc" id="L634">            .setResource(resource)</span>
-<span class="fc" id="L635">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L636">            .build();</span>
-<span class="fc" id="L637">    return updateFeatureAsync(request);</span>
+<span class="fc" id="L656">        UpdateFeatureRequest.newBuilder()</span>
+<span class="fc" id="L657">            .setName(name)</span>
+<span class="fc" id="L658">            .setResource(resource)</span>
+<span class="fc" id="L659">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L660">            .build();</span>
+<span class="fc" id="L661">    return updateFeatureAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -663,7 +687,7 @@ public class GkeHubClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Feature, OperationMetadata&gt; updateFeatureAsync(
       UpdateFeatureRequest request) {
-<span class="fc" id="L666">    return updateFeatureOperationCallable().futureCall(request);</span>
+<span class="fc" id="L690">    return updateFeatureOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -692,7 +716,7 @@ public class GkeHubClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateFeatureRequest, Feature, OperationMetadata&gt;
       updateFeatureOperationCallable() {
-<span class="fc" id="L695">    return stub.updateFeatureOperationCallable();</span>
+<span class="fc" id="L719">    return stub.updateFeatureOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -719,37 +743,37 @@ public class GkeHubClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateFeatureRequest, Operation&gt; updateFeatureCallable() {
-<span class="nc" id="L722">    return stub.updateFeatureCallable();</span>
+<span class="nc" id="L746">    return stub.updateFeatureCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L727">    stub.close();</span>
-<span class="fc" id="L728">  }</span>
+<span class="fc" id="L751">    stub.close();</span>
+<span class="fc" id="L752">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L732">    stub.shutdown();</span>
-<span class="nc" id="L733">  }</span>
+<span class="nc" id="L756">    stub.shutdown();</span>
+<span class="nc" id="L757">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L737">    return stub.isShutdown();</span>
+<span class="nc" id="L761">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L742">    return stub.isTerminated();</span>
+<span class="nc" id="L766">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L747">    stub.shutdownNow();</span>
-<span class="nc" id="L748">  }</span>
+<span class="nc" id="L771">    stub.shutdownNow();</span>
+<span class="nc" id="L772">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L752">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L776">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListFeaturesPagedResponse
@@ -764,16 +788,16 @@ public class GkeHubClient implements BackgroundResource {
         PageContext&lt;ListFeaturesRequest, ListFeaturesResponse, Feature&gt; context,
         ApiFuture&lt;ListFeaturesResponse&gt; futureResponse) {
       ApiFuture&lt;ListFeaturesPage&gt; futurePage =
-<span class="fc" id="L767">          ListFeaturesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L768">      return ApiFutures.transform(</span>
+<span class="fc" id="L791">          ListFeaturesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L792">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L770">          input -&gt; new ListFeaturesPagedResponse(input),</span>
-<span class="fc" id="L771">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L794">          input -&gt; new ListFeaturesPagedResponse(input),</span>
+<span class="fc" id="L795">          MoreExecutors.directExecutor());</span>
     }
 
     private ListFeaturesPagedResponse(ListFeaturesPage page) {
-<span class="fc" id="L775">      super(page, ListFeaturesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L776">    }</span>
+<span class="fc" id="L799">      super(page, ListFeaturesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L800">    }</span>
   }
 
   public static class ListFeaturesPage
@@ -782,25 +806,25 @@ public class GkeHubClient implements BackgroundResource {
     private ListFeaturesPage(
         PageContext&lt;ListFeaturesRequest, ListFeaturesResponse, Feature&gt; context,
         ListFeaturesResponse response) {
-<span class="fc" id="L785">      super(context, response);</span>
-<span class="fc" id="L786">    }</span>
+<span class="fc" id="L809">      super(context, response);</span>
+<span class="fc" id="L810">    }</span>
 
     private static ListFeaturesPage createEmptyPage() {
-<span class="fc" id="L789">      return new ListFeaturesPage(null, null);</span>
+<span class="fc" id="L813">      return new ListFeaturesPage(null, null);</span>
     }
 
     @Override
     protected ListFeaturesPage createPage(
         PageContext&lt;ListFeaturesRequest, ListFeaturesResponse, Feature&gt; context,
         ListFeaturesResponse response) {
-<span class="fc" id="L796">      return new ListFeaturesPage(context, response);</span>
+<span class="fc" id="L820">      return new ListFeaturesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListFeaturesPage&gt; createPageAsync(
         PageContext&lt;ListFeaturesRequest, ListFeaturesResponse, Feature&gt; context,
         ApiFuture&lt;ListFeaturesResponse&gt; futureResponse) {
-<span class="fc" id="L803">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L827">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -813,17 +837,17 @@ public class GkeHubClient implements BackgroundResource {
           ListFeaturesFixedSizeCollection&gt; {
 
     private ListFeaturesFixedSizeCollection(List&lt;ListFeaturesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L816">      super(pages, collectionSize);</span>
-<span class="fc" id="L817">    }</span>
+<span class="fc" id="L840">      super(pages, collectionSize);</span>
+<span class="fc" id="L841">    }</span>
 
     private static ListFeaturesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L820">      return new ListFeaturesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L844">      return new ListFeaturesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListFeaturesFixedSizeCollection createCollection(
         List&lt;ListFeaturesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L826">      return new ListFeaturesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L850">      return new ListFeaturesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

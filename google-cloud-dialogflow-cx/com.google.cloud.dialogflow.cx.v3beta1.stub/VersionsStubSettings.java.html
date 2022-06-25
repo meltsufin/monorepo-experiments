@@ -16,6 +16,7 @@
 
 package com.google.cloud.dialogflow.cx.v3beta1.stub;
 
+import static com.google.cloud.dialogflow.cx.v3beta1.VersionsClient.ListLocationsPagedResponse;
 import static com.google.cloud.dialogflow.cx.v3beta1.VersionsClient.ListVersionsPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -28,6 +29,9 @@ import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.grpc.ProtoOperationTransformers;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.longrunning.OperationSnapshot;
 import com.google.api.gax.longrunning.OperationTimedPollAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
@@ -55,6 +59,10 @@ import com.google.cloud.dialogflow.cx.v3beta1.ListVersionsResponse;
 import com.google.cloud.dialogflow.cx.v3beta1.LoadVersionRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.UpdateVersionRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.Version;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -105,10 +113,10 @@ import org.threeten.bp.Duration;
 public class VersionsStubSettings extends StubSettings&lt;VersionsStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L108">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L109">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L110">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L111">          .build();</span>
+<span class="fc" id="L116">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L117">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L118">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L119">          .build();</span>
 
   private final PagedCallSettings&lt;
           ListVersionsRequest, ListVersionsResponse, ListVersionsPagedResponse&gt;
@@ -124,192 +132,292 @@ public class VersionsStubSettings extends StubSettings&lt;VersionsStubSettings&g
       loadVersionOperationSettings;
   private final UnaryCallSettings&lt;CompareVersionsRequest, CompareVersionsResponse&gt;
       compareVersionsSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;ListVersionsRequest, ListVersionsResponse, Version&gt;
-<span class="fc" id="L129">      LIST_VERSIONS_PAGE_STR_DESC =</span>
-<span class="fc" id="L130">          new PagedListDescriptor&lt;ListVersionsRequest, ListVersionsResponse, Version&gt;() {</span>
+<span class="fc" id="L141">      LIST_VERSIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L142">          new PagedListDescriptor&lt;ListVersionsRequest, ListVersionsResponse, Version&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L133">              return &quot;&quot;;</span>
+<span class="fc" id="L145">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListVersionsRequest injectToken(ListVersionsRequest payload, String token) {
-<span class="nc" id="L138">              return ListVersionsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L150">              return ListVersionsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListVersionsRequest injectPageSize(ListVersionsRequest payload, int pageSize) {
-<span class="nc" id="L143">              return ListVersionsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L155">              return ListVersionsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListVersionsRequest payload) {
-<span class="nc" id="L148">              return payload.getPageSize();</span>
+<span class="nc" id="L160">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListVersionsResponse payload) {
-<span class="fc" id="L153">              return payload.getNextPageToken();</span>
+<span class="fc" id="L165">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Version&gt; extractResources(ListVersionsResponse payload) {
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">              return payload.getVersionsList() == null</span>
-<span class="nc" id="L159">                  ? ImmutableList.&lt;Version&gt;of()</span>
-<span class="fc" id="L160">                  : payload.getVersionsList();</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">              return payload.getVersionsList() == null</span>
+<span class="nc" id="L171">                  ? ImmutableList.&lt;Version&gt;of()</span>
+<span class="fc" id="L172">                  : payload.getVersionsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L177">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L178">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L181">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L186">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L191">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L196">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L201">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L207">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L208">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListVersionsRequest, ListVersionsResponse, ListVersionsPagedResponse&gt;
-<span class="fc" id="L166">      LIST_VERSIONS_PAGE_STR_FACT =</span>
+<span class="fc" id="L214">      LIST_VERSIONS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L168">              ListVersionsRequest, ListVersionsResponse, ListVersionsPagedResponse&gt;() {</span>
+<span class="fc" id="L216">              ListVersionsRequest, ListVersionsResponse, ListVersionsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListVersionsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListVersionsRequest, ListVersionsResponse&gt; callable,
                 ListVersionsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListVersionsResponse&gt; futureResponse) {
-<span class="fc" id="L175">              PageContext&lt;ListVersionsRequest, ListVersionsResponse, Version&gt; pageContext =</span>
-<span class="fc" id="L176">                  PageContext.create(callable, LIST_VERSIONS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L177">              return ListVersionsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L223">              PageContext&lt;ListVersionsRequest, ListVersionsResponse, Version&gt; pageContext =</span>
+<span class="fc" id="L224">                  PageContext.create(callable, LIST_VERSIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L225">              return ListVersionsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L231">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L233">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L240">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L241">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L242">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to listVersions. */
   public PagedCallSettings&lt;ListVersionsRequest, ListVersionsResponse, ListVersionsPagedResponse&gt;
       listVersionsSettings() {
-<span class="fc" id="L184">    return listVersionsSettings;</span>
+<span class="fc" id="L249">    return listVersionsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getVersion. */
   public UnaryCallSettings&lt;GetVersionRequest, Version&gt; getVersionSettings() {
-<span class="fc" id="L189">    return getVersionSettings;</span>
+<span class="fc" id="L254">    return getVersionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createVersion. */
   public UnaryCallSettings&lt;CreateVersionRequest, Operation&gt; createVersionSettings() {
-<span class="fc" id="L194">    return createVersionSettings;</span>
+<span class="fc" id="L259">    return createVersionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createVersion. */
   public OperationCallSettings&lt;CreateVersionRequest, Version, CreateVersionOperationMetadata&gt;
       createVersionOperationSettings() {
-<span class="fc" id="L200">    return createVersionOperationSettings;</span>
+<span class="fc" id="L265">    return createVersionOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateVersion. */
   public UnaryCallSettings&lt;UpdateVersionRequest, Version&gt; updateVersionSettings() {
-<span class="fc" id="L205">    return updateVersionSettings;</span>
+<span class="fc" id="L270">    return updateVersionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteVersion. */
   public UnaryCallSettings&lt;DeleteVersionRequest, Empty&gt; deleteVersionSettings() {
-<span class="fc" id="L210">    return deleteVersionSettings;</span>
+<span class="fc" id="L275">    return deleteVersionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to loadVersion. */
   public UnaryCallSettings&lt;LoadVersionRequest, Operation&gt; loadVersionSettings() {
-<span class="fc" id="L215">    return loadVersionSettings;</span>
+<span class="fc" id="L280">    return loadVersionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to loadVersion. */
   public OperationCallSettings&lt;LoadVersionRequest, Empty, Struct&gt; loadVersionOperationSettings() {
-<span class="fc" id="L220">    return loadVersionOperationSettings;</span>
+<span class="fc" id="L285">    return loadVersionOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to compareVersions. */
   public UnaryCallSettings&lt;CompareVersionsRequest, CompareVersionsResponse&gt;
       compareVersionsSettings() {
-<span class="fc" id="L226">    return compareVersionsSettings;</span>
+<span class="fc" id="L291">    return compareVersionsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L297">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L302">    return getLocationSettings;</span>
   }
 
   public VersionsStub createStub() throws IOException {
-<span class="fc" id="L230">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L231">        .getTransportName()</span>
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L233">      return GrpcVersionsStub.create(this);</span>
+<span class="fc" id="L306">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L307">        .getTransportName()</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L309">      return GrpcVersionsStub.create(this);</span>
     }
-<span class="nc" id="L235">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L236">        String.format(</span>
-<span class="nc" id="L237">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L311">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L312">        .getTransportName()</span>
+<span class="pc bpc" id="L313" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L314">      return HttpJsonVersionsStub.create(this);</span>
+    }
+<span class="nc" id="L316">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L317">        String.format(</span>
+<span class="nc" id="L318">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L242">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L323">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L247">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L328">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L252">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L333">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L257">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L338">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L262">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L263">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L264">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L343">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L344">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L345">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L269">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L270">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L350">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L351">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L358">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L274">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L362">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L279">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L280">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(VersionsStubSettings.class))</span>
-<span class="fc" id="L281">        .setTransportToken(</span>
-<span class="fc" id="L282">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L367">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L368">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(VersionsStubSettings.class))</span>
+<span class="fc" id="L369">        .setTransportToken(</span>
+<span class="fc" id="L370">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L375">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L376">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(VersionsStubSettings.class))</span>
+<span class="fc" id="L377">        .setTransportToken(</span>
+<span class="fc" id="L378">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L379">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L383">    return VersionsStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L287">    return Builder.createDefault();</span>
+<span class="fc" id="L388">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L393">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L292">    return new Builder(clientContext);</span>
+<span class="nc" id="L398">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L297">    return new Builder(this);</span>
+<span class="nc" id="L403">    return new Builder(this);</span>
   }
 
   protected VersionsStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L301">    super(settingsBuilder);</span>
+<span class="fc" id="L407">    super(settingsBuilder);</span>
 
-<span class="fc" id="L303">    listVersionsSettings = settingsBuilder.listVersionsSettings().build();</span>
-<span class="fc" id="L304">    getVersionSettings = settingsBuilder.getVersionSettings().build();</span>
-<span class="fc" id="L305">    createVersionSettings = settingsBuilder.createVersionSettings().build();</span>
-<span class="fc" id="L306">    createVersionOperationSettings = settingsBuilder.createVersionOperationSettings().build();</span>
-<span class="fc" id="L307">    updateVersionSettings = settingsBuilder.updateVersionSettings().build();</span>
-<span class="fc" id="L308">    deleteVersionSettings = settingsBuilder.deleteVersionSettings().build();</span>
-<span class="fc" id="L309">    loadVersionSettings = settingsBuilder.loadVersionSettings().build();</span>
-<span class="fc" id="L310">    loadVersionOperationSettings = settingsBuilder.loadVersionOperationSettings().build();</span>
-<span class="fc" id="L311">    compareVersionsSettings = settingsBuilder.compareVersionsSettings().build();</span>
-<span class="fc" id="L312">  }</span>
+<span class="fc" id="L409">    listVersionsSettings = settingsBuilder.listVersionsSettings().build();</span>
+<span class="fc" id="L410">    getVersionSettings = settingsBuilder.getVersionSettings().build();</span>
+<span class="fc" id="L411">    createVersionSettings = settingsBuilder.createVersionSettings().build();</span>
+<span class="fc" id="L412">    createVersionOperationSettings = settingsBuilder.createVersionOperationSettings().build();</span>
+<span class="fc" id="L413">    updateVersionSettings = settingsBuilder.updateVersionSettings().build();</span>
+<span class="fc" id="L414">    deleteVersionSettings = settingsBuilder.deleteVersionSettings().build();</span>
+<span class="fc" id="L415">    loadVersionSettings = settingsBuilder.loadVersionSettings().build();</span>
+<span class="fc" id="L416">    loadVersionOperationSettings = settingsBuilder.loadVersionOperationSettings().build();</span>
+<span class="fc" id="L417">    compareVersionsSettings = settingsBuilder.compareVersionsSettings().build();</span>
+<span class="fc" id="L418">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L419">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L420">  }</span>
 
   /** Builder for VersionsStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;VersionsStubSettings, Builder&gt; {
@@ -329,188 +437,223 @@ public class VersionsStubSettings extends StubSettings&lt;VersionsStubSettings&g
         loadVersionOperationSettings;
     private final UnaryCallSettings.Builder&lt;CompareVersionsRequest, CompareVersionsResponse&gt;
         compareVersionsSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L337">          ImmutableMap.builder();</span>
-<span class="fc" id="L338">      definitions.put(</span>
+<span class="fc" id="L449">          ImmutableMap.builder();</span>
+<span class="fc" id="L450">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L340">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L341">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L452">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L453">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L347">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L348">      RetrySettings settings = null;</span>
+<span class="fc" id="L459">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L460">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L350">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L351">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L352">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L353">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L354">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L355">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L356">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L357">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L358">              .build();</span>
-<span class="fc" id="L359">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L360">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L361">    }</span>
+<span class="fc" id="L462">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L463">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L464">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L465">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L466">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L467">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L468">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L469">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L470">              .build();</span>
+<span class="fc" id="L471">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L472">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L473">    }</span>
 
     protected Builder() {
-<span class="nc" id="L364">      this(((ClientContext) null));</span>
-<span class="nc" id="L365">    }</span>
+<span class="nc" id="L476">      this(((ClientContext) null));</span>
+<span class="nc" id="L477">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L368">      super(clientContext);</span>
+<span class="fc" id="L480">      super(clientContext);</span>
 
-<span class="fc" id="L370">      listVersionsSettings = PagedCallSettings.newBuilder(LIST_VERSIONS_PAGE_STR_FACT);</span>
-<span class="fc" id="L371">      getVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L372">      createVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L373">      createVersionOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L374">      updateVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L375">      deleteVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L376">      loadVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L377">      loadVersionOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L378">      compareVersionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L482">      listVersionsSettings = PagedCallSettings.newBuilder(LIST_VERSIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L483">      getVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L484">      createVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L485">      createVersionOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L486">      updateVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L487">      deleteVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L488">      loadVersionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L489">      loadVersionOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L490">      compareVersionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L491">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L492">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L380">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L381">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L494">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L495">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listVersionsSettings,
               getVersionSettings,
               createVersionSettings,
               updateVersionSettings,
               deleteVersionSettings,
               loadVersionSettings,
-              compareVersionsSettings);
-<span class="fc" id="L389">      initDefaults(this);</span>
-<span class="fc" id="L390">    }</span>
+              compareVersionsSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L505">      initDefaults(this);</span>
+<span class="fc" id="L506">    }</span>
 
     protected Builder(VersionsStubSettings settings) {
-<span class="nc" id="L393">      super(settings);</span>
+<span class="nc" id="L509">      super(settings);</span>
 
-<span class="nc" id="L395">      listVersionsSettings = settings.listVersionsSettings.toBuilder();</span>
-<span class="nc" id="L396">      getVersionSettings = settings.getVersionSettings.toBuilder();</span>
-<span class="nc" id="L397">      createVersionSettings = settings.createVersionSettings.toBuilder();</span>
-<span class="nc" id="L398">      createVersionOperationSettings = settings.createVersionOperationSettings.toBuilder();</span>
-<span class="nc" id="L399">      updateVersionSettings = settings.updateVersionSettings.toBuilder();</span>
-<span class="nc" id="L400">      deleteVersionSettings = settings.deleteVersionSettings.toBuilder();</span>
-<span class="nc" id="L401">      loadVersionSettings = settings.loadVersionSettings.toBuilder();</span>
-<span class="nc" id="L402">      loadVersionOperationSettings = settings.loadVersionOperationSettings.toBuilder();</span>
-<span class="nc" id="L403">      compareVersionsSettings = settings.compareVersionsSettings.toBuilder();</span>
+<span class="nc" id="L511">      listVersionsSettings = settings.listVersionsSettings.toBuilder();</span>
+<span class="nc" id="L512">      getVersionSettings = settings.getVersionSettings.toBuilder();</span>
+<span class="nc" id="L513">      createVersionSettings = settings.createVersionSettings.toBuilder();</span>
+<span class="nc" id="L514">      createVersionOperationSettings = settings.createVersionOperationSettings.toBuilder();</span>
+<span class="nc" id="L515">      updateVersionSettings = settings.updateVersionSettings.toBuilder();</span>
+<span class="nc" id="L516">      deleteVersionSettings = settings.deleteVersionSettings.toBuilder();</span>
+<span class="nc" id="L517">      loadVersionSettings = settings.loadVersionSettings.toBuilder();</span>
+<span class="nc" id="L518">      loadVersionOperationSettings = settings.loadVersionOperationSettings.toBuilder();</span>
+<span class="nc" id="L519">      compareVersionsSettings = settings.compareVersionsSettings.toBuilder();</span>
+<span class="nc" id="L520">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L521">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L405">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L406">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L523">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L524">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listVersionsSettings,
               getVersionSettings,
               createVersionSettings,
               updateVersionSettings,
               deleteVersionSettings,
               loadVersionSettings,
-              compareVersionsSettings);
-<span class="nc" id="L414">    }</span>
+              compareVersionsSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L534">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L417">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L537">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L419">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L420">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L421">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L422">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L423">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L424">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L539">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L540">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L541">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L542">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L543">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L544">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L426">      return initDefaults(builder);</span>
+<span class="fc" id="L546">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L550">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L552">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L553">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L554">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L555">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L556">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L557">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L559">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L430">      builder</span>
-<span class="fc" id="L431">          .listVersionsSettings()</span>
-<span class="fc" id="L432">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L433">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L563">      builder</span>
+<span class="fc" id="L564">          .listVersionsSettings()</span>
+<span class="fc" id="L565">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L566">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L435">      builder</span>
-<span class="fc" id="L436">          .getVersionSettings()</span>
-<span class="fc" id="L437">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L438">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L568">      builder</span>
+<span class="fc" id="L569">          .getVersionSettings()</span>
+<span class="fc" id="L570">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L571">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L440">      builder</span>
-<span class="fc" id="L441">          .createVersionSettings()</span>
-<span class="fc" id="L442">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L443">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L573">      builder</span>
+<span class="fc" id="L574">          .createVersionSettings()</span>
+<span class="fc" id="L575">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L576">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L445">      builder</span>
-<span class="fc" id="L446">          .updateVersionSettings()</span>
-<span class="fc" id="L447">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L448">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L578">      builder</span>
+<span class="fc" id="L579">          .updateVersionSettings()</span>
+<span class="fc" id="L580">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L581">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L450">      builder</span>
-<span class="fc" id="L451">          .deleteVersionSettings()</span>
-<span class="fc" id="L452">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L453">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L583">      builder</span>
+<span class="fc" id="L584">          .deleteVersionSettings()</span>
+<span class="fc" id="L585">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L586">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L455">      builder</span>
-<span class="fc" id="L456">          .loadVersionSettings()</span>
-<span class="fc" id="L457">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L458">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L588">      builder</span>
+<span class="fc" id="L589">          .loadVersionSettings()</span>
+<span class="fc" id="L590">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L591">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L460">      builder</span>
-<span class="fc" id="L461">          .compareVersionsSettings()</span>
-<span class="fc" id="L462">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L463">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L593">      builder</span>
+<span class="fc" id="L594">          .compareVersionsSettings()</span>
+<span class="fc" id="L595">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L596">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L465">      builder</span>
-<span class="fc" id="L466">          .createVersionOperationSettings()</span>
-<span class="fc" id="L467">          .setInitialCallSettings(</span>
+<span class="fc" id="L598">      builder</span>
+<span class="fc" id="L599">          .listLocationsSettings()</span>
+<span class="fc" id="L600">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L601">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L603">      builder</span>
+<span class="fc" id="L604">          .getLocationSettings()</span>
+<span class="fc" id="L605">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L606">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L608">      builder</span>
+<span class="fc" id="L609">          .createVersionOperationSettings()</span>
+<span class="fc" id="L610">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L469">                  .&lt;CreateVersionRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L470">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L471">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L472">                  .build())</span>
-<span class="fc" id="L473">          .setResponseTransformer(</span>
-<span class="fc" id="L474">              ProtoOperationTransformers.ResponseTransformer.create(Version.class))</span>
-<span class="fc" id="L475">          .setMetadataTransformer(</span>
-<span class="fc" id="L476">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+<span class="fc" id="L612">                  .&lt;CreateVersionRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L613">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L614">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L615">                  .build())</span>
+<span class="fc" id="L616">          .setResponseTransformer(</span>
+<span class="fc" id="L617">              ProtoOperationTransformers.ResponseTransformer.create(Version.class))</span>
+<span class="fc" id="L618">          .setMetadataTransformer(</span>
+<span class="fc" id="L619">              ProtoOperationTransformers.MetadataTransformer.create(</span>
                   CreateVersionOperationMetadata.class))
-<span class="fc" id="L478">          .setPollingAlgorithm(</span>
-<span class="fc" id="L479">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L480">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L481">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L482">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L483">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L484">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L485">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L486">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L487">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L488">                      .build()));</span>
+<span class="fc" id="L621">          .setPollingAlgorithm(</span>
+<span class="fc" id="L622">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L623">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L624">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L625">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L626">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L627">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L628">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L629">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L630">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L631">                      .build()));</span>
 
-<span class="fc" id="L490">      builder</span>
-<span class="fc" id="L491">          .loadVersionOperationSettings()</span>
-<span class="fc" id="L492">          .setInitialCallSettings(</span>
-<span class="fc" id="L493">              UnaryCallSettings.&lt;LoadVersionRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L494">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L495">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L496">                  .build())</span>
-<span class="fc" id="L497">          .setResponseTransformer(</span>
-<span class="fc" id="L498">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
-<span class="fc" id="L499">          .setMetadataTransformer(</span>
-<span class="fc" id="L500">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
-<span class="fc" id="L501">          .setPollingAlgorithm(</span>
-<span class="fc" id="L502">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L503">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L504">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L505">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L506">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L507">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L508">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L509">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L510">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L511">                      .build()));</span>
+<span class="fc" id="L633">      builder</span>
+<span class="fc" id="L634">          .loadVersionOperationSettings()</span>
+<span class="fc" id="L635">          .setInitialCallSettings(</span>
+<span class="fc" id="L636">              UnaryCallSettings.&lt;LoadVersionRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L637">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L638">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L639">                  .build())</span>
+<span class="fc" id="L640">          .setResponseTransformer(</span>
+<span class="fc" id="L641">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
+<span class="fc" id="L642">          .setMetadataTransformer(</span>
+<span class="fc" id="L643">              ProtoOperationTransformers.MetadataTransformer.create(Struct.class))</span>
+<span class="fc" id="L644">          .setPollingAlgorithm(</span>
+<span class="fc" id="L645">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L646">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L647">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L648">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L649">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L650">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L651">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L652">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L653">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L654">                      .build()));</span>
 
-<span class="fc" id="L513">      return builder;</span>
+<span class="fc" id="L656">      return builder;</span>
     }
 
     /**
@@ -520,29 +663,29 @@ public class VersionsStubSettings extends StubSettings&lt;VersionsStubSettings&g
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L523">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L524">      return this;</span>
+<span class="nc" id="L666">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L667">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L528">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L671">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listVersions. */
     public PagedCallSettings.Builder&lt;
             ListVersionsRequest, ListVersionsResponse, ListVersionsPagedResponse&gt;
         listVersionsSettings() {
-<span class="fc" id="L535">      return listVersionsSettings;</span>
+<span class="fc" id="L678">      return listVersionsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getVersion. */
     public UnaryCallSettings.Builder&lt;GetVersionRequest, Version&gt; getVersionSettings() {
-<span class="fc" id="L540">      return getVersionSettings;</span>
+<span class="fc" id="L683">      return getVersionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createVersion. */
     public UnaryCallSettings.Builder&lt;CreateVersionRequest, Operation&gt; createVersionSettings() {
-<span class="fc" id="L545">      return createVersionSettings;</span>
+<span class="fc" id="L688">      return createVersionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createVersion. */
@@ -551,22 +694,22 @@ public class VersionsStubSettings extends StubSettings&lt;VersionsStubSettings&g
     public OperationCallSettings.Builder&lt;
             CreateVersionRequest, Version, CreateVersionOperationMetadata&gt;
         createVersionOperationSettings() {
-<span class="fc" id="L554">      return createVersionOperationSettings;</span>
+<span class="fc" id="L697">      return createVersionOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateVersion. */
     public UnaryCallSettings.Builder&lt;UpdateVersionRequest, Version&gt; updateVersionSettings() {
-<span class="fc" id="L559">      return updateVersionSettings;</span>
+<span class="fc" id="L702">      return updateVersionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteVersion. */
     public UnaryCallSettings.Builder&lt;DeleteVersionRequest, Empty&gt; deleteVersionSettings() {
-<span class="fc" id="L564">      return deleteVersionSettings;</span>
+<span class="fc" id="L707">      return deleteVersionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to loadVersion. */
     public UnaryCallSettings.Builder&lt;LoadVersionRequest, Operation&gt; loadVersionSettings() {
-<span class="fc" id="L569">      return loadVersionSettings;</span>
+<span class="fc" id="L712">      return loadVersionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to loadVersion. */
@@ -574,18 +717,30 @@ public class VersionsStubSettings extends StubSettings&lt;VersionsStubSettings&g
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;LoadVersionRequest, Empty, Struct&gt;
         loadVersionOperationSettings() {
-<span class="fc" id="L577">      return loadVersionOperationSettings;</span>
+<span class="fc" id="L720">      return loadVersionOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to compareVersions. */
     public UnaryCallSettings.Builder&lt;CompareVersionsRequest, CompareVersionsResponse&gt;
         compareVersionsSettings() {
-<span class="fc" id="L583">      return compareVersionsSettings;</span>
+<span class="fc" id="L726">      return compareVersionsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L733">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L738">      return getLocationSettings;</span>
     }
 
     @Override
     public VersionsStubSettings build() throws IOException {
-<span class="fc" id="L588">      return new VersionsStubSettings(this);</span>
+<span class="fc" id="L743">      return new VersionsStubSettings(this);</span>
     }
   }
 }

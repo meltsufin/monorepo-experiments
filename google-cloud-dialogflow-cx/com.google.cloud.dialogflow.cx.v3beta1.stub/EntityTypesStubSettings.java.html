@@ -17,6 +17,7 @@
 package com.google.cloud.dialogflow.cx.v3beta1.stub;
 
 import static com.google.cloud.dialogflow.cx.v3beta1.EntityTypesClient.ListEntityTypesPagedResponse;
+import static com.google.cloud.dialogflow.cx.v3beta1.EntityTypesClient.ListLocationsPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
@@ -27,6 +28,9 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
@@ -47,6 +51,10 @@ import com.google.cloud.dialogflow.cx.v3beta1.GetEntityTypeRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.ListEntityTypesRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.ListEntityTypesResponse;
 import com.google.cloud.dialogflow.cx.v3beta1.UpdateEntityTypeRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -96,10 +104,10 @@ import org.threeten.bp.Duration;
 public class EntityTypesStubSettings extends StubSettings&lt;EntityTypesStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L99">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L100">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L101">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L102">          .build();</span>
+<span class="fc" id="L107">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L108">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L109">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L110">          .build();</span>
 
   private final PagedCallSettings&lt;
           ListEntityTypesRequest, ListEntityTypesResponse, ListEntityTypesPagedResponse&gt;
@@ -108,60 +116,117 @@ public class EntityTypesStubSettings extends StubSettings&lt;EntityTypesStubSett
   private final UnaryCallSettings&lt;CreateEntityTypeRequest, EntityType&gt; createEntityTypeSettings;
   private final UnaryCallSettings&lt;UpdateEntityTypeRequest, EntityType&gt; updateEntityTypeSettings;
   private final UnaryCallSettings&lt;DeleteEntityTypeRequest, Empty&gt; deleteEntityTypeSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;
           ListEntityTypesRequest, ListEntityTypesResponse, EntityType&gt;
-<span class="fc" id="L114">      LIST_ENTITY_TYPES_PAGE_STR_DESC =</span>
-<span class="fc" id="L115">          new PagedListDescriptor&lt;ListEntityTypesRequest, ListEntityTypesResponse, EntityType&gt;() {</span>
+<span class="fc" id="L126">      LIST_ENTITY_TYPES_PAGE_STR_DESC =</span>
+<span class="fc" id="L127">          new PagedListDescriptor&lt;ListEntityTypesRequest, ListEntityTypesResponse, EntityType&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L118">              return &quot;&quot;;</span>
+<span class="fc" id="L130">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListEntityTypesRequest injectToken(
                 ListEntityTypesRequest payload, String token) {
-<span class="nc" id="L124">              return ListEntityTypesRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L136">              return ListEntityTypesRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListEntityTypesRequest injectPageSize(
                 ListEntityTypesRequest payload, int pageSize) {
-<span class="nc" id="L130">              return ListEntityTypesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L142">              return ListEntityTypesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListEntityTypesRequest payload) {
-<span class="nc" id="L135">              return payload.getPageSize();</span>
+<span class="nc" id="L147">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListEntityTypesResponse payload) {
-<span class="fc" id="L140">              return payload.getNextPageToken();</span>
+<span class="fc" id="L152">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;EntityType&gt; extractResources(ListEntityTypesResponse payload) {
-<span class="pc bpc" id="L145" title="1 of 2 branches missed.">              return payload.getEntityTypesList() == null</span>
-<span class="nc" id="L146">                  ? ImmutableList.&lt;EntityType&gt;of()</span>
-<span class="fc" id="L147">                  : payload.getEntityTypesList();</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">              return payload.getEntityTypesList() == null</span>
+<span class="nc" id="L158">                  ? ImmutableList.&lt;EntityType&gt;of()</span>
+<span class="fc" id="L159">                  : payload.getEntityTypesList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L164">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L165">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L168">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L173">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L178">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L183">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L188">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L194">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L195">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListEntityTypesRequest, ListEntityTypesResponse, ListEntityTypesPagedResponse&gt;
-<span class="fc" id="L153">      LIST_ENTITY_TYPES_PAGE_STR_FACT =</span>
+<span class="fc" id="L201">      LIST_ENTITY_TYPES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L155">              ListEntityTypesRequest, ListEntityTypesResponse, ListEntityTypesPagedResponse&gt;() {</span>
+<span class="fc" id="L203">              ListEntityTypesRequest, ListEntityTypesResponse, ListEntityTypesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListEntityTypesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListEntityTypesRequest, ListEntityTypesResponse&gt; callable,
                 ListEntityTypesRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListEntityTypesResponse&gt; futureResponse) {
-<span class="fc" id="L162">              PageContext&lt;ListEntityTypesRequest, ListEntityTypesResponse, EntityType&gt; pageContext =</span>
-<span class="fc" id="L163">                  PageContext.create(callable, LIST_ENTITY_TYPES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L164">              return ListEntityTypesPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L210">              PageContext&lt;ListEntityTypesRequest, ListEntityTypesResponse, EntityType&gt; pageContext =</span>
+<span class="fc" id="L211">                  PageContext.create(callable, LIST_ENTITY_TYPES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L212">              return ListEntityTypesPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L218">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L220">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L227">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L228">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L229">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -169,110 +234,154 @@ public class EntityTypesStubSettings extends StubSettings&lt;EntityTypesStubSett
   public PagedCallSettings&lt;
           ListEntityTypesRequest, ListEntityTypesResponse, ListEntityTypesPagedResponse&gt;
       listEntityTypesSettings() {
-<span class="fc" id="L172">    return listEntityTypesSettings;</span>
+<span class="fc" id="L237">    return listEntityTypesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getEntityType. */
   public UnaryCallSettings&lt;GetEntityTypeRequest, EntityType&gt; getEntityTypeSettings() {
-<span class="fc" id="L177">    return getEntityTypeSettings;</span>
+<span class="fc" id="L242">    return getEntityTypeSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createEntityType. */
   public UnaryCallSettings&lt;CreateEntityTypeRequest, EntityType&gt; createEntityTypeSettings() {
-<span class="fc" id="L182">    return createEntityTypeSettings;</span>
+<span class="fc" id="L247">    return createEntityTypeSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateEntityType. */
   public UnaryCallSettings&lt;UpdateEntityTypeRequest, EntityType&gt; updateEntityTypeSettings() {
-<span class="fc" id="L187">    return updateEntityTypeSettings;</span>
+<span class="fc" id="L252">    return updateEntityTypeSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteEntityType. */
   public UnaryCallSettings&lt;DeleteEntityTypeRequest, Empty&gt; deleteEntityTypeSettings() {
-<span class="fc" id="L192">    return deleteEntityTypeSettings;</span>
+<span class="fc" id="L257">    return deleteEntityTypeSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L263">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L268">    return getLocationSettings;</span>
   }
 
   public EntityTypesStub createStub() throws IOException {
-<span class="fc" id="L196">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L197">        .getTransportName()</span>
-<span class="pc bpc" id="L198" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L199">      return GrpcEntityTypesStub.create(this);</span>
+<span class="fc" id="L272">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L273">        .getTransportName()</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L275">      return GrpcEntityTypesStub.create(this);</span>
     }
-<span class="nc" id="L201">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L202">        String.format(</span>
-<span class="nc" id="L203">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L277">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L278">        .getTransportName()</span>
+<span class="pc bpc" id="L279" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L280">      return HttpJsonEntityTypesStub.create(this);</span>
+    }
+<span class="nc" id="L282">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L283">        String.format(</span>
+<span class="nc" id="L284">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L208">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L289">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L213">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L294">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L218">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L299">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L223">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L304">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L228">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L229">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L230">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L309">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L310">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L311">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L235">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L236">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L316">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L317">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L324">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L240">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L328">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L245">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L246">        .setGeneratedLibToken(</span>
-<span class="fc" id="L247">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(EntityTypesStubSettings.class))</span>
-<span class="fc" id="L248">        .setTransportToken(</span>
-<span class="fc" id="L249">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L333">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L334">        .setGeneratedLibToken(</span>
+<span class="fc" id="L335">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(EntityTypesStubSettings.class))</span>
+<span class="fc" id="L336">        .setTransportToken(</span>
+<span class="fc" id="L337">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L342">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L343">        .setGeneratedLibToken(</span>
+<span class="fc" id="L344">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(EntityTypesStubSettings.class))</span>
+<span class="fc" id="L345">        .setTransportToken(</span>
+<span class="fc" id="L346">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L347">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L351">    return EntityTypesStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L254">    return Builder.createDefault();</span>
+<span class="fc" id="L356">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L361">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L259">    return new Builder(clientContext);</span>
+<span class="nc" id="L366">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L264">    return new Builder(this);</span>
+<span class="nc" id="L371">    return new Builder(this);</span>
   }
 
   protected EntityTypesStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L268">    super(settingsBuilder);</span>
+<span class="fc" id="L375">    super(settingsBuilder);</span>
 
-<span class="fc" id="L270">    listEntityTypesSettings = settingsBuilder.listEntityTypesSettings().build();</span>
-<span class="fc" id="L271">    getEntityTypeSettings = settingsBuilder.getEntityTypeSettings().build();</span>
-<span class="fc" id="L272">    createEntityTypeSettings = settingsBuilder.createEntityTypeSettings().build();</span>
-<span class="fc" id="L273">    updateEntityTypeSettings = settingsBuilder.updateEntityTypeSettings().build();</span>
-<span class="fc" id="L274">    deleteEntityTypeSettings = settingsBuilder.deleteEntityTypeSettings().build();</span>
-<span class="fc" id="L275">  }</span>
+<span class="fc" id="L377">    listEntityTypesSettings = settingsBuilder.listEntityTypesSettings().build();</span>
+<span class="fc" id="L378">    getEntityTypeSettings = settingsBuilder.getEntityTypeSettings().build();</span>
+<span class="fc" id="L379">    createEntityTypeSettings = settingsBuilder.createEntityTypeSettings().build();</span>
+<span class="fc" id="L380">    updateEntityTypeSettings = settingsBuilder.updateEntityTypeSettings().build();</span>
+<span class="fc" id="L381">    deleteEntityTypeSettings = settingsBuilder.deleteEntityTypeSettings().build();</span>
+<span class="fc" id="L382">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L383">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L384">  }</span>
 
   /** Builder for EntityTypesStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;EntityTypesStubSettings, Builder&gt; {
@@ -287,118 +396,153 @@ public class EntityTypesStubSettings extends StubSettings&lt;EntityTypesStubSett
         updateEntityTypeSettings;
     private final UnaryCallSettings.Builder&lt;DeleteEntityTypeRequest, Empty&gt;
         deleteEntityTypeSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L295">          ImmutableMap.builder();</span>
-<span class="fc" id="L296">      definitions.put(</span>
+<span class="fc" id="L408">          ImmutableMap.builder();</span>
+<span class="fc" id="L409">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L298">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L299">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L411">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L412">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L305">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L306">      RetrySettings settings = null;</span>
+<span class="fc" id="L418">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L419">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L308">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L309">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L310">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L311">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L312">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L313">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L314">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L315">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L316">              .build();</span>
-<span class="fc" id="L317">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L318">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L319">    }</span>
+<span class="fc" id="L421">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L422">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L423">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L424">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L425">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L426">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L427">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L428">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L429">              .build();</span>
+<span class="fc" id="L430">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L431">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L432">    }</span>
 
     protected Builder() {
-<span class="nc" id="L322">      this(((ClientContext) null));</span>
-<span class="nc" id="L323">    }</span>
+<span class="nc" id="L435">      this(((ClientContext) null));</span>
+<span class="nc" id="L436">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L326">      super(clientContext);</span>
+<span class="fc" id="L439">      super(clientContext);</span>
 
-<span class="fc" id="L328">      listEntityTypesSettings = PagedCallSettings.newBuilder(LIST_ENTITY_TYPES_PAGE_STR_FACT);</span>
-<span class="fc" id="L329">      getEntityTypeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L330">      createEntityTypeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L331">      updateEntityTypeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L332">      deleteEntityTypeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L441">      listEntityTypesSettings = PagedCallSettings.newBuilder(LIST_ENTITY_TYPES_PAGE_STR_FACT);</span>
+<span class="fc" id="L442">      getEntityTypeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L443">      createEntityTypeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L444">      updateEntityTypeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L445">      deleteEntityTypeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L446">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L447">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L334">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L335">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L449">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L450">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listEntityTypesSettings,
               getEntityTypeSettings,
               createEntityTypeSettings,
               updateEntityTypeSettings,
-              deleteEntityTypeSettings);
-<span class="fc" id="L341">      initDefaults(this);</span>
-<span class="fc" id="L342">    }</span>
+              deleteEntityTypeSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L458">      initDefaults(this);</span>
+<span class="fc" id="L459">    }</span>
 
     protected Builder(EntityTypesStubSettings settings) {
-<span class="nc" id="L345">      super(settings);</span>
+<span class="nc" id="L462">      super(settings);</span>
 
-<span class="nc" id="L347">      listEntityTypesSettings = settings.listEntityTypesSettings.toBuilder();</span>
-<span class="nc" id="L348">      getEntityTypeSettings = settings.getEntityTypeSettings.toBuilder();</span>
-<span class="nc" id="L349">      createEntityTypeSettings = settings.createEntityTypeSettings.toBuilder();</span>
-<span class="nc" id="L350">      updateEntityTypeSettings = settings.updateEntityTypeSettings.toBuilder();</span>
-<span class="nc" id="L351">      deleteEntityTypeSettings = settings.deleteEntityTypeSettings.toBuilder();</span>
+<span class="nc" id="L464">      listEntityTypesSettings = settings.listEntityTypesSettings.toBuilder();</span>
+<span class="nc" id="L465">      getEntityTypeSettings = settings.getEntityTypeSettings.toBuilder();</span>
+<span class="nc" id="L466">      createEntityTypeSettings = settings.createEntityTypeSettings.toBuilder();</span>
+<span class="nc" id="L467">      updateEntityTypeSettings = settings.updateEntityTypeSettings.toBuilder();</span>
+<span class="nc" id="L468">      deleteEntityTypeSettings = settings.deleteEntityTypeSettings.toBuilder();</span>
+<span class="nc" id="L469">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L470">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L353">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L354">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L472">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L473">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listEntityTypesSettings,
               getEntityTypeSettings,
               createEntityTypeSettings,
               updateEntityTypeSettings,
-              deleteEntityTypeSettings);
-<span class="nc" id="L360">    }</span>
+              deleteEntityTypeSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L481">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L363">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L484">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L365">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L366">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L367">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L368">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L369">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L370">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L486">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L487">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L488">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L489">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L490">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L491">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L372">      return initDefaults(builder);</span>
+<span class="fc" id="L493">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L497">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L499">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L500">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L501">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L502">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L503">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L504">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L506">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L376">      builder</span>
-<span class="fc" id="L377">          .listEntityTypesSettings()</span>
-<span class="fc" id="L378">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L379">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L510">      builder</span>
+<span class="fc" id="L511">          .listEntityTypesSettings()</span>
+<span class="fc" id="L512">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L513">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L381">      builder</span>
-<span class="fc" id="L382">          .getEntityTypeSettings()</span>
-<span class="fc" id="L383">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L384">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L515">      builder</span>
+<span class="fc" id="L516">          .getEntityTypeSettings()</span>
+<span class="fc" id="L517">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L518">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L386">      builder</span>
-<span class="fc" id="L387">          .createEntityTypeSettings()</span>
-<span class="fc" id="L388">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L389">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L520">      builder</span>
+<span class="fc" id="L521">          .createEntityTypeSettings()</span>
+<span class="fc" id="L522">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L523">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L391">      builder</span>
-<span class="fc" id="L392">          .updateEntityTypeSettings()</span>
-<span class="fc" id="L393">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L394">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L525">      builder</span>
+<span class="fc" id="L526">          .updateEntityTypeSettings()</span>
+<span class="fc" id="L527">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L528">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L396">      builder</span>
-<span class="fc" id="L397">          .deleteEntityTypeSettings()</span>
-<span class="fc" id="L398">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L399">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L530">      builder</span>
+<span class="fc" id="L531">          .deleteEntityTypeSettings()</span>
+<span class="fc" id="L532">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L533">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L401">      return builder;</span>
+<span class="fc" id="L535">      builder</span>
+<span class="fc" id="L536">          .listLocationsSettings()</span>
+<span class="fc" id="L537">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L538">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L540">      builder</span>
+<span class="fc" id="L541">          .getLocationSettings()</span>
+<span class="fc" id="L542">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L543">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L545">      return builder;</span>
     }
 
     /**
@@ -408,46 +552,58 @@ public class EntityTypesStubSettings extends StubSettings&lt;EntityTypesStubSett
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L411">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L412">      return this;</span>
+<span class="nc" id="L555">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L556">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L416">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L560">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listEntityTypes. */
     public PagedCallSettings.Builder&lt;
             ListEntityTypesRequest, ListEntityTypesResponse, ListEntityTypesPagedResponse&gt;
         listEntityTypesSettings() {
-<span class="fc" id="L423">      return listEntityTypesSettings;</span>
+<span class="fc" id="L567">      return listEntityTypesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getEntityType. */
     public UnaryCallSettings.Builder&lt;GetEntityTypeRequest, EntityType&gt; getEntityTypeSettings() {
-<span class="fc" id="L428">      return getEntityTypeSettings;</span>
+<span class="fc" id="L572">      return getEntityTypeSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createEntityType. */
     public UnaryCallSettings.Builder&lt;CreateEntityTypeRequest, EntityType&gt;
         createEntityTypeSettings() {
-<span class="fc" id="L434">      return createEntityTypeSettings;</span>
+<span class="fc" id="L578">      return createEntityTypeSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateEntityType. */
     public UnaryCallSettings.Builder&lt;UpdateEntityTypeRequest, EntityType&gt;
         updateEntityTypeSettings() {
-<span class="fc" id="L440">      return updateEntityTypeSettings;</span>
+<span class="fc" id="L584">      return updateEntityTypeSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteEntityType. */
     public UnaryCallSettings.Builder&lt;DeleteEntityTypeRequest, Empty&gt; deleteEntityTypeSettings() {
-<span class="fc" id="L445">      return deleteEntityTypeSettings;</span>
+<span class="fc" id="L589">      return deleteEntityTypeSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L596">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L601">      return getLocationSettings;</span>
     }
 
     @Override
     public EntityTypesStubSettings build() throws IOException {
-<span class="fc" id="L450">      return new EntityTypesStubSettings(this);</span>
+<span class="fc" id="L606">      return new EntityTypesStubSettings(this);</span>
     }
   }
 }

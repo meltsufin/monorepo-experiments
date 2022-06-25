@@ -16,6 +16,7 @@
 
 package com.google.cloud.dialogflow.cx.v3.stub;
 
+import static com.google.cloud.dialogflow.cx.v3.TestCasesClient.ListLocationsPagedResponse;
 import static com.google.cloud.dialogflow.cx.v3.TestCasesClient.ListTestCaseResultsPagedResponse;
 import static com.google.cloud.dialogflow.cx.v3.TestCasesClient.ListTestCasesPagedResponse;
 
@@ -29,6 +30,9 @@ import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.grpc.ProtoOperationTransformers;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.longrunning.OperationSnapshot;
 import com.google.api.gax.longrunning.OperationTimedPollAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
@@ -70,6 +74,10 @@ import com.google.cloud.dialogflow.cx.v3.RunTestCaseResponse;
 import com.google.cloud.dialogflow.cx.v3.TestCase;
 import com.google.cloud.dialogflow.cx.v3.TestCaseResult;
 import com.google.cloud.dialogflow.cx.v3.UpdateTestCaseRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -118,10 +126,10 @@ import org.threeten.bp.Duration;
 public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L121">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L122">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L123">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L124">          .build();</span>
+<span class="fc" id="L129">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L130">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L131">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L132">          .build();</span>
 
   private final PagedCallSettings&lt;
           ListTestCasesRequest, ListTestCasesResponse, ListTestCasesPagedResponse&gt;
@@ -152,107 +160,147 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
       listTestCaseResultsSettings;
   private final UnaryCallSettings&lt;GetTestCaseResultRequest, TestCaseResult&gt;
       getTestCaseResultSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt;
-<span class="fc" id="L157">      LIST_TEST_CASES_PAGE_STR_DESC =</span>
-<span class="fc" id="L158">          new PagedListDescriptor&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt;() {</span>
+<span class="fc" id="L169">      LIST_TEST_CASES_PAGE_STR_DESC =</span>
+<span class="fc" id="L170">          new PagedListDescriptor&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L161">              return &quot;&quot;;</span>
+<span class="fc" id="L173">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListTestCasesRequest injectToken(ListTestCasesRequest payload, String token) {
-<span class="nc" id="L166">              return ListTestCasesRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L178">              return ListTestCasesRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListTestCasesRequest injectPageSize(ListTestCasesRequest payload, int pageSize) {
-<span class="nc" id="L171">              return ListTestCasesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L183">              return ListTestCasesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListTestCasesRequest payload) {
-<span class="nc" id="L176">              return payload.getPageSize();</span>
+<span class="nc" id="L188">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListTestCasesResponse payload) {
-<span class="fc" id="L181">              return payload.getNextPageToken();</span>
+<span class="fc" id="L193">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;TestCase&gt; extractResources(ListTestCasesResponse payload) {
-<span class="pc bpc" id="L186" title="1 of 2 branches missed.">              return payload.getTestCasesList() == null</span>
-<span class="nc" id="L187">                  ? ImmutableList.&lt;TestCase&gt;of()</span>
-<span class="fc" id="L188">                  : payload.getTestCasesList();</span>
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">              return payload.getTestCasesList() == null</span>
+<span class="nc" id="L199">                  ? ImmutableList.&lt;TestCase&gt;of()</span>
+<span class="fc" id="L200">                  : payload.getTestCasesList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;
           ListTestCaseResultsRequest, ListTestCaseResultsResponse, TestCaseResult&gt;
-<span class="fc" id="L194">      LIST_TEST_CASE_RESULTS_PAGE_STR_DESC =</span>
+<span class="fc" id="L206">      LIST_TEST_CASE_RESULTS_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L196">              ListTestCaseResultsRequest, ListTestCaseResultsResponse, TestCaseResult&gt;() {</span>
+<span class="fc" id="L208">              ListTestCaseResultsRequest, ListTestCaseResultsResponse, TestCaseResult&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L199">              return &quot;&quot;;</span>
+<span class="fc" id="L211">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListTestCaseResultsRequest injectToken(
                 ListTestCaseResultsRequest payload, String token) {
-<span class="nc" id="L205">              return ListTestCaseResultsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L217">              return ListTestCaseResultsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListTestCaseResultsRequest injectPageSize(
                 ListTestCaseResultsRequest payload, int pageSize) {
-<span class="nc" id="L211">              return ListTestCaseResultsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L223">              return ListTestCaseResultsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListTestCaseResultsRequest payload) {
-<span class="nc" id="L216">              return payload.getPageSize();</span>
+<span class="nc" id="L228">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListTestCaseResultsResponse payload) {
-<span class="fc" id="L221">              return payload.getNextPageToken();</span>
+<span class="fc" id="L233">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;TestCaseResult&gt; extractResources(ListTestCaseResultsResponse payload) {
-<span class="pc bpc" id="L226" title="1 of 2 branches missed.">              return payload.getTestCaseResultsList() == null</span>
-<span class="nc" id="L227">                  ? ImmutableList.&lt;TestCaseResult&gt;of()</span>
-<span class="fc" id="L228">                  : payload.getTestCaseResultsList();</span>
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">              return payload.getTestCaseResultsList() == null</span>
+<span class="nc" id="L239">                  ? ImmutableList.&lt;TestCaseResult&gt;of()</span>
+<span class="fc" id="L240">                  : payload.getTestCaseResultsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L245">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L246">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L249">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L254">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L259">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L264">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L269">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L275">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L276">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListTestCasesRequest, ListTestCasesResponse, ListTestCasesPagedResponse&gt;
-<span class="fc" id="L234">      LIST_TEST_CASES_PAGE_STR_FACT =</span>
+<span class="fc" id="L282">      LIST_TEST_CASES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L236">              ListTestCasesRequest, ListTestCasesResponse, ListTestCasesPagedResponse&gt;() {</span>
+<span class="fc" id="L284">              ListTestCasesRequest, ListTestCasesResponse, ListTestCasesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListTestCasesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListTestCasesRequest, ListTestCasesResponse&gt; callable,
                 ListTestCasesRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListTestCasesResponse&gt; futureResponse) {
-<span class="fc" id="L243">              PageContext&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt; pageContext =</span>
-<span class="fc" id="L244">                  PageContext.create(callable, LIST_TEST_CASES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L245">              return ListTestCasesPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L291">              PageContext&lt;ListTestCasesRequest, ListTestCasesResponse, TestCase&gt; pageContext =</span>
+<span class="fc" id="L292">                  PageContext.create(callable, LIST_TEST_CASES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L293">              return ListTestCasesPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListTestCaseResultsRequest, ListTestCaseResultsResponse, ListTestCaseResultsPagedResponse&gt;
-<span class="fc" id="L251">      LIST_TEST_CASE_RESULTS_PAGE_STR_FACT =</span>
+<span class="fc" id="L299">      LIST_TEST_CASE_RESULTS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListTestCaseResultsRequest,
               ListTestCaseResultsResponse,
-<span class="fc" id="L255">              ListTestCaseResultsPagedResponse&gt;() {</span>
+<span class="fc" id="L303">              ListTestCaseResultsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListTestCaseResultsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListTestCaseResultsRequest, ListTestCaseResultsResponse&gt; callable,
@@ -260,196 +308,256 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
                 ApiCallContext context,
                 ApiFuture&lt;ListTestCaseResultsResponse&gt; futureResponse) {
               PageContext&lt;ListTestCaseResultsRequest, ListTestCaseResultsResponse, TestCaseResult&gt;
-<span class="fc" id="L263">                  pageContext =</span>
-<span class="fc" id="L264">                      PageContext.create(</span>
-<span class="fc" id="L265">                          callable, LIST_TEST_CASE_RESULTS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L266">              return ListTestCaseResultsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L311">                  pageContext =</span>
+<span class="fc" id="L312">                      PageContext.create(</span>
+<span class="fc" id="L313">                          callable, LIST_TEST_CASE_RESULTS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L314">              return ListTestCaseResultsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L320">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L322">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L329">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L330">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L331">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to listTestCases. */
   public PagedCallSettings&lt;ListTestCasesRequest, ListTestCasesResponse, ListTestCasesPagedResponse&gt;
       listTestCasesSettings() {
-<span class="fc" id="L273">    return listTestCasesSettings;</span>
+<span class="fc" id="L338">    return listTestCasesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to batchDeleteTestCases. */
   public UnaryCallSettings&lt;BatchDeleteTestCasesRequest, Empty&gt; batchDeleteTestCasesSettings() {
-<span class="fc" id="L278">    return batchDeleteTestCasesSettings;</span>
+<span class="fc" id="L343">    return batchDeleteTestCasesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getTestCase. */
   public UnaryCallSettings&lt;GetTestCaseRequest, TestCase&gt; getTestCaseSettings() {
-<span class="fc" id="L283">    return getTestCaseSettings;</span>
+<span class="fc" id="L348">    return getTestCaseSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createTestCase. */
   public UnaryCallSettings&lt;CreateTestCaseRequest, TestCase&gt; createTestCaseSettings() {
-<span class="fc" id="L288">    return createTestCaseSettings;</span>
+<span class="fc" id="L353">    return createTestCaseSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateTestCase. */
   public UnaryCallSettings&lt;UpdateTestCaseRequest, TestCase&gt; updateTestCaseSettings() {
-<span class="fc" id="L293">    return updateTestCaseSettings;</span>
+<span class="fc" id="L358">    return updateTestCaseSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to runTestCase. */
   public UnaryCallSettings&lt;RunTestCaseRequest, Operation&gt; runTestCaseSettings() {
-<span class="fc" id="L298">    return runTestCaseSettings;</span>
+<span class="fc" id="L363">    return runTestCaseSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to runTestCase. */
   public OperationCallSettings&lt;RunTestCaseRequest, RunTestCaseResponse, RunTestCaseMetadata&gt;
       runTestCaseOperationSettings() {
-<span class="fc" id="L304">    return runTestCaseOperationSettings;</span>
+<span class="fc" id="L369">    return runTestCaseOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to batchRunTestCases. */
   public UnaryCallSettings&lt;BatchRunTestCasesRequest, Operation&gt; batchRunTestCasesSettings() {
-<span class="fc" id="L309">    return batchRunTestCasesSettings;</span>
+<span class="fc" id="L374">    return batchRunTestCasesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to batchRunTestCases. */
   public OperationCallSettings&lt;
           BatchRunTestCasesRequest, BatchRunTestCasesResponse, BatchRunTestCasesMetadata&gt;
       batchRunTestCasesOperationSettings() {
-<span class="fc" id="L316">    return batchRunTestCasesOperationSettings;</span>
+<span class="fc" id="L381">    return batchRunTestCasesOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to calculateCoverage. */
   public UnaryCallSettings&lt;CalculateCoverageRequest, CalculateCoverageResponse&gt;
       calculateCoverageSettings() {
-<span class="fc" id="L322">    return calculateCoverageSettings;</span>
+<span class="fc" id="L387">    return calculateCoverageSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to importTestCases. */
   public UnaryCallSettings&lt;ImportTestCasesRequest, Operation&gt; importTestCasesSettings() {
-<span class="fc" id="L327">    return importTestCasesSettings;</span>
+<span class="fc" id="L392">    return importTestCasesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to importTestCases. */
   public OperationCallSettings&lt;
           ImportTestCasesRequest, ImportTestCasesResponse, ImportTestCasesMetadata&gt;
       importTestCasesOperationSettings() {
-<span class="fc" id="L334">    return importTestCasesOperationSettings;</span>
+<span class="fc" id="L399">    return importTestCasesOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to exportTestCases. */
   public UnaryCallSettings&lt;ExportTestCasesRequest, Operation&gt; exportTestCasesSettings() {
-<span class="fc" id="L339">    return exportTestCasesSettings;</span>
+<span class="fc" id="L404">    return exportTestCasesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to exportTestCases. */
   public OperationCallSettings&lt;
           ExportTestCasesRequest, ExportTestCasesResponse, ExportTestCasesMetadata&gt;
       exportTestCasesOperationSettings() {
-<span class="fc" id="L346">    return exportTestCasesOperationSettings;</span>
+<span class="fc" id="L411">    return exportTestCasesOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listTestCaseResults. */
   public PagedCallSettings&lt;
           ListTestCaseResultsRequest, ListTestCaseResultsResponse, ListTestCaseResultsPagedResponse&gt;
       listTestCaseResultsSettings() {
-<span class="fc" id="L353">    return listTestCaseResultsSettings;</span>
+<span class="fc" id="L418">    return listTestCaseResultsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getTestCaseResult. */
   public UnaryCallSettings&lt;GetTestCaseResultRequest, TestCaseResult&gt; getTestCaseResultSettings() {
-<span class="fc" id="L358">    return getTestCaseResultSettings;</span>
+<span class="fc" id="L423">    return getTestCaseResultSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L429">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L434">    return getLocationSettings;</span>
   }
 
   public TestCasesStub createStub() throws IOException {
-<span class="fc" id="L362">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L363">        .getTransportName()</span>
-<span class="pc bpc" id="L364" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L365">      return GrpcTestCasesStub.create(this);</span>
+<span class="fc" id="L438">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L439">        .getTransportName()</span>
+<span class="fc bfc" id="L440" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L441">      return GrpcTestCasesStub.create(this);</span>
     }
-<span class="nc" id="L367">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L368">        String.format(</span>
-<span class="nc" id="L369">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L443">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L444">        .getTransportName()</span>
+<span class="pc bpc" id="L445" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L446">      return HttpJsonTestCasesStub.create(this);</span>
+    }
+<span class="nc" id="L448">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L449">        String.format(</span>
+<span class="nc" id="L450">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L374">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L455">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L379">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L460">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L384">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L465">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L389">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L470">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L394">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L395">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L396">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L475">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L476">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L477">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L401">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L402">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L482">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L483">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L490">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L406">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L494">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L411">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L412">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(TestCasesStubSettings.class))</span>
-<span class="fc" id="L413">        .setTransportToken(</span>
-<span class="fc" id="L414">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L499">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L500">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(TestCasesStubSettings.class))</span>
+<span class="fc" id="L501">        .setTransportToken(</span>
+<span class="fc" id="L502">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L507">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L508">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(TestCasesStubSettings.class))</span>
+<span class="fc" id="L509">        .setTransportToken(</span>
+<span class="fc" id="L510">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L511">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L515">    return TestCasesStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L419">    return Builder.createDefault();</span>
+<span class="fc" id="L520">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L525">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L424">    return new Builder(clientContext);</span>
+<span class="nc" id="L530">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L429">    return new Builder(this);</span>
+<span class="nc" id="L535">    return new Builder(this);</span>
   }
 
   protected TestCasesStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L433">    super(settingsBuilder);</span>
+<span class="fc" id="L539">    super(settingsBuilder);</span>
 
-<span class="fc" id="L435">    listTestCasesSettings = settingsBuilder.listTestCasesSettings().build();</span>
-<span class="fc" id="L436">    batchDeleteTestCasesSettings = settingsBuilder.batchDeleteTestCasesSettings().build();</span>
-<span class="fc" id="L437">    getTestCaseSettings = settingsBuilder.getTestCaseSettings().build();</span>
-<span class="fc" id="L438">    createTestCaseSettings = settingsBuilder.createTestCaseSettings().build();</span>
-<span class="fc" id="L439">    updateTestCaseSettings = settingsBuilder.updateTestCaseSettings().build();</span>
-<span class="fc" id="L440">    runTestCaseSettings = settingsBuilder.runTestCaseSettings().build();</span>
-<span class="fc" id="L441">    runTestCaseOperationSettings = settingsBuilder.runTestCaseOperationSettings().build();</span>
-<span class="fc" id="L442">    batchRunTestCasesSettings = settingsBuilder.batchRunTestCasesSettings().build();</span>
-<span class="fc" id="L443">    batchRunTestCasesOperationSettings =</span>
-<span class="fc" id="L444">        settingsBuilder.batchRunTestCasesOperationSettings().build();</span>
-<span class="fc" id="L445">    calculateCoverageSettings = settingsBuilder.calculateCoverageSettings().build();</span>
-<span class="fc" id="L446">    importTestCasesSettings = settingsBuilder.importTestCasesSettings().build();</span>
-<span class="fc" id="L447">    importTestCasesOperationSettings = settingsBuilder.importTestCasesOperationSettings().build();</span>
-<span class="fc" id="L448">    exportTestCasesSettings = settingsBuilder.exportTestCasesSettings().build();</span>
-<span class="fc" id="L449">    exportTestCasesOperationSettings = settingsBuilder.exportTestCasesOperationSettings().build();</span>
-<span class="fc" id="L450">    listTestCaseResultsSettings = settingsBuilder.listTestCaseResultsSettings().build();</span>
-<span class="fc" id="L451">    getTestCaseResultSettings = settingsBuilder.getTestCaseResultSettings().build();</span>
-<span class="fc" id="L452">  }</span>
+<span class="fc" id="L541">    listTestCasesSettings = settingsBuilder.listTestCasesSettings().build();</span>
+<span class="fc" id="L542">    batchDeleteTestCasesSettings = settingsBuilder.batchDeleteTestCasesSettings().build();</span>
+<span class="fc" id="L543">    getTestCaseSettings = settingsBuilder.getTestCaseSettings().build();</span>
+<span class="fc" id="L544">    createTestCaseSettings = settingsBuilder.createTestCaseSettings().build();</span>
+<span class="fc" id="L545">    updateTestCaseSettings = settingsBuilder.updateTestCaseSettings().build();</span>
+<span class="fc" id="L546">    runTestCaseSettings = settingsBuilder.runTestCaseSettings().build();</span>
+<span class="fc" id="L547">    runTestCaseOperationSettings = settingsBuilder.runTestCaseOperationSettings().build();</span>
+<span class="fc" id="L548">    batchRunTestCasesSettings = settingsBuilder.batchRunTestCasesSettings().build();</span>
+<span class="fc" id="L549">    batchRunTestCasesOperationSettings =</span>
+<span class="fc" id="L550">        settingsBuilder.batchRunTestCasesOperationSettings().build();</span>
+<span class="fc" id="L551">    calculateCoverageSettings = settingsBuilder.calculateCoverageSettings().build();</span>
+<span class="fc" id="L552">    importTestCasesSettings = settingsBuilder.importTestCasesSettings().build();</span>
+<span class="fc" id="L553">    importTestCasesOperationSettings = settingsBuilder.importTestCasesOperationSettings().build();</span>
+<span class="fc" id="L554">    exportTestCasesSettings = settingsBuilder.exportTestCasesSettings().build();</span>
+<span class="fc" id="L555">    exportTestCasesOperationSettings = settingsBuilder.exportTestCasesOperationSettings().build();</span>
+<span class="fc" id="L556">    listTestCaseResultsSettings = settingsBuilder.listTestCaseResultsSettings().build();</span>
+<span class="fc" id="L557">    getTestCaseResultSettings = settingsBuilder.getTestCaseResultSettings().build();</span>
+<span class="fc" id="L558">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L559">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L560">  }</span>
 
   /** Builder for TestCasesStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;TestCasesStubSettings, Builder&gt; {
@@ -490,64 +598,70 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
         listTestCaseResultsSettings;
     private final UnaryCallSettings.Builder&lt;GetTestCaseResultRequest, TestCaseResult&gt;
         getTestCaseResultSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L498">          ImmutableMap.builder();</span>
-<span class="fc" id="L499">      definitions.put(</span>
+<span class="fc" id="L610">          ImmutableMap.builder();</span>
+<span class="fc" id="L611">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L501">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L502">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L613">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L614">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L508">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L509">      RetrySettings settings = null;</span>
+<span class="fc" id="L620">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L621">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L511">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L512">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L513">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L514">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L515">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L516">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L517">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L518">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L519">              .build();</span>
-<span class="fc" id="L520">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L521">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L522">    }</span>
+<span class="fc" id="L623">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L624">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L625">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L626">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L627">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L628">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L629">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L630">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L631">              .build();</span>
+<span class="fc" id="L632">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L633">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L634">    }</span>
 
     protected Builder() {
-<span class="nc" id="L525">      this(((ClientContext) null));</span>
-<span class="nc" id="L526">    }</span>
+<span class="nc" id="L637">      this(((ClientContext) null));</span>
+<span class="nc" id="L638">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L529">      super(clientContext);</span>
+<span class="fc" id="L641">      super(clientContext);</span>
 
-<span class="fc" id="L531">      listTestCasesSettings = PagedCallSettings.newBuilder(LIST_TEST_CASES_PAGE_STR_FACT);</span>
-<span class="fc" id="L532">      batchDeleteTestCasesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L533">      getTestCaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L534">      createTestCaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L535">      updateTestCaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L536">      runTestCaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L537">      runTestCaseOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L538">      batchRunTestCasesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L539">      batchRunTestCasesOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L540">      calculateCoverageSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L541">      importTestCasesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L542">      importTestCasesOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L543">      exportTestCasesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L544">      exportTestCasesOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L545">      listTestCaseResultsSettings =</span>
-<span class="fc" id="L546">          PagedCallSettings.newBuilder(LIST_TEST_CASE_RESULTS_PAGE_STR_FACT);</span>
-<span class="fc" id="L547">      getTestCaseResultSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L643">      listTestCasesSettings = PagedCallSettings.newBuilder(LIST_TEST_CASES_PAGE_STR_FACT);</span>
+<span class="fc" id="L644">      batchDeleteTestCasesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L645">      getTestCaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L646">      createTestCaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L647">      updateTestCaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L648">      runTestCaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L649">      runTestCaseOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L650">      batchRunTestCasesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L651">      batchRunTestCasesOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L652">      calculateCoverageSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L653">      importTestCasesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L654">      importTestCasesOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L655">      exportTestCasesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L656">      exportTestCasesOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L657">      listTestCaseResultsSettings =</span>
+<span class="fc" id="L658">          PagedCallSettings.newBuilder(LIST_TEST_CASE_RESULTS_PAGE_STR_FACT);</span>
+<span class="fc" id="L659">      getTestCaseResultSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L660">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L661">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L549">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L550">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L663">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L664">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listTestCasesSettings,
               batchDeleteTestCasesSettings,
               getTestCaseSettings,
@@ -559,32 +673,36 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
               importTestCasesSettings,
               exportTestCasesSettings,
               listTestCaseResultsSettings,
-              getTestCaseResultSettings);
-<span class="fc" id="L563">      initDefaults(this);</span>
-<span class="fc" id="L564">    }</span>
+              getTestCaseResultSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L679">      initDefaults(this);</span>
+<span class="fc" id="L680">    }</span>
 
     protected Builder(TestCasesStubSettings settings) {
-<span class="nc" id="L567">      super(settings);</span>
+<span class="nc" id="L683">      super(settings);</span>
 
-<span class="nc" id="L569">      listTestCasesSettings = settings.listTestCasesSettings.toBuilder();</span>
-<span class="nc" id="L570">      batchDeleteTestCasesSettings = settings.batchDeleteTestCasesSettings.toBuilder();</span>
-<span class="nc" id="L571">      getTestCaseSettings = settings.getTestCaseSettings.toBuilder();</span>
-<span class="nc" id="L572">      createTestCaseSettings = settings.createTestCaseSettings.toBuilder();</span>
-<span class="nc" id="L573">      updateTestCaseSettings = settings.updateTestCaseSettings.toBuilder();</span>
-<span class="nc" id="L574">      runTestCaseSettings = settings.runTestCaseSettings.toBuilder();</span>
-<span class="nc" id="L575">      runTestCaseOperationSettings = settings.runTestCaseOperationSettings.toBuilder();</span>
-<span class="nc" id="L576">      batchRunTestCasesSettings = settings.batchRunTestCasesSettings.toBuilder();</span>
-<span class="nc" id="L577">      batchRunTestCasesOperationSettings = settings.batchRunTestCasesOperationSettings.toBuilder();</span>
-<span class="nc" id="L578">      calculateCoverageSettings = settings.calculateCoverageSettings.toBuilder();</span>
-<span class="nc" id="L579">      importTestCasesSettings = settings.importTestCasesSettings.toBuilder();</span>
-<span class="nc" id="L580">      importTestCasesOperationSettings = settings.importTestCasesOperationSettings.toBuilder();</span>
-<span class="nc" id="L581">      exportTestCasesSettings = settings.exportTestCasesSettings.toBuilder();</span>
-<span class="nc" id="L582">      exportTestCasesOperationSettings = settings.exportTestCasesOperationSettings.toBuilder();</span>
-<span class="nc" id="L583">      listTestCaseResultsSettings = settings.listTestCaseResultsSettings.toBuilder();</span>
-<span class="nc" id="L584">      getTestCaseResultSettings = settings.getTestCaseResultSettings.toBuilder();</span>
+<span class="nc" id="L685">      listTestCasesSettings = settings.listTestCasesSettings.toBuilder();</span>
+<span class="nc" id="L686">      batchDeleteTestCasesSettings = settings.batchDeleteTestCasesSettings.toBuilder();</span>
+<span class="nc" id="L687">      getTestCaseSettings = settings.getTestCaseSettings.toBuilder();</span>
+<span class="nc" id="L688">      createTestCaseSettings = settings.createTestCaseSettings.toBuilder();</span>
+<span class="nc" id="L689">      updateTestCaseSettings = settings.updateTestCaseSettings.toBuilder();</span>
+<span class="nc" id="L690">      runTestCaseSettings = settings.runTestCaseSettings.toBuilder();</span>
+<span class="nc" id="L691">      runTestCaseOperationSettings = settings.runTestCaseOperationSettings.toBuilder();</span>
+<span class="nc" id="L692">      batchRunTestCasesSettings = settings.batchRunTestCasesSettings.toBuilder();</span>
+<span class="nc" id="L693">      batchRunTestCasesOperationSettings = settings.batchRunTestCasesOperationSettings.toBuilder();</span>
+<span class="nc" id="L694">      calculateCoverageSettings = settings.calculateCoverageSettings.toBuilder();</span>
+<span class="nc" id="L695">      importTestCasesSettings = settings.importTestCasesSettings.toBuilder();</span>
+<span class="nc" id="L696">      importTestCasesOperationSettings = settings.importTestCasesOperationSettings.toBuilder();</span>
+<span class="nc" id="L697">      exportTestCasesSettings = settings.exportTestCasesSettings.toBuilder();</span>
+<span class="nc" id="L698">      exportTestCasesOperationSettings = settings.exportTestCasesOperationSettings.toBuilder();</span>
+<span class="nc" id="L699">      listTestCaseResultsSettings = settings.listTestCaseResultsSettings.toBuilder();</span>
+<span class="nc" id="L700">      getTestCaseResultSettings = settings.getTestCaseResultSettings.toBuilder();</span>
+<span class="nc" id="L701">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L702">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L586">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L587">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L704">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L705">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listTestCasesSettings,
               batchDeleteTestCasesSettings,
               getTestCaseSettings,
@@ -596,181 +714,206 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
               importTestCasesSettings,
               exportTestCasesSettings,
               listTestCaseResultsSettings,
-              getTestCaseResultSettings);
-<span class="nc" id="L600">    }</span>
+              getTestCaseResultSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L720">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L603">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L723">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L605">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L606">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L607">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L608">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L609">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L610">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L725">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L726">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L727">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L728">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L729">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L730">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L612">      return initDefaults(builder);</span>
+<span class="fc" id="L732">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L736">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L738">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L739">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L740">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L741">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L742">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L743">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L745">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L616">      builder</span>
-<span class="fc" id="L617">          .listTestCasesSettings()</span>
-<span class="fc" id="L618">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L619">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L621">      builder</span>
-<span class="fc" id="L622">          .batchDeleteTestCasesSettings()</span>
-<span class="fc" id="L623">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L624">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L626">      builder</span>
-<span class="fc" id="L627">          .getTestCaseSettings()</span>
-<span class="fc" id="L628">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L629">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L631">      builder</span>
-<span class="fc" id="L632">          .createTestCaseSettings()</span>
-<span class="fc" id="L633">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L634">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L636">      builder</span>
-<span class="fc" id="L637">          .updateTestCaseSettings()</span>
-<span class="fc" id="L638">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L639">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L641">      builder</span>
-<span class="fc" id="L642">          .runTestCaseSettings()</span>
-<span class="fc" id="L643">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L644">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L646">      builder</span>
-<span class="fc" id="L647">          .batchRunTestCasesSettings()</span>
-<span class="fc" id="L648">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L649">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L651">      builder</span>
-<span class="fc" id="L652">          .calculateCoverageSettings()</span>
-<span class="fc" id="L653">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L654">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L656">      builder</span>
-<span class="fc" id="L657">          .importTestCasesSettings()</span>
-<span class="fc" id="L658">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L659">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L661">      builder</span>
-<span class="fc" id="L662">          .exportTestCasesSettings()</span>
-<span class="fc" id="L663">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L664">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L666">      builder</span>
-<span class="fc" id="L667">          .listTestCaseResultsSettings()</span>
-<span class="fc" id="L668">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L669">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L671">      builder</span>
-<span class="fc" id="L672">          .getTestCaseResultSettings()</span>
-<span class="fc" id="L673">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L674">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
-
-<span class="fc" id="L676">      builder</span>
-<span class="fc" id="L677">          .runTestCaseOperationSettings()</span>
-<span class="fc" id="L678">          .setInitialCallSettings(</span>
-<span class="fc" id="L679">              UnaryCallSettings.&lt;RunTestCaseRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L680">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L681">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L682">                  .build())</span>
-<span class="fc" id="L683">          .setResponseTransformer(</span>
-<span class="fc" id="L684">              ProtoOperationTransformers.ResponseTransformer.create(RunTestCaseResponse.class))</span>
-<span class="fc" id="L685">          .setMetadataTransformer(</span>
-<span class="fc" id="L686">              ProtoOperationTransformers.MetadataTransformer.create(RunTestCaseMetadata.class))</span>
-<span class="fc" id="L687">          .setPollingAlgorithm(</span>
-<span class="fc" id="L688">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L689">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L690">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L691">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L692">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L693">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L694">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L695">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L696">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L697">                      .build()));</span>
-
-<span class="fc" id="L699">      builder</span>
-<span class="fc" id="L700">          .batchRunTestCasesOperationSettings()</span>
-<span class="fc" id="L701">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L703">                  .&lt;BatchRunTestCasesRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L704">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L705">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L706">                  .build())</span>
-<span class="fc" id="L707">          .setResponseTransformer(</span>
-<span class="fc" id="L708">              ProtoOperationTransformers.ResponseTransformer.create(</span>
-                  BatchRunTestCasesResponse.class))
-<span class="fc" id="L710">          .setMetadataTransformer(</span>
-<span class="fc" id="L711">              ProtoOperationTransformers.MetadataTransformer.create(</span>
-                  BatchRunTestCasesMetadata.class))
-<span class="fc" id="L713">          .setPollingAlgorithm(</span>
-<span class="fc" id="L714">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L715">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L716">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L717">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L718">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L719">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L720">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L721">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L722">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L723">                      .build()));</span>
-
-<span class="fc" id="L725">      builder</span>
-<span class="fc" id="L726">          .importTestCasesOperationSettings()</span>
-<span class="fc" id="L727">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L729">                  .&lt;ImportTestCasesRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L730">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L731">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L732">                  .build())</span>
-<span class="fc" id="L733">          .setResponseTransformer(</span>
-<span class="fc" id="L734">              ProtoOperationTransformers.ResponseTransformer.create(ImportTestCasesResponse.class))</span>
-<span class="fc" id="L735">          .setMetadataTransformer(</span>
-<span class="fc" id="L736">              ProtoOperationTransformers.MetadataTransformer.create(ImportTestCasesMetadata.class))</span>
-<span class="fc" id="L737">          .setPollingAlgorithm(</span>
-<span class="fc" id="L738">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L739">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L740">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L741">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L742">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L743">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L744">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L745">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L746">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L747">                      .build()));</span>
-
 <span class="fc" id="L749">      builder</span>
-<span class="fc" id="L750">          .exportTestCasesOperationSettings()</span>
-<span class="fc" id="L751">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L753">                  .&lt;ExportTestCasesRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L754">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L755">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
-<span class="fc" id="L756">                  .build())</span>
-<span class="fc" id="L757">          .setResponseTransformer(</span>
-<span class="fc" id="L758">              ProtoOperationTransformers.ResponseTransformer.create(ExportTestCasesResponse.class))</span>
-<span class="fc" id="L759">          .setMetadataTransformer(</span>
-<span class="fc" id="L760">              ProtoOperationTransformers.MetadataTransformer.create(ExportTestCasesMetadata.class))</span>
-<span class="fc" id="L761">          .setPollingAlgorithm(</span>
-<span class="fc" id="L762">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L763">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L764">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L765">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L766">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L767">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L768">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L769">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L770">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L771">                      .build()));</span>
+<span class="fc" id="L750">          .listTestCasesSettings()</span>
+<span class="fc" id="L751">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L752">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L773">      return builder;</span>
+<span class="fc" id="L754">      builder</span>
+<span class="fc" id="L755">          .batchDeleteTestCasesSettings()</span>
+<span class="fc" id="L756">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L757">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L759">      builder</span>
+<span class="fc" id="L760">          .getTestCaseSettings()</span>
+<span class="fc" id="L761">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L762">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L764">      builder</span>
+<span class="fc" id="L765">          .createTestCaseSettings()</span>
+<span class="fc" id="L766">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L767">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L769">      builder</span>
+<span class="fc" id="L770">          .updateTestCaseSettings()</span>
+<span class="fc" id="L771">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L772">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L774">      builder</span>
+<span class="fc" id="L775">          .runTestCaseSettings()</span>
+<span class="fc" id="L776">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L777">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L779">      builder</span>
+<span class="fc" id="L780">          .batchRunTestCasesSettings()</span>
+<span class="fc" id="L781">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L782">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L784">      builder</span>
+<span class="fc" id="L785">          .calculateCoverageSettings()</span>
+<span class="fc" id="L786">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L787">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L789">      builder</span>
+<span class="fc" id="L790">          .importTestCasesSettings()</span>
+<span class="fc" id="L791">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L792">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L794">      builder</span>
+<span class="fc" id="L795">          .exportTestCasesSettings()</span>
+<span class="fc" id="L796">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L797">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L799">      builder</span>
+<span class="fc" id="L800">          .listTestCaseResultsSettings()</span>
+<span class="fc" id="L801">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L802">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L804">      builder</span>
+<span class="fc" id="L805">          .getTestCaseResultSettings()</span>
+<span class="fc" id="L806">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L807">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L809">      builder</span>
+<span class="fc" id="L810">          .listLocationsSettings()</span>
+<span class="fc" id="L811">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L812">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L814">      builder</span>
+<span class="fc" id="L815">          .getLocationSettings()</span>
+<span class="fc" id="L816">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L817">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L819">      builder</span>
+<span class="fc" id="L820">          .runTestCaseOperationSettings()</span>
+<span class="fc" id="L821">          .setInitialCallSettings(</span>
+<span class="fc" id="L822">              UnaryCallSettings.&lt;RunTestCaseRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L823">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L824">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L825">                  .build())</span>
+<span class="fc" id="L826">          .setResponseTransformer(</span>
+<span class="fc" id="L827">              ProtoOperationTransformers.ResponseTransformer.create(RunTestCaseResponse.class))</span>
+<span class="fc" id="L828">          .setMetadataTransformer(</span>
+<span class="fc" id="L829">              ProtoOperationTransformers.MetadataTransformer.create(RunTestCaseMetadata.class))</span>
+<span class="fc" id="L830">          .setPollingAlgorithm(</span>
+<span class="fc" id="L831">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L832">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L833">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L834">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L835">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L836">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L837">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L838">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L839">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L840">                      .build()));</span>
+
+<span class="fc" id="L842">      builder</span>
+<span class="fc" id="L843">          .batchRunTestCasesOperationSettings()</span>
+<span class="fc" id="L844">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L846">                  .&lt;BatchRunTestCasesRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L847">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L848">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L849">                  .build())</span>
+<span class="fc" id="L850">          .setResponseTransformer(</span>
+<span class="fc" id="L851">              ProtoOperationTransformers.ResponseTransformer.create(</span>
+                  BatchRunTestCasesResponse.class))
+<span class="fc" id="L853">          .setMetadataTransformer(</span>
+<span class="fc" id="L854">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+                  BatchRunTestCasesMetadata.class))
+<span class="fc" id="L856">          .setPollingAlgorithm(</span>
+<span class="fc" id="L857">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L858">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L859">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L860">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L861">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L862">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L863">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L864">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L865">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L866">                      .build()));</span>
+
+<span class="fc" id="L868">      builder</span>
+<span class="fc" id="L869">          .importTestCasesOperationSettings()</span>
+<span class="fc" id="L870">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L872">                  .&lt;ImportTestCasesRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L873">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L874">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L875">                  .build())</span>
+<span class="fc" id="L876">          .setResponseTransformer(</span>
+<span class="fc" id="L877">              ProtoOperationTransformers.ResponseTransformer.create(ImportTestCasesResponse.class))</span>
+<span class="fc" id="L878">          .setMetadataTransformer(</span>
+<span class="fc" id="L879">              ProtoOperationTransformers.MetadataTransformer.create(ImportTestCasesMetadata.class))</span>
+<span class="fc" id="L880">          .setPollingAlgorithm(</span>
+<span class="fc" id="L881">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L882">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L883">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L884">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L885">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L886">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L887">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L888">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L889">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L890">                      .build()));</span>
+
+<span class="fc" id="L892">      builder</span>
+<span class="fc" id="L893">          .exportTestCasesOperationSettings()</span>
+<span class="fc" id="L894">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L896">                  .&lt;ExportTestCasesRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L897">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L898">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;))</span>
+<span class="fc" id="L899">                  .build())</span>
+<span class="fc" id="L900">          .setResponseTransformer(</span>
+<span class="fc" id="L901">              ProtoOperationTransformers.ResponseTransformer.create(ExportTestCasesResponse.class))</span>
+<span class="fc" id="L902">          .setMetadataTransformer(</span>
+<span class="fc" id="L903">              ProtoOperationTransformers.MetadataTransformer.create(ExportTestCasesMetadata.class))</span>
+<span class="fc" id="L904">          .setPollingAlgorithm(</span>
+<span class="fc" id="L905">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L906">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L907">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L908">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L909">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L910">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L911">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L912">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L913">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L914">                      .build()));</span>
+
+<span class="fc" id="L916">      return builder;</span>
     }
 
     /**
@@ -780,45 +923,45 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L783">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L784">      return this;</span>
+<span class="nc" id="L926">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L927">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L788">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L931">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listTestCases. */
     public PagedCallSettings.Builder&lt;
             ListTestCasesRequest, ListTestCasesResponse, ListTestCasesPagedResponse&gt;
         listTestCasesSettings() {
-<span class="fc" id="L795">      return listTestCasesSettings;</span>
+<span class="fc" id="L938">      return listTestCasesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to batchDeleteTestCases. */
     public UnaryCallSettings.Builder&lt;BatchDeleteTestCasesRequest, Empty&gt;
         batchDeleteTestCasesSettings() {
-<span class="fc" id="L801">      return batchDeleteTestCasesSettings;</span>
+<span class="fc" id="L944">      return batchDeleteTestCasesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getTestCase. */
     public UnaryCallSettings.Builder&lt;GetTestCaseRequest, TestCase&gt; getTestCaseSettings() {
-<span class="fc" id="L806">      return getTestCaseSettings;</span>
+<span class="fc" id="L949">      return getTestCaseSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createTestCase. */
     public UnaryCallSettings.Builder&lt;CreateTestCaseRequest, TestCase&gt; createTestCaseSettings() {
-<span class="fc" id="L811">      return createTestCaseSettings;</span>
+<span class="fc" id="L954">      return createTestCaseSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateTestCase. */
     public UnaryCallSettings.Builder&lt;UpdateTestCaseRequest, TestCase&gt; updateTestCaseSettings() {
-<span class="fc" id="L816">      return updateTestCaseSettings;</span>
+<span class="fc" id="L959">      return updateTestCaseSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to runTestCase. */
     public UnaryCallSettings.Builder&lt;RunTestCaseRequest, Operation&gt; runTestCaseSettings() {
-<span class="fc" id="L821">      return runTestCaseSettings;</span>
+<span class="fc" id="L964">      return runTestCaseSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to runTestCase. */
@@ -827,13 +970,13 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
     public OperationCallSettings.Builder&lt;
             RunTestCaseRequest, RunTestCaseResponse, RunTestCaseMetadata&gt;
         runTestCaseOperationSettings() {
-<span class="fc" id="L830">      return runTestCaseOperationSettings;</span>
+<span class="fc" id="L973">      return runTestCaseOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to batchRunTestCases. */
     public UnaryCallSettings.Builder&lt;BatchRunTestCasesRequest, Operation&gt;
         batchRunTestCasesSettings() {
-<span class="fc" id="L836">      return batchRunTestCasesSettings;</span>
+<span class="fc" id="L979">      return batchRunTestCasesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to batchRunTestCases. */
@@ -842,18 +985,18 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
     public OperationCallSettings.Builder&lt;
             BatchRunTestCasesRequest, BatchRunTestCasesResponse, BatchRunTestCasesMetadata&gt;
         batchRunTestCasesOperationSettings() {
-<span class="fc" id="L845">      return batchRunTestCasesOperationSettings;</span>
+<span class="fc" id="L988">      return batchRunTestCasesOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to calculateCoverage. */
     public UnaryCallSettings.Builder&lt;CalculateCoverageRequest, CalculateCoverageResponse&gt;
         calculateCoverageSettings() {
-<span class="fc" id="L851">      return calculateCoverageSettings;</span>
+<span class="fc" id="L994">      return calculateCoverageSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to importTestCases. */
     public UnaryCallSettings.Builder&lt;ImportTestCasesRequest, Operation&gt; importTestCasesSettings() {
-<span class="fc" id="L856">      return importTestCasesSettings;</span>
+<span class="fc" id="L999">      return importTestCasesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to importTestCases. */
@@ -862,12 +1005,12 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
     public OperationCallSettings.Builder&lt;
             ImportTestCasesRequest, ImportTestCasesResponse, ImportTestCasesMetadata&gt;
         importTestCasesOperationSettings() {
-<span class="fc" id="L865">      return importTestCasesOperationSettings;</span>
+<span class="fc" id="L1008">      return importTestCasesOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to exportTestCases. */
     public UnaryCallSettings.Builder&lt;ExportTestCasesRequest, Operation&gt; exportTestCasesSettings() {
-<span class="fc" id="L870">      return exportTestCasesSettings;</span>
+<span class="fc" id="L1013">      return exportTestCasesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to exportTestCases. */
@@ -876,7 +1019,7 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
     public OperationCallSettings.Builder&lt;
             ExportTestCasesRequest, ExportTestCasesResponse, ExportTestCasesMetadata&gt;
         exportTestCasesOperationSettings() {
-<span class="fc" id="L879">      return exportTestCasesOperationSettings;</span>
+<span class="fc" id="L1022">      return exportTestCasesOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listTestCaseResults. */
@@ -885,18 +1028,30 @@ public class TestCasesStubSettings extends StubSettings&lt;TestCasesStubSettings
             ListTestCaseResultsResponse,
             ListTestCaseResultsPagedResponse&gt;
         listTestCaseResultsSettings() {
-<span class="fc" id="L888">      return listTestCaseResultsSettings;</span>
+<span class="fc" id="L1031">      return listTestCaseResultsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getTestCaseResult. */
     public UnaryCallSettings.Builder&lt;GetTestCaseResultRequest, TestCaseResult&gt;
         getTestCaseResultSettings() {
-<span class="fc" id="L894">      return getTestCaseResultSettings;</span>
+<span class="fc" id="L1037">      return getTestCaseResultSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L1044">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L1049">      return getLocationSettings;</span>
     }
 
     @Override
     public TestCasesStubSettings build() throws IOException {
-<span class="fc" id="L899">      return new TestCasesStubSettings(this);</span>
+<span class="fc" id="L1054">      return new TestCasesStubSettings(this);</span>
     }
   }
 }

@@ -17,6 +17,7 @@
 package com.google.cloud.dialogflow.cx.v3beta1.stub;
 
 import static com.google.cloud.dialogflow.cx.v3beta1.ExperimentsClient.ListExperimentsPagedResponse;
+import static com.google.cloud.dialogflow.cx.v3beta1.ExperimentsClient.ListLocationsPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
@@ -27,6 +28,9 @@ import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiClientHeaderProvider;
@@ -49,6 +53,10 @@ import com.google.cloud.dialogflow.cx.v3beta1.ListExperimentsResponse;
 import com.google.cloud.dialogflow.cx.v3beta1.StartExperimentRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.StopExperimentRequest;
 import com.google.cloud.dialogflow.cx.v3beta1.UpdateExperimentRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -98,10 +106,10 @@ import org.threeten.bp.Duration;
 public class ExperimentsStubSettings extends StubSettings&lt;ExperimentsStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L101">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L102">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L103">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L104">          .build();</span>
+<span class="fc" id="L109">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L110">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L111">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L112">          .build();</span>
 
   private final PagedCallSettings&lt;
           ListExperimentsRequest, ListExperimentsResponse, ListExperimentsPagedResponse&gt;
@@ -112,60 +120,117 @@ public class ExperimentsStubSettings extends StubSettings&lt;ExperimentsStubSett
   private final UnaryCallSettings&lt;DeleteExperimentRequest, Empty&gt; deleteExperimentSettings;
   private final UnaryCallSettings&lt;StartExperimentRequest, Experiment&gt; startExperimentSettings;
   private final UnaryCallSettings&lt;StopExperimentRequest, Experiment&gt; stopExperimentSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;
           ListExperimentsRequest, ListExperimentsResponse, Experiment&gt;
-<span class="fc" id="L118">      LIST_EXPERIMENTS_PAGE_STR_DESC =</span>
-<span class="fc" id="L119">          new PagedListDescriptor&lt;ListExperimentsRequest, ListExperimentsResponse, Experiment&gt;() {</span>
+<span class="fc" id="L130">      LIST_EXPERIMENTS_PAGE_STR_DESC =</span>
+<span class="fc" id="L131">          new PagedListDescriptor&lt;ListExperimentsRequest, ListExperimentsResponse, Experiment&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L122">              return &quot;&quot;;</span>
+<span class="fc" id="L134">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListExperimentsRequest injectToken(
                 ListExperimentsRequest payload, String token) {
-<span class="nc" id="L128">              return ListExperimentsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L140">              return ListExperimentsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListExperimentsRequest injectPageSize(
                 ListExperimentsRequest payload, int pageSize) {
-<span class="nc" id="L134">              return ListExperimentsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L146">              return ListExperimentsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListExperimentsRequest payload) {
-<span class="nc" id="L139">              return payload.getPageSize();</span>
+<span class="nc" id="L151">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListExperimentsResponse payload) {
-<span class="fc" id="L144">              return payload.getNextPageToken();</span>
+<span class="fc" id="L156">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Experiment&gt; extractResources(ListExperimentsResponse payload) {
-<span class="pc bpc" id="L149" title="1 of 2 branches missed.">              return payload.getExperimentsList() == null</span>
-<span class="nc" id="L150">                  ? ImmutableList.&lt;Experiment&gt;of()</span>
-<span class="fc" id="L151">                  : payload.getExperimentsList();</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">              return payload.getExperimentsList() == null</span>
+<span class="nc" id="L162">                  ? ImmutableList.&lt;Experiment&gt;of()</span>
+<span class="fc" id="L163">                  : payload.getExperimentsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L168">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L169">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L172">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L177">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L182">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L187">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L192">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L198">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L199">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListExperimentsRequest, ListExperimentsResponse, ListExperimentsPagedResponse&gt;
-<span class="fc" id="L157">      LIST_EXPERIMENTS_PAGE_STR_FACT =</span>
+<span class="fc" id="L205">      LIST_EXPERIMENTS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L159">              ListExperimentsRequest, ListExperimentsResponse, ListExperimentsPagedResponse&gt;() {</span>
+<span class="fc" id="L207">              ListExperimentsRequest, ListExperimentsResponse, ListExperimentsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListExperimentsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListExperimentsRequest, ListExperimentsResponse&gt; callable,
                 ListExperimentsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListExperimentsResponse&gt; futureResponse) {
-<span class="fc" id="L166">              PageContext&lt;ListExperimentsRequest, ListExperimentsResponse, Experiment&gt; pageContext =</span>
-<span class="fc" id="L167">                  PageContext.create(callable, LIST_EXPERIMENTS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L168">              return ListExperimentsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L214">              PageContext&lt;ListExperimentsRequest, ListExperimentsResponse, Experiment&gt; pageContext =</span>
+<span class="fc" id="L215">                  PageContext.create(callable, LIST_EXPERIMENTS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L216">              return ListExperimentsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L222">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L224">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L231">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L232">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L233">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -173,122 +238,166 @@ public class ExperimentsStubSettings extends StubSettings&lt;ExperimentsStubSett
   public PagedCallSettings&lt;
           ListExperimentsRequest, ListExperimentsResponse, ListExperimentsPagedResponse&gt;
       listExperimentsSettings() {
-<span class="fc" id="L176">    return listExperimentsSettings;</span>
+<span class="fc" id="L241">    return listExperimentsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getExperiment. */
   public UnaryCallSettings&lt;GetExperimentRequest, Experiment&gt; getExperimentSettings() {
-<span class="fc" id="L181">    return getExperimentSettings;</span>
+<span class="fc" id="L246">    return getExperimentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createExperiment. */
   public UnaryCallSettings&lt;CreateExperimentRequest, Experiment&gt; createExperimentSettings() {
-<span class="fc" id="L186">    return createExperimentSettings;</span>
+<span class="fc" id="L251">    return createExperimentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateExperiment. */
   public UnaryCallSettings&lt;UpdateExperimentRequest, Experiment&gt; updateExperimentSettings() {
-<span class="fc" id="L191">    return updateExperimentSettings;</span>
+<span class="fc" id="L256">    return updateExperimentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteExperiment. */
   public UnaryCallSettings&lt;DeleteExperimentRequest, Empty&gt; deleteExperimentSettings() {
-<span class="fc" id="L196">    return deleteExperimentSettings;</span>
+<span class="fc" id="L261">    return deleteExperimentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to startExperiment. */
   public UnaryCallSettings&lt;StartExperimentRequest, Experiment&gt; startExperimentSettings() {
-<span class="fc" id="L201">    return startExperimentSettings;</span>
+<span class="fc" id="L266">    return startExperimentSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to stopExperiment. */
   public UnaryCallSettings&lt;StopExperimentRequest, Experiment&gt; stopExperimentSettings() {
-<span class="fc" id="L206">    return stopExperimentSettings;</span>
+<span class="fc" id="L271">    return stopExperimentSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L277">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L282">    return getLocationSettings;</span>
   }
 
   public ExperimentsStub createStub() throws IOException {
-<span class="fc" id="L210">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L211">        .getTransportName()</span>
-<span class="pc bpc" id="L212" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L213">      return GrpcExperimentsStub.create(this);</span>
+<span class="fc" id="L286">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L287">        .getTransportName()</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L289">      return GrpcExperimentsStub.create(this);</span>
     }
-<span class="nc" id="L215">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L216">        String.format(</span>
-<span class="nc" id="L217">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L291">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L292">        .getTransportName()</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L294">      return HttpJsonExperimentsStub.create(this);</span>
+    }
+<span class="nc" id="L296">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L297">        String.format(</span>
+<span class="nc" id="L298">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L222">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L303">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L227">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L308">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L232">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L313">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L237">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L318">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L242">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L243">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L244">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L323">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L324">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L325">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L249">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L250">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L330">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L331">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L338">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L254">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L342">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L259">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L260">        .setGeneratedLibToken(</span>
-<span class="fc" id="L261">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(ExperimentsStubSettings.class))</span>
-<span class="fc" id="L262">        .setTransportToken(</span>
-<span class="fc" id="L263">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L347">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L348">        .setGeneratedLibToken(</span>
+<span class="fc" id="L349">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(ExperimentsStubSettings.class))</span>
+<span class="fc" id="L350">        .setTransportToken(</span>
+<span class="fc" id="L351">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L356">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L357">        .setGeneratedLibToken(</span>
+<span class="fc" id="L358">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(ExperimentsStubSettings.class))</span>
+<span class="fc" id="L359">        .setTransportToken(</span>
+<span class="fc" id="L360">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L361">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L365">    return ExperimentsStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L268">    return Builder.createDefault();</span>
+<span class="fc" id="L370">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L375">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L273">    return new Builder(clientContext);</span>
+<span class="nc" id="L380">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L278">    return new Builder(this);</span>
+<span class="nc" id="L385">    return new Builder(this);</span>
   }
 
   protected ExperimentsStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L282">    super(settingsBuilder);</span>
+<span class="fc" id="L389">    super(settingsBuilder);</span>
 
-<span class="fc" id="L284">    listExperimentsSettings = settingsBuilder.listExperimentsSettings().build();</span>
-<span class="fc" id="L285">    getExperimentSettings = settingsBuilder.getExperimentSettings().build();</span>
-<span class="fc" id="L286">    createExperimentSettings = settingsBuilder.createExperimentSettings().build();</span>
-<span class="fc" id="L287">    updateExperimentSettings = settingsBuilder.updateExperimentSettings().build();</span>
-<span class="fc" id="L288">    deleteExperimentSettings = settingsBuilder.deleteExperimentSettings().build();</span>
-<span class="fc" id="L289">    startExperimentSettings = settingsBuilder.startExperimentSettings().build();</span>
-<span class="fc" id="L290">    stopExperimentSettings = settingsBuilder.stopExperimentSettings().build();</span>
-<span class="fc" id="L291">  }</span>
+<span class="fc" id="L391">    listExperimentsSettings = settingsBuilder.listExperimentsSettings().build();</span>
+<span class="fc" id="L392">    getExperimentSettings = settingsBuilder.getExperimentSettings().build();</span>
+<span class="fc" id="L393">    createExperimentSettings = settingsBuilder.createExperimentSettings().build();</span>
+<span class="fc" id="L394">    updateExperimentSettings = settingsBuilder.updateExperimentSettings().build();</span>
+<span class="fc" id="L395">    deleteExperimentSettings = settingsBuilder.deleteExperimentSettings().build();</span>
+<span class="fc" id="L396">    startExperimentSettings = settingsBuilder.startExperimentSettings().build();</span>
+<span class="fc" id="L397">    stopExperimentSettings = settingsBuilder.stopExperimentSettings().build();</span>
+<span class="fc" id="L398">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L399">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L400">  }</span>
 
   /** Builder for ExperimentsStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;ExperimentsStubSettings, Builder&gt; {
@@ -307,136 +416,171 @@ public class ExperimentsStubSettings extends StubSettings&lt;ExperimentsStubSett
         startExperimentSettings;
     private final UnaryCallSettings.Builder&lt;StopExperimentRequest, Experiment&gt;
         stopExperimentSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L315">          ImmutableMap.builder();</span>
-<span class="fc" id="L316">      definitions.put(</span>
+<span class="fc" id="L428">          ImmutableMap.builder();</span>
+<span class="fc" id="L429">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L318">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L319">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L431">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L432">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L325">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L326">      RetrySettings settings = null;</span>
+<span class="fc" id="L438">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L439">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L328">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L329">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L330">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L331">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L332">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L333">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L334">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L335">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L336">              .build();</span>
-<span class="fc" id="L337">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L338">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L339">    }</span>
+<span class="fc" id="L441">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L442">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L443">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L444">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L445">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L446">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L447">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L448">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L449">              .build();</span>
+<span class="fc" id="L450">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L451">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L452">    }</span>
 
     protected Builder() {
-<span class="nc" id="L342">      this(((ClientContext) null));</span>
-<span class="nc" id="L343">    }</span>
+<span class="nc" id="L455">      this(((ClientContext) null));</span>
+<span class="nc" id="L456">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L346">      super(clientContext);</span>
+<span class="fc" id="L459">      super(clientContext);</span>
 
-<span class="fc" id="L348">      listExperimentsSettings = PagedCallSettings.newBuilder(LIST_EXPERIMENTS_PAGE_STR_FACT);</span>
-<span class="fc" id="L349">      getExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L350">      createExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L351">      updateExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L352">      deleteExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L353">      startExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L354">      stopExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L461">      listExperimentsSettings = PagedCallSettings.newBuilder(LIST_EXPERIMENTS_PAGE_STR_FACT);</span>
+<span class="fc" id="L462">      getExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L463">      createExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L464">      updateExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L465">      deleteExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L466">      startExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L467">      stopExperimentSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L468">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L469">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L356">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L357">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L471">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L472">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listExperimentsSettings,
               getExperimentSettings,
               createExperimentSettings,
               updateExperimentSettings,
               deleteExperimentSettings,
               startExperimentSettings,
-              stopExperimentSettings);
-<span class="fc" id="L365">      initDefaults(this);</span>
-<span class="fc" id="L366">    }</span>
+              stopExperimentSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L482">      initDefaults(this);</span>
+<span class="fc" id="L483">    }</span>
 
     protected Builder(ExperimentsStubSettings settings) {
-<span class="nc" id="L369">      super(settings);</span>
+<span class="nc" id="L486">      super(settings);</span>
 
-<span class="nc" id="L371">      listExperimentsSettings = settings.listExperimentsSettings.toBuilder();</span>
-<span class="nc" id="L372">      getExperimentSettings = settings.getExperimentSettings.toBuilder();</span>
-<span class="nc" id="L373">      createExperimentSettings = settings.createExperimentSettings.toBuilder();</span>
-<span class="nc" id="L374">      updateExperimentSettings = settings.updateExperimentSettings.toBuilder();</span>
-<span class="nc" id="L375">      deleteExperimentSettings = settings.deleteExperimentSettings.toBuilder();</span>
-<span class="nc" id="L376">      startExperimentSettings = settings.startExperimentSettings.toBuilder();</span>
-<span class="nc" id="L377">      stopExperimentSettings = settings.stopExperimentSettings.toBuilder();</span>
+<span class="nc" id="L488">      listExperimentsSettings = settings.listExperimentsSettings.toBuilder();</span>
+<span class="nc" id="L489">      getExperimentSettings = settings.getExperimentSettings.toBuilder();</span>
+<span class="nc" id="L490">      createExperimentSettings = settings.createExperimentSettings.toBuilder();</span>
+<span class="nc" id="L491">      updateExperimentSettings = settings.updateExperimentSettings.toBuilder();</span>
+<span class="nc" id="L492">      deleteExperimentSettings = settings.deleteExperimentSettings.toBuilder();</span>
+<span class="nc" id="L493">      startExperimentSettings = settings.startExperimentSettings.toBuilder();</span>
+<span class="nc" id="L494">      stopExperimentSettings = settings.stopExperimentSettings.toBuilder();</span>
+<span class="nc" id="L495">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L496">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L379">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L380">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L498">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L499">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listExperimentsSettings,
               getExperimentSettings,
               createExperimentSettings,
               updateExperimentSettings,
               deleteExperimentSettings,
               startExperimentSettings,
-              stopExperimentSettings);
-<span class="nc" id="L388">    }</span>
+              stopExperimentSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L509">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L391">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L512">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L393">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L394">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L395">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L396">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L397">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L398">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L514">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L515">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L516">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L517">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L518">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L519">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L400">      return initDefaults(builder);</span>
+<span class="fc" id="L521">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L525">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L527">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L528">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L529">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L530">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L531">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L532">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L534">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L404">      builder</span>
-<span class="fc" id="L405">          .listExperimentsSettings()</span>
-<span class="fc" id="L406">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L407">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L538">      builder</span>
+<span class="fc" id="L539">          .listExperimentsSettings()</span>
+<span class="fc" id="L540">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L541">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L409">      builder</span>
-<span class="fc" id="L410">          .getExperimentSettings()</span>
-<span class="fc" id="L411">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L412">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L543">      builder</span>
+<span class="fc" id="L544">          .getExperimentSettings()</span>
+<span class="fc" id="L545">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L546">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L414">      builder</span>
-<span class="fc" id="L415">          .createExperimentSettings()</span>
-<span class="fc" id="L416">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L417">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L548">      builder</span>
+<span class="fc" id="L549">          .createExperimentSettings()</span>
+<span class="fc" id="L550">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L551">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L419">      builder</span>
-<span class="fc" id="L420">          .updateExperimentSettings()</span>
-<span class="fc" id="L421">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L422">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L553">      builder</span>
+<span class="fc" id="L554">          .updateExperimentSettings()</span>
+<span class="fc" id="L555">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L556">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L424">      builder</span>
-<span class="fc" id="L425">          .deleteExperimentSettings()</span>
-<span class="fc" id="L426">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L427">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L558">      builder</span>
+<span class="fc" id="L559">          .deleteExperimentSettings()</span>
+<span class="fc" id="L560">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L561">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L429">      builder</span>
-<span class="fc" id="L430">          .startExperimentSettings()</span>
-<span class="fc" id="L431">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L432">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L563">      builder</span>
+<span class="fc" id="L564">          .startExperimentSettings()</span>
+<span class="fc" id="L565">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L566">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L434">      builder</span>
-<span class="fc" id="L435">          .stopExperimentSettings()</span>
-<span class="fc" id="L436">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L437">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L568">      builder</span>
+<span class="fc" id="L569">          .stopExperimentSettings()</span>
+<span class="fc" id="L570">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L571">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L439">      return builder;</span>
+<span class="fc" id="L573">      builder</span>
+<span class="fc" id="L574">          .listLocationsSettings()</span>
+<span class="fc" id="L575">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L576">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L578">      builder</span>
+<span class="fc" id="L579">          .getLocationSettings()</span>
+<span class="fc" id="L580">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L581">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L583">      return builder;</span>
     }
 
     /**
@@ -446,56 +590,68 @@ public class ExperimentsStubSettings extends StubSettings&lt;ExperimentsStubSett
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L449">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L450">      return this;</span>
+<span class="nc" id="L593">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L594">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L454">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L598">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listExperiments. */
     public PagedCallSettings.Builder&lt;
             ListExperimentsRequest, ListExperimentsResponse, ListExperimentsPagedResponse&gt;
         listExperimentsSettings() {
-<span class="fc" id="L461">      return listExperimentsSettings;</span>
+<span class="fc" id="L605">      return listExperimentsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getExperiment. */
     public UnaryCallSettings.Builder&lt;GetExperimentRequest, Experiment&gt; getExperimentSettings() {
-<span class="fc" id="L466">      return getExperimentSettings;</span>
+<span class="fc" id="L610">      return getExperimentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createExperiment. */
     public UnaryCallSettings.Builder&lt;CreateExperimentRequest, Experiment&gt;
         createExperimentSettings() {
-<span class="fc" id="L472">      return createExperimentSettings;</span>
+<span class="fc" id="L616">      return createExperimentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateExperiment. */
     public UnaryCallSettings.Builder&lt;UpdateExperimentRequest, Experiment&gt;
         updateExperimentSettings() {
-<span class="fc" id="L478">      return updateExperimentSettings;</span>
+<span class="fc" id="L622">      return updateExperimentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteExperiment. */
     public UnaryCallSettings.Builder&lt;DeleteExperimentRequest, Empty&gt; deleteExperimentSettings() {
-<span class="fc" id="L483">      return deleteExperimentSettings;</span>
+<span class="fc" id="L627">      return deleteExperimentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to startExperiment. */
     public UnaryCallSettings.Builder&lt;StartExperimentRequest, Experiment&gt; startExperimentSettings() {
-<span class="fc" id="L488">      return startExperimentSettings;</span>
+<span class="fc" id="L632">      return startExperimentSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to stopExperiment. */
     public UnaryCallSettings.Builder&lt;StopExperimentRequest, Experiment&gt; stopExperimentSettings() {
-<span class="fc" id="L493">      return stopExperimentSettings;</span>
+<span class="fc" id="L637">      return stopExperimentSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L644">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L649">      return getLocationSettings;</span>
     }
 
     @Override
     public ExperimentsStubSettings build() throws IOException {
-<span class="fc" id="L498">      return new ExperimentsStubSettings(this);</span>
+<span class="fc" id="L654">      return new ExperimentsStubSettings(this);</span>
     }
   }
 }

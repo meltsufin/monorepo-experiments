@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.retail.v2beta.stub.ProductServiceStub;
 import com.google.cloud.retail.v2beta.stub.ProductServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -106,6 +106,20 @@ import javax.annotation.Generated;
  * ProductServiceClient productServiceClient = ProductServiceClient.create(productServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ProductServiceSettings productServiceSettings =
+ *     ProductServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ProductServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ProductServiceClient productServiceClient = ProductServiceClient.create(productServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -113,11 +127,12 @@ import javax.annotation.Generated;
 public class ProductServiceClient implements BackgroundResource {
   private final ProductServiceSettings settings;
   private final ProductServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ProductServiceClient with default settings. */
   public static final ProductServiceClient create() throws IOException {
-<span class="nc" id="L120">    return create(ProductServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L135">    return create(ProductServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -126,7 +141,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public static final ProductServiceClient create(ProductServiceSettings settings)
       throws IOException {
-<span class="fc" id="L129">    return new ProductServiceClient(settings);</span>
+<span class="fc" id="L144">    return new ProductServiceClient(settings);</span>
   }
 
   /**
@@ -134,7 +149,7 @@ public class ProductServiceClient implements BackgroundResource {
    * for advanced usage - prefer using create(ProductServiceSettings).
    */
   public static final ProductServiceClient create(ProductServiceStub stub) {
-<span class="nc" id="L137">    return new ProductServiceClient(stub);</span>
+<span class="nc" id="L152">    return new ProductServiceClient(stub);</span>
   }
 
   /**
@@ -142,32 +157,44 @@ public class ProductServiceClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L145">  protected ProductServiceClient(ProductServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L146">    this.settings = settings;</span>
-<span class="fc" id="L147">    this.stub = ((ProductServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L148">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L149">  }</span>
+<span class="fc" id="L160">  protected ProductServiceClient(ProductServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L161">    this.settings = settings;</span>
+<span class="fc" id="L162">    this.stub = ((ProductServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L163">    this.operationsClient =</span>
+<span class="fc" id="L164">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L165">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L166">  }</span>
 
-<span class="nc" id="L151">  protected ProductServiceClient(ProductServiceStub stub) {</span>
-<span class="nc" id="L152">    this.settings = null;</span>
-<span class="nc" id="L153">    this.stub = stub;</span>
-<span class="nc" id="L154">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L155">  }</span>
+<span class="nc" id="L168">  protected ProductServiceClient(ProductServiceStub stub) {</span>
+<span class="nc" id="L169">    this.settings = null;</span>
+<span class="nc" id="L170">    this.stub = stub;</span>
+<span class="nc" id="L171">    this.operationsClient =</span>
+<span class="nc" id="L172">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L173">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L174">  }</span>
 
   public final ProductServiceSettings getSettings() {
-<span class="nc" id="L158">    return settings;</span>
+<span class="nc" id="L177">    return settings;</span>
   }
 
   public ProductServiceStub getStub() {
-<span class="nc" id="L162">    return stub;</span>
+<span class="nc" id="L181">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L170">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L189">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L197">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -205,12 +232,12 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final Product createProduct(BranchName parent, Product product, String productId) {
     CreateProductRequest request =
-<span class="fc" id="L208">        CreateProductRequest.newBuilder()</span>
-<span class="pc bpc" id="L209" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L210">            .setProduct(product)</span>
-<span class="fc" id="L211">            .setProductId(productId)</span>
-<span class="fc" id="L212">            .build();</span>
-<span class="fc" id="L213">    return createProduct(request);</span>
+<span class="fc" id="L235">        CreateProductRequest.newBuilder()</span>
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L237">            .setProduct(product)</span>
+<span class="fc" id="L238">            .setProductId(productId)</span>
+<span class="fc" id="L239">            .build();</span>
+<span class="fc" id="L240">    return createProduct(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -248,12 +275,12 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final Product createProduct(String parent, Product product, String productId) {
     CreateProductRequest request =
-<span class="fc" id="L251">        CreateProductRequest.newBuilder()</span>
-<span class="fc" id="L252">            .setParent(parent)</span>
-<span class="fc" id="L253">            .setProduct(product)</span>
-<span class="fc" id="L254">            .setProductId(productId)</span>
-<span class="fc" id="L255">            .build();</span>
-<span class="fc" id="L256">    return createProduct(request);</span>
+<span class="fc" id="L278">        CreateProductRequest.newBuilder()</span>
+<span class="fc" id="L279">            .setParent(parent)</span>
+<span class="fc" id="L280">            .setProduct(product)</span>
+<span class="fc" id="L281">            .setProductId(productId)</span>
+<span class="fc" id="L282">            .build();</span>
+<span class="fc" id="L283">    return createProduct(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -281,7 +308,7 @@ public class ProductServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Product createProduct(CreateProductRequest request) {
-<span class="fc" id="L284">    return createProductCallable().call(request);</span>
+<span class="fc" id="L311">    return createProductCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -308,7 +335,7 @@ public class ProductServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateProductRequest, Product&gt; createProductCallable() {
-<span class="fc" id="L311">    return stub.createProductCallable();</span>
+<span class="fc" id="L338">    return stub.createProductCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -339,8 +366,8 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final Product getProduct(ProductName name) {
     GetProductRequest request =
-<span class="pc bpc" id="L342" title="1 of 2 branches missed.">        GetProductRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L343">    return getProduct(request);</span>
+<span class="pc bpc" id="L369" title="1 of 2 branches missed.">        GetProductRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L370">    return getProduct(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -371,8 +398,8 @@ public class ProductServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Product getProduct(String name) {
-<span class="fc" id="L374">    GetProductRequest request = GetProductRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L375">    return getProduct(request);</span>
+<span class="fc" id="L401">    GetProductRequest request = GetProductRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L402">    return getProduct(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -399,7 +426,7 @@ public class ProductServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Product getProduct(GetProductRequest request) {
-<span class="fc" id="L402">    return getProductCallable().call(request);</span>
+<span class="fc" id="L429">    return getProductCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -425,7 +452,7 @@ public class ProductServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetProductRequest, Product&gt; getProductCallable() {
-<span class="fc" id="L428">    return stub.getProductCallable();</span>
+<span class="fc" id="L455">    return stub.getProductCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -455,10 +482,10 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final ListProductsPagedResponse listProducts(BranchName parent) {
     ListProductsRequest request =
-<span class="fc" id="L458">        ListProductsRequest.newBuilder()</span>
-<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L460">            .build();</span>
-<span class="fc" id="L461">    return listProducts(request);</span>
+<span class="fc" id="L485">        ListProductsRequest.newBuilder()</span>
+<span class="pc bpc" id="L486" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L487">            .build();</span>
+<span class="fc" id="L488">    return listProducts(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -487,8 +514,8 @@ public class ProductServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListProductsPagedResponse listProducts(String parent) {
-<span class="fc" id="L490">    ListProductsRequest request = ListProductsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L491">    return listProducts(request);</span>
+<span class="fc" id="L517">    ListProductsRequest request = ListProductsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L518">    return listProducts(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -520,7 +547,7 @@ public class ProductServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListProductsPagedResponse listProducts(ListProductsRequest request) {
-<span class="fc" id="L523">    return listProductsPagedCallable().call(request);</span>
+<span class="fc" id="L550">    return listProductsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -553,7 +580,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListProductsRequest, ListProductsPagedResponse&gt;
       listProductsPagedCallable() {
-<span class="fc" id="L556">    return stub.listProductsPagedCallable();</span>
+<span class="fc" id="L583">    return stub.listProductsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -591,7 +618,7 @@ public class ProductServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListProductsRequest, ListProductsResponse&gt; listProductsCallable() {
-<span class="nc" id="L594">    return stub.listProductsCallable();</span>
+<span class="nc" id="L621">    return stub.listProductsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -626,8 +653,8 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final Product updateProduct(Product product, FieldMask updateMask) {
     UpdateProductRequest request =
-<span class="fc" id="L629">        UpdateProductRequest.newBuilder().setProduct(product).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L630">    return updateProduct(request);</span>
+<span class="fc" id="L656">        UpdateProductRequest.newBuilder().setProduct(product).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L657">    return updateProduct(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -654,7 +681,7 @@ public class ProductServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Product updateProduct(UpdateProductRequest request) {
-<span class="fc" id="L657">    return updateProductCallable().call(request);</span>
+<span class="fc" id="L684">    return updateProductCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -680,7 +707,7 @@ public class ProductServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateProductRequest, Product&gt; updateProductCallable() {
-<span class="fc" id="L683">    return stub.updateProductCallable();</span>
+<span class="fc" id="L710">    return stub.updateProductCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -720,9 +747,9 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final void deleteProduct(ProductName name) {
     DeleteProductRequest request =
-<span class="pc bpc" id="L723" title="1 of 2 branches missed.">        DeleteProductRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L724">    deleteProduct(request);</span>
-<span class="fc" id="L725">  }</span>
+<span class="pc bpc" id="L750" title="1 of 2 branches missed.">        DeleteProductRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L751">    deleteProduct(request);</span>
+<span class="fc" id="L752">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -761,9 +788,9 @@ public class ProductServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteProduct(String name) {
-<span class="fc" id="L764">    DeleteProductRequest request = DeleteProductRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L765">    deleteProduct(request);</span>
-<span class="fc" id="L766">  }</span>
+<span class="fc" id="L791">    DeleteProductRequest request = DeleteProductRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L792">    deleteProduct(request);</span>
+<span class="fc" id="L793">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -789,8 +816,8 @@ public class ProductServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteProduct(DeleteProductRequest request) {
-<span class="fc" id="L792">    deleteProductCallable().call(request);</span>
-<span class="fc" id="L793">  }</span>
+<span class="fc" id="L819">    deleteProductCallable().call(request);</span>
+<span class="fc" id="L820">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -815,7 +842,7 @@ public class ProductServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteProductRequest, Empty&gt; deleteProductCallable() {
-<span class="fc" id="L818">    return stub.deleteProductCallable();</span>
+<span class="fc" id="L845">    return stub.deleteProductCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -853,7 +880,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ImportProductsResponse, ImportMetadata&gt; importProductsAsync(
       ImportProductsRequest request) {
-<span class="fc" id="L856">    return importProductsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L883">    return importProductsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -891,7 +918,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ImportProductsRequest, ImportProductsResponse, ImportMetadata&gt;
       importProductsOperationCallable() {
-<span class="fc" id="L894">    return stub.importProductsOperationCallable();</span>
+<span class="fc" id="L921">    return stub.importProductsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -928,7 +955,7 @@ public class ProductServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ImportProductsRequest, Operation&gt; importProductsCallable() {
-<span class="nc" id="L931">    return stub.importProductsCallable();</span>
+<span class="nc" id="L958">    return stub.importProductsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1041,8 +1068,8 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;SetInventoryResponse, SetInventoryMetadata&gt; setInventoryAsync(
       Product inventory, FieldMask setMask) {
     SetInventoryRequest request =
-<span class="fc" id="L1044">        SetInventoryRequest.newBuilder().setInventory(inventory).setSetMask(setMask).build();</span>
-<span class="fc" id="L1045">    return setInventoryAsync(request);</span>
+<span class="fc" id="L1071">        SetInventoryRequest.newBuilder().setInventory(inventory).setSetMask(setMask).build();</span>
+<span class="fc" id="L1072">    return setInventoryAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1105,7 +1132,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;SetInventoryResponse, SetInventoryMetadata&gt; setInventoryAsync(
       SetInventoryRequest request) {
-<span class="fc" id="L1108">    return setInventoryOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1135">    return setInventoryOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1168,7 +1195,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;SetInventoryRequest, SetInventoryResponse, SetInventoryMetadata&gt;
       setInventoryOperationCallable() {
-<span class="fc" id="L1171">    return stub.setInventoryOperationCallable();</span>
+<span class="fc" id="L1198">    return stub.setInventoryOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1229,7 +1256,7 @@ public class ProductServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SetInventoryRequest, Operation&gt; setInventoryCallable() {
-<span class="nc" id="L1232">    return stub.setInventoryCallable();</span>
+<span class="nc" id="L1259">    return stub.setInventoryCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1272,10 +1299,10 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;AddFulfillmentPlacesResponse, AddFulfillmentPlacesMetadata&gt;
       addFulfillmentPlacesAsync(ProductName product) {
     AddFulfillmentPlacesRequest request =
-<span class="fc" id="L1275">        AddFulfillmentPlacesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1276" title="1 of 2 branches missed.">            .setProduct(product == null ? null : product.toString())</span>
-<span class="fc" id="L1277">            .build();</span>
-<span class="fc" id="L1278">    return addFulfillmentPlacesAsync(request);</span>
+<span class="fc" id="L1302">        AddFulfillmentPlacesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1303" title="1 of 2 branches missed.">            .setProduct(product == null ? null : product.toString())</span>
+<span class="fc" id="L1304">            .build();</span>
+<span class="fc" id="L1305">    return addFulfillmentPlacesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1319,8 +1346,8 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;AddFulfillmentPlacesResponse, AddFulfillmentPlacesMetadata&gt;
       addFulfillmentPlacesAsync(String product) {
     AddFulfillmentPlacesRequest request =
-<span class="fc" id="L1322">        AddFulfillmentPlacesRequest.newBuilder().setProduct(product).build();</span>
-<span class="fc" id="L1323">    return addFulfillmentPlacesAsync(request);</span>
+<span class="fc" id="L1349">        AddFulfillmentPlacesRequest.newBuilder().setProduct(product).build();</span>
+<span class="fc" id="L1350">    return addFulfillmentPlacesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1365,7 +1392,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;AddFulfillmentPlacesResponse, AddFulfillmentPlacesMetadata&gt;
       addFulfillmentPlacesAsync(AddFulfillmentPlacesRequest request) {
-<span class="fc" id="L1368">    return addFulfillmentPlacesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1395">    return addFulfillmentPlacesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1410,7 +1437,7 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           AddFulfillmentPlacesRequest, AddFulfillmentPlacesResponse, AddFulfillmentPlacesMetadata&gt;
       addFulfillmentPlacesOperationCallable() {
-<span class="fc" id="L1413">    return stub.addFulfillmentPlacesOperationCallable();</span>
+<span class="fc" id="L1440">    return stub.addFulfillmentPlacesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1454,7 +1481,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;AddFulfillmentPlacesRequest, Operation&gt;
       addFulfillmentPlacesCallable() {
-<span class="nc" id="L1457">    return stub.addFulfillmentPlacesCallable();</span>
+<span class="nc" id="L1484">    return stub.addFulfillmentPlacesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1497,10 +1524,10 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;RemoveFulfillmentPlacesResponse, RemoveFulfillmentPlacesMetadata&gt;
       removeFulfillmentPlacesAsync(ProductName product) {
     RemoveFulfillmentPlacesRequest request =
-<span class="fc" id="L1500">        RemoveFulfillmentPlacesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1501" title="1 of 2 branches missed.">            .setProduct(product == null ? null : product.toString())</span>
-<span class="fc" id="L1502">            .build();</span>
-<span class="fc" id="L1503">    return removeFulfillmentPlacesAsync(request);</span>
+<span class="fc" id="L1527">        RemoveFulfillmentPlacesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1528" title="1 of 2 branches missed.">            .setProduct(product == null ? null : product.toString())</span>
+<span class="fc" id="L1529">            .build();</span>
+<span class="fc" id="L1530">    return removeFulfillmentPlacesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1544,8 +1571,8 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;RemoveFulfillmentPlacesResponse, RemoveFulfillmentPlacesMetadata&gt;
       removeFulfillmentPlacesAsync(String product) {
     RemoveFulfillmentPlacesRequest request =
-<span class="fc" id="L1547">        RemoveFulfillmentPlacesRequest.newBuilder().setProduct(product).build();</span>
-<span class="fc" id="L1548">    return removeFulfillmentPlacesAsync(request);</span>
+<span class="fc" id="L1574">        RemoveFulfillmentPlacesRequest.newBuilder().setProduct(product).build();</span>
+<span class="fc" id="L1575">    return removeFulfillmentPlacesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1590,7 +1617,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;RemoveFulfillmentPlacesResponse, RemoveFulfillmentPlacesMetadata&gt;
       removeFulfillmentPlacesAsync(RemoveFulfillmentPlacesRequest request) {
-<span class="fc" id="L1593">    return removeFulfillmentPlacesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1620">    return removeFulfillmentPlacesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1637,7 +1664,7 @@ public class ProductServiceClient implements BackgroundResource {
           RemoveFulfillmentPlacesResponse,
           RemoveFulfillmentPlacesMetadata&gt;
       removeFulfillmentPlacesOperationCallable() {
-<span class="fc" id="L1640">    return stub.removeFulfillmentPlacesOperationCallable();</span>
+<span class="fc" id="L1667">    return stub.removeFulfillmentPlacesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1681,7 +1708,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;RemoveFulfillmentPlacesRequest, Operation&gt;
       removeFulfillmentPlacesCallable() {
-<span class="nc" id="L1684">    return stub.removeFulfillmentPlacesCallable();</span>
+<span class="nc" id="L1711">    return stub.removeFulfillmentPlacesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1729,10 +1756,10 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;AddLocalInventoriesResponse, AddLocalInventoriesMetadata&gt;
       addLocalInventoriesAsync(ProductName product) {
     AddLocalInventoriesRequest request =
-<span class="fc" id="L1732">        AddLocalInventoriesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1733" title="1 of 2 branches missed.">            .setProduct(product == null ? null : product.toString())</span>
-<span class="fc" id="L1734">            .build();</span>
-<span class="fc" id="L1735">    return addLocalInventoriesAsync(request);</span>
+<span class="fc" id="L1759">        AddLocalInventoriesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1760" title="1 of 2 branches missed.">            .setProduct(product == null ? null : product.toString())</span>
+<span class="fc" id="L1761">            .build();</span>
+<span class="fc" id="L1762">    return addLocalInventoriesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1781,8 +1808,8 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;AddLocalInventoriesResponse, AddLocalInventoriesMetadata&gt;
       addLocalInventoriesAsync(String product) {
     AddLocalInventoriesRequest request =
-<span class="fc" id="L1784">        AddLocalInventoriesRequest.newBuilder().setProduct(product).build();</span>
-<span class="fc" id="L1785">    return addLocalInventoriesAsync(request);</span>
+<span class="fc" id="L1811">        AddLocalInventoriesRequest.newBuilder().setProduct(product).build();</span>
+<span class="fc" id="L1812">    return addLocalInventoriesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1832,7 +1859,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;AddLocalInventoriesResponse, AddLocalInventoriesMetadata&gt;
       addLocalInventoriesAsync(AddLocalInventoriesRequest request) {
-<span class="fc" id="L1835">    return addLocalInventoriesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1862">    return addLocalInventoriesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1882,7 +1909,7 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           AddLocalInventoriesRequest, AddLocalInventoriesResponse, AddLocalInventoriesMetadata&gt;
       addLocalInventoriesOperationCallable() {
-<span class="fc" id="L1885">    return stub.addLocalInventoriesOperationCallable();</span>
+<span class="fc" id="L1912">    return stub.addLocalInventoriesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1930,7 +1957,7 @@ public class ProductServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;AddLocalInventoriesRequest, Operation&gt; addLocalInventoriesCallable() {
-<span class="nc" id="L1933">    return stub.addLocalInventoriesCallable();</span>
+<span class="nc" id="L1960">    return stub.addLocalInventoriesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1976,10 +2003,10 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;RemoveLocalInventoriesResponse, RemoveLocalInventoriesMetadata&gt;
       removeLocalInventoriesAsync(ProductName product) {
     RemoveLocalInventoriesRequest request =
-<span class="fc" id="L1979">        RemoveLocalInventoriesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1980" title="1 of 2 branches missed.">            .setProduct(product == null ? null : product.toString())</span>
-<span class="fc" id="L1981">            .build();</span>
-<span class="fc" id="L1982">    return removeLocalInventoriesAsync(request);</span>
+<span class="fc" id="L2006">        RemoveLocalInventoriesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2007" title="1 of 2 branches missed.">            .setProduct(product == null ? null : product.toString())</span>
+<span class="fc" id="L2008">            .build();</span>
+<span class="fc" id="L2009">    return removeLocalInventoriesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2026,8 +2053,8 @@ public class ProductServiceClient implements BackgroundResource {
   public final OperationFuture&lt;RemoveLocalInventoriesResponse, RemoveLocalInventoriesMetadata&gt;
       removeLocalInventoriesAsync(String product) {
     RemoveLocalInventoriesRequest request =
-<span class="fc" id="L2029">        RemoveLocalInventoriesRequest.newBuilder().setProduct(product).build();</span>
-<span class="fc" id="L2030">    return removeLocalInventoriesAsync(request);</span>
+<span class="fc" id="L2056">        RemoveLocalInventoriesRequest.newBuilder().setProduct(product).build();</span>
+<span class="fc" id="L2057">    return removeLocalInventoriesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2074,7 +2101,7 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;RemoveLocalInventoriesResponse, RemoveLocalInventoriesMetadata&gt;
       removeLocalInventoriesAsync(RemoveLocalInventoriesRequest request) {
-<span class="fc" id="L2077">    return removeLocalInventoriesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2104">    return removeLocalInventoriesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2123,7 +2150,7 @@ public class ProductServiceClient implements BackgroundResource {
           RemoveLocalInventoriesResponse,
           RemoveLocalInventoriesMetadata&gt;
       removeLocalInventoriesOperationCallable() {
-<span class="fc" id="L2126">    return stub.removeLocalInventoriesOperationCallable();</span>
+<span class="fc" id="L2153">    return stub.removeLocalInventoriesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2169,37 +2196,37 @@ public class ProductServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;RemoveLocalInventoriesRequest, Operation&gt;
       removeLocalInventoriesCallable() {
-<span class="nc" id="L2172">    return stub.removeLocalInventoriesCallable();</span>
+<span class="nc" id="L2199">    return stub.removeLocalInventoriesCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2177">    stub.close();</span>
-<span class="fc" id="L2178">  }</span>
+<span class="fc" id="L2204">    stub.close();</span>
+<span class="fc" id="L2205">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2182">    stub.shutdown();</span>
-<span class="nc" id="L2183">  }</span>
+<span class="nc" id="L2209">    stub.shutdown();</span>
+<span class="nc" id="L2210">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2187">    return stub.isShutdown();</span>
+<span class="nc" id="L2214">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2192">    return stub.isTerminated();</span>
+<span class="nc" id="L2219">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2197">    stub.shutdownNow();</span>
-<span class="nc" id="L2198">  }</span>
+<span class="nc" id="L2224">    stub.shutdownNow();</span>
+<span class="nc" id="L2225">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2202">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2229">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListProductsPagedResponse
@@ -2214,16 +2241,16 @@ public class ProductServiceClient implements BackgroundResource {
         PageContext&lt;ListProductsRequest, ListProductsResponse, Product&gt; context,
         ApiFuture&lt;ListProductsResponse&gt; futureResponse) {
       ApiFuture&lt;ListProductsPage&gt; futurePage =
-<span class="fc" id="L2217">          ListProductsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2218">      return ApiFutures.transform(</span>
+<span class="fc" id="L2244">          ListProductsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2245">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2220">          input -&gt; new ListProductsPagedResponse(input),</span>
-<span class="fc" id="L2221">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2247">          input -&gt; new ListProductsPagedResponse(input),</span>
+<span class="fc" id="L2248">          MoreExecutors.directExecutor());</span>
     }
 
     private ListProductsPagedResponse(ListProductsPage page) {
-<span class="fc" id="L2225">      super(page, ListProductsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2226">    }</span>
+<span class="fc" id="L2252">      super(page, ListProductsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2253">    }</span>
   }
 
   public static class ListProductsPage
@@ -2232,25 +2259,25 @@ public class ProductServiceClient implements BackgroundResource {
     private ListProductsPage(
         PageContext&lt;ListProductsRequest, ListProductsResponse, Product&gt; context,
         ListProductsResponse response) {
-<span class="fc" id="L2235">      super(context, response);</span>
-<span class="fc" id="L2236">    }</span>
+<span class="fc" id="L2262">      super(context, response);</span>
+<span class="fc" id="L2263">    }</span>
 
     private static ListProductsPage createEmptyPage() {
-<span class="fc" id="L2239">      return new ListProductsPage(null, null);</span>
+<span class="fc" id="L2266">      return new ListProductsPage(null, null);</span>
     }
 
     @Override
     protected ListProductsPage createPage(
         PageContext&lt;ListProductsRequest, ListProductsResponse, Product&gt; context,
         ListProductsResponse response) {
-<span class="fc" id="L2246">      return new ListProductsPage(context, response);</span>
+<span class="fc" id="L2273">      return new ListProductsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListProductsPage&gt; createPageAsync(
         PageContext&lt;ListProductsRequest, ListProductsResponse, Product&gt; context,
         ApiFuture&lt;ListProductsResponse&gt; futureResponse) {
-<span class="fc" id="L2253">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2280">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2263,17 +2290,17 @@ public class ProductServiceClient implements BackgroundResource {
           ListProductsFixedSizeCollection&gt; {
 
     private ListProductsFixedSizeCollection(List&lt;ListProductsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2266">      super(pages, collectionSize);</span>
-<span class="fc" id="L2267">    }</span>
+<span class="fc" id="L2293">      super(pages, collectionSize);</span>
+<span class="fc" id="L2294">    }</span>
 
     private static ListProductsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2270">      return new ListProductsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2297">      return new ListProductsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListProductsFixedSizeCollection createCollection(
         List&lt;ListProductsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2276">      return new ListProductsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2303">      return new ListProductsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
