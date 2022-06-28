@@ -19,6 +19,7 @@ package com.google.cloud.vmmigration.v1;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +31,6 @@ import com.google.cloud.vmmigration.v1.stub.VmMigrationStub;
 import com.google.cloud.vmmigration.v1.stub.VmMigrationStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -102,17 +102,32 @@ import javax.annotation.Generated;
  * VmMigrationClient vmMigrationClient = VmMigrationClient.create(vmMigrationSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * VmMigrationSettings vmMigrationSettings =
+ *     VmMigrationSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             VmMigrationSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * VmMigrationClient vmMigrationClient = VmMigrationClient.create(vmMigrationSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class VmMigrationClient implements BackgroundResource {
   private final VmMigrationSettings settings;
   private final VmMigrationStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of VmMigrationClient with default settings. */
   public static final VmMigrationClient create() throws IOException {
-<span class="nc" id="L115">    return create(VmMigrationSettings.newBuilder().build());</span>
+<span class="nc" id="L130">    return create(VmMigrationSettings.newBuilder().build());</span>
   }
 
   /**
@@ -120,7 +135,7 @@ public class VmMigrationClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final VmMigrationClient create(VmMigrationSettings settings) throws IOException {
-<span class="fc" id="L123">    return new VmMigrationClient(settings);</span>
+<span class="fc" id="L138">    return new VmMigrationClient(settings);</span>
   }
 
   /**
@@ -128,7 +143,7 @@ public class VmMigrationClient implements BackgroundResource {
    * advanced usage - prefer using create(VmMigrationSettings).
    */
   public static final VmMigrationClient create(VmMigrationStub stub) {
-<span class="nc" id="L131">    return new VmMigrationClient(stub);</span>
+<span class="nc" id="L146">    return new VmMigrationClient(stub);</span>
   }
 
   /**
@@ -136,32 +151,44 @@ public class VmMigrationClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L139">  protected VmMigrationClient(VmMigrationSettings settings) throws IOException {</span>
-<span class="fc" id="L140">    this.settings = settings;</span>
-<span class="fc" id="L141">    this.stub = ((VmMigrationStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L142">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L143">  }</span>
+<span class="fc" id="L154">  protected VmMigrationClient(VmMigrationSettings settings) throws IOException {</span>
+<span class="fc" id="L155">    this.settings = settings;</span>
+<span class="fc" id="L156">    this.stub = ((VmMigrationStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L157">    this.operationsClient =</span>
+<span class="fc" id="L158">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L159">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L160">  }</span>
 
-<span class="nc" id="L145">  protected VmMigrationClient(VmMigrationStub stub) {</span>
-<span class="nc" id="L146">    this.settings = null;</span>
-<span class="nc" id="L147">    this.stub = stub;</span>
-<span class="nc" id="L148">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L149">  }</span>
+<span class="nc" id="L162">  protected VmMigrationClient(VmMigrationStub stub) {</span>
+<span class="nc" id="L163">    this.settings = null;</span>
+<span class="nc" id="L164">    this.stub = stub;</span>
+<span class="nc" id="L165">    this.operationsClient =</span>
+<span class="nc" id="L166">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L167">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L168">  }</span>
 
   public final VmMigrationSettings getSettings() {
-<span class="nc" id="L152">    return settings;</span>
+<span class="nc" id="L171">    return settings;</span>
   }
 
   public VmMigrationStub getStub() {
-<span class="nc" id="L156">    return stub;</span>
+<span class="nc" id="L175">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L164">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L183">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L191">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -186,10 +213,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListSourcesPagedResponse listSources(LocationName parent) {
     ListSourcesRequest request =
-<span class="fc" id="L189">        ListSourcesRequest.newBuilder()</span>
-<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L191">            .build();</span>
-<span class="fc" id="L192">    return listSources(request);</span>
+<span class="fc" id="L216">        ListSourcesRequest.newBuilder()</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L218">            .build();</span>
+<span class="fc" id="L219">    return listSources(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -213,8 +240,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListSourcesPagedResponse listSources(String parent) {
-<span class="fc" id="L216">    ListSourcesRequest request = ListSourcesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L217">    return listSources(request);</span>
+<span class="fc" id="L243">    ListSourcesRequest request = ListSourcesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L244">    return listSources(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -245,7 +272,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListSourcesPagedResponse listSources(ListSourcesRequest request) {
-<span class="fc" id="L248">    return listSourcesPagedCallable().call(request);</span>
+<span class="fc" id="L275">    return listSourcesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -276,7 +303,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListSourcesRequest, ListSourcesPagedResponse&gt;
       listSourcesPagedCallable() {
-<span class="fc" id="L279">    return stub.listSourcesPagedCallable();</span>
+<span class="fc" id="L306">    return stub.listSourcesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -313,7 +340,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListSourcesRequest, ListSourcesResponse&gt; listSourcesCallable() {
-<span class="nc" id="L316">    return stub.listSourcesCallable();</span>
+<span class="nc" id="L343">    return stub.listSourcesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -336,8 +363,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final Source getSource(SourceName name) {
     GetSourceRequest request =
-<span class="pc bpc" id="L339" title="1 of 2 branches missed.">        GetSourceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L340">    return getSource(request);</span>
+<span class="pc bpc" id="L366" title="1 of 2 branches missed.">        GetSourceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L367">    return getSource(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -359,8 +386,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Source getSource(String name) {
-<span class="fc" id="L362">    GetSourceRequest request = GetSourceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L363">    return getSource(request);</span>
+<span class="fc" id="L389">    GetSourceRequest request = GetSourceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L390">    return getSource(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -385,7 +412,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Source getSource(GetSourceRequest request) {
-<span class="fc" id="L388">    return getSourceCallable().call(request);</span>
+<span class="fc" id="L415">    return getSourceCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -409,7 +436,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetSourceRequest, Source&gt; getSourceCallable() {
-<span class="fc" id="L412">    return stub.getSourceCallable();</span>
+<span class="fc" id="L439">    return stub.getSourceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -437,12 +464,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Source, OperationMetadata&gt; createSourceAsync(
       LocationName parent, Source source, String sourceId) {
     CreateSourceRequest request =
-<span class="fc" id="L440">        CreateSourceRequest.newBuilder()</span>
-<span class="pc bpc" id="L441" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L442">            .setSource(source)</span>
-<span class="fc" id="L443">            .setSourceId(sourceId)</span>
-<span class="fc" id="L444">            .build();</span>
-<span class="fc" id="L445">    return createSourceAsync(request);</span>
+<span class="fc" id="L467">        CreateSourceRequest.newBuilder()</span>
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L469">            .setSource(source)</span>
+<span class="fc" id="L470">            .setSourceId(sourceId)</span>
+<span class="fc" id="L471">            .build();</span>
+<span class="fc" id="L472">    return createSourceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -470,12 +497,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Source, OperationMetadata&gt; createSourceAsync(
       String parent, Source source, String sourceId) {
     CreateSourceRequest request =
-<span class="fc" id="L473">        CreateSourceRequest.newBuilder()</span>
-<span class="fc" id="L474">            .setParent(parent)</span>
-<span class="fc" id="L475">            .setSource(source)</span>
-<span class="fc" id="L476">            .setSourceId(sourceId)</span>
-<span class="fc" id="L477">            .build();</span>
-<span class="fc" id="L478">    return createSourceAsync(request);</span>
+<span class="fc" id="L500">        CreateSourceRequest.newBuilder()</span>
+<span class="fc" id="L501">            .setParent(parent)</span>
+<span class="fc" id="L502">            .setSource(source)</span>
+<span class="fc" id="L503">            .setSourceId(sourceId)</span>
+<span class="fc" id="L504">            .build();</span>
+<span class="fc" id="L505">    return createSourceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -504,7 +531,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Source, OperationMetadata&gt; createSourceAsync(
       CreateSourceRequest request) {
-<span class="fc" id="L507">    return createSourceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L534">    return createSourceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -533,7 +560,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateSourceRequest, Source, OperationMetadata&gt;
       createSourceOperationCallable() {
-<span class="fc" id="L536">    return stub.createSourceOperationCallable();</span>
+<span class="fc" id="L563">    return stub.createSourceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -560,7 +587,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateSourceRequest, Operation&gt; createSourceCallable() {
-<span class="nc" id="L563">    return stub.createSourceCallable();</span>
+<span class="nc" id="L590">    return stub.createSourceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -589,8 +616,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Source, OperationMetadata&gt; updateSourceAsync(
       Source source, FieldMask updateMask) {
     UpdateSourceRequest request =
-<span class="fc" id="L592">        UpdateSourceRequest.newBuilder().setSource(source).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L593">    return updateSourceAsync(request);</span>
+<span class="fc" id="L619">        UpdateSourceRequest.newBuilder().setSource(source).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L620">    return updateSourceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -618,7 +645,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Source, OperationMetadata&gt; updateSourceAsync(
       UpdateSourceRequest request) {
-<span class="fc" id="L621">    return updateSourceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L648">    return updateSourceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -646,7 +673,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateSourceRequest, Source, OperationMetadata&gt;
       updateSourceOperationCallable() {
-<span class="fc" id="L649">    return stub.updateSourceOperationCallable();</span>
+<span class="fc" id="L676">    return stub.updateSourceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -672,7 +699,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateSourceRequest, Operation&gt; updateSourceCallable() {
-<span class="nc" id="L675">    return stub.updateSourceCallable();</span>
+<span class="nc" id="L702">    return stub.updateSourceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -695,8 +722,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteSourceAsync(SourceName name) {
     DeleteSourceRequest request =
-<span class="pc bpc" id="L698" title="1 of 2 branches missed.">        DeleteSourceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L699">    return deleteSourceAsync(request);</span>
+<span class="pc bpc" id="L725" title="1 of 2 branches missed.">        DeleteSourceRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L726">    return deleteSourceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -718,8 +745,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteSourceAsync(String name) {
-<span class="fc" id="L721">    DeleteSourceRequest request = DeleteSourceRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L722">    return deleteSourceAsync(request);</span>
+<span class="fc" id="L748">    DeleteSourceRequest request = DeleteSourceRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L749">    return deleteSourceAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -746,7 +773,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteSourceAsync(
       DeleteSourceRequest request) {
-<span class="fc" id="L749">    return deleteSourceOperationCallable().futureCall(request);</span>
+<span class="fc" id="L776">    return deleteSourceOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -773,7 +800,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteSourceRequest, Empty, OperationMetadata&gt;
       deleteSourceOperationCallable() {
-<span class="fc" id="L776">    return stub.deleteSourceOperationCallable();</span>
+<span class="fc" id="L803">    return stub.deleteSourceOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -798,7 +825,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteSourceRequest, Operation&gt; deleteSourceCallable() {
-<span class="nc" id="L801">    return stub.deleteSourceCallable();</span>
+<span class="nc" id="L828">    return stub.deleteSourceCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -824,10 +851,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final FetchInventoryResponse fetchInventory(SourceName source) {
     FetchInventoryRequest request =
-<span class="fc" id="L827">        FetchInventoryRequest.newBuilder()</span>
-<span class="pc bpc" id="L828" title="1 of 2 branches missed.">            .setSource(source == null ? null : source.toString())</span>
-<span class="fc" id="L829">            .build();</span>
-<span class="fc" id="L830">    return fetchInventory(request);</span>
+<span class="fc" id="L854">        FetchInventoryRequest.newBuilder()</span>
+<span class="pc bpc" id="L855" title="1 of 2 branches missed.">            .setSource(source == null ? null : source.toString())</span>
+<span class="fc" id="L856">            .build();</span>
+<span class="fc" id="L857">    return fetchInventory(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -852,8 +879,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final FetchInventoryResponse fetchInventory(String source) {
-<span class="fc" id="L855">    FetchInventoryRequest request = FetchInventoryRequest.newBuilder().setSource(source).build();</span>
-<span class="fc" id="L856">    return fetchInventory(request);</span>
+<span class="fc" id="L882">    FetchInventoryRequest request = FetchInventoryRequest.newBuilder().setSource(source).build();</span>
+<span class="fc" id="L883">    return fetchInventory(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -882,7 +909,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final FetchInventoryResponse fetchInventory(FetchInventoryRequest request) {
-<span class="fc" id="L885">    return fetchInventoryCallable().call(request);</span>
+<span class="fc" id="L912">    return fetchInventoryCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -912,7 +939,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;FetchInventoryRequest, FetchInventoryResponse&gt;
       fetchInventoryCallable() {
-<span class="fc" id="L915">    return stub.fetchInventoryCallable();</span>
+<span class="fc" id="L942">    return stub.fetchInventoryCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -938,10 +965,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListUtilizationReportsPagedResponse listUtilizationReports(SourceName parent) {
     ListUtilizationReportsRequest request =
-<span class="fc" id="L941">        ListUtilizationReportsRequest.newBuilder()</span>
-<span class="pc bpc" id="L942" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L943">            .build();</span>
-<span class="fc" id="L944">    return listUtilizationReports(request);</span>
+<span class="fc" id="L968">        ListUtilizationReportsRequest.newBuilder()</span>
+<span class="pc bpc" id="L969" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L970">            .build();</span>
+<span class="fc" id="L971">    return listUtilizationReports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -967,8 +994,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListUtilizationReportsPagedResponse listUtilizationReports(String parent) {
     ListUtilizationReportsRequest request =
-<span class="fc" id="L970">        ListUtilizationReportsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L971">    return listUtilizationReports(request);</span>
+<span class="fc" id="L997">        ListUtilizationReportsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L998">    return listUtilizationReports(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1002,7 +1029,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListUtilizationReportsPagedResponse listUtilizationReports(
       ListUtilizationReportsRequest request) {
-<span class="fc" id="L1005">    return listUtilizationReportsPagedCallable().call(request);</span>
+<span class="fc" id="L1032">    return listUtilizationReportsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1035,7 +1062,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListUtilizationReportsRequest, ListUtilizationReportsPagedResponse&gt;
       listUtilizationReportsPagedCallable() {
-<span class="fc" id="L1038">    return stub.listUtilizationReportsPagedCallable();</span>
+<span class="fc" id="L1065">    return stub.listUtilizationReportsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1075,7 +1102,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListUtilizationReportsRequest, ListUtilizationReportsResponse&gt;
       listUtilizationReportsCallable() {
-<span class="nc" id="L1078">    return stub.listUtilizationReportsCallable();</span>
+<span class="nc" id="L1105">    return stub.listUtilizationReportsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1099,10 +1126,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UtilizationReport getUtilizationReport(UtilizationReportName name) {
     GetUtilizationReportRequest request =
-<span class="fc" id="L1102">        GetUtilizationReportRequest.newBuilder()</span>
-<span class="pc bpc" id="L1103" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1104">            .build();</span>
-<span class="fc" id="L1105">    return getUtilizationReport(request);</span>
+<span class="fc" id="L1129">        GetUtilizationReportRequest.newBuilder()</span>
+<span class="pc bpc" id="L1130" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1131">            .build();</span>
+<span class="fc" id="L1132">    return getUtilizationReport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1127,8 +1154,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UtilizationReport getUtilizationReport(String name) {
     GetUtilizationReportRequest request =
-<span class="fc" id="L1130">        GetUtilizationReportRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1131">    return getUtilizationReport(request);</span>
+<span class="fc" id="L1157">        GetUtilizationReportRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1158">    return getUtilizationReport(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1157,7 +1184,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final UtilizationReport getUtilizationReport(GetUtilizationReportRequest request) {
-<span class="fc" id="L1160">    return getUtilizationReportCallable().call(request);</span>
+<span class="fc" id="L1187">    return getUtilizationReportCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1187,7 +1214,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetUtilizationReportRequest, UtilizationReport&gt;
       getUtilizationReportCallable() {
-<span class="fc" id="L1190">    return stub.getUtilizationReportCallable();</span>
+<span class="fc" id="L1217">    return stub.getUtilizationReportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1221,12 +1248,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;UtilizationReport, OperationMetadata&gt; createUtilizationReportAsync(
       SourceName parent, UtilizationReport utilizationReport, String utilizationReportId) {
     CreateUtilizationReportRequest request =
-<span class="fc" id="L1224">        CreateUtilizationReportRequest.newBuilder()</span>
-<span class="pc bpc" id="L1225" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1226">            .setUtilizationReport(utilizationReport)</span>
-<span class="fc" id="L1227">            .setUtilizationReportId(utilizationReportId)</span>
-<span class="fc" id="L1228">            .build();</span>
-<span class="fc" id="L1229">    return createUtilizationReportAsync(request);</span>
+<span class="fc" id="L1251">        CreateUtilizationReportRequest.newBuilder()</span>
+<span class="pc bpc" id="L1252" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1253">            .setUtilizationReport(utilizationReport)</span>
+<span class="fc" id="L1254">            .setUtilizationReportId(utilizationReportId)</span>
+<span class="fc" id="L1255">            .build();</span>
+<span class="fc" id="L1256">    return createUtilizationReportAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1260,12 +1287,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;UtilizationReport, OperationMetadata&gt; createUtilizationReportAsync(
       String parent, UtilizationReport utilizationReport, String utilizationReportId) {
     CreateUtilizationReportRequest request =
-<span class="fc" id="L1263">        CreateUtilizationReportRequest.newBuilder()</span>
-<span class="fc" id="L1264">            .setParent(parent)</span>
-<span class="fc" id="L1265">            .setUtilizationReport(utilizationReport)</span>
-<span class="fc" id="L1266">            .setUtilizationReportId(utilizationReportId)</span>
-<span class="fc" id="L1267">            .build();</span>
-<span class="fc" id="L1268">    return createUtilizationReportAsync(request);</span>
+<span class="fc" id="L1290">        CreateUtilizationReportRequest.newBuilder()</span>
+<span class="fc" id="L1291">            .setParent(parent)</span>
+<span class="fc" id="L1292">            .setUtilizationReport(utilizationReport)</span>
+<span class="fc" id="L1293">            .setUtilizationReportId(utilizationReportId)</span>
+<span class="fc" id="L1294">            .build();</span>
+<span class="fc" id="L1295">    return createUtilizationReportAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1294,7 +1321,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;UtilizationReport, OperationMetadata&gt; createUtilizationReportAsync(
       CreateUtilizationReportRequest request) {
-<span class="fc" id="L1297">    return createUtilizationReportOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1324">    return createUtilizationReportOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1324,7 +1351,7 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateUtilizationReportRequest, UtilizationReport, OperationMetadata&gt;
       createUtilizationReportOperationCallable() {
-<span class="fc" id="L1327">    return stub.createUtilizationReportOperationCallable();</span>
+<span class="fc" id="L1354">    return stub.createUtilizationReportOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1353,7 +1380,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateUtilizationReportRequest, Operation&gt;
       createUtilizationReportCallable() {
-<span class="nc" id="L1356">    return stub.createUtilizationReportCallable();</span>
+<span class="nc" id="L1383">    return stub.createUtilizationReportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1378,10 +1405,10 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteUtilizationReportAsync(
       UtilizationReportName name) {
     DeleteUtilizationReportRequest request =
-<span class="fc" id="L1381">        DeleteUtilizationReportRequest.newBuilder()</span>
-<span class="pc bpc" id="L1382" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1383">            .build();</span>
-<span class="fc" id="L1384">    return deleteUtilizationReportAsync(request);</span>
+<span class="fc" id="L1408">        DeleteUtilizationReportRequest.newBuilder()</span>
+<span class="pc bpc" id="L1409" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1410">            .build();</span>
+<span class="fc" id="L1411">    return deleteUtilizationReportAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1406,8 +1433,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteUtilizationReportAsync(String name) {
     DeleteUtilizationReportRequest request =
-<span class="fc" id="L1409">        DeleteUtilizationReportRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1410">    return deleteUtilizationReportAsync(request);</span>
+<span class="fc" id="L1436">        DeleteUtilizationReportRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1437">    return deleteUtilizationReportAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1437,7 +1464,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteUtilizationReportAsync(
       DeleteUtilizationReportRequest request) {
-<span class="fc" id="L1440">    return deleteUtilizationReportOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1467">    return deleteUtilizationReportOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1467,7 +1494,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteUtilizationReportRequest, Empty, OperationMetadata&gt;
       deleteUtilizationReportOperationCallable() {
-<span class="fc" id="L1470">    return stub.deleteUtilizationReportOperationCallable();</span>
+<span class="fc" id="L1497">    return stub.deleteUtilizationReportOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1497,7 +1524,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteUtilizationReportRequest, Operation&gt;
       deleteUtilizationReportCallable() {
-<span class="nc" id="L1500">    return stub.deleteUtilizationReportCallable();</span>
+<span class="nc" id="L1527">    return stub.deleteUtilizationReportCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1523,10 +1550,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListDatacenterConnectorsPagedResponse listDatacenterConnectors(SourceName parent) {
     ListDatacenterConnectorsRequest request =
-<span class="fc" id="L1526">        ListDatacenterConnectorsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1527" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1528">            .build();</span>
-<span class="fc" id="L1529">    return listDatacenterConnectors(request);</span>
+<span class="fc" id="L1553">        ListDatacenterConnectorsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1554" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1555">            .build();</span>
+<span class="fc" id="L1556">    return listDatacenterConnectors(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1552,8 +1579,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListDatacenterConnectorsPagedResponse listDatacenterConnectors(String parent) {
     ListDatacenterConnectorsRequest request =
-<span class="fc" id="L1555">        ListDatacenterConnectorsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1556">    return listDatacenterConnectors(request);</span>
+<span class="fc" id="L1582">        ListDatacenterConnectorsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1583">    return listDatacenterConnectors(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1586,7 +1613,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListDatacenterConnectorsPagedResponse listDatacenterConnectors(
       ListDatacenterConnectorsRequest request) {
-<span class="fc" id="L1589">    return listDatacenterConnectorsPagedCallable().call(request);</span>
+<span class="fc" id="L1616">    return listDatacenterConnectorsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1618,7 +1645,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDatacenterConnectorsRequest, ListDatacenterConnectorsPagedResponse&gt;
       listDatacenterConnectorsPagedCallable() {
-<span class="fc" id="L1621">    return stub.listDatacenterConnectorsPagedCallable();</span>
+<span class="fc" id="L1648">    return stub.listDatacenterConnectorsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1657,7 +1684,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDatacenterConnectorsRequest, ListDatacenterConnectorsResponse&gt;
       listDatacenterConnectorsCallable() {
-<span class="nc" id="L1660">    return stub.listDatacenterConnectorsCallable();</span>
+<span class="nc" id="L1687">    return stub.listDatacenterConnectorsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1682,10 +1709,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final DatacenterConnector getDatacenterConnector(DatacenterConnectorName name) {
     GetDatacenterConnectorRequest request =
-<span class="fc" id="L1685">        GetDatacenterConnectorRequest.newBuilder()</span>
-<span class="pc bpc" id="L1686" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1687">            .build();</span>
-<span class="fc" id="L1688">    return getDatacenterConnector(request);</span>
+<span class="fc" id="L1712">        GetDatacenterConnectorRequest.newBuilder()</span>
+<span class="pc bpc" id="L1713" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1714">            .build();</span>
+<span class="fc" id="L1715">    return getDatacenterConnector(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1711,8 +1738,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final DatacenterConnector getDatacenterConnector(String name) {
     GetDatacenterConnectorRequest request =
-<span class="fc" id="L1714">        GetDatacenterConnectorRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1715">    return getDatacenterConnector(request);</span>
+<span class="fc" id="L1741">        GetDatacenterConnectorRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1742">    return getDatacenterConnector(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1740,7 +1767,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final DatacenterConnector getDatacenterConnector(GetDatacenterConnectorRequest request) {
-<span class="fc" id="L1743">    return getDatacenterConnectorCallable().call(request);</span>
+<span class="fc" id="L1770">    return getDatacenterConnectorCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1769,7 +1796,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetDatacenterConnectorRequest, DatacenterConnector&gt;
       getDatacenterConnectorCallable() {
-<span class="fc" id="L1772">    return stub.getDatacenterConnectorCallable();</span>
+<span class="fc" id="L1799">    return stub.getDatacenterConnectorCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1805,12 +1832,12 @@ public class VmMigrationClient implements BackgroundResource {
           DatacenterConnector datacenterConnector,
           String datacenterConnectorId) {
     CreateDatacenterConnectorRequest request =
-<span class="fc" id="L1808">        CreateDatacenterConnectorRequest.newBuilder()</span>
-<span class="pc bpc" id="L1809" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1810">            .setDatacenterConnector(datacenterConnector)</span>
-<span class="fc" id="L1811">            .setDatacenterConnectorId(datacenterConnectorId)</span>
-<span class="fc" id="L1812">            .build();</span>
-<span class="fc" id="L1813">    return createDatacenterConnectorAsync(request);</span>
+<span class="fc" id="L1835">        CreateDatacenterConnectorRequest.newBuilder()</span>
+<span class="pc bpc" id="L1836" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1837">            .setDatacenterConnector(datacenterConnector)</span>
+<span class="fc" id="L1838">            .setDatacenterConnectorId(datacenterConnectorId)</span>
+<span class="fc" id="L1839">            .build();</span>
+<span class="fc" id="L1840">    return createDatacenterConnectorAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1844,12 +1871,12 @@ public class VmMigrationClient implements BackgroundResource {
       createDatacenterConnectorAsync(
           String parent, DatacenterConnector datacenterConnector, String datacenterConnectorId) {
     CreateDatacenterConnectorRequest request =
-<span class="fc" id="L1847">        CreateDatacenterConnectorRequest.newBuilder()</span>
-<span class="fc" id="L1848">            .setParent(parent)</span>
-<span class="fc" id="L1849">            .setDatacenterConnector(datacenterConnector)</span>
-<span class="fc" id="L1850">            .setDatacenterConnectorId(datacenterConnectorId)</span>
-<span class="fc" id="L1851">            .build();</span>
-<span class="fc" id="L1852">    return createDatacenterConnectorAsync(request);</span>
+<span class="fc" id="L1874">        CreateDatacenterConnectorRequest.newBuilder()</span>
+<span class="fc" id="L1875">            .setParent(parent)</span>
+<span class="fc" id="L1876">            .setDatacenterConnector(datacenterConnector)</span>
+<span class="fc" id="L1877">            .setDatacenterConnectorId(datacenterConnectorId)</span>
+<span class="fc" id="L1878">            .build();</span>
+<span class="fc" id="L1879">    return createDatacenterConnectorAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1879,7 +1906,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DatacenterConnector, OperationMetadata&gt;
       createDatacenterConnectorAsync(CreateDatacenterConnectorRequest request) {
-<span class="fc" id="L1882">    return createDatacenterConnectorOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1909">    return createDatacenterConnectorOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1909,7 +1936,7 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateDatacenterConnectorRequest, DatacenterConnector, OperationMetadata&gt;
       createDatacenterConnectorOperationCallable() {
-<span class="fc" id="L1912">    return stub.createDatacenterConnectorOperationCallable();</span>
+<span class="fc" id="L1939">    return stub.createDatacenterConnectorOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1938,7 +1965,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateDatacenterConnectorRequest, Operation&gt;
       createDatacenterConnectorCallable() {
-<span class="nc" id="L1941">    return stub.createDatacenterConnectorCallable();</span>
+<span class="nc" id="L1968">    return stub.createDatacenterConnectorCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1964,10 +1991,10 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDatacenterConnectorAsync(
       DatacenterConnectorName name) {
     DeleteDatacenterConnectorRequest request =
-<span class="fc" id="L1967">        DeleteDatacenterConnectorRequest.newBuilder()</span>
-<span class="pc bpc" id="L1968" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1969">            .build();</span>
-<span class="fc" id="L1970">    return deleteDatacenterConnectorAsync(request);</span>
+<span class="fc" id="L1994">        DeleteDatacenterConnectorRequest.newBuilder()</span>
+<span class="pc bpc" id="L1995" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1996">            .build();</span>
+<span class="fc" id="L1997">    return deleteDatacenterConnectorAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1994,8 +2021,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDatacenterConnectorAsync(
       String name) {
     DeleteDatacenterConnectorRequest request =
-<span class="fc" id="L1997">        DeleteDatacenterConnectorRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1998">    return deleteDatacenterConnectorAsync(request);</span>
+<span class="fc" id="L2024">        DeleteDatacenterConnectorRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2025">    return deleteDatacenterConnectorAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2025,7 +2052,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDatacenterConnectorAsync(
       DeleteDatacenterConnectorRequest request) {
-<span class="fc" id="L2028">    return deleteDatacenterConnectorOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2055">    return deleteDatacenterConnectorOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2055,7 +2082,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteDatacenterConnectorRequest, Empty, OperationMetadata&gt;
       deleteDatacenterConnectorOperationCallable() {
-<span class="fc" id="L2058">    return stub.deleteDatacenterConnectorOperationCallable();</span>
+<span class="fc" id="L2085">    return stub.deleteDatacenterConnectorOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2085,7 +2112,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteDatacenterConnectorRequest, Operation&gt;
       deleteDatacenterConnectorCallable() {
-<span class="nc" id="L2088">    return stub.deleteDatacenterConnectorCallable();</span>
+<span class="nc" id="L2115">    return stub.deleteDatacenterConnectorCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2114,12 +2141,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;MigratingVm, OperationMetadata&gt; createMigratingVmAsync(
       SourceName parent, MigratingVm migratingVm, String migratingVmId) {
     CreateMigratingVmRequest request =
-<span class="fc" id="L2117">        CreateMigratingVmRequest.newBuilder()</span>
-<span class="pc bpc" id="L2118" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2119">            .setMigratingVm(migratingVm)</span>
-<span class="fc" id="L2120">            .setMigratingVmId(migratingVmId)</span>
-<span class="fc" id="L2121">            .build();</span>
-<span class="fc" id="L2122">    return createMigratingVmAsync(request);</span>
+<span class="fc" id="L2144">        CreateMigratingVmRequest.newBuilder()</span>
+<span class="pc bpc" id="L2145" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2146">            .setMigratingVm(migratingVm)</span>
+<span class="fc" id="L2147">            .setMigratingVmId(migratingVmId)</span>
+<span class="fc" id="L2148">            .build();</span>
+<span class="fc" id="L2149">    return createMigratingVmAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2148,12 +2175,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;MigratingVm, OperationMetadata&gt; createMigratingVmAsync(
       String parent, MigratingVm migratingVm, String migratingVmId) {
     CreateMigratingVmRequest request =
-<span class="fc" id="L2151">        CreateMigratingVmRequest.newBuilder()</span>
-<span class="fc" id="L2152">            .setParent(parent)</span>
-<span class="fc" id="L2153">            .setMigratingVm(migratingVm)</span>
-<span class="fc" id="L2154">            .setMigratingVmId(migratingVmId)</span>
-<span class="fc" id="L2155">            .build();</span>
-<span class="fc" id="L2156">    return createMigratingVmAsync(request);</span>
+<span class="fc" id="L2178">        CreateMigratingVmRequest.newBuilder()</span>
+<span class="fc" id="L2179">            .setParent(parent)</span>
+<span class="fc" id="L2180">            .setMigratingVm(migratingVm)</span>
+<span class="fc" id="L2181">            .setMigratingVmId(migratingVmId)</span>
+<span class="fc" id="L2182">            .build();</span>
+<span class="fc" id="L2183">    return createMigratingVmAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2182,7 +2209,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;MigratingVm, OperationMetadata&gt; createMigratingVmAsync(
       CreateMigratingVmRequest request) {
-<span class="fc" id="L2185">    return createMigratingVmOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2212">    return createMigratingVmOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2211,7 +2238,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateMigratingVmRequest, MigratingVm, OperationMetadata&gt;
       createMigratingVmOperationCallable() {
-<span class="fc" id="L2214">    return stub.createMigratingVmOperationCallable();</span>
+<span class="fc" id="L2241">    return stub.createMigratingVmOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2239,7 +2266,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateMigratingVmRequest, Operation&gt; createMigratingVmCallable() {
-<span class="nc" id="L2242">    return stub.createMigratingVmCallable();</span>
+<span class="nc" id="L2269">    return stub.createMigratingVmCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2264,10 +2291,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListMigratingVmsPagedResponse listMigratingVms(SourceName parent) {
     ListMigratingVmsRequest request =
-<span class="fc" id="L2267">        ListMigratingVmsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2268" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2269">            .build();</span>
-<span class="fc" id="L2270">    return listMigratingVms(request);</span>
+<span class="fc" id="L2294">        ListMigratingVmsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2295" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2296">            .build();</span>
+<span class="fc" id="L2297">    return listMigratingVms(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2292,8 +2319,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListMigratingVmsPagedResponse listMigratingVms(String parent) {
     ListMigratingVmsRequest request =
-<span class="fc" id="L2295">        ListMigratingVmsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2296">    return listMigratingVms(request);</span>
+<span class="fc" id="L2322">        ListMigratingVmsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2323">    return listMigratingVms(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2324,7 +2351,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListMigratingVmsPagedResponse listMigratingVms(ListMigratingVmsRequest request) {
-<span class="fc" id="L2327">    return listMigratingVmsPagedCallable().call(request);</span>
+<span class="fc" id="L2354">    return listMigratingVmsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2356,7 +2383,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListMigratingVmsRequest, ListMigratingVmsPagedResponse&gt;
       listMigratingVmsPagedCallable() {
-<span class="fc" id="L2359">    return stub.listMigratingVmsPagedCallable();</span>
+<span class="fc" id="L2386">    return stub.listMigratingVmsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2395,7 +2422,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListMigratingVmsRequest, ListMigratingVmsResponse&gt;
       listMigratingVmsCallable() {
-<span class="nc" id="L2398">    return stub.listMigratingVmsCallable();</span>
+<span class="nc" id="L2425">    return stub.listMigratingVmsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2419,8 +2446,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final MigratingVm getMigratingVm(MigratingVmName name) {
     GetMigratingVmRequest request =
-<span class="pc bpc" id="L2422" title="1 of 2 branches missed.">        GetMigratingVmRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2423">    return getMigratingVm(request);</span>
+<span class="pc bpc" id="L2449" title="1 of 2 branches missed.">        GetMigratingVmRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2450">    return getMigratingVm(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2443,8 +2470,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final MigratingVm getMigratingVm(String name) {
-<span class="fc" id="L2446">    GetMigratingVmRequest request = GetMigratingVmRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2447">    return getMigratingVm(request);</span>
+<span class="fc" id="L2473">    GetMigratingVmRequest request = GetMigratingVmRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2474">    return getMigratingVm(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2471,7 +2498,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final MigratingVm getMigratingVm(GetMigratingVmRequest request) {
-<span class="fc" id="L2474">    return getMigratingVmCallable().call(request);</span>
+<span class="fc" id="L2501">    return getMigratingVmCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2498,7 +2525,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetMigratingVmRequest, MigratingVm&gt; getMigratingVmCallable() {
-<span class="fc" id="L2501">    return stub.getMigratingVmCallable();</span>
+<span class="fc" id="L2528">    return stub.getMigratingVmCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2528,11 +2555,11 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;MigratingVm, OperationMetadata&gt; updateMigratingVmAsync(
       MigratingVm migratingVm, FieldMask updateMask) {
     UpdateMigratingVmRequest request =
-<span class="fc" id="L2531">        UpdateMigratingVmRequest.newBuilder()</span>
-<span class="fc" id="L2532">            .setMigratingVm(migratingVm)</span>
-<span class="fc" id="L2533">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L2534">            .build();</span>
-<span class="fc" id="L2535">    return updateMigratingVmAsync(request);</span>
+<span class="fc" id="L2558">        UpdateMigratingVmRequest.newBuilder()</span>
+<span class="fc" id="L2559">            .setMigratingVm(migratingVm)</span>
+<span class="fc" id="L2560">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L2561">            .build();</span>
+<span class="fc" id="L2562">    return updateMigratingVmAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2560,7 +2587,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;MigratingVm, OperationMetadata&gt; updateMigratingVmAsync(
       UpdateMigratingVmRequest request) {
-<span class="fc" id="L2563">    return updateMigratingVmOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2590">    return updateMigratingVmOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2588,7 +2615,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateMigratingVmRequest, MigratingVm, OperationMetadata&gt;
       updateMigratingVmOperationCallable() {
-<span class="fc" id="L2591">    return stub.updateMigratingVmOperationCallable();</span>
+<span class="fc" id="L2618">    return stub.updateMigratingVmOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2615,7 +2642,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateMigratingVmRequest, Operation&gt; updateMigratingVmCallable() {
-<span class="nc" id="L2618">    return stub.updateMigratingVmCallable();</span>
+<span class="nc" id="L2645">    return stub.updateMigratingVmCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2640,10 +2667,10 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteMigratingVmAsync(
       MigratingVmName name) {
     DeleteMigratingVmRequest request =
-<span class="fc" id="L2643">        DeleteMigratingVmRequest.newBuilder()</span>
-<span class="pc bpc" id="L2644" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2645">            .build();</span>
-<span class="fc" id="L2646">    return deleteMigratingVmAsync(request);</span>
+<span class="fc" id="L2670">        DeleteMigratingVmRequest.newBuilder()</span>
+<span class="pc bpc" id="L2671" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2672">            .build();</span>
+<span class="fc" id="L2673">    return deleteMigratingVmAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2666,8 +2693,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteMigratingVmAsync(String name) {
-<span class="fc" id="L2669">    DeleteMigratingVmRequest request = DeleteMigratingVmRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2670">    return deleteMigratingVmAsync(request);</span>
+<span class="fc" id="L2696">    DeleteMigratingVmRequest request = DeleteMigratingVmRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2697">    return deleteMigratingVmAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2695,7 +2722,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteMigratingVmAsync(
       DeleteMigratingVmRequest request) {
-<span class="fc" id="L2698">    return deleteMigratingVmOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2725">    return deleteMigratingVmOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2723,7 +2750,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteMigratingVmRequest, Empty, OperationMetadata&gt;
       deleteMigratingVmOperationCallable() {
-<span class="fc" id="L2726">    return stub.deleteMigratingVmOperationCallable();</span>
+<span class="fc" id="L2753">    return stub.deleteMigratingVmOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2750,7 +2777,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteMigratingVmRequest, Operation&gt; deleteMigratingVmCallable() {
-<span class="nc" id="L2753">    return stub.deleteMigratingVmCallable();</span>
+<span class="nc" id="L2780">    return stub.deleteMigratingVmCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2776,10 +2803,10 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;StartMigrationResponse, OperationMetadata&gt; startMigrationAsync(
       MigratingVmName migratingVm) {
     StartMigrationRequest request =
-<span class="fc" id="L2779">        StartMigrationRequest.newBuilder()</span>
-<span class="pc bpc" id="L2780" title="1 of 2 branches missed.">            .setMigratingVm(migratingVm == null ? null : migratingVm.toString())</span>
-<span class="fc" id="L2781">            .build();</span>
-<span class="fc" id="L2782">    return startMigrationAsync(request);</span>
+<span class="fc" id="L2806">        StartMigrationRequest.newBuilder()</span>
+<span class="pc bpc" id="L2807" title="1 of 2 branches missed.">            .setMigratingVm(migratingVm == null ? null : migratingVm.toString())</span>
+<span class="fc" id="L2808">            .build();</span>
+<span class="fc" id="L2809">    return startMigrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2805,8 +2832,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;StartMigrationResponse, OperationMetadata&gt; startMigrationAsync(
       String migratingVm) {
     StartMigrationRequest request =
-<span class="fc" id="L2808">        StartMigrationRequest.newBuilder().setMigratingVm(migratingVm).build();</span>
-<span class="fc" id="L2809">    return startMigrationAsync(request);</span>
+<span class="fc" id="L2835">        StartMigrationRequest.newBuilder().setMigratingVm(migratingVm).build();</span>
+<span class="fc" id="L2836">    return startMigrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2835,7 +2862,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;StartMigrationResponse, OperationMetadata&gt; startMigrationAsync(
       StartMigrationRequest request) {
-<span class="fc" id="L2838">    return startMigrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2865">    return startMigrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2864,7 +2891,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;StartMigrationRequest, StartMigrationResponse, OperationMetadata&gt;
       startMigrationOperationCallable() {
-<span class="fc" id="L2867">    return stub.startMigrationOperationCallable();</span>
+<span class="fc" id="L2894">    return stub.startMigrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2891,7 +2918,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;StartMigrationRequest, Operation&gt; startMigrationCallable() {
-<span class="nc" id="L2894">    return stub.startMigrationCallable();</span>
+<span class="nc" id="L2921">    return stub.startMigrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2922,7 +2949,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ResumeMigrationResponse, OperationMetadata&gt; resumeMigrationAsync(
       ResumeMigrationRequest request) {
-<span class="fc" id="L2925">    return resumeMigrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2952">    return resumeMigrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2953,7 +2980,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ResumeMigrationRequest, ResumeMigrationResponse, OperationMetadata&gt;
       resumeMigrationOperationCallable() {
-<span class="fc" id="L2956">    return stub.resumeMigrationOperationCallable();</span>
+<span class="fc" id="L2983">    return stub.resumeMigrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2982,7 +3009,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ResumeMigrationRequest, Operation&gt; resumeMigrationCallable() {
-<span class="nc" id="L2985">    return stub.resumeMigrationCallable();</span>
+<span class="nc" id="L3012">    return stub.resumeMigrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3011,7 +3038,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;PauseMigrationResponse, OperationMetadata&gt; pauseMigrationAsync(
       PauseMigrationRequest request) {
-<span class="fc" id="L3014">    return pauseMigrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3041">    return pauseMigrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3040,7 +3067,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;PauseMigrationRequest, PauseMigrationResponse, OperationMetadata&gt;
       pauseMigrationOperationCallable() {
-<span class="fc" id="L3043">    return stub.pauseMigrationOperationCallable();</span>
+<span class="fc" id="L3070">    return stub.pauseMigrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3067,7 +3094,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;PauseMigrationRequest, Operation&gt; pauseMigrationCallable() {
-<span class="nc" id="L3070">    return stub.pauseMigrationCallable();</span>
+<span class="nc" id="L3097">    return stub.pauseMigrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3094,10 +3121,10 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;FinalizeMigrationResponse, OperationMetadata&gt; finalizeMigrationAsync(
       MigratingVmName migratingVm) {
     FinalizeMigrationRequest request =
-<span class="fc" id="L3097">        FinalizeMigrationRequest.newBuilder()</span>
-<span class="pc bpc" id="L3098" title="1 of 2 branches missed.">            .setMigratingVm(migratingVm == null ? null : migratingVm.toString())</span>
-<span class="fc" id="L3099">            .build();</span>
-<span class="fc" id="L3100">    return finalizeMigrationAsync(request);</span>
+<span class="fc" id="L3124">        FinalizeMigrationRequest.newBuilder()</span>
+<span class="pc bpc" id="L3125" title="1 of 2 branches missed.">            .setMigratingVm(migratingVm == null ? null : migratingVm.toString())</span>
+<span class="fc" id="L3126">            .build();</span>
+<span class="fc" id="L3127">    return finalizeMigrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3124,8 +3151,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;FinalizeMigrationResponse, OperationMetadata&gt; finalizeMigrationAsync(
       String migratingVm) {
     FinalizeMigrationRequest request =
-<span class="fc" id="L3127">        FinalizeMigrationRequest.newBuilder().setMigratingVm(migratingVm).build();</span>
-<span class="fc" id="L3128">    return finalizeMigrationAsync(request);</span>
+<span class="fc" id="L3154">        FinalizeMigrationRequest.newBuilder().setMigratingVm(migratingVm).build();</span>
+<span class="fc" id="L3155">    return finalizeMigrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3154,7 +3181,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;FinalizeMigrationResponse, OperationMetadata&gt; finalizeMigrationAsync(
       FinalizeMigrationRequest request) {
-<span class="fc" id="L3157">    return finalizeMigrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3184">    return finalizeMigrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3184,7 +3211,7 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationCallable&lt;
           FinalizeMigrationRequest, FinalizeMigrationResponse, OperationMetadata&gt;
       finalizeMigrationOperationCallable() {
-<span class="fc" id="L3187">    return stub.finalizeMigrationOperationCallable();</span>
+<span class="fc" id="L3214">    return stub.finalizeMigrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3212,7 +3239,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;FinalizeMigrationRequest, Operation&gt; finalizeMigrationCallable() {
-<span class="nc" id="L3215">    return stub.finalizeMigrationCallable();</span>
+<span class="nc" id="L3242">    return stub.finalizeMigrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3241,12 +3268,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;CloneJob, OperationMetadata&gt; createCloneJobAsync(
       MigratingVmName parent, CloneJob cloneJob, String cloneJobId) {
     CreateCloneJobRequest request =
-<span class="fc" id="L3244">        CreateCloneJobRequest.newBuilder()</span>
-<span class="pc bpc" id="L3245" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L3246">            .setCloneJob(cloneJob)</span>
-<span class="fc" id="L3247">            .setCloneJobId(cloneJobId)</span>
-<span class="fc" id="L3248">            .build();</span>
-<span class="fc" id="L3249">    return createCloneJobAsync(request);</span>
+<span class="fc" id="L3271">        CreateCloneJobRequest.newBuilder()</span>
+<span class="pc bpc" id="L3272" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L3273">            .setCloneJob(cloneJob)</span>
+<span class="fc" id="L3274">            .setCloneJobId(cloneJobId)</span>
+<span class="fc" id="L3275">            .build();</span>
+<span class="fc" id="L3276">    return createCloneJobAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3275,12 +3302,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;CloneJob, OperationMetadata&gt; createCloneJobAsync(
       String parent, CloneJob cloneJob, String cloneJobId) {
     CreateCloneJobRequest request =
-<span class="fc" id="L3278">        CreateCloneJobRequest.newBuilder()</span>
-<span class="fc" id="L3279">            .setParent(parent)</span>
-<span class="fc" id="L3280">            .setCloneJob(cloneJob)</span>
-<span class="fc" id="L3281">            .setCloneJobId(cloneJobId)</span>
-<span class="fc" id="L3282">            .build();</span>
-<span class="fc" id="L3283">    return createCloneJobAsync(request);</span>
+<span class="fc" id="L3305">        CreateCloneJobRequest.newBuilder()</span>
+<span class="fc" id="L3306">            .setParent(parent)</span>
+<span class="fc" id="L3307">            .setCloneJob(cloneJob)</span>
+<span class="fc" id="L3308">            .setCloneJobId(cloneJobId)</span>
+<span class="fc" id="L3309">            .build();</span>
+<span class="fc" id="L3310">    return createCloneJobAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3311,7 +3338,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CloneJob, OperationMetadata&gt; createCloneJobAsync(
       CreateCloneJobRequest request) {
-<span class="fc" id="L3314">    return createCloneJobOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3341">    return createCloneJobOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3342,7 +3369,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateCloneJobRequest, CloneJob, OperationMetadata&gt;
       createCloneJobOperationCallable() {
-<span class="fc" id="L3345">    return stub.createCloneJobOperationCallable();</span>
+<span class="fc" id="L3372">    return stub.createCloneJobOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3371,7 +3398,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateCloneJobRequest, Operation&gt; createCloneJobCallable() {
-<span class="nc" id="L3374">    return stub.createCloneJobCallable();</span>
+<span class="nc" id="L3401">    return stub.createCloneJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3396,8 +3423,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;CancelCloneJobResponse, OperationMetadata&gt; cancelCloneJobAsync(
       CloneJobName name) {
     CancelCloneJobRequest request =
-<span class="pc bpc" id="L3399" title="1 of 2 branches missed.">        CancelCloneJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L3400">    return cancelCloneJobAsync(request);</span>
+<span class="pc bpc" id="L3426" title="1 of 2 branches missed.">        CancelCloneJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3427">    return cancelCloneJobAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3422,8 +3449,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CancelCloneJobResponse, OperationMetadata&gt; cancelCloneJobAsync(
       String name) {
-<span class="fc" id="L3425">    CancelCloneJobRequest request = CancelCloneJobRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3426">    return cancelCloneJobAsync(request);</span>
+<span class="fc" id="L3452">    CancelCloneJobRequest request = CancelCloneJobRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3453">    return cancelCloneJobAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3452,7 +3479,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CancelCloneJobResponse, OperationMetadata&gt; cancelCloneJobAsync(
       CancelCloneJobRequest request) {
-<span class="fc" id="L3455">    return cancelCloneJobOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3482">    return cancelCloneJobOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3481,7 +3508,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CancelCloneJobRequest, CancelCloneJobResponse, OperationMetadata&gt;
       cancelCloneJobOperationCallable() {
-<span class="fc" id="L3484">    return stub.cancelCloneJobOperationCallable();</span>
+<span class="fc" id="L3511">    return stub.cancelCloneJobOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3508,7 +3535,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CancelCloneJobRequest, Operation&gt; cancelCloneJobCallable() {
-<span class="nc" id="L3511">    return stub.cancelCloneJobCallable();</span>
+<span class="nc" id="L3538">    return stub.cancelCloneJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3534,10 +3561,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListCloneJobsPagedResponse listCloneJobs(MigratingVmName parent) {
     ListCloneJobsRequest request =
-<span class="fc" id="L3537">        ListCloneJobsRequest.newBuilder()</span>
-<span class="pc bpc" id="L3538" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L3539">            .build();</span>
-<span class="fc" id="L3540">    return listCloneJobs(request);</span>
+<span class="fc" id="L3564">        ListCloneJobsRequest.newBuilder()</span>
+<span class="pc bpc" id="L3565" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L3566">            .build();</span>
+<span class="fc" id="L3567">    return listCloneJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3562,8 +3589,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListCloneJobsPagedResponse listCloneJobs(String parent) {
-<span class="fc" id="L3565">    ListCloneJobsRequest request = ListCloneJobsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L3566">    return listCloneJobs(request);</span>
+<span class="fc" id="L3592">    ListCloneJobsRequest request = ListCloneJobsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L3593">    return listCloneJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3596,7 +3623,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListCloneJobsPagedResponse listCloneJobs(ListCloneJobsRequest request) {
-<span class="fc" id="L3599">    return listCloneJobsPagedCallable().call(request);</span>
+<span class="fc" id="L3626">    return listCloneJobsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3630,7 +3657,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListCloneJobsRequest, ListCloneJobsPagedResponse&gt;
       listCloneJobsPagedCallable() {
-<span class="fc" id="L3633">    return stub.listCloneJobsPagedCallable();</span>
+<span class="fc" id="L3660">    return stub.listCloneJobsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3669,7 +3696,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListCloneJobsRequest, ListCloneJobsResponse&gt; listCloneJobsCallable() {
-<span class="nc" id="L3672">    return stub.listCloneJobsCallable();</span>
+<span class="nc" id="L3699">    return stub.listCloneJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3693,8 +3720,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final CloneJob getCloneJob(CloneJobName name) {
     GetCloneJobRequest request =
-<span class="pc bpc" id="L3696" title="1 of 2 branches missed.">        GetCloneJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L3697">    return getCloneJob(request);</span>
+<span class="pc bpc" id="L3723" title="1 of 2 branches missed.">        GetCloneJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3724">    return getCloneJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3718,8 +3745,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final CloneJob getCloneJob(String name) {
-<span class="fc" id="L3721">    GetCloneJobRequest request = GetCloneJobRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3722">    return getCloneJob(request);</span>
+<span class="fc" id="L3748">    GetCloneJobRequest request = GetCloneJobRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3749">    return getCloneJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3747,7 +3774,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final CloneJob getCloneJob(GetCloneJobRequest request) {
-<span class="fc" id="L3750">    return getCloneJobCallable().call(request);</span>
+<span class="fc" id="L3777">    return getCloneJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3774,7 +3801,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetCloneJobRequest, CloneJob&gt; getCloneJobCallable() {
-<span class="fc" id="L3777">    return stub.getCloneJobCallable();</span>
+<span class="fc" id="L3804">    return stub.getCloneJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3805,12 +3832,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;CutoverJob, OperationMetadata&gt; createCutoverJobAsync(
       MigratingVmName parent, CutoverJob cutoverJob, String cutoverJobId) {
     CreateCutoverJobRequest request =
-<span class="fc" id="L3808">        CreateCutoverJobRequest.newBuilder()</span>
-<span class="pc bpc" id="L3809" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L3810">            .setCutoverJob(cutoverJob)</span>
-<span class="fc" id="L3811">            .setCutoverJobId(cutoverJobId)</span>
-<span class="fc" id="L3812">            .build();</span>
-<span class="fc" id="L3813">    return createCutoverJobAsync(request);</span>
+<span class="fc" id="L3835">        CreateCutoverJobRequest.newBuilder()</span>
+<span class="pc bpc" id="L3836" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L3837">            .setCutoverJob(cutoverJob)</span>
+<span class="fc" id="L3838">            .setCutoverJobId(cutoverJobId)</span>
+<span class="fc" id="L3839">            .build();</span>
+<span class="fc" id="L3840">    return createCutoverJobAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3841,12 +3868,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;CutoverJob, OperationMetadata&gt; createCutoverJobAsync(
       String parent, CutoverJob cutoverJob, String cutoverJobId) {
     CreateCutoverJobRequest request =
-<span class="fc" id="L3844">        CreateCutoverJobRequest.newBuilder()</span>
-<span class="fc" id="L3845">            .setParent(parent)</span>
-<span class="fc" id="L3846">            .setCutoverJob(cutoverJob)</span>
-<span class="fc" id="L3847">            .setCutoverJobId(cutoverJobId)</span>
-<span class="fc" id="L3848">            .build();</span>
-<span class="fc" id="L3849">    return createCutoverJobAsync(request);</span>
+<span class="fc" id="L3871">        CreateCutoverJobRequest.newBuilder()</span>
+<span class="fc" id="L3872">            .setParent(parent)</span>
+<span class="fc" id="L3873">            .setCutoverJob(cutoverJob)</span>
+<span class="fc" id="L3874">            .setCutoverJobId(cutoverJobId)</span>
+<span class="fc" id="L3875">            .build();</span>
+<span class="fc" id="L3876">    return createCutoverJobAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3878,7 +3905,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CutoverJob, OperationMetadata&gt; createCutoverJobAsync(
       CreateCutoverJobRequest request) {
-<span class="fc" id="L3881">    return createCutoverJobOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3908">    return createCutoverJobOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3910,7 +3937,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateCutoverJobRequest, CutoverJob, OperationMetadata&gt;
       createCutoverJobOperationCallable() {
-<span class="fc" id="L3913">    return stub.createCutoverJobOperationCallable();</span>
+<span class="fc" id="L3940">    return stub.createCutoverJobOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3941,7 +3968,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateCutoverJobRequest, Operation&gt; createCutoverJobCallable() {
-<span class="nc" id="L3944">    return stub.createCutoverJobCallable();</span>
+<span class="nc" id="L3971">    return stub.createCutoverJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3967,8 +3994,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;CancelCutoverJobResponse, OperationMetadata&gt; cancelCutoverJobAsync(
       CutoverJobName name) {
     CancelCutoverJobRequest request =
-<span class="pc bpc" id="L3970" title="1 of 2 branches missed.">        CancelCutoverJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L3971">    return cancelCutoverJobAsync(request);</span>
+<span class="pc bpc" id="L3997" title="1 of 2 branches missed.">        CancelCutoverJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3998">    return cancelCutoverJobAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3994,8 +4021,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CancelCutoverJobResponse, OperationMetadata&gt; cancelCutoverJobAsync(
       String name) {
-<span class="fc" id="L3997">    CancelCutoverJobRequest request = CancelCutoverJobRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3998">    return cancelCutoverJobAsync(request);</span>
+<span class="fc" id="L4024">    CancelCutoverJobRequest request = CancelCutoverJobRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L4025">    return cancelCutoverJobAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4024,7 +4051,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;CancelCutoverJobResponse, OperationMetadata&gt; cancelCutoverJobAsync(
       CancelCutoverJobRequest request) {
-<span class="fc" id="L4027">    return cancelCutoverJobOperationCallable().futureCall(request);</span>
+<span class="fc" id="L4054">    return cancelCutoverJobOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4054,7 +4081,7 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationCallable&lt;
           CancelCutoverJobRequest, CancelCutoverJobResponse, OperationMetadata&gt;
       cancelCutoverJobOperationCallable() {
-<span class="fc" id="L4057">    return stub.cancelCutoverJobOperationCallable();</span>
+<span class="fc" id="L4084">    return stub.cancelCutoverJobOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4082,7 +4109,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CancelCutoverJobRequest, Operation&gt; cancelCutoverJobCallable() {
-<span class="nc" id="L4085">    return stub.cancelCutoverJobCallable();</span>
+<span class="nc" id="L4112">    return stub.cancelCutoverJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4108,10 +4135,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListCutoverJobsPagedResponse listCutoverJobs(MigratingVmName parent) {
     ListCutoverJobsRequest request =
-<span class="fc" id="L4111">        ListCutoverJobsRequest.newBuilder()</span>
-<span class="pc bpc" id="L4112" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4113">            .build();</span>
-<span class="fc" id="L4114">    return listCutoverJobs(request);</span>
+<span class="fc" id="L4138">        ListCutoverJobsRequest.newBuilder()</span>
+<span class="pc bpc" id="L4139" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4140">            .build();</span>
+<span class="fc" id="L4141">    return listCutoverJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4136,8 +4163,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListCutoverJobsPagedResponse listCutoverJobs(String parent) {
-<span class="fc" id="L4139">    ListCutoverJobsRequest request = ListCutoverJobsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L4140">    return listCutoverJobs(request);</span>
+<span class="fc" id="L4166">    ListCutoverJobsRequest request = ListCutoverJobsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L4167">    return listCutoverJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4170,7 +4197,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListCutoverJobsPagedResponse listCutoverJobs(ListCutoverJobsRequest request) {
-<span class="fc" id="L4173">    return listCutoverJobsPagedCallable().call(request);</span>
+<span class="fc" id="L4200">    return listCutoverJobsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4204,7 +4231,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListCutoverJobsRequest, ListCutoverJobsPagedResponse&gt;
       listCutoverJobsPagedCallable() {
-<span class="fc" id="L4207">    return stub.listCutoverJobsPagedCallable();</span>
+<span class="fc" id="L4234">    return stub.listCutoverJobsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4245,7 +4272,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListCutoverJobsRequest, ListCutoverJobsResponse&gt;
       listCutoverJobsCallable() {
-<span class="nc" id="L4248">    return stub.listCutoverJobsCallable();</span>
+<span class="nc" id="L4275">    return stub.listCutoverJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4270,8 +4297,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final CutoverJob getCutoverJob(CutoverJobName name) {
     GetCutoverJobRequest request =
-<span class="pc bpc" id="L4273" title="1 of 2 branches missed.">        GetCutoverJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L4274">    return getCutoverJob(request);</span>
+<span class="pc bpc" id="L4300" title="1 of 2 branches missed.">        GetCutoverJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L4301">    return getCutoverJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4296,8 +4323,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final CutoverJob getCutoverJob(String name) {
-<span class="fc" id="L4299">    GetCutoverJobRequest request = GetCutoverJobRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L4300">    return getCutoverJob(request);</span>
+<span class="fc" id="L4326">    GetCutoverJobRequest request = GetCutoverJobRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L4327">    return getCutoverJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4325,7 +4352,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final CutoverJob getCutoverJob(GetCutoverJobRequest request) {
-<span class="fc" id="L4328">    return getCutoverJobCallable().call(request);</span>
+<span class="fc" id="L4355">    return getCutoverJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4352,7 +4379,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetCutoverJobRequest, CutoverJob&gt; getCutoverJobCallable() {
-<span class="fc" id="L4355">    return stub.getCutoverJobCallable();</span>
+<span class="fc" id="L4382">    return stub.getCutoverJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4377,8 +4404,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListGroupsPagedResponse listGroups(LocationName parent) {
     ListGroupsRequest request =
-<span class="pc bpc" id="L4380" title="1 of 2 branches missed.">        ListGroupsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L4381">    return listGroups(request);</span>
+<span class="pc bpc" id="L4407" title="1 of 2 branches missed.">        ListGroupsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L4408">    return listGroups(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4402,8 +4429,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListGroupsPagedResponse listGroups(String parent) {
-<span class="fc" id="L4405">    ListGroupsRequest request = ListGroupsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L4406">    return listGroups(request);</span>
+<span class="fc" id="L4432">    ListGroupsRequest request = ListGroupsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L4433">    return listGroups(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4434,7 +4461,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListGroupsPagedResponse listGroups(ListGroupsRequest request) {
-<span class="fc" id="L4437">    return listGroupsPagedCallable().call(request);</span>
+<span class="fc" id="L4464">    return listGroupsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4464,7 +4491,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListGroupsRequest, ListGroupsPagedResponse&gt; listGroupsPagedCallable() {
-<span class="fc" id="L4467">    return stub.listGroupsPagedCallable();</span>
+<span class="fc" id="L4494">    return stub.listGroupsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4501,7 +4528,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListGroupsRequest, ListGroupsResponse&gt; listGroupsCallable() {
-<span class="nc" id="L4504">    return stub.listGroupsCallable();</span>
+<span class="nc" id="L4531">    return stub.listGroupsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4524,8 +4551,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final Group getGroup(GroupName name) {
     GetGroupRequest request =
-<span class="pc bpc" id="L4527" title="1 of 2 branches missed.">        GetGroupRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L4528">    return getGroup(request);</span>
+<span class="pc bpc" id="L4554" title="1 of 2 branches missed.">        GetGroupRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L4555">    return getGroup(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4547,8 +4574,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Group getGroup(String name) {
-<span class="fc" id="L4550">    GetGroupRequest request = GetGroupRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L4551">    return getGroup(request);</span>
+<span class="fc" id="L4577">    GetGroupRequest request = GetGroupRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L4578">    return getGroup(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4573,7 +4600,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Group getGroup(GetGroupRequest request) {
-<span class="fc" id="L4576">    return getGroupCallable().call(request);</span>
+<span class="fc" id="L4603">    return getGroupCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4597,7 +4624,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetGroupRequest, Group&gt; getGroupCallable() {
-<span class="fc" id="L4600">    return stub.getGroupCallable();</span>
+<span class="fc" id="L4627">    return stub.getGroupCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4625,12 +4652,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Group, OperationMetadata&gt; createGroupAsync(
       LocationName parent, Group group, String groupId) {
     CreateGroupRequest request =
-<span class="fc" id="L4628">        CreateGroupRequest.newBuilder()</span>
-<span class="pc bpc" id="L4629" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4630">            .setGroup(group)</span>
-<span class="fc" id="L4631">            .setGroupId(groupId)</span>
-<span class="fc" id="L4632">            .build();</span>
-<span class="fc" id="L4633">    return createGroupAsync(request);</span>
+<span class="fc" id="L4655">        CreateGroupRequest.newBuilder()</span>
+<span class="pc bpc" id="L4656" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4657">            .setGroup(group)</span>
+<span class="fc" id="L4658">            .setGroupId(groupId)</span>
+<span class="fc" id="L4659">            .build();</span>
+<span class="fc" id="L4660">    return createGroupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4658,12 +4685,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Group, OperationMetadata&gt; createGroupAsync(
       String parent, Group group, String groupId) {
     CreateGroupRequest request =
-<span class="fc" id="L4661">        CreateGroupRequest.newBuilder()</span>
-<span class="fc" id="L4662">            .setParent(parent)</span>
-<span class="fc" id="L4663">            .setGroup(group)</span>
-<span class="fc" id="L4664">            .setGroupId(groupId)</span>
-<span class="fc" id="L4665">            .build();</span>
-<span class="fc" id="L4666">    return createGroupAsync(request);</span>
+<span class="fc" id="L4688">        CreateGroupRequest.newBuilder()</span>
+<span class="fc" id="L4689">            .setParent(parent)</span>
+<span class="fc" id="L4690">            .setGroup(group)</span>
+<span class="fc" id="L4691">            .setGroupId(groupId)</span>
+<span class="fc" id="L4692">            .build();</span>
+<span class="fc" id="L4693">    return createGroupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4692,7 +4719,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Group, OperationMetadata&gt; createGroupAsync(
       CreateGroupRequest request) {
-<span class="fc" id="L4695">    return createGroupOperationCallable().futureCall(request);</span>
+<span class="fc" id="L4722">    return createGroupOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4721,7 +4748,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateGroupRequest, Group, OperationMetadata&gt;
       createGroupOperationCallable() {
-<span class="fc" id="L4724">    return stub.createGroupOperationCallable();</span>
+<span class="fc" id="L4751">    return stub.createGroupOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4748,7 +4775,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateGroupRequest, Operation&gt; createGroupCallable() {
-<span class="nc" id="L4751">    return stub.createGroupCallable();</span>
+<span class="nc" id="L4778">    return stub.createGroupCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4777,8 +4804,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Group, OperationMetadata&gt; updateGroupAsync(
       Group group, FieldMask updateMask) {
     UpdateGroupRequest request =
-<span class="fc" id="L4780">        UpdateGroupRequest.newBuilder().setGroup(group).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L4781">    return updateGroupAsync(request);</span>
+<span class="fc" id="L4807">        UpdateGroupRequest.newBuilder().setGroup(group).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L4808">    return updateGroupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4806,7 +4833,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Group, OperationMetadata&gt; updateGroupAsync(
       UpdateGroupRequest request) {
-<span class="fc" id="L4809">    return updateGroupOperationCallable().futureCall(request);</span>
+<span class="fc" id="L4836">    return updateGroupOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4834,7 +4861,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateGroupRequest, Group, OperationMetadata&gt;
       updateGroupOperationCallable() {
-<span class="fc" id="L4837">    return stub.updateGroupOperationCallable();</span>
+<span class="fc" id="L4864">    return stub.updateGroupOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4860,7 +4887,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateGroupRequest, Operation&gt; updateGroupCallable() {
-<span class="nc" id="L4863">    return stub.updateGroupCallable();</span>
+<span class="nc" id="L4890">    return stub.updateGroupCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4883,8 +4910,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGroupAsync(GroupName name) {
     DeleteGroupRequest request =
-<span class="pc bpc" id="L4886" title="1 of 2 branches missed.">        DeleteGroupRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L4887">    return deleteGroupAsync(request);</span>
+<span class="pc bpc" id="L4913" title="1 of 2 branches missed.">        DeleteGroupRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L4914">    return deleteGroupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4906,8 +4933,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGroupAsync(String name) {
-<span class="fc" id="L4909">    DeleteGroupRequest request = DeleteGroupRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L4910">    return deleteGroupAsync(request);</span>
+<span class="fc" id="L4936">    DeleteGroupRequest request = DeleteGroupRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L4937">    return deleteGroupAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4934,7 +4961,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteGroupAsync(
       DeleteGroupRequest request) {
-<span class="fc" id="L4937">    return deleteGroupOperationCallable().futureCall(request);</span>
+<span class="fc" id="L4964">    return deleteGroupOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4961,7 +4988,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteGroupRequest, Empty, OperationMetadata&gt;
       deleteGroupOperationCallable() {
-<span class="fc" id="L4964">    return stub.deleteGroupOperationCallable();</span>
+<span class="fc" id="L4991">    return stub.deleteGroupOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4986,7 +5013,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteGroupRequest, Operation&gt; deleteGroupCallable() {
-<span class="nc" id="L4989">    return stub.deleteGroupCallable();</span>
+<span class="nc" id="L5016">    return stub.deleteGroupCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5010,10 +5037,10 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;AddGroupMigrationResponse, OperationMetadata&gt; addGroupMigrationAsync(
       GroupName group) {
     AddGroupMigrationRequest request =
-<span class="fc" id="L5013">        AddGroupMigrationRequest.newBuilder()</span>
-<span class="pc bpc" id="L5014" title="1 of 2 branches missed.">            .setGroup(group == null ? null : group.toString())</span>
-<span class="fc" id="L5015">            .build();</span>
-<span class="fc" id="L5016">    return addGroupMigrationAsync(request);</span>
+<span class="fc" id="L5040">        AddGroupMigrationRequest.newBuilder()</span>
+<span class="pc bpc" id="L5041" title="1 of 2 branches missed.">            .setGroup(group == null ? null : group.toString())</span>
+<span class="fc" id="L5042">            .build();</span>
+<span class="fc" id="L5043">    return addGroupMigrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5037,8 +5064,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;AddGroupMigrationResponse, OperationMetadata&gt; addGroupMigrationAsync(
       String group) {
     AddGroupMigrationRequest request =
-<span class="fc" id="L5040">        AddGroupMigrationRequest.newBuilder().setGroup(group).build();</span>
-<span class="fc" id="L5041">    return addGroupMigrationAsync(request);</span>
+<span class="fc" id="L5067">        AddGroupMigrationRequest.newBuilder().setGroup(group).build();</span>
+<span class="fc" id="L5068">    return addGroupMigrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5067,7 +5094,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;AddGroupMigrationResponse, OperationMetadata&gt; addGroupMigrationAsync(
       AddGroupMigrationRequest request) {
-<span class="fc" id="L5070">    return addGroupMigrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L5097">    return addGroupMigrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5097,7 +5124,7 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationCallable&lt;
           AddGroupMigrationRequest, AddGroupMigrationResponse, OperationMetadata&gt;
       addGroupMigrationOperationCallable() {
-<span class="fc" id="L5100">    return stub.addGroupMigrationOperationCallable();</span>
+<span class="fc" id="L5127">    return stub.addGroupMigrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5125,7 +5152,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;AddGroupMigrationRequest, Operation&gt; addGroupMigrationCallable() {
-<span class="nc" id="L5128">    return stub.addGroupMigrationCallable();</span>
+<span class="nc" id="L5155">    return stub.addGroupMigrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5150,10 +5177,10 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;RemoveGroupMigrationResponse, OperationMetadata&gt;
       removeGroupMigrationAsync(GroupName group) {
     RemoveGroupMigrationRequest request =
-<span class="fc" id="L5153">        RemoveGroupMigrationRequest.newBuilder()</span>
-<span class="pc bpc" id="L5154" title="1 of 2 branches missed.">            .setGroup(group == null ? null : group.toString())</span>
-<span class="fc" id="L5155">            .build();</span>
-<span class="fc" id="L5156">    return removeGroupMigrationAsync(request);</span>
+<span class="fc" id="L5180">        RemoveGroupMigrationRequest.newBuilder()</span>
+<span class="pc bpc" id="L5181" title="1 of 2 branches missed.">            .setGroup(group == null ? null : group.toString())</span>
+<span class="fc" id="L5182">            .build();</span>
+<span class="fc" id="L5183">    return removeGroupMigrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5178,8 +5205,8 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;RemoveGroupMigrationResponse, OperationMetadata&gt;
       removeGroupMigrationAsync(String group) {
     RemoveGroupMigrationRequest request =
-<span class="fc" id="L5181">        RemoveGroupMigrationRequest.newBuilder().setGroup(group).build();</span>
-<span class="fc" id="L5182">    return removeGroupMigrationAsync(request);</span>
+<span class="fc" id="L5208">        RemoveGroupMigrationRequest.newBuilder().setGroup(group).build();</span>
+<span class="fc" id="L5209">    return removeGroupMigrationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5209,7 +5236,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;RemoveGroupMigrationResponse, OperationMetadata&gt;
       removeGroupMigrationAsync(RemoveGroupMigrationRequest request) {
-<span class="fc" id="L5212">    return removeGroupMigrationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L5239">    return removeGroupMigrationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5239,7 +5266,7 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationCallable&lt;
           RemoveGroupMigrationRequest, RemoveGroupMigrationResponse, OperationMetadata&gt;
       removeGroupMigrationOperationCallable() {
-<span class="fc" id="L5242">    return stub.removeGroupMigrationOperationCallable();</span>
+<span class="fc" id="L5269">    return stub.removeGroupMigrationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5268,7 +5295,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;RemoveGroupMigrationRequest, Operation&gt;
       removeGroupMigrationCallable() {
-<span class="nc" id="L5271">    return stub.removeGroupMigrationCallable();</span>
+<span class="nc" id="L5298">    return stub.removeGroupMigrationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5296,10 +5323,10 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListTargetProjectsPagedResponse listTargetProjects(LocationName parent) {
     ListTargetProjectsRequest request =
-<span class="fc" id="L5299">        ListTargetProjectsRequest.newBuilder()</span>
-<span class="pc bpc" id="L5300" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L5301">            .build();</span>
-<span class="fc" id="L5302">    return listTargetProjects(request);</span>
+<span class="fc" id="L5326">        ListTargetProjectsRequest.newBuilder()</span>
+<span class="pc bpc" id="L5327" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L5328">            .build();</span>
+<span class="fc" id="L5329">    return listTargetProjects(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5327,8 +5354,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListTargetProjectsPagedResponse listTargetProjects(String parent) {
     ListTargetProjectsRequest request =
-<span class="fc" id="L5330">        ListTargetProjectsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L5331">    return listTargetProjects(request);</span>
+<span class="fc" id="L5357">        ListTargetProjectsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L5358">    return listTargetProjects(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5363,7 +5390,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final ListTargetProjectsPagedResponse listTargetProjects(
       ListTargetProjectsRequest request) {
-<span class="fc" id="L5366">    return listTargetProjectsPagedCallable().call(request);</span>
+<span class="fc" id="L5393">    return listTargetProjectsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5398,7 +5425,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTargetProjectsRequest, ListTargetProjectsPagedResponse&gt;
       listTargetProjectsPagedCallable() {
-<span class="fc" id="L5401">    return stub.listTargetProjectsPagedCallable();</span>
+<span class="fc" id="L5428">    return stub.listTargetProjectsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5440,7 +5467,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTargetProjectsRequest, ListTargetProjectsResponse&gt;
       listTargetProjectsCallable() {
-<span class="nc" id="L5443">    return stub.listTargetProjectsCallable();</span>
+<span class="nc" id="L5470">    return stub.listTargetProjectsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5466,8 +5493,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final TargetProject getTargetProject(TargetProjectName name) {
     GetTargetProjectRequest request =
-<span class="pc bpc" id="L5469" title="1 of 2 branches missed.">        GetTargetProjectRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L5470">    return getTargetProject(request);</span>
+<span class="pc bpc" id="L5496" title="1 of 2 branches missed.">        GetTargetProjectRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L5497">    return getTargetProject(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5492,8 +5519,8 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TargetProject getTargetProject(String name) {
-<span class="fc" id="L5495">    GetTargetProjectRequest request = GetTargetProjectRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L5496">    return getTargetProject(request);</span>
+<span class="fc" id="L5522">    GetTargetProjectRequest request = GetTargetProjectRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L5523">    return getTargetProject(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5522,7 +5549,7 @@ public class VmMigrationClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TargetProject getTargetProject(GetTargetProjectRequest request) {
-<span class="fc" id="L5525">    return getTargetProjectCallable().call(request);</span>
+<span class="fc" id="L5552">    return getTargetProjectCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5551,7 +5578,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTargetProjectRequest, TargetProject&gt; getTargetProjectCallable() {
-<span class="fc" id="L5554">    return stub.getTargetProjectCallable();</span>
+<span class="fc" id="L5581">    return stub.getTargetProjectCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5583,12 +5610,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;TargetProject, OperationMetadata&gt; createTargetProjectAsync(
       LocationName parent, TargetProject targetProject, String targetProjectId) {
     CreateTargetProjectRequest request =
-<span class="fc" id="L5586">        CreateTargetProjectRequest.newBuilder()</span>
-<span class="pc bpc" id="L5587" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L5588">            .setTargetProject(targetProject)</span>
-<span class="fc" id="L5589">            .setTargetProjectId(targetProjectId)</span>
-<span class="fc" id="L5590">            .build();</span>
-<span class="fc" id="L5591">    return createTargetProjectAsync(request);</span>
+<span class="fc" id="L5613">        CreateTargetProjectRequest.newBuilder()</span>
+<span class="pc bpc" id="L5614" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L5615">            .setTargetProject(targetProject)</span>
+<span class="fc" id="L5616">            .setTargetProjectId(targetProjectId)</span>
+<span class="fc" id="L5617">            .build();</span>
+<span class="fc" id="L5618">    return createTargetProjectAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5620,12 +5647,12 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;TargetProject, OperationMetadata&gt; createTargetProjectAsync(
       String parent, TargetProject targetProject, String targetProjectId) {
     CreateTargetProjectRequest request =
-<span class="fc" id="L5623">        CreateTargetProjectRequest.newBuilder()</span>
-<span class="fc" id="L5624">            .setParent(parent)</span>
-<span class="fc" id="L5625">            .setTargetProject(targetProject)</span>
-<span class="fc" id="L5626">            .setTargetProjectId(targetProjectId)</span>
-<span class="fc" id="L5627">            .build();</span>
-<span class="fc" id="L5628">    return createTargetProjectAsync(request);</span>
+<span class="fc" id="L5650">        CreateTargetProjectRequest.newBuilder()</span>
+<span class="fc" id="L5651">            .setParent(parent)</span>
+<span class="fc" id="L5652">            .setTargetProject(targetProject)</span>
+<span class="fc" id="L5653">            .setTargetProjectId(targetProjectId)</span>
+<span class="fc" id="L5654">            .build();</span>
+<span class="fc" id="L5655">    return createTargetProjectAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5657,7 +5684,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;TargetProject, OperationMetadata&gt; createTargetProjectAsync(
       CreateTargetProjectRequest request) {
-<span class="fc" id="L5660">    return createTargetProjectOperationCallable().futureCall(request);</span>
+<span class="fc" id="L5687">    return createTargetProjectOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5689,7 +5716,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateTargetProjectRequest, TargetProject, OperationMetadata&gt;
       createTargetProjectOperationCallable() {
-<span class="fc" id="L5692">    return stub.createTargetProjectOperationCallable();</span>
+<span class="fc" id="L5719">    return stub.createTargetProjectOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5720,7 +5747,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateTargetProjectRequest, Operation&gt; createTargetProjectCallable() {
-<span class="nc" id="L5723">    return stub.createTargetProjectCallable();</span>
+<span class="nc" id="L5750">    return stub.createTargetProjectCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5753,11 +5780,11 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;TargetProject, OperationMetadata&gt; updateTargetProjectAsync(
       TargetProject targetProject, FieldMask updateMask) {
     UpdateTargetProjectRequest request =
-<span class="fc" id="L5756">        UpdateTargetProjectRequest.newBuilder()</span>
-<span class="fc" id="L5757">            .setTargetProject(targetProject)</span>
-<span class="fc" id="L5758">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L5759">            .build();</span>
-<span class="fc" id="L5760">    return updateTargetProjectAsync(request);</span>
+<span class="fc" id="L5783">        UpdateTargetProjectRequest.newBuilder()</span>
+<span class="fc" id="L5784">            .setTargetProject(targetProject)</span>
+<span class="fc" id="L5785">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L5786">            .build();</span>
+<span class="fc" id="L5787">    return updateTargetProjectAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5788,7 +5815,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;TargetProject, OperationMetadata&gt; updateTargetProjectAsync(
       UpdateTargetProjectRequest request) {
-<span class="fc" id="L5791">    return updateTargetProjectOperationCallable().futureCall(request);</span>
+<span class="fc" id="L5818">    return updateTargetProjectOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5819,7 +5846,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateTargetProjectRequest, TargetProject, OperationMetadata&gt;
       updateTargetProjectOperationCallable() {
-<span class="fc" id="L5822">    return stub.updateTargetProjectOperationCallable();</span>
+<span class="fc" id="L5849">    return stub.updateTargetProjectOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5849,7 +5876,7 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateTargetProjectRequest, Operation&gt; updateTargetProjectCallable() {
-<span class="nc" id="L5852">    return stub.updateTargetProjectCallable();</span>
+<span class="nc" id="L5879">    return stub.updateTargetProjectCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5876,10 +5903,10 @@ public class VmMigrationClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetProjectAsync(
       TargetProjectName name) {
     DeleteTargetProjectRequest request =
-<span class="fc" id="L5879">        DeleteTargetProjectRequest.newBuilder()</span>
-<span class="pc bpc" id="L5880" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L5881">            .build();</span>
-<span class="fc" id="L5882">    return deleteTargetProjectAsync(request);</span>
+<span class="fc" id="L5906">        DeleteTargetProjectRequest.newBuilder()</span>
+<span class="pc bpc" id="L5907" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L5908">            .build();</span>
+<span class="fc" id="L5909">    return deleteTargetProjectAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5905,8 +5932,8 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetProjectAsync(String name) {
     DeleteTargetProjectRequest request =
-<span class="fc" id="L5908">        DeleteTargetProjectRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L5909">    return deleteTargetProjectAsync(request);</span>
+<span class="fc" id="L5935">        DeleteTargetProjectRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L5936">    return deleteTargetProjectAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5937,7 +5964,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetProjectAsync(
       DeleteTargetProjectRequest request) {
-<span class="fc" id="L5940">    return deleteTargetProjectOperationCallable().futureCall(request);</span>
+<span class="fc" id="L5967">    return deleteTargetProjectOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5968,7 +5995,7 @@ public class VmMigrationClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTargetProjectRequest, Empty, OperationMetadata&gt;
       deleteTargetProjectOperationCallable() {
-<span class="fc" id="L5971">    return stub.deleteTargetProjectOperationCallable();</span>
+<span class="fc" id="L5998">    return stub.deleteTargetProjectOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -5998,37 +6025,37 @@ public class VmMigrationClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteTargetProjectRequest, Operation&gt; deleteTargetProjectCallable() {
-<span class="nc" id="L6001">    return stub.deleteTargetProjectCallable();</span>
+<span class="nc" id="L6028">    return stub.deleteTargetProjectCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L6006">    stub.close();</span>
-<span class="fc" id="L6007">  }</span>
+<span class="fc" id="L6033">    stub.close();</span>
+<span class="fc" id="L6034">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L6011">    stub.shutdown();</span>
-<span class="nc" id="L6012">  }</span>
+<span class="nc" id="L6038">    stub.shutdown();</span>
+<span class="nc" id="L6039">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L6016">    return stub.isShutdown();</span>
+<span class="nc" id="L6043">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L6021">    return stub.isTerminated();</span>
+<span class="nc" id="L6048">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L6026">    stub.shutdownNow();</span>
-<span class="nc" id="L6027">  }</span>
+<span class="nc" id="L6053">    stub.shutdownNow();</span>
+<span class="nc" id="L6054">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L6031">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L6058">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListSourcesPagedResponse
@@ -6043,14 +6070,14 @@ public class VmMigrationClient implements BackgroundResource {
         PageContext&lt;ListSourcesRequest, ListSourcesResponse, Source&gt; context,
         ApiFuture&lt;ListSourcesResponse&gt; futureResponse) {
       ApiFuture&lt;ListSourcesPage&gt; futurePage =
-<span class="fc" id="L6046">          ListSourcesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L6047">      return ApiFutures.transform(</span>
-<span class="fc" id="L6048">          futurePage, input -&gt; new ListSourcesPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L6073">          ListSourcesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6074">      return ApiFutures.transform(</span>
+<span class="fc" id="L6075">          futurePage, input -&gt; new ListSourcesPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListSourcesPagedResponse(ListSourcesPage page) {
-<span class="fc" id="L6052">      super(page, ListSourcesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L6053">    }</span>
+<span class="fc" id="L6079">      super(page, ListSourcesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L6080">    }</span>
   }
 
   public static class ListSourcesPage
@@ -6059,25 +6086,25 @@ public class VmMigrationClient implements BackgroundResource {
     private ListSourcesPage(
         PageContext&lt;ListSourcesRequest, ListSourcesResponse, Source&gt; context,
         ListSourcesResponse response) {
-<span class="fc" id="L6062">      super(context, response);</span>
-<span class="fc" id="L6063">    }</span>
+<span class="fc" id="L6089">      super(context, response);</span>
+<span class="fc" id="L6090">    }</span>
 
     private static ListSourcesPage createEmptyPage() {
-<span class="fc" id="L6066">      return new ListSourcesPage(null, null);</span>
+<span class="fc" id="L6093">      return new ListSourcesPage(null, null);</span>
     }
 
     @Override
     protected ListSourcesPage createPage(
         PageContext&lt;ListSourcesRequest, ListSourcesResponse, Source&gt; context,
         ListSourcesResponse response) {
-<span class="fc" id="L6073">      return new ListSourcesPage(context, response);</span>
+<span class="fc" id="L6100">      return new ListSourcesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListSourcesPage&gt; createPageAsync(
         PageContext&lt;ListSourcesRequest, ListSourcesResponse, Source&gt; context,
         ApiFuture&lt;ListSourcesResponse&gt; futureResponse) {
-<span class="fc" id="L6080">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6107">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -6090,17 +6117,17 @@ public class VmMigrationClient implements BackgroundResource {
           ListSourcesFixedSizeCollection&gt; {
 
     private ListSourcesFixedSizeCollection(List&lt;ListSourcesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L6093">      super(pages, collectionSize);</span>
-<span class="fc" id="L6094">    }</span>
+<span class="fc" id="L6120">      super(pages, collectionSize);</span>
+<span class="fc" id="L6121">    }</span>
 
     private static ListSourcesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L6097">      return new ListSourcesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L6124">      return new ListSourcesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListSourcesFixedSizeCollection createCollection(
         List&lt;ListSourcesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L6103">      return new ListSourcesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L6130">      return new ListSourcesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -6118,16 +6145,16 @@ public class VmMigrationClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListUtilizationReportsResponse&gt; futureResponse) {
       ApiFuture&lt;ListUtilizationReportsPage&gt; futurePage =
-<span class="fc" id="L6121">          ListUtilizationReportsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L6122">      return ApiFutures.transform(</span>
+<span class="fc" id="L6148">          ListUtilizationReportsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6149">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L6124">          input -&gt; new ListUtilizationReportsPagedResponse(input),</span>
-<span class="fc" id="L6125">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L6151">          input -&gt; new ListUtilizationReportsPagedResponse(input),</span>
+<span class="fc" id="L6152">          MoreExecutors.directExecutor());</span>
     }
 
     private ListUtilizationReportsPagedResponse(ListUtilizationReportsPage page) {
-<span class="fc" id="L6129">      super(page, ListUtilizationReportsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L6130">    }</span>
+<span class="fc" id="L6156">      super(page, ListUtilizationReportsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L6157">    }</span>
   }
 
   public static class ListUtilizationReportsPage
@@ -6142,11 +6169,11 @@ public class VmMigrationClient implements BackgroundResource {
                 ListUtilizationReportsRequest, ListUtilizationReportsResponse, UtilizationReport&gt;
             context,
         ListUtilizationReportsResponse response) {
-<span class="fc" id="L6145">      super(context, response);</span>
-<span class="fc" id="L6146">    }</span>
+<span class="fc" id="L6172">      super(context, response);</span>
+<span class="fc" id="L6173">    }</span>
 
     private static ListUtilizationReportsPage createEmptyPage() {
-<span class="fc" id="L6149">      return new ListUtilizationReportsPage(null, null);</span>
+<span class="fc" id="L6176">      return new ListUtilizationReportsPage(null, null);</span>
     }
 
     @Override
@@ -6155,7 +6182,7 @@ public class VmMigrationClient implements BackgroundResource {
                 ListUtilizationReportsRequest, ListUtilizationReportsResponse, UtilizationReport&gt;
             context,
         ListUtilizationReportsResponse response) {
-<span class="fc" id="L6158">      return new ListUtilizationReportsPage(context, response);</span>
+<span class="fc" id="L6185">      return new ListUtilizationReportsPage(context, response);</span>
     }
 
     @Override
@@ -6164,7 +6191,7 @@ public class VmMigrationClient implements BackgroundResource {
                 ListUtilizationReportsRequest, ListUtilizationReportsResponse, UtilizationReport&gt;
             context,
         ApiFuture&lt;ListUtilizationReportsResponse&gt; futureResponse) {
-<span class="fc" id="L6167">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6194">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -6178,17 +6205,17 @@ public class VmMigrationClient implements BackgroundResource {
 
     private ListUtilizationReportsFixedSizeCollection(
         List&lt;ListUtilizationReportsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L6181">      super(pages, collectionSize);</span>
-<span class="fc" id="L6182">    }</span>
+<span class="fc" id="L6208">      super(pages, collectionSize);</span>
+<span class="fc" id="L6209">    }</span>
 
     private static ListUtilizationReportsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L6185">      return new ListUtilizationReportsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L6212">      return new ListUtilizationReportsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListUtilizationReportsFixedSizeCollection createCollection(
         List&lt;ListUtilizationReportsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L6191">      return new ListUtilizationReportsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L6218">      return new ListUtilizationReportsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -6208,16 +6235,16 @@ public class VmMigrationClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListDatacenterConnectorsResponse&gt; futureResponse) {
       ApiFuture&lt;ListDatacenterConnectorsPage&gt; futurePage =
-<span class="fc" id="L6211">          ListDatacenterConnectorsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L6212">      return ApiFutures.transform(</span>
+<span class="fc" id="L6238">          ListDatacenterConnectorsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6239">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L6214">          input -&gt; new ListDatacenterConnectorsPagedResponse(input),</span>
-<span class="fc" id="L6215">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L6241">          input -&gt; new ListDatacenterConnectorsPagedResponse(input),</span>
+<span class="fc" id="L6242">          MoreExecutors.directExecutor());</span>
     }
 
     private ListDatacenterConnectorsPagedResponse(ListDatacenterConnectorsPage page) {
-<span class="fc" id="L6219">      super(page, ListDatacenterConnectorsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L6220">    }</span>
+<span class="fc" id="L6246">      super(page, ListDatacenterConnectorsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L6247">    }</span>
   }
 
   public static class ListDatacenterConnectorsPage
@@ -6234,11 +6261,11 @@ public class VmMigrationClient implements BackgroundResource {
                 DatacenterConnector&gt;
             context,
         ListDatacenterConnectorsResponse response) {
-<span class="fc" id="L6237">      super(context, response);</span>
-<span class="fc" id="L6238">    }</span>
+<span class="fc" id="L6264">      super(context, response);</span>
+<span class="fc" id="L6265">    }</span>
 
     private static ListDatacenterConnectorsPage createEmptyPage() {
-<span class="fc" id="L6241">      return new ListDatacenterConnectorsPage(null, null);</span>
+<span class="fc" id="L6268">      return new ListDatacenterConnectorsPage(null, null);</span>
     }
 
     @Override
@@ -6249,7 +6276,7 @@ public class VmMigrationClient implements BackgroundResource {
                 DatacenterConnector&gt;
             context,
         ListDatacenterConnectorsResponse response) {
-<span class="fc" id="L6252">      return new ListDatacenterConnectorsPage(context, response);</span>
+<span class="fc" id="L6279">      return new ListDatacenterConnectorsPage(context, response);</span>
     }
 
     @Override
@@ -6260,7 +6287,7 @@ public class VmMigrationClient implements BackgroundResource {
                 DatacenterConnector&gt;
             context,
         ApiFuture&lt;ListDatacenterConnectorsResponse&gt; futureResponse) {
-<span class="fc" id="L6263">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6290">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -6274,17 +6301,17 @@ public class VmMigrationClient implements BackgroundResource {
 
     private ListDatacenterConnectorsFixedSizeCollection(
         List&lt;ListDatacenterConnectorsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L6277">      super(pages, collectionSize);</span>
-<span class="fc" id="L6278">    }</span>
+<span class="fc" id="L6304">      super(pages, collectionSize);</span>
+<span class="fc" id="L6305">    }</span>
 
     private static ListDatacenterConnectorsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L6281">      return new ListDatacenterConnectorsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L6308">      return new ListDatacenterConnectorsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListDatacenterConnectorsFixedSizeCollection createCollection(
         List&lt;ListDatacenterConnectorsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L6287">      return new ListDatacenterConnectorsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L6314">      return new ListDatacenterConnectorsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -6300,16 +6327,16 @@ public class VmMigrationClient implements BackgroundResource {
         PageContext&lt;ListMigratingVmsRequest, ListMigratingVmsResponse, MigratingVm&gt; context,
         ApiFuture&lt;ListMigratingVmsResponse&gt; futureResponse) {
       ApiFuture&lt;ListMigratingVmsPage&gt; futurePage =
-<span class="fc" id="L6303">          ListMigratingVmsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L6304">      return ApiFutures.transform(</span>
+<span class="fc" id="L6330">          ListMigratingVmsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6331">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L6306">          input -&gt; new ListMigratingVmsPagedResponse(input),</span>
-<span class="fc" id="L6307">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L6333">          input -&gt; new ListMigratingVmsPagedResponse(input),</span>
+<span class="fc" id="L6334">          MoreExecutors.directExecutor());</span>
     }
 
     private ListMigratingVmsPagedResponse(ListMigratingVmsPage page) {
-<span class="fc" id="L6311">      super(page, ListMigratingVmsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L6312">    }</span>
+<span class="fc" id="L6338">      super(page, ListMigratingVmsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L6339">    }</span>
   }
 
   public static class ListMigratingVmsPage
@@ -6319,25 +6346,25 @@ public class VmMigrationClient implements BackgroundResource {
     private ListMigratingVmsPage(
         PageContext&lt;ListMigratingVmsRequest, ListMigratingVmsResponse, MigratingVm&gt; context,
         ListMigratingVmsResponse response) {
-<span class="fc" id="L6322">      super(context, response);</span>
-<span class="fc" id="L6323">    }</span>
+<span class="fc" id="L6349">      super(context, response);</span>
+<span class="fc" id="L6350">    }</span>
 
     private static ListMigratingVmsPage createEmptyPage() {
-<span class="fc" id="L6326">      return new ListMigratingVmsPage(null, null);</span>
+<span class="fc" id="L6353">      return new ListMigratingVmsPage(null, null);</span>
     }
 
     @Override
     protected ListMigratingVmsPage createPage(
         PageContext&lt;ListMigratingVmsRequest, ListMigratingVmsResponse, MigratingVm&gt; context,
         ListMigratingVmsResponse response) {
-<span class="fc" id="L6333">      return new ListMigratingVmsPage(context, response);</span>
+<span class="fc" id="L6360">      return new ListMigratingVmsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListMigratingVmsPage&gt; createPageAsync(
         PageContext&lt;ListMigratingVmsRequest, ListMigratingVmsResponse, MigratingVm&gt; context,
         ApiFuture&lt;ListMigratingVmsResponse&gt; futureResponse) {
-<span class="fc" id="L6340">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6367">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -6351,17 +6378,17 @@ public class VmMigrationClient implements BackgroundResource {
 
     private ListMigratingVmsFixedSizeCollection(
         List&lt;ListMigratingVmsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L6354">      super(pages, collectionSize);</span>
-<span class="fc" id="L6355">    }</span>
+<span class="fc" id="L6381">      super(pages, collectionSize);</span>
+<span class="fc" id="L6382">    }</span>
 
     private static ListMigratingVmsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L6358">      return new ListMigratingVmsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L6385">      return new ListMigratingVmsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListMigratingVmsFixedSizeCollection createCollection(
         List&lt;ListMigratingVmsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L6364">      return new ListMigratingVmsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L6391">      return new ListMigratingVmsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -6377,16 +6404,16 @@ public class VmMigrationClient implements BackgroundResource {
         PageContext&lt;ListCloneJobsRequest, ListCloneJobsResponse, CloneJob&gt; context,
         ApiFuture&lt;ListCloneJobsResponse&gt; futureResponse) {
       ApiFuture&lt;ListCloneJobsPage&gt; futurePage =
-<span class="fc" id="L6380">          ListCloneJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L6381">      return ApiFutures.transform(</span>
+<span class="fc" id="L6407">          ListCloneJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6408">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L6383">          input -&gt; new ListCloneJobsPagedResponse(input),</span>
-<span class="fc" id="L6384">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L6410">          input -&gt; new ListCloneJobsPagedResponse(input),</span>
+<span class="fc" id="L6411">          MoreExecutors.directExecutor());</span>
     }
 
     private ListCloneJobsPagedResponse(ListCloneJobsPage page) {
-<span class="fc" id="L6388">      super(page, ListCloneJobsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L6389">    }</span>
+<span class="fc" id="L6415">      super(page, ListCloneJobsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L6416">    }</span>
   }
 
   public static class ListCloneJobsPage
@@ -6396,25 +6423,25 @@ public class VmMigrationClient implements BackgroundResource {
     private ListCloneJobsPage(
         PageContext&lt;ListCloneJobsRequest, ListCloneJobsResponse, CloneJob&gt; context,
         ListCloneJobsResponse response) {
-<span class="fc" id="L6399">      super(context, response);</span>
-<span class="fc" id="L6400">    }</span>
+<span class="fc" id="L6426">      super(context, response);</span>
+<span class="fc" id="L6427">    }</span>
 
     private static ListCloneJobsPage createEmptyPage() {
-<span class="fc" id="L6403">      return new ListCloneJobsPage(null, null);</span>
+<span class="fc" id="L6430">      return new ListCloneJobsPage(null, null);</span>
     }
 
     @Override
     protected ListCloneJobsPage createPage(
         PageContext&lt;ListCloneJobsRequest, ListCloneJobsResponse, CloneJob&gt; context,
         ListCloneJobsResponse response) {
-<span class="fc" id="L6410">      return new ListCloneJobsPage(context, response);</span>
+<span class="fc" id="L6437">      return new ListCloneJobsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListCloneJobsPage&gt; createPageAsync(
         PageContext&lt;ListCloneJobsRequest, ListCloneJobsResponse, CloneJob&gt; context,
         ApiFuture&lt;ListCloneJobsResponse&gt; futureResponse) {
-<span class="fc" id="L6417">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6444">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -6427,17 +6454,17 @@ public class VmMigrationClient implements BackgroundResource {
           ListCloneJobsFixedSizeCollection&gt; {
 
     private ListCloneJobsFixedSizeCollection(List&lt;ListCloneJobsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L6430">      super(pages, collectionSize);</span>
-<span class="fc" id="L6431">    }</span>
+<span class="fc" id="L6457">      super(pages, collectionSize);</span>
+<span class="fc" id="L6458">    }</span>
 
     private static ListCloneJobsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L6434">      return new ListCloneJobsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L6461">      return new ListCloneJobsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListCloneJobsFixedSizeCollection createCollection(
         List&lt;ListCloneJobsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L6440">      return new ListCloneJobsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L6467">      return new ListCloneJobsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -6453,16 +6480,16 @@ public class VmMigrationClient implements BackgroundResource {
         PageContext&lt;ListCutoverJobsRequest, ListCutoverJobsResponse, CutoverJob&gt; context,
         ApiFuture&lt;ListCutoverJobsResponse&gt; futureResponse) {
       ApiFuture&lt;ListCutoverJobsPage&gt; futurePage =
-<span class="fc" id="L6456">          ListCutoverJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L6457">      return ApiFutures.transform(</span>
+<span class="fc" id="L6483">          ListCutoverJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6484">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L6459">          input -&gt; new ListCutoverJobsPagedResponse(input),</span>
-<span class="fc" id="L6460">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L6486">          input -&gt; new ListCutoverJobsPagedResponse(input),</span>
+<span class="fc" id="L6487">          MoreExecutors.directExecutor());</span>
     }
 
     private ListCutoverJobsPagedResponse(ListCutoverJobsPage page) {
-<span class="fc" id="L6464">      super(page, ListCutoverJobsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L6465">    }</span>
+<span class="fc" id="L6491">      super(page, ListCutoverJobsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L6492">    }</span>
   }
 
   public static class ListCutoverJobsPage
@@ -6472,25 +6499,25 @@ public class VmMigrationClient implements BackgroundResource {
     private ListCutoverJobsPage(
         PageContext&lt;ListCutoverJobsRequest, ListCutoverJobsResponse, CutoverJob&gt; context,
         ListCutoverJobsResponse response) {
-<span class="fc" id="L6475">      super(context, response);</span>
-<span class="fc" id="L6476">    }</span>
+<span class="fc" id="L6502">      super(context, response);</span>
+<span class="fc" id="L6503">    }</span>
 
     private static ListCutoverJobsPage createEmptyPage() {
-<span class="fc" id="L6479">      return new ListCutoverJobsPage(null, null);</span>
+<span class="fc" id="L6506">      return new ListCutoverJobsPage(null, null);</span>
     }
 
     @Override
     protected ListCutoverJobsPage createPage(
         PageContext&lt;ListCutoverJobsRequest, ListCutoverJobsResponse, CutoverJob&gt; context,
         ListCutoverJobsResponse response) {
-<span class="fc" id="L6486">      return new ListCutoverJobsPage(context, response);</span>
+<span class="fc" id="L6513">      return new ListCutoverJobsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListCutoverJobsPage&gt; createPageAsync(
         PageContext&lt;ListCutoverJobsRequest, ListCutoverJobsResponse, CutoverJob&gt; context,
         ApiFuture&lt;ListCutoverJobsResponse&gt; futureResponse) {
-<span class="fc" id="L6493">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6520">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -6504,17 +6531,17 @@ public class VmMigrationClient implements BackgroundResource {
 
     private ListCutoverJobsFixedSizeCollection(
         List&lt;ListCutoverJobsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L6507">      super(pages, collectionSize);</span>
-<span class="fc" id="L6508">    }</span>
+<span class="fc" id="L6534">      super(pages, collectionSize);</span>
+<span class="fc" id="L6535">    }</span>
 
     private static ListCutoverJobsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L6511">      return new ListCutoverJobsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L6538">      return new ListCutoverJobsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListCutoverJobsFixedSizeCollection createCollection(
         List&lt;ListCutoverJobsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L6517">      return new ListCutoverJobsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L6544">      return new ListCutoverJobsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -6530,14 +6557,14 @@ public class VmMigrationClient implements BackgroundResource {
         PageContext&lt;ListGroupsRequest, ListGroupsResponse, Group&gt; context,
         ApiFuture&lt;ListGroupsResponse&gt; futureResponse) {
       ApiFuture&lt;ListGroupsPage&gt; futurePage =
-<span class="fc" id="L6533">          ListGroupsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L6534">      return ApiFutures.transform(</span>
-<span class="fc" id="L6535">          futurePage, input -&gt; new ListGroupsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L6560">          ListGroupsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6561">      return ApiFutures.transform(</span>
+<span class="fc" id="L6562">          futurePage, input -&gt; new ListGroupsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListGroupsPagedResponse(ListGroupsPage page) {
-<span class="fc" id="L6539">      super(page, ListGroupsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L6540">    }</span>
+<span class="fc" id="L6566">      super(page, ListGroupsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L6567">    }</span>
   }
 
   public static class ListGroupsPage
@@ -6546,25 +6573,25 @@ public class VmMigrationClient implements BackgroundResource {
     private ListGroupsPage(
         PageContext&lt;ListGroupsRequest, ListGroupsResponse, Group&gt; context,
         ListGroupsResponse response) {
-<span class="fc" id="L6549">      super(context, response);</span>
-<span class="fc" id="L6550">    }</span>
+<span class="fc" id="L6576">      super(context, response);</span>
+<span class="fc" id="L6577">    }</span>
 
     private static ListGroupsPage createEmptyPage() {
-<span class="fc" id="L6553">      return new ListGroupsPage(null, null);</span>
+<span class="fc" id="L6580">      return new ListGroupsPage(null, null);</span>
     }
 
     @Override
     protected ListGroupsPage createPage(
         PageContext&lt;ListGroupsRequest, ListGroupsResponse, Group&gt; context,
         ListGroupsResponse response) {
-<span class="fc" id="L6560">      return new ListGroupsPage(context, response);</span>
+<span class="fc" id="L6587">      return new ListGroupsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListGroupsPage&gt; createPageAsync(
         PageContext&lt;ListGroupsRequest, ListGroupsResponse, Group&gt; context,
         ApiFuture&lt;ListGroupsResponse&gt; futureResponse) {
-<span class="fc" id="L6567">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6594">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -6577,17 +6604,17 @@ public class VmMigrationClient implements BackgroundResource {
           ListGroupsFixedSizeCollection&gt; {
 
     private ListGroupsFixedSizeCollection(List&lt;ListGroupsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L6580">      super(pages, collectionSize);</span>
-<span class="fc" id="L6581">    }</span>
+<span class="fc" id="L6607">      super(pages, collectionSize);</span>
+<span class="fc" id="L6608">    }</span>
 
     private static ListGroupsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L6584">      return new ListGroupsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L6611">      return new ListGroupsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListGroupsFixedSizeCollection createCollection(
         List&lt;ListGroupsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L6590">      return new ListGroupsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L6617">      return new ListGroupsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -6603,16 +6630,16 @@ public class VmMigrationClient implements BackgroundResource {
         PageContext&lt;ListTargetProjectsRequest, ListTargetProjectsResponse, TargetProject&gt; context,
         ApiFuture&lt;ListTargetProjectsResponse&gt; futureResponse) {
       ApiFuture&lt;ListTargetProjectsPage&gt; futurePage =
-<span class="fc" id="L6606">          ListTargetProjectsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L6607">      return ApiFutures.transform(</span>
+<span class="fc" id="L6633">          ListTargetProjectsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6634">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L6609">          input -&gt; new ListTargetProjectsPagedResponse(input),</span>
-<span class="fc" id="L6610">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L6636">          input -&gt; new ListTargetProjectsPagedResponse(input),</span>
+<span class="fc" id="L6637">          MoreExecutors.directExecutor());</span>
     }
 
     private ListTargetProjectsPagedResponse(ListTargetProjectsPage page) {
-<span class="fc" id="L6614">      super(page, ListTargetProjectsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L6615">    }</span>
+<span class="fc" id="L6641">      super(page, ListTargetProjectsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L6642">    }</span>
   }
 
   public static class ListTargetProjectsPage
@@ -6625,25 +6652,25 @@ public class VmMigrationClient implements BackgroundResource {
     private ListTargetProjectsPage(
         PageContext&lt;ListTargetProjectsRequest, ListTargetProjectsResponse, TargetProject&gt; context,
         ListTargetProjectsResponse response) {
-<span class="fc" id="L6628">      super(context, response);</span>
-<span class="fc" id="L6629">    }</span>
+<span class="fc" id="L6655">      super(context, response);</span>
+<span class="fc" id="L6656">    }</span>
 
     private static ListTargetProjectsPage createEmptyPage() {
-<span class="fc" id="L6632">      return new ListTargetProjectsPage(null, null);</span>
+<span class="fc" id="L6659">      return new ListTargetProjectsPage(null, null);</span>
     }
 
     @Override
     protected ListTargetProjectsPage createPage(
         PageContext&lt;ListTargetProjectsRequest, ListTargetProjectsResponse, TargetProject&gt; context,
         ListTargetProjectsResponse response) {
-<span class="fc" id="L6639">      return new ListTargetProjectsPage(context, response);</span>
+<span class="fc" id="L6666">      return new ListTargetProjectsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListTargetProjectsPage&gt; createPageAsync(
         PageContext&lt;ListTargetProjectsRequest, ListTargetProjectsResponse, TargetProject&gt; context,
         ApiFuture&lt;ListTargetProjectsResponse&gt; futureResponse) {
-<span class="fc" id="L6646">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L6673">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -6657,17 +6684,17 @@ public class VmMigrationClient implements BackgroundResource {
 
     private ListTargetProjectsFixedSizeCollection(
         List&lt;ListTargetProjectsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L6660">      super(pages, collectionSize);</span>
-<span class="fc" id="L6661">    }</span>
+<span class="fc" id="L6687">      super(pages, collectionSize);</span>
+<span class="fc" id="L6688">    }</span>
 
     private static ListTargetProjectsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L6664">      return new ListTargetProjectsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L6691">      return new ListTargetProjectsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTargetProjectsFixedSizeCollection createCollection(
         List&lt;ListTargetProjectsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L6670">      return new ListTargetProjectsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L6697">      return new ListTargetProjectsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

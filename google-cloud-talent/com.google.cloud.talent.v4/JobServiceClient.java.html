@@ -18,7 +18,9 @@ package com.google.cloud.talent.v4;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +32,6 @@ import com.google.cloud.talent.v4.stub.JobServiceStub;
 import com.google.cloud.talent.v4.stub.JobServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -104,17 +105,32 @@ import javax.annotation.Generated;
  * JobServiceClient jobServiceClient = JobServiceClient.create(jobServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * JobServiceSettings jobServiceSettings =
+ *     JobServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             JobServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * JobServiceClient jobServiceClient = JobServiceClient.create(jobServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class JobServiceClient implements BackgroundResource {
   private final JobServiceSettings settings;
   private final JobServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of JobServiceClient with default settings. */
   public static final JobServiceClient create() throws IOException {
-<span class="nc" id="L117">    return create(JobServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L133">    return create(JobServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -122,7 +138,7 @@ public class JobServiceClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final JobServiceClient create(JobServiceSettings settings) throws IOException {
-<span class="fc" id="L125">    return new JobServiceClient(settings);</span>
+<span class="fc" id="L141">    return new JobServiceClient(settings);</span>
   }
 
   /**
@@ -130,39 +146,52 @@ public class JobServiceClient implements BackgroundResource {
    * advanced usage - prefer using create(JobServiceSettings).
    */
   public static final JobServiceClient create(JobServiceStub stub) {
-<span class="nc" id="L133">    return new JobServiceClient(stub);</span>
+<span class="nc" id="L149">    return new JobServiceClient(stub);</span>
   }
 
   /**
    * Constructs an instance of JobServiceClient, using the given settings. This is protected so that
    * it is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L140">  protected JobServiceClient(JobServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L141">    this.settings = settings;</span>
-<span class="fc" id="L142">    this.stub = ((JobServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L143">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L144">  }</span>
+<span class="fc" id="L156">  protected JobServiceClient(JobServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L157">    this.settings = settings;</span>
+<span class="fc" id="L158">    this.stub = ((JobServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L159">    this.operationsClient =</span>
+<span class="fc" id="L160">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L161">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L162">  }</span>
 
-<span class="nc" id="L146">  protected JobServiceClient(JobServiceStub stub) {</span>
-<span class="nc" id="L147">    this.settings = null;</span>
-<span class="nc" id="L148">    this.stub = stub;</span>
-<span class="nc" id="L149">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L150">  }</span>
+<span class="nc" id="L164">  protected JobServiceClient(JobServiceStub stub) {</span>
+<span class="nc" id="L165">    this.settings = null;</span>
+<span class="nc" id="L166">    this.stub = stub;</span>
+<span class="nc" id="L167">    this.operationsClient =</span>
+<span class="nc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L170">  }</span>
 
   public final JobServiceSettings getSettings() {
-<span class="nc" id="L153">    return settings;</span>
+<span class="nc" id="L173">    return settings;</span>
   }
 
   public JobServiceStub getStub() {
-<span class="nc" id="L157">    return stub;</span>
+<span class="nc" id="L177">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L165">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L185">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L194">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -191,11 +220,11 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final Job createJob(TenantName parent, Job job) {
     CreateJobRequest request =
-<span class="fc" id="L194">        CreateJobRequest.newBuilder()</span>
-<span class="pc bpc" id="L195" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L196">            .setJob(job)</span>
-<span class="fc" id="L197">            .build();</span>
-<span class="fc" id="L198">    return createJob(request);</span>
+<span class="fc" id="L223">        CreateJobRequest.newBuilder()</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L225">            .setJob(job)</span>
+<span class="fc" id="L226">            .build();</span>
+<span class="fc" id="L227">    return createJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -223,8 +252,8 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job createJob(String parent, Job job) {
-<span class="fc" id="L226">    CreateJobRequest request = CreateJobRequest.newBuilder().setParent(parent).setJob(job).build();</span>
-<span class="fc" id="L227">    return createJob(request);</span>
+<span class="fc" id="L255">    CreateJobRequest request = CreateJobRequest.newBuilder().setParent(parent).setJob(job).build();</span>
+<span class="fc" id="L256">    return createJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -252,7 +281,7 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job createJob(CreateJobRequest request) {
-<span class="fc" id="L255">    return createJobCallable().call(request);</span>
+<span class="fc" id="L284">    return createJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -279,7 +308,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateJobRequest, Job&gt; createJobCallable() {
-<span class="fc" id="L282">    return stub.createJobCallable();</span>
+<span class="fc" id="L311">    return stub.createJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -307,11 +336,11 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationFuture&lt;BatchCreateJobsResponse, BatchOperationMetadata&gt;
       batchCreateJobsAsync(TenantName parent, List&lt;Job&gt; jobs) {
     BatchCreateJobsRequest request =
-<span class="fc" id="L310">        BatchCreateJobsRequest.newBuilder()</span>
-<span class="pc bpc" id="L311" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L312">            .addAllJobs(jobs)</span>
-<span class="fc" id="L313">            .build();</span>
-<span class="fc" id="L314">    return batchCreateJobsAsync(request);</span>
+<span class="fc" id="L339">        BatchCreateJobsRequest.newBuilder()</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L341">            .addAllJobs(jobs)</span>
+<span class="fc" id="L342">            .build();</span>
+<span class="fc" id="L343">    return batchCreateJobsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -339,8 +368,8 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationFuture&lt;BatchCreateJobsResponse, BatchOperationMetadata&gt;
       batchCreateJobsAsync(String parent, List&lt;Job&gt; jobs) {
     BatchCreateJobsRequest request =
-<span class="fc" id="L342">        BatchCreateJobsRequest.newBuilder().setParent(parent).addAllJobs(jobs).build();</span>
-<span class="fc" id="L343">    return batchCreateJobsAsync(request);</span>
+<span class="fc" id="L371">        BatchCreateJobsRequest.newBuilder().setParent(parent).addAllJobs(jobs).build();</span>
+<span class="fc" id="L372">    return batchCreateJobsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -367,7 +396,7 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;BatchCreateJobsResponse, BatchOperationMetadata&gt;
       batchCreateJobsAsync(BatchCreateJobsRequest request) {
-<span class="fc" id="L370">    return batchCreateJobsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L399">    return batchCreateJobsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -395,7 +424,7 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           BatchCreateJobsRequest, BatchCreateJobsResponse, BatchOperationMetadata&gt;
       batchCreateJobsOperationCallable() {
-<span class="fc" id="L398">    return stub.batchCreateJobsOperationCallable();</span>
+<span class="fc" id="L427">    return stub.batchCreateJobsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -420,7 +449,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;BatchCreateJobsRequest, Operation&gt; batchCreateJobsCallable() {
-<span class="nc" id="L423">    return stub.batchCreateJobsCallable();</span>
+<span class="nc" id="L452">    return stub.batchCreateJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -445,8 +474,8 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final Job getJob(JobName name) {
     GetJobRequest request =
-<span class="pc bpc" id="L448" title="1 of 2 branches missed.">        GetJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L449">    return getJob(request);</span>
+<span class="pc bpc" id="L477" title="1 of 2 branches missed.">        GetJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L478">    return getJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -470,8 +499,8 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job getJob(String name) {
-<span class="fc" id="L473">    GetJobRequest request = GetJobRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L474">    return getJob(request);</span>
+<span class="fc" id="L502">    GetJobRequest request = GetJobRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L503">    return getJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -496,7 +525,7 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job getJob(GetJobRequest request) {
-<span class="fc" id="L499">    return getJobCallable().call(request);</span>
+<span class="fc" id="L528">    return getJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -520,7 +549,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetJobRequest, Job&gt; getJobCallable() {
-<span class="fc" id="L523">    return stub.getJobCallable();</span>
+<span class="fc" id="L552">    return stub.getJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -553,8 +582,8 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final Job updateJob(Job job, FieldMask updateMask) {
     UpdateJobRequest request =
-<span class="fc" id="L556">        UpdateJobRequest.newBuilder().setJob(job).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L557">    return updateJob(request);</span>
+<span class="fc" id="L585">        UpdateJobRequest.newBuilder().setJob(job).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L586">    return updateJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -583,7 +612,7 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job updateJob(UpdateJobRequest request) {
-<span class="fc" id="L586">    return updateJobCallable().call(request);</span>
+<span class="fc" id="L615">    return updateJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -611,7 +640,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateJobRequest, Job&gt; updateJobCallable() {
-<span class="fc" id="L614">    return stub.updateJobCallable();</span>
+<span class="fc" id="L643">    return stub.updateJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -639,11 +668,11 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationFuture&lt;BatchUpdateJobsResponse, BatchOperationMetadata&gt;
       batchUpdateJobsAsync(TenantName parent, List&lt;Job&gt; jobs) {
     BatchUpdateJobsRequest request =
-<span class="fc" id="L642">        BatchUpdateJobsRequest.newBuilder()</span>
-<span class="pc bpc" id="L643" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L644">            .addAllJobs(jobs)</span>
-<span class="fc" id="L645">            .build();</span>
-<span class="fc" id="L646">    return batchUpdateJobsAsync(request);</span>
+<span class="fc" id="L671">        BatchUpdateJobsRequest.newBuilder()</span>
+<span class="pc bpc" id="L672" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L673">            .addAllJobs(jobs)</span>
+<span class="fc" id="L674">            .build();</span>
+<span class="fc" id="L675">    return batchUpdateJobsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -671,8 +700,8 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationFuture&lt;BatchUpdateJobsResponse, BatchOperationMetadata&gt;
       batchUpdateJobsAsync(String parent, List&lt;Job&gt; jobs) {
     BatchUpdateJobsRequest request =
-<span class="fc" id="L674">        BatchUpdateJobsRequest.newBuilder().setParent(parent).addAllJobs(jobs).build();</span>
-<span class="fc" id="L675">    return batchUpdateJobsAsync(request);</span>
+<span class="fc" id="L703">        BatchUpdateJobsRequest.newBuilder().setParent(parent).addAllJobs(jobs).build();</span>
+<span class="fc" id="L704">    return batchUpdateJobsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -700,7 +729,7 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;BatchUpdateJobsResponse, BatchOperationMetadata&gt;
       batchUpdateJobsAsync(BatchUpdateJobsRequest request) {
-<span class="fc" id="L703">    return batchUpdateJobsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L732">    return batchUpdateJobsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -729,7 +758,7 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           BatchUpdateJobsRequest, BatchUpdateJobsResponse, BatchOperationMetadata&gt;
       batchUpdateJobsOperationCallable() {
-<span class="fc" id="L732">    return stub.batchUpdateJobsOperationCallable();</span>
+<span class="fc" id="L761">    return stub.batchUpdateJobsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -755,7 +784,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;BatchUpdateJobsRequest, Operation&gt; batchUpdateJobsCallable() {
-<span class="nc" id="L758">    return stub.batchUpdateJobsCallable();</span>
+<span class="nc" id="L787">    return stub.batchUpdateJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -782,9 +811,9 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final void deleteJob(JobName name) {
     DeleteJobRequest request =
-<span class="pc bpc" id="L785" title="1 of 2 branches missed.">        DeleteJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L786">    deleteJob(request);</span>
-<span class="fc" id="L787">  }</span>
+<span class="pc bpc" id="L814" title="1 of 2 branches missed.">        DeleteJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L815">    deleteJob(request);</span>
+<span class="fc" id="L816">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -809,9 +838,9 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteJob(String name) {
-<span class="fc" id="L812">    DeleteJobRequest request = DeleteJobRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L813">    deleteJob(request);</span>
-<span class="fc" id="L814">  }</span>
+<span class="fc" id="L841">    DeleteJobRequest request = DeleteJobRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L842">    deleteJob(request);</span>
+<span class="fc" id="L843">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -837,8 +866,8 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteJob(DeleteJobRequest request) {
-<span class="fc" id="L840">    deleteJobCallable().call(request);</span>
-<span class="fc" id="L841">  }</span>
+<span class="fc" id="L869">    deleteJobCallable().call(request);</span>
+<span class="fc" id="L870">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -863,7 +892,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteJobRequest, Empty&gt; deleteJobCallable() {
-<span class="fc" id="L866">    return stub.deleteJobCallable();</span>
+<span class="fc" id="L895">    return stub.deleteJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -895,11 +924,11 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationFuture&lt;BatchDeleteJobsResponse, BatchOperationMetadata&gt;
       batchDeleteJobsAsync(TenantName parent, List&lt;String&gt; names) {
     BatchDeleteJobsRequest request =
-<span class="fc" id="L898">        BatchDeleteJobsRequest.newBuilder()</span>
-<span class="pc bpc" id="L899" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L900">            .addAllNames(names)</span>
-<span class="fc" id="L901">            .build();</span>
-<span class="fc" id="L902">    return batchDeleteJobsAsync(request);</span>
+<span class="fc" id="L927">        BatchDeleteJobsRequest.newBuilder()</span>
+<span class="pc bpc" id="L928" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L929">            .addAllNames(names)</span>
+<span class="fc" id="L930">            .build();</span>
+<span class="fc" id="L931">    return batchDeleteJobsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -931,8 +960,8 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationFuture&lt;BatchDeleteJobsResponse, BatchOperationMetadata&gt;
       batchDeleteJobsAsync(String parent, List&lt;String&gt; names) {
     BatchDeleteJobsRequest request =
-<span class="fc" id="L934">        BatchDeleteJobsRequest.newBuilder().setParent(parent).addAllNames(names).build();</span>
-<span class="fc" id="L935">    return batchDeleteJobsAsync(request);</span>
+<span class="fc" id="L963">        BatchDeleteJobsRequest.newBuilder().setParent(parent).addAllNames(names).build();</span>
+<span class="fc" id="L964">    return batchDeleteJobsAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -959,7 +988,7 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;BatchDeleteJobsResponse, BatchOperationMetadata&gt;
       batchDeleteJobsAsync(BatchDeleteJobsRequest request) {
-<span class="fc" id="L962">    return batchDeleteJobsOperationCallable().futureCall(request);</span>
+<span class="fc" id="L991">    return batchDeleteJobsOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -987,7 +1016,7 @@ public class JobServiceClient implements BackgroundResource {
   public final OperationCallable&lt;
           BatchDeleteJobsRequest, BatchDeleteJobsResponse, BatchOperationMetadata&gt;
       batchDeleteJobsOperationCallable() {
-<span class="fc" id="L990">    return stub.batchDeleteJobsOperationCallable();</span>
+<span class="fc" id="L1019">    return stub.batchDeleteJobsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1012,7 +1041,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;BatchDeleteJobsRequest, Operation&gt; batchDeleteJobsCallable() {
-<span class="nc" id="L1015">    return stub.batchDeleteJobsCallable();</span>
+<span class="nc" id="L1044">    return stub.batchDeleteJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1060,11 +1089,11 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final ListJobsPagedResponse listJobs(TenantName parent, String filter) {
     ListJobsRequest request =
-<span class="fc" id="L1063">        ListJobsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1064" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1065">            .setFilter(filter)</span>
-<span class="fc" id="L1066">            .build();</span>
-<span class="fc" id="L1067">    return listJobs(request);</span>
+<span class="fc" id="L1092">        ListJobsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1093" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1094">            .setFilter(filter)</span>
+<span class="fc" id="L1095">            .build();</span>
+<span class="fc" id="L1096">    return listJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1112,8 +1141,8 @@ public class JobServiceClient implements BackgroundResource {
    */
   public final ListJobsPagedResponse listJobs(String parent, String filter) {
     ListJobsRequest request =
-<span class="fc" id="L1115">        ListJobsRequest.newBuilder().setParent(parent).setFilter(filter).build();</span>
-<span class="fc" id="L1116">    return listJobs(request);</span>
+<span class="fc" id="L1144">        ListJobsRequest.newBuilder().setParent(parent).setFilter(filter).build();</span>
+<span class="fc" id="L1145">    return listJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1144,7 +1173,7 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListJobsPagedResponse listJobs(ListJobsRequest request) {
-<span class="fc" id="L1147">    return listJobsPagedCallable().call(request);</span>
+<span class="fc" id="L1176">    return listJobsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1174,7 +1203,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListJobsRequest, ListJobsPagedResponse&gt; listJobsPagedCallable() {
-<span class="fc" id="L1177">    return stub.listJobsPagedCallable();</span>
+<span class="fc" id="L1206">    return stub.listJobsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1197,7 +1226,7 @@ public class JobServiceClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListJobsResponse response = jobServiceClient.listJobsCallable().call(request);
-   *     for (Job element : response.getResponsesList()) {
+   *     for (Job element : response.getJobsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1211,7 +1240,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListJobsRequest, ListJobsResponse&gt; listJobsCallable() {
-<span class="nc" id="L1214">    return stub.listJobsCallable();</span>
+<span class="nc" id="L1243">    return stub.listJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1251,7 +1280,7 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final SearchJobsResponse searchJobs(SearchJobsRequest request) {
-<span class="fc" id="L1254">    return searchJobsCallable().call(request);</span>
+<span class="fc" id="L1283">    return searchJobsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1291,7 +1320,7 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SearchJobsRequest, SearchJobsResponse&gt; searchJobsCallable() {
-<span class="fc" id="L1294">    return stub.searchJobsCallable();</span>
+<span class="fc" id="L1323">    return stub.searchJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1336,7 +1365,7 @@ public class JobServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final SearchJobsResponse searchJobsForAlert(SearchJobsRequest request) {
-<span class="fc" id="L1339">    return searchJobsForAlertCallable().call(request);</span>
+<span class="fc" id="L1368">    return searchJobsForAlertCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1381,37 +1410,37 @@ public class JobServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SearchJobsRequest, SearchJobsResponse&gt; searchJobsForAlertCallable() {
-<span class="fc" id="L1384">    return stub.searchJobsForAlertCallable();</span>
+<span class="fc" id="L1413">    return stub.searchJobsForAlertCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1389">    stub.close();</span>
-<span class="fc" id="L1390">  }</span>
+<span class="fc" id="L1418">    stub.close();</span>
+<span class="fc" id="L1419">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1394">    stub.shutdown();</span>
-<span class="nc" id="L1395">  }</span>
+<span class="nc" id="L1423">    stub.shutdown();</span>
+<span class="nc" id="L1424">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1399">    return stub.isShutdown();</span>
+<span class="nc" id="L1428">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1404">    return stub.isTerminated();</span>
+<span class="nc" id="L1433">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1409">    stub.shutdownNow();</span>
-<span class="nc" id="L1410">  }</span>
+<span class="nc" id="L1438">    stub.shutdownNow();</span>
+<span class="nc" id="L1439">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1414">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1443">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListJobsPagedResponse
@@ -1422,14 +1451,14 @@ public class JobServiceClient implements BackgroundResource {
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context,
         ApiFuture&lt;ListJobsResponse&gt; futureResponse) {
       ApiFuture&lt;ListJobsPage&gt; futurePage =
-<span class="fc" id="L1425">          ListJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1426">      return ApiFutures.transform(</span>
-<span class="fc" id="L1427">          futurePage, input -&gt; new ListJobsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1454">          ListJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1455">      return ApiFutures.transform(</span>
+<span class="fc" id="L1456">          futurePage, input -&gt; new ListJobsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListJobsPagedResponse(ListJobsPage page) {
-<span class="fc" id="L1431">      super(page, ListJobsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1432">    }</span>
+<span class="fc" id="L1460">      super(page, ListJobsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1461">    }</span>
   }
 
   public static class ListJobsPage
@@ -1437,24 +1466,24 @@ public class JobServiceClient implements BackgroundResource {
 
     private ListJobsPage(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context, ListJobsResponse response) {
-<span class="fc" id="L1440">      super(context, response);</span>
-<span class="fc" id="L1441">    }</span>
+<span class="fc" id="L1469">      super(context, response);</span>
+<span class="fc" id="L1470">    }</span>
 
     private static ListJobsPage createEmptyPage() {
-<span class="fc" id="L1444">      return new ListJobsPage(null, null);</span>
+<span class="fc" id="L1473">      return new ListJobsPage(null, null);</span>
     }
 
     @Override
     protected ListJobsPage createPage(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context, ListJobsResponse response) {
-<span class="fc" id="L1450">      return new ListJobsPage(context, response);</span>
+<span class="fc" id="L1479">      return new ListJobsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListJobsPage&gt; createPageAsync(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context,
         ApiFuture&lt;ListJobsResponse&gt; futureResponse) {
-<span class="fc" id="L1457">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1486">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1463,17 +1492,17 @@ public class JobServiceClient implements BackgroundResource {
           ListJobsRequest, ListJobsResponse, Job, ListJobsPage, ListJobsFixedSizeCollection&gt; {
 
     private ListJobsFixedSizeCollection(List&lt;ListJobsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1466">      super(pages, collectionSize);</span>
-<span class="fc" id="L1467">    }</span>
+<span class="fc" id="L1495">      super(pages, collectionSize);</span>
+<span class="fc" id="L1496">    }</span>
 
     private static ListJobsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1470">      return new ListJobsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1499">      return new ListJobsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListJobsFixedSizeCollection createCollection(
         List&lt;ListJobsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1476">      return new ListJobsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1505">      return new ListJobsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
