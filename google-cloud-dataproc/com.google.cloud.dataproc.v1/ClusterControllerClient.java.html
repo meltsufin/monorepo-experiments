@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ClusterControllerClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-dataproc</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.dataproc.v1</a> &gt; <span class="el_source">ClusterControllerClient.java</span></div><h1>ClusterControllerClient.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.dataproc.v1.stub.ClusterControllerStub;
 import com.google.cloud.dataproc.v1.stub.ClusterControllerStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -48,6 +48,8 @@ import javax.annotation.Generated;
  * calls that map to API methods. Sample code to get started:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
  *   String projectId = &quot;projectId-894832108&quot;;
  *   String region = &quot;region-934795532&quot;;
@@ -86,6 +88,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize credentials:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * ClusterControllerSettings clusterControllerSettings =
  *     ClusterControllerSettings.newBuilder()
  *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
@@ -97,8 +101,25 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize the endpoint:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * ClusterControllerSettings clusterControllerSettings =
  *     ClusterControllerSettings.newBuilder().setEndpoint(myEndpoint).build();
+ * ClusterControllerClient clusterControllerClient =
+ *     ClusterControllerClient.create(clusterControllerSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ClusterControllerSettings clusterControllerSettings =
+ *     ClusterControllerSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ClusterControllerSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
  * ClusterControllerClient clusterControllerClient =
  *     ClusterControllerClient.create(clusterControllerSettings);
  * }&lt;/pre&gt;
@@ -109,11 +130,12 @@ import javax.annotation.Generated;
 public class ClusterControllerClient implements BackgroundResource {
   private final ClusterControllerSettings settings;
   private final ClusterControllerStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ClusterControllerClient with default settings. */
   public static final ClusterControllerClient create() throws IOException {
-<span class="nc" id="L116">    return create(ClusterControllerSettings.newBuilder().build());</span>
+<span class="nc" id="L138">    return create(ClusterControllerSettings.newBuilder().build());</span>
   }
 
   /**
@@ -122,16 +144,15 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public static final ClusterControllerClient create(ClusterControllerSettings settings)
       throws IOException {
-<span class="fc" id="L125">    return new ClusterControllerClient(settings);</span>
+<span class="fc" id="L147">    return new ClusterControllerClient(settings);</span>
   }
 
   /**
    * Constructs an instance of ClusterControllerClient, using the given stub for making calls. This
    * is for advanced usage - prefer using create(ClusterControllerSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final ClusterControllerClient create(ClusterControllerStub stub) {
-<span class="nc" id="L134">    return new ClusterControllerClient(stub);</span>
+<span class="nc" id="L155">    return new ClusterControllerClient(stub);</span>
   }
 
   /**
@@ -139,34 +160,45 @@ public class ClusterControllerClient implements BackgroundResource {
    * so that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L142">  protected ClusterControllerClient(ClusterControllerSettings settings) throws IOException {</span>
-<span class="fc" id="L143">    this.settings = settings;</span>
-<span class="fc" id="L144">    this.stub = ((ClusterControllerStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L145">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L146">  }</span>
+<span class="fc" id="L163">  protected ClusterControllerClient(ClusterControllerSettings settings) throws IOException {</span>
+<span class="fc" id="L164">    this.settings = settings;</span>
+<span class="fc" id="L165">    this.stub = ((ClusterControllerStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L166">    this.operationsClient =</span>
+<span class="fc" id="L167">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L168">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L169">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L149">  protected ClusterControllerClient(ClusterControllerStub stub) {</span>
-<span class="nc" id="L150">    this.settings = null;</span>
-<span class="nc" id="L151">    this.stub = stub;</span>
-<span class="nc" id="L152">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L153">  }</span>
+<span class="nc" id="L171">  protected ClusterControllerClient(ClusterControllerStub stub) {</span>
+<span class="nc" id="L172">    this.settings = null;</span>
+<span class="nc" id="L173">    this.stub = stub;</span>
+<span class="nc" id="L174">    this.operationsClient =</span>
+<span class="nc" id="L175">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L176">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L177">  }</span>
 
   public final ClusterControllerSettings getSettings() {
-<span class="nc" id="L156">    return settings;</span>
+<span class="nc" id="L180">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public ClusterControllerStub getStub() {
-<span class="nc" id="L161">    return stub;</span>
+<span class="nc" id="L184">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L169">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L192">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L201">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -178,6 +210,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -196,12 +230,12 @@ public class ClusterControllerClient implements BackgroundResource {
   public final OperationFuture&lt;Cluster, ClusterOperationMetadata&gt; createClusterAsync(
       String projectId, String region, Cluster cluster) {
     CreateClusterRequest request =
-<span class="fc" id="L199">        CreateClusterRequest.newBuilder()</span>
-<span class="fc" id="L200">            .setProjectId(projectId)</span>
-<span class="fc" id="L201">            .setRegion(region)</span>
-<span class="fc" id="L202">            .setCluster(cluster)</span>
-<span class="fc" id="L203">            .build();</span>
-<span class="fc" id="L204">    return createClusterAsync(request);</span>
+<span class="fc" id="L233">        CreateClusterRequest.newBuilder()</span>
+<span class="fc" id="L234">            .setProjectId(projectId)</span>
+<span class="fc" id="L235">            .setRegion(region)</span>
+<span class="fc" id="L236">            .setCluster(cluster)</span>
+<span class="fc" id="L237">            .build();</span>
+<span class="fc" id="L238">    return createClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -213,6 +247,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   CreateClusterRequest request =
    *       CreateClusterRequest.newBuilder()
@@ -231,7 +267,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Cluster, ClusterOperationMetadata&gt; createClusterAsync(
       CreateClusterRequest request) {
-<span class="fc" id="L234">    return createClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L270">    return createClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -243,6 +279,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   CreateClusterRequest request =
    *       CreateClusterRequest.newBuilder()
@@ -261,7 +299,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateClusterRequest, Cluster, ClusterOperationMetadata&gt;
       createClusterOperationCallable() {
-<span class="fc" id="L264">    return stub.createClusterOperationCallable();</span>
+<span class="fc" id="L302">    return stub.createClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -273,6 +311,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   CreateClusterRequest request =
    *       CreateClusterRequest.newBuilder()
@@ -290,7 +330,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateClusterRequest, Operation&gt; createClusterCallable() {
-<span class="nc" id="L293">    return stub.createClusterCallable();</span>
+<span class="nc" id="L333">    return stub.createClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -304,6 +344,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -347,14 +389,14 @@ public class ClusterControllerClient implements BackgroundResource {
   public final OperationFuture&lt;Cluster, ClusterOperationMetadata&gt; updateClusterAsync(
       String projectId, String region, String clusterName, Cluster cluster, FieldMask updateMask) {
     UpdateClusterRequest request =
-<span class="fc" id="L350">        UpdateClusterRequest.newBuilder()</span>
-<span class="fc" id="L351">            .setProjectId(projectId)</span>
-<span class="fc" id="L352">            .setRegion(region)</span>
-<span class="fc" id="L353">            .setClusterName(clusterName)</span>
-<span class="fc" id="L354">            .setCluster(cluster)</span>
-<span class="fc" id="L355">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L356">            .build();</span>
-<span class="fc" id="L357">    return updateClusterAsync(request);</span>
+<span class="fc" id="L392">        UpdateClusterRequest.newBuilder()</span>
+<span class="fc" id="L393">            .setProjectId(projectId)</span>
+<span class="fc" id="L394">            .setRegion(region)</span>
+<span class="fc" id="L395">            .setClusterName(clusterName)</span>
+<span class="fc" id="L396">            .setCluster(cluster)</span>
+<span class="fc" id="L397">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L398">            .build();</span>
+<span class="fc" id="L399">    return updateClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -368,6 +410,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   UpdateClusterRequest request =
    *       UpdateClusterRequest.newBuilder()
@@ -388,7 +432,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Cluster, ClusterOperationMetadata&gt; updateClusterAsync(
       UpdateClusterRequest request) {
-<span class="fc" id="L391">    return updateClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L435">    return updateClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -402,6 +446,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   UpdateClusterRequest request =
    *       UpdateClusterRequest.newBuilder()
@@ -422,7 +468,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateClusterRequest, Cluster, ClusterOperationMetadata&gt;
       updateClusterOperationCallable() {
-<span class="fc" id="L425">    return stub.updateClusterOperationCallable();</span>
+<span class="fc" id="L471">    return stub.updateClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -436,6 +482,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   UpdateClusterRequest request =
    *       UpdateClusterRequest.newBuilder()
@@ -455,7 +503,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateClusterRequest, Operation&gt; updateClusterCallable() {
-<span class="nc" id="L458">    return stub.updateClusterCallable();</span>
+<span class="nc" id="L506">    return stub.updateClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -465,6 +513,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   StopClusterRequest request =
    *       StopClusterRequest.newBuilder()
@@ -483,7 +533,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Cluster, ClusterOperationMetadata&gt; stopClusterAsync(
       StopClusterRequest request) {
-<span class="fc" id="L486">    return stopClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L536">    return stopClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -493,6 +543,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   StopClusterRequest request =
    *       StopClusterRequest.newBuilder()
@@ -511,7 +563,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationCallable&lt;StopClusterRequest, Cluster, ClusterOperationMetadata&gt;
       stopClusterOperationCallable() {
-<span class="fc" id="L514">    return stub.stopClusterOperationCallable();</span>
+<span class="fc" id="L566">    return stub.stopClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -521,6 +573,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   StopClusterRequest request =
    *       StopClusterRequest.newBuilder()
@@ -538,7 +592,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;StopClusterRequest, Operation&gt; stopClusterCallable() {
-<span class="nc" id="L541">    return stub.stopClusterCallable();</span>
+<span class="nc" id="L595">    return stub.stopClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -548,6 +602,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   StartClusterRequest request =
    *       StartClusterRequest.newBuilder()
@@ -566,7 +622,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Cluster, ClusterOperationMetadata&gt; startClusterAsync(
       StartClusterRequest request) {
-<span class="fc" id="L569">    return startClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L625">    return startClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -576,6 +632,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   StartClusterRequest request =
    *       StartClusterRequest.newBuilder()
@@ -594,7 +652,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationCallable&lt;StartClusterRequest, Cluster, ClusterOperationMetadata&gt;
       startClusterOperationCallable() {
-<span class="fc" id="L597">    return stub.startClusterOperationCallable();</span>
+<span class="fc" id="L655">    return stub.startClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -604,6 +662,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   StartClusterRequest request =
    *       StartClusterRequest.newBuilder()
@@ -621,7 +681,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;StartClusterRequest, Operation&gt; startClusterCallable() {
-<span class="nc" id="L624">    return stub.startClusterCallable();</span>
+<span class="nc" id="L684">    return stub.startClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -633,6 +693,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -650,12 +712,12 @@ public class ClusterControllerClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, ClusterOperationMetadata&gt; deleteClusterAsync(
       String projectId, String region, String clusterName) {
     DeleteClusterRequest request =
-<span class="fc" id="L653">        DeleteClusterRequest.newBuilder()</span>
-<span class="fc" id="L654">            .setProjectId(projectId)</span>
-<span class="fc" id="L655">            .setRegion(region)</span>
-<span class="fc" id="L656">            .setClusterName(clusterName)</span>
-<span class="fc" id="L657">            .build();</span>
-<span class="fc" id="L658">    return deleteClusterAsync(request);</span>
+<span class="fc" id="L715">        DeleteClusterRequest.newBuilder()</span>
+<span class="fc" id="L716">            .setProjectId(projectId)</span>
+<span class="fc" id="L717">            .setRegion(region)</span>
+<span class="fc" id="L718">            .setClusterName(clusterName)</span>
+<span class="fc" id="L719">            .build();</span>
+<span class="fc" id="L720">    return deleteClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -667,6 +729,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   DeleteClusterRequest request =
    *       DeleteClusterRequest.newBuilder()
@@ -685,7 +749,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, ClusterOperationMetadata&gt; deleteClusterAsync(
       DeleteClusterRequest request) {
-<span class="fc" id="L688">    return deleteClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L752">    return deleteClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -697,6 +761,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   DeleteClusterRequest request =
    *       DeleteClusterRequest.newBuilder()
@@ -715,7 +781,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteClusterRequest, Empty, ClusterOperationMetadata&gt;
       deleteClusterOperationCallable() {
-<span class="fc" id="L718">    return stub.deleteClusterOperationCallable();</span>
+<span class="fc" id="L784">    return stub.deleteClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -727,6 +793,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   DeleteClusterRequest request =
    *       DeleteClusterRequest.newBuilder()
@@ -744,7 +812,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteClusterRequest, Operation&gt; deleteClusterCallable() {
-<span class="nc" id="L747">    return stub.deleteClusterCallable();</span>
+<span class="nc" id="L815">    return stub.deleteClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -754,6 +822,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -770,12 +840,12 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final Cluster getCluster(String projectId, String region, String clusterName) {
     GetClusterRequest request =
-<span class="fc" id="L773">        GetClusterRequest.newBuilder()</span>
-<span class="fc" id="L774">            .setProjectId(projectId)</span>
-<span class="fc" id="L775">            .setRegion(region)</span>
-<span class="fc" id="L776">            .setClusterName(clusterName)</span>
-<span class="fc" id="L777">            .build();</span>
-<span class="fc" id="L778">    return getCluster(request);</span>
+<span class="fc" id="L843">        GetClusterRequest.newBuilder()</span>
+<span class="fc" id="L844">            .setProjectId(projectId)</span>
+<span class="fc" id="L845">            .setRegion(region)</span>
+<span class="fc" id="L846">            .setClusterName(clusterName)</span>
+<span class="fc" id="L847">            .build();</span>
+<span class="fc" id="L848">    return getCluster(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -785,6 +855,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   GetClusterRequest request =
    *       GetClusterRequest.newBuilder()
@@ -800,7 +872,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Cluster getCluster(GetClusterRequest request) {
-<span class="fc" id="L803">    return getClusterCallable().call(request);</span>
+<span class="fc" id="L875">    return getClusterCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -810,6 +882,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   GetClusterRequest request =
    *       GetClusterRequest.newBuilder()
@@ -824,7 +898,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetClusterRequest, Cluster&gt; getClusterCallable() {
-<span class="fc" id="L827">    return stub.getClusterCallable();</span>
+<span class="fc" id="L901">    return stub.getClusterCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -834,6 +908,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -850,8 +926,8 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final ListClustersPagedResponse listClusters(String projectId, String region) {
     ListClustersRequest request =
-<span class="fc" id="L853">        ListClustersRequest.newBuilder().setProjectId(projectId).setRegion(region).build();</span>
-<span class="fc" id="L854">    return listClusters(request);</span>
+<span class="fc" id="L929">        ListClustersRequest.newBuilder().setProjectId(projectId).setRegion(region).build();</span>
+<span class="fc" id="L930">    return listClusters(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -861,6 +937,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -894,12 +972,12 @@ public class ClusterControllerClient implements BackgroundResource {
   public final ListClustersPagedResponse listClusters(
       String projectId, String region, String filter) {
     ListClustersRequest request =
-<span class="fc" id="L897">        ListClustersRequest.newBuilder()</span>
-<span class="fc" id="L898">            .setProjectId(projectId)</span>
-<span class="fc" id="L899">            .setRegion(region)</span>
-<span class="fc" id="L900">            .setFilter(filter)</span>
-<span class="fc" id="L901">            .build();</span>
-<span class="fc" id="L902">    return listClusters(request);</span>
+<span class="fc" id="L975">        ListClustersRequest.newBuilder()</span>
+<span class="fc" id="L976">            .setProjectId(projectId)</span>
+<span class="fc" id="L977">            .setRegion(region)</span>
+<span class="fc" id="L978">            .setFilter(filter)</span>
+<span class="fc" id="L979">            .build();</span>
+<span class="fc" id="L980">    return listClusters(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -909,6 +987,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   ListClustersRequest request =
    *       ListClustersRequest.newBuilder()
@@ -928,7 +1008,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListClustersPagedResponse listClusters(ListClustersRequest request) {
-<span class="fc" id="L931">    return listClustersPagedCallable().call(request);</span>
+<span class="fc" id="L1011">    return listClustersPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -938,6 +1018,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   ListClustersRequest request =
    *       ListClustersRequest.newBuilder()
@@ -958,7 +1040,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListClustersRequest, ListClustersPagedResponse&gt;
       listClustersPagedCallable() {
-<span class="fc" id="L961">    return stub.listClustersPagedCallable();</span>
+<span class="fc" id="L1043">    return stub.listClustersPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -968,6 +1050,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   ListClustersRequest request =
    *       ListClustersRequest.newBuilder()
@@ -980,7 +1064,7 @@ public class ClusterControllerClient implements BackgroundResource {
    *   while (true) {
    *     ListClustersResponse response =
    *         clusterControllerClient.listClustersCallable().call(request);
-   *     for (Cluster element : response.getResponsesList()) {
+   *     for (Cluster element : response.getClustersList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -994,7 +1078,7 @@ public class ClusterControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListClustersRequest, ListClustersResponse&gt; listClustersCallable() {
-<span class="nc" id="L997">    return stub.listClustersCallable();</span>
+<span class="nc" id="L1081">    return stub.listClustersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1009,6 +1093,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -1027,12 +1113,12 @@ public class ClusterControllerClient implements BackgroundResource {
   public final OperationFuture&lt;DiagnoseClusterResults, ClusterOperationMetadata&gt;
       diagnoseClusterAsync(String projectId, String region, String clusterName) {
     DiagnoseClusterRequest request =
-<span class="fc" id="L1030">        DiagnoseClusterRequest.newBuilder()</span>
-<span class="fc" id="L1031">            .setProjectId(projectId)</span>
-<span class="fc" id="L1032">            .setRegion(region)</span>
-<span class="fc" id="L1033">            .setClusterName(clusterName)</span>
-<span class="fc" id="L1034">            .build();</span>
-<span class="fc" id="L1035">    return diagnoseClusterAsync(request);</span>
+<span class="fc" id="L1116">        DiagnoseClusterRequest.newBuilder()</span>
+<span class="fc" id="L1117">            .setProjectId(projectId)</span>
+<span class="fc" id="L1118">            .setRegion(region)</span>
+<span class="fc" id="L1119">            .setClusterName(clusterName)</span>
+<span class="fc" id="L1120">            .build();</span>
+<span class="fc" id="L1121">    return diagnoseClusterAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1047,6 +1133,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   DiagnoseClusterRequest request =
    *       DiagnoseClusterRequest.newBuilder()
@@ -1063,7 +1151,7 @@ public class ClusterControllerClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DiagnoseClusterResults, ClusterOperationMetadata&gt;
       diagnoseClusterAsync(DiagnoseClusterRequest request) {
-<span class="fc" id="L1066">    return diagnoseClusterOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1154">    return diagnoseClusterOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1078,6 +1166,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   DiagnoseClusterRequest request =
    *       DiagnoseClusterRequest.newBuilder()
@@ -1095,7 +1185,7 @@ public class ClusterControllerClient implements BackgroundResource {
   public final OperationCallable&lt;
           DiagnoseClusterRequest, DiagnoseClusterResults, ClusterOperationMetadata&gt;
       diagnoseClusterOperationCallable() {
-<span class="fc" id="L1098">    return stub.diagnoseClusterOperationCallable();</span>
+<span class="fc" id="L1188">    return stub.diagnoseClusterOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1110,6 +1200,8 @@ public class ClusterControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (ClusterControllerClient clusterControllerClient = ClusterControllerClient.create()) {
    *   DiagnoseClusterRequest request =
    *       DiagnoseClusterRequest.newBuilder()
@@ -1125,37 +1217,37 @@ public class ClusterControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DiagnoseClusterRequest, Operation&gt; diagnoseClusterCallable() {
-<span class="nc" id="L1128">    return stub.diagnoseClusterCallable();</span>
+<span class="nc" id="L1220">    return stub.diagnoseClusterCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1133">    stub.close();</span>
-<span class="fc" id="L1134">  }</span>
+<span class="fc" id="L1225">    stub.close();</span>
+<span class="fc" id="L1226">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1138">    stub.shutdown();</span>
-<span class="nc" id="L1139">  }</span>
+<span class="nc" id="L1230">    stub.shutdown();</span>
+<span class="nc" id="L1231">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1143">    return stub.isShutdown();</span>
+<span class="nc" id="L1235">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1148">    return stub.isTerminated();</span>
+<span class="nc" id="L1240">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1153">    stub.shutdownNow();</span>
-<span class="nc" id="L1154">  }</span>
+<span class="nc" id="L1245">    stub.shutdownNow();</span>
+<span class="nc" id="L1246">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1158">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1250">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListClustersPagedResponse
@@ -1170,16 +1262,16 @@ public class ClusterControllerClient implements BackgroundResource {
         PageContext&lt;ListClustersRequest, ListClustersResponse, Cluster&gt; context,
         ApiFuture&lt;ListClustersResponse&gt; futureResponse) {
       ApiFuture&lt;ListClustersPage&gt; futurePage =
-<span class="fc" id="L1173">          ListClustersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1174">      return ApiFutures.transform(</span>
+<span class="fc" id="L1265">          ListClustersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1266">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1176">          input -&gt; new ListClustersPagedResponse(input),</span>
-<span class="fc" id="L1177">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1268">          input -&gt; new ListClustersPagedResponse(input),</span>
+<span class="fc" id="L1269">          MoreExecutors.directExecutor());</span>
     }
 
     private ListClustersPagedResponse(ListClustersPage page) {
-<span class="fc" id="L1181">      super(page, ListClustersFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1182">    }</span>
+<span class="fc" id="L1273">      super(page, ListClustersFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1274">    }</span>
   }
 
   public static class ListClustersPage
@@ -1188,25 +1280,25 @@ public class ClusterControllerClient implements BackgroundResource {
     private ListClustersPage(
         PageContext&lt;ListClustersRequest, ListClustersResponse, Cluster&gt; context,
         ListClustersResponse response) {
-<span class="fc" id="L1191">      super(context, response);</span>
-<span class="fc" id="L1192">    }</span>
+<span class="fc" id="L1283">      super(context, response);</span>
+<span class="fc" id="L1284">    }</span>
 
     private static ListClustersPage createEmptyPage() {
-<span class="fc" id="L1195">      return new ListClustersPage(null, null);</span>
+<span class="fc" id="L1287">      return new ListClustersPage(null, null);</span>
     }
 
     @Override
     protected ListClustersPage createPage(
         PageContext&lt;ListClustersRequest, ListClustersResponse, Cluster&gt; context,
         ListClustersResponse response) {
-<span class="fc" id="L1202">      return new ListClustersPage(context, response);</span>
+<span class="fc" id="L1294">      return new ListClustersPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListClustersPage&gt; createPageAsync(
         PageContext&lt;ListClustersRequest, ListClustersResponse, Cluster&gt; context,
         ApiFuture&lt;ListClustersResponse&gt; futureResponse) {
-<span class="fc" id="L1209">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1301">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1219,17 +1311,17 @@ public class ClusterControllerClient implements BackgroundResource {
           ListClustersFixedSizeCollection&gt; {
 
     private ListClustersFixedSizeCollection(List&lt;ListClustersPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1222">      super(pages, collectionSize);</span>
-<span class="fc" id="L1223">    }</span>
+<span class="fc" id="L1314">      super(pages, collectionSize);</span>
+<span class="fc" id="L1315">    }</span>
 
     private static ListClustersFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1226">      return new ListClustersFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1318">      return new ListClustersFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListClustersFixedSizeCollection createCollection(
         List&lt;ListClustersPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1232">      return new ListClustersFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1324">      return new ListClustersFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

@@ -18,13 +18,13 @@ package com.google.cloud.vision.v1p3beta1;
 
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.rpc.OperationCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.vision.v1p3beta1.stub.ImageAnnotatorStub;
 import com.google.cloud.vision.v1p3beta1.stub.ImageAnnotatorStubSettings;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -96,6 +96,20 @@ import javax.annotation.Generated;
  * ImageAnnotatorClient imageAnnotatorClient = ImageAnnotatorClient.create(imageAnnotatorSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ImageAnnotatorSettings imageAnnotatorSettings =
+ *     ImageAnnotatorSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ImageAnnotatorSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ImageAnnotatorClient imageAnnotatorClient = ImageAnnotatorClient.create(imageAnnotatorSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -103,11 +117,12 @@ import javax.annotation.Generated;
 public class ImageAnnotatorClient implements BackgroundResource {
   private final ImageAnnotatorSettings settings;
   private final ImageAnnotatorStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ImageAnnotatorClient with default settings. */
   public static final ImageAnnotatorClient create() throws IOException {
-<span class="nc" id="L110">    return create(ImageAnnotatorSettings.newBuilder().build());</span>
+<span class="nc" id="L125">    return create(ImageAnnotatorSettings.newBuilder().build());</span>
   }
 
   /**
@@ -116,16 +131,15 @@ public class ImageAnnotatorClient implements BackgroundResource {
    */
   public static final ImageAnnotatorClient create(ImageAnnotatorSettings settings)
       throws IOException {
-<span class="fc" id="L119">    return new ImageAnnotatorClient(settings);</span>
+<span class="fc" id="L134">    return new ImageAnnotatorClient(settings);</span>
   }
 
   /**
    * Constructs an instance of ImageAnnotatorClient, using the given stub for making calls. This is
    * for advanced usage - prefer using create(ImageAnnotatorSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final ImageAnnotatorClient create(ImageAnnotatorStub stub) {
-<span class="nc" id="L128">    return new ImageAnnotatorClient(stub);</span>
+<span class="nc" id="L142">    return new ImageAnnotatorClient(stub);</span>
   }
 
   /**
@@ -133,34 +147,45 @@ public class ImageAnnotatorClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L136">  protected ImageAnnotatorClient(ImageAnnotatorSettings settings) throws IOException {</span>
-<span class="fc" id="L137">    this.settings = settings;</span>
-<span class="fc" id="L138">    this.stub = ((ImageAnnotatorStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L139">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L140">  }</span>
+<span class="fc" id="L150">  protected ImageAnnotatorClient(ImageAnnotatorSettings settings) throws IOException {</span>
+<span class="fc" id="L151">    this.settings = settings;</span>
+<span class="fc" id="L152">    this.stub = ((ImageAnnotatorStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L153">    this.operationsClient =</span>
+<span class="fc" id="L154">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L155">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L156">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L143">  protected ImageAnnotatorClient(ImageAnnotatorStub stub) {</span>
-<span class="nc" id="L144">    this.settings = null;</span>
-<span class="nc" id="L145">    this.stub = stub;</span>
-<span class="nc" id="L146">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L147">  }</span>
+<span class="nc" id="L158">  protected ImageAnnotatorClient(ImageAnnotatorStub stub) {</span>
+<span class="nc" id="L159">    this.settings = null;</span>
+<span class="nc" id="L160">    this.stub = stub;</span>
+<span class="nc" id="L161">    this.operationsClient =</span>
+<span class="nc" id="L162">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L163">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L164">  }</span>
 
   public final ImageAnnotatorSettings getSettings() {
-<span class="nc" id="L150">    return settings;</span>
+<span class="nc" id="L167">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public ImageAnnotatorStub getStub() {
-<span class="nc" id="L155">    return stub;</span>
+<span class="nc" id="L171">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L163">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L179">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L188">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -184,8 +209,8 @@ public class ImageAnnotatorClient implements BackgroundResource {
   public final BatchAnnotateImagesResponse batchAnnotateImages(
       List&lt;AnnotateImageRequest&gt; requests) {
     BatchAnnotateImagesRequest request =
-<span class="fc" id="L187">        BatchAnnotateImagesRequest.newBuilder().addAllRequests(requests).build();</span>
-<span class="fc" id="L188">    return batchAnnotateImages(request);</span>
+<span class="fc" id="L212">        BatchAnnotateImagesRequest.newBuilder().addAllRequests(requests).build();</span>
+<span class="fc" id="L213">    return batchAnnotateImages(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -210,7 +235,7 @@ public class ImageAnnotatorClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final BatchAnnotateImagesResponse batchAnnotateImages(BatchAnnotateImagesRequest request) {
-<span class="fc" id="L213">    return batchAnnotateImagesCallable().call(request);</span>
+<span class="fc" id="L238">    return batchAnnotateImagesCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -236,7 +261,7 @@ public class ImageAnnotatorClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;BatchAnnotateImagesRequest, BatchAnnotateImagesResponse&gt;
       batchAnnotateImagesCallable() {
-<span class="fc" id="L239">    return stub.batchAnnotateImagesCallable();</span>
+<span class="fc" id="L264">    return stub.batchAnnotateImagesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -265,8 +290,8 @@ public class ImageAnnotatorClient implements BackgroundResource {
   public final OperationFuture&lt;AsyncBatchAnnotateFilesResponse, OperationMetadata&gt;
       asyncBatchAnnotateFilesAsync(List&lt;AsyncAnnotateFileRequest&gt; requests) {
     AsyncBatchAnnotateFilesRequest request =
-<span class="fc" id="L268">        AsyncBatchAnnotateFilesRequest.newBuilder().addAllRequests(requests).build();</span>
-<span class="fc" id="L269">    return asyncBatchAnnotateFilesAsync(request);</span>
+<span class="fc" id="L293">        AsyncBatchAnnotateFilesRequest.newBuilder().addAllRequests(requests).build();</span>
+<span class="fc" id="L294">    return asyncBatchAnnotateFilesAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -297,7 +322,7 @@ public class ImageAnnotatorClient implements BackgroundResource {
    */
   public final OperationFuture&lt;AsyncBatchAnnotateFilesResponse, OperationMetadata&gt;
       asyncBatchAnnotateFilesAsync(AsyncBatchAnnotateFilesRequest request) {
-<span class="fc" id="L300">    return asyncBatchAnnotateFilesOperationCallable().futureCall(request);</span>
+<span class="fc" id="L325">    return asyncBatchAnnotateFilesOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -328,7 +353,7 @@ public class ImageAnnotatorClient implements BackgroundResource {
   public final OperationCallable&lt;
           AsyncBatchAnnotateFilesRequest, AsyncBatchAnnotateFilesResponse, OperationMetadata&gt;
       asyncBatchAnnotateFilesOperationCallable() {
-<span class="fc" id="L331">    return stub.asyncBatchAnnotateFilesOperationCallable();</span>
+<span class="fc" id="L356">    return stub.asyncBatchAnnotateFilesOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -358,37 +383,37 @@ public class ImageAnnotatorClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;AsyncBatchAnnotateFilesRequest, Operation&gt;
       asyncBatchAnnotateFilesCallable() {
-<span class="nc" id="L361">    return stub.asyncBatchAnnotateFilesCallable();</span>
+<span class="nc" id="L386">    return stub.asyncBatchAnnotateFilesCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L366">    stub.close();</span>
-<span class="fc" id="L367">  }</span>
+<span class="fc" id="L391">    stub.close();</span>
+<span class="fc" id="L392">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L371">    stub.shutdown();</span>
-<span class="nc" id="L372">  }</span>
+<span class="nc" id="L396">    stub.shutdown();</span>
+<span class="nc" id="L397">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L376">    return stub.isShutdown();</span>
+<span class="nc" id="L401">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L381">    return stub.isTerminated();</span>
+<span class="nc" id="L406">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L386">    stub.shutdownNow();</span>
-<span class="nc" id="L387">  }</span>
+<span class="nc" id="L411">    stub.shutdownNow();</span>
+<span class="nc" id="L412">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L391">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L416">    return stub.awaitTermination(duration, unit);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

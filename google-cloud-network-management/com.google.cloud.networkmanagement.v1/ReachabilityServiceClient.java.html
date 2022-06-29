@@ -18,7 +18,9 @@ package com.google.cloud.networkmanagement.v1;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +32,6 @@ import com.google.cloud.networkmanagement.v1.stub.ReachabilityServiceStub;
 import com.google.cloud.networkmanagement.v1.stub.ReachabilityServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -112,17 +113,33 @@ import javax.annotation.Generated;
  *     ReachabilityServiceClient.create(reachabilityServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ReachabilityServiceSettings reachabilityServiceSettings =
+ *     ReachabilityServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ReachabilityServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ReachabilityServiceClient reachabilityServiceClient =
+ *     ReachabilityServiceClient.create(reachabilityServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class ReachabilityServiceClient implements BackgroundResource {
   private final ReachabilityServiceSettings settings;
   private final ReachabilityServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ReachabilityServiceClient with default settings. */
   public static final ReachabilityServiceClient create() throws IOException {
-<span class="nc" id="L125">    return create(ReachabilityServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L142">    return create(ReachabilityServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -131,7 +148,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public static final ReachabilityServiceClient create(ReachabilityServiceSettings settings)
       throws IOException {
-<span class="fc" id="L134">    return new ReachabilityServiceClient(settings);</span>
+<span class="fc" id="L151">    return new ReachabilityServiceClient(settings);</span>
   }
 
   /**
@@ -139,7 +156,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    * This is for advanced usage - prefer using create(ReachabilityServiceSettings).
    */
   public static final ReachabilityServiceClient create(ReachabilityServiceStub stub) {
-<span class="nc" id="L142">    return new ReachabilityServiceClient(stub);</span>
+<span class="nc" id="L159">    return new ReachabilityServiceClient(stub);</span>
   }
 
   /**
@@ -147,32 +164,45 @@ public class ReachabilityServiceClient implements BackgroundResource {
    * protected so that it is easy to make a subclass, but otherwise, the static factory methods
    * should be preferred.
    */
-<span class="fc" id="L150">  protected ReachabilityServiceClient(ReachabilityServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L151">    this.settings = settings;</span>
-<span class="fc" id="L152">    this.stub = ((ReachabilityServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L153">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L154">  }</span>
+<span class="fc" id="L167">  protected ReachabilityServiceClient(ReachabilityServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L168">    this.settings = settings;</span>
+<span class="fc" id="L169">    this.stub = ((ReachabilityServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L170">    this.operationsClient =</span>
+<span class="fc" id="L171">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L172">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L173">  }</span>
 
-<span class="nc" id="L156">  protected ReachabilityServiceClient(ReachabilityServiceStub stub) {</span>
-<span class="nc" id="L157">    this.settings = null;</span>
-<span class="nc" id="L158">    this.stub = stub;</span>
-<span class="nc" id="L159">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L160">  }</span>
+<span class="nc" id="L175">  protected ReachabilityServiceClient(ReachabilityServiceStub stub) {</span>
+<span class="nc" id="L176">    this.settings = null;</span>
+<span class="nc" id="L177">    this.stub = stub;</span>
+<span class="nc" id="L178">    this.operationsClient =</span>
+<span class="nc" id="L179">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L180">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L181">  }</span>
 
   public final ReachabilityServiceSettings getSettings() {
-<span class="nc" id="L163">    return settings;</span>
+<span class="nc" id="L184">    return settings;</span>
   }
 
   public ReachabilityServiceStub getStub() {
-<span class="nc" id="L167">    return stub;</span>
+<span class="nc" id="L188">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L175">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L196">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L205">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -199,8 +229,8 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final ListConnectivityTestsPagedResponse listConnectivityTests(String parent) {
     ListConnectivityTestsRequest request =
-<span class="fc" id="L202">        ListConnectivityTestsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L203">    return listConnectivityTests(request);</span>
+<span class="fc" id="L232">        ListConnectivityTestsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L233">    return listConnectivityTests(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -233,7 +263,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final ListConnectivityTestsPagedResponse listConnectivityTests(
       ListConnectivityTestsRequest request) {
-<span class="fc" id="L236">    return listConnectivityTestsPagedCallable().call(request);</span>
+<span class="fc" id="L266">    return listConnectivityTestsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -265,7 +295,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConnectivityTestsRequest, ListConnectivityTestsPagedResponse&gt;
       listConnectivityTestsPagedCallable() {
-<span class="fc" id="L268">    return stub.listConnectivityTestsPagedCallable();</span>
+<span class="fc" id="L298">    return stub.listConnectivityTestsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -304,7 +334,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConnectivityTestsRequest, ListConnectivityTestsResponse&gt;
       listConnectivityTestsCallable() {
-<span class="nc" id="L307">    return stub.listConnectivityTestsCallable();</span>
+<span class="nc" id="L337">    return stub.listConnectivityTestsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -328,8 +358,8 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final ConnectivityTest getConnectivityTest(String name) {
     GetConnectivityTestRequest request =
-<span class="fc" id="L331">        GetConnectivityTestRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L332">    return getConnectivityTest(request);</span>
+<span class="fc" id="L361">        GetConnectivityTestRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L362">    return getConnectivityTest(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -352,7 +382,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ConnectivityTest getConnectivityTest(GetConnectivityTestRequest request) {
-<span class="fc" id="L355">    return getConnectivityTestCallable().call(request);</span>
+<span class="fc" id="L385">    return getConnectivityTestCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -376,7 +406,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetConnectivityTestRequest, ConnectivityTest&gt;
       getConnectivityTestCallable() {
-<span class="fc" id="L379">    return stub.getConnectivityTestCallable();</span>
+<span class="fc" id="L409">    return stub.getConnectivityTestCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -424,12 +454,12 @@ public class ReachabilityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;ConnectivityTest, OperationMetadata&gt; createConnectivityTestAsync(
       String parent, String testId, ConnectivityTest resource) {
     CreateConnectivityTestRequest request =
-<span class="fc" id="L427">        CreateConnectivityTestRequest.newBuilder()</span>
-<span class="fc" id="L428">            .setParent(parent)</span>
-<span class="fc" id="L429">            .setTestId(testId)</span>
-<span class="fc" id="L430">            .setResource(resource)</span>
-<span class="fc" id="L431">            .build();</span>
-<span class="fc" id="L432">    return createConnectivityTestAsync(request);</span>
+<span class="fc" id="L457">        CreateConnectivityTestRequest.newBuilder()</span>
+<span class="fc" id="L458">            .setParent(parent)</span>
+<span class="fc" id="L459">            .setTestId(testId)</span>
+<span class="fc" id="L460">            .setResource(resource)</span>
+<span class="fc" id="L461">            .build();</span>
+<span class="fc" id="L462">    return createConnectivityTestAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -467,7 +497,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ConnectivityTest, OperationMetadata&gt; createConnectivityTestAsync(
       CreateConnectivityTestRequest request) {
-<span class="fc" id="L470">    return createConnectivityTestOperationCallable().futureCall(request);</span>
+<span class="fc" id="L500">    return createConnectivityTestOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -504,7 +534,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateConnectivityTestRequest, ConnectivityTest, OperationMetadata&gt;
       createConnectivityTestOperationCallable() {
-<span class="fc" id="L507">    return stub.createConnectivityTestOperationCallable();</span>
+<span class="fc" id="L537">    return stub.createConnectivityTestOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -541,7 +571,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateConnectivityTestRequest, Operation&gt;
       createConnectivityTestCallable() {
-<span class="nc" id="L544">    return stub.createConnectivityTestCallable();</span>
+<span class="nc" id="L574">    return stub.createConnectivityTestCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -581,11 +611,11 @@ public class ReachabilityServiceClient implements BackgroundResource {
   public final OperationFuture&lt;ConnectivityTest, OperationMetadata&gt; updateConnectivityTestAsync(
       FieldMask updateMask, ConnectivityTest resource) {
     UpdateConnectivityTestRequest request =
-<span class="fc" id="L584">        UpdateConnectivityTestRequest.newBuilder()</span>
-<span class="fc" id="L585">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L586">            .setResource(resource)</span>
-<span class="fc" id="L587">            .build();</span>
-<span class="fc" id="L588">    return updateConnectivityTestAsync(request);</span>
+<span class="fc" id="L614">        UpdateConnectivityTestRequest.newBuilder()</span>
+<span class="fc" id="L615">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L616">            .setResource(resource)</span>
+<span class="fc" id="L617">            .build();</span>
+<span class="fc" id="L618">    return updateConnectivityTestAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -625,7 +655,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ConnectivityTest, OperationMetadata&gt; updateConnectivityTestAsync(
       UpdateConnectivityTestRequest request) {
-<span class="fc" id="L628">    return updateConnectivityTestOperationCallable().futureCall(request);</span>
+<span class="fc" id="L658">    return updateConnectivityTestOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -664,7 +694,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateConnectivityTestRequest, ConnectivityTest, OperationMetadata&gt;
       updateConnectivityTestOperationCallable() {
-<span class="fc" id="L667">    return stub.updateConnectivityTestOperationCallable();</span>
+<span class="fc" id="L697">    return stub.updateConnectivityTestOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -703,7 +733,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateConnectivityTestRequest, Operation&gt;
       updateConnectivityTestCallable() {
-<span class="nc" id="L706">    return stub.updateConnectivityTestCallable();</span>
+<span class="nc" id="L736">    return stub.updateConnectivityTestCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -737,7 +767,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ConnectivityTest, OperationMetadata&gt; rerunConnectivityTestAsync(
       RerunConnectivityTestRequest request) {
-<span class="fc" id="L740">    return rerunConnectivityTestOperationCallable().futureCall(request);</span>
+<span class="fc" id="L770">    return rerunConnectivityTestOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -770,7 +800,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RerunConnectivityTestRequest, ConnectivityTest, OperationMetadata&gt;
       rerunConnectivityTestOperationCallable() {
-<span class="fc" id="L773">    return stub.rerunConnectivityTestOperationCallable();</span>
+<span class="fc" id="L803">    return stub.rerunConnectivityTestOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -803,7 +833,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;RerunConnectivityTestRequest, Operation&gt;
       rerunConnectivityTestCallable() {
-<span class="nc" id="L806">    return stub.rerunConnectivityTestCallable();</span>
+<span class="nc" id="L836">    return stub.rerunConnectivityTestCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -827,8 +857,8 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteConnectivityTestAsync(String name) {
     DeleteConnectivityTestRequest request =
-<span class="fc" id="L830">        DeleteConnectivityTestRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L831">    return deleteConnectivityTestAsync(request);</span>
+<span class="fc" id="L860">        DeleteConnectivityTestRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L861">    return deleteConnectivityTestAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -852,7 +882,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteConnectivityTestAsync(
       DeleteConnectivityTestRequest request) {
-<span class="fc" id="L855">    return deleteConnectivityTestOperationCallable().futureCall(request);</span>
+<span class="fc" id="L885">    return deleteConnectivityTestOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -876,7 +906,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteConnectivityTestRequest, Empty, OperationMetadata&gt;
       deleteConnectivityTestOperationCallable() {
-<span class="fc" id="L879">    return stub.deleteConnectivityTestOperationCallable();</span>
+<span class="fc" id="L909">    return stub.deleteConnectivityTestOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -900,37 +930,37 @@ public class ReachabilityServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteConnectivityTestRequest, Operation&gt;
       deleteConnectivityTestCallable() {
-<span class="nc" id="L903">    return stub.deleteConnectivityTestCallable();</span>
+<span class="nc" id="L933">    return stub.deleteConnectivityTestCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L908">    stub.close();</span>
-<span class="fc" id="L909">  }</span>
+<span class="fc" id="L938">    stub.close();</span>
+<span class="fc" id="L939">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L913">    stub.shutdown();</span>
-<span class="nc" id="L914">  }</span>
+<span class="nc" id="L943">    stub.shutdown();</span>
+<span class="nc" id="L944">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L918">    return stub.isShutdown();</span>
+<span class="nc" id="L948">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L923">    return stub.isTerminated();</span>
+<span class="nc" id="L953">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L928">    stub.shutdownNow();</span>
-<span class="nc" id="L929">  }</span>
+<span class="nc" id="L958">    stub.shutdownNow();</span>
+<span class="nc" id="L959">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L933">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L963">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListConnectivityTestsPagedResponse
@@ -946,16 +976,16 @@ public class ReachabilityServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListConnectivityTestsResponse&gt; futureResponse) {
       ApiFuture&lt;ListConnectivityTestsPage&gt; futurePage =
-<span class="fc" id="L949">          ListConnectivityTestsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L950">      return ApiFutures.transform(</span>
+<span class="fc" id="L979">          ListConnectivityTestsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L980">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L952">          input -&gt; new ListConnectivityTestsPagedResponse(input),</span>
-<span class="fc" id="L953">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L982">          input -&gt; new ListConnectivityTestsPagedResponse(input),</span>
+<span class="fc" id="L983">          MoreExecutors.directExecutor());</span>
     }
 
     private ListConnectivityTestsPagedResponse(ListConnectivityTestsPage page) {
-<span class="fc" id="L957">      super(page, ListConnectivityTestsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L958">    }</span>
+<span class="fc" id="L987">      super(page, ListConnectivityTestsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L988">    }</span>
   }
 
   public static class ListConnectivityTestsPage
@@ -969,11 +999,11 @@ public class ReachabilityServiceClient implements BackgroundResource {
         PageContext&lt;ListConnectivityTestsRequest, ListConnectivityTestsResponse, ConnectivityTest&gt;
             context,
         ListConnectivityTestsResponse response) {
-<span class="fc" id="L972">      super(context, response);</span>
-<span class="fc" id="L973">    }</span>
+<span class="fc" id="L1002">      super(context, response);</span>
+<span class="fc" id="L1003">    }</span>
 
     private static ListConnectivityTestsPage createEmptyPage() {
-<span class="fc" id="L976">      return new ListConnectivityTestsPage(null, null);</span>
+<span class="fc" id="L1006">      return new ListConnectivityTestsPage(null, null);</span>
     }
 
     @Override
@@ -981,7 +1011,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
         PageContext&lt;ListConnectivityTestsRequest, ListConnectivityTestsResponse, ConnectivityTest&gt;
             context,
         ListConnectivityTestsResponse response) {
-<span class="fc" id="L984">      return new ListConnectivityTestsPage(context, response);</span>
+<span class="fc" id="L1014">      return new ListConnectivityTestsPage(context, response);</span>
     }
 
     @Override
@@ -989,7 +1019,7 @@ public class ReachabilityServiceClient implements BackgroundResource {
         PageContext&lt;ListConnectivityTestsRequest, ListConnectivityTestsResponse, ConnectivityTest&gt;
             context,
         ApiFuture&lt;ListConnectivityTestsResponse&gt; futureResponse) {
-<span class="fc" id="L992">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1022">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1003,17 +1033,17 @@ public class ReachabilityServiceClient implements BackgroundResource {
 
     private ListConnectivityTestsFixedSizeCollection(
         List&lt;ListConnectivityTestsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1006">      super(pages, collectionSize);</span>
-<span class="fc" id="L1007">    }</span>
+<span class="fc" id="L1036">      super(pages, collectionSize);</span>
+<span class="fc" id="L1037">    }</span>
 
     private static ListConnectivityTestsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1010">      return new ListConnectivityTestsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1040">      return new ListConnectivityTestsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListConnectivityTestsFixedSizeCollection createCollection(
         List&lt;ListConnectivityTestsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1016">      return new ListConnectivityTestsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1046">      return new ListConnectivityTestsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

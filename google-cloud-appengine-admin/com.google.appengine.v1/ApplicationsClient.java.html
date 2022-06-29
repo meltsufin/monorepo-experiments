@@ -18,13 +18,13 @@ package com.google.appengine.v1;
 
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.rpc.OperationCallable;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.appengine.v1.stub.ApplicationsStub;
 import com.google.appengine.v1.stub.ApplicationsStubSettings;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
@@ -93,17 +93,32 @@ import javax.annotation.Generated;
  * ApplicationsClient applicationsClient = ApplicationsClient.create(applicationsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ApplicationsSettings applicationsSettings =
+ *     ApplicationsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ApplicationsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ApplicationsClient applicationsClient = ApplicationsClient.create(applicationsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class ApplicationsClient implements BackgroundResource {
   private final ApplicationsSettings settings;
   private final ApplicationsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ApplicationsClient with default settings. */
   public static final ApplicationsClient create() throws IOException {
-<span class="nc" id="L106">    return create(ApplicationsSettings.newBuilder().build());</span>
+<span class="nc" id="L121">    return create(ApplicationsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -111,16 +126,15 @@ public class ApplicationsClient implements BackgroundResource {
    * created based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final ApplicationsClient create(ApplicationsSettings settings) throws IOException {
-<span class="fc" id="L114">    return new ApplicationsClient(settings);</span>
+<span class="fc" id="L129">    return new ApplicationsClient(settings);</span>
   }
 
   /**
    * Constructs an instance of ApplicationsClient, using the given stub for making calls. This is
    * for advanced usage - prefer using create(ApplicationsSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final ApplicationsClient create(ApplicationsStub stub) {
-<span class="nc" id="L123">    return new ApplicationsClient(stub);</span>
+<span class="nc" id="L137">    return new ApplicationsClient(stub);</span>
   }
 
   /**
@@ -128,34 +142,45 @@ public class ApplicationsClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L131">  protected ApplicationsClient(ApplicationsSettings settings) throws IOException {</span>
-<span class="fc" id="L132">    this.settings = settings;</span>
-<span class="fc" id="L133">    this.stub = ((ApplicationsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L134">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L135">  }</span>
+<span class="fc" id="L145">  protected ApplicationsClient(ApplicationsSettings settings) throws IOException {</span>
+<span class="fc" id="L146">    this.settings = settings;</span>
+<span class="fc" id="L147">    this.stub = ((ApplicationsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L148">    this.operationsClient =</span>
+<span class="fc" id="L149">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L150">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L151">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L138">  protected ApplicationsClient(ApplicationsStub stub) {</span>
-<span class="nc" id="L139">    this.settings = null;</span>
-<span class="nc" id="L140">    this.stub = stub;</span>
-<span class="nc" id="L141">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L142">  }</span>
+<span class="nc" id="L153">  protected ApplicationsClient(ApplicationsStub stub) {</span>
+<span class="nc" id="L154">    this.settings = null;</span>
+<span class="nc" id="L155">    this.stub = stub;</span>
+<span class="nc" id="L156">    this.operationsClient =</span>
+<span class="nc" id="L157">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L158">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L159">  }</span>
 
   public final ApplicationsSettings getSettings() {
-<span class="nc" id="L145">    return settings;</span>
+<span class="nc" id="L162">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public ApplicationsStub getStub() {
-<span class="nc" id="L150">    return stub;</span>
+<span class="nc" id="L166">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L158">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L174">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L183">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -177,8 +202,8 @@ public class ApplicationsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Application getApplication(String name) {
-<span class="fc" id="L180">    GetApplicationRequest request = GetApplicationRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L181">    return getApplication(request);</span>
+<span class="fc" id="L205">    GetApplicationRequest request = GetApplicationRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L206">    return getApplication(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -201,7 +226,7 @@ public class ApplicationsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Application getApplication(GetApplicationRequest request) {
-<span class="fc" id="L204">    return getApplicationCallable().call(request);</span>
+<span class="fc" id="L229">    return getApplicationCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -224,7 +249,7 @@ public class ApplicationsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetApplicationRequest, Application&gt; getApplicationCallable() {
-<span class="fc" id="L227">    return stub.getApplicationCallable();</span>
+<span class="fc" id="L252">    return stub.getApplicationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -259,7 +284,7 @@ public class ApplicationsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Application, OperationMetadataV1&gt; createApplicationAsync(
       CreateApplicationRequest request) {
-<span class="fc" id="L262">    return createApplicationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L287">    return createApplicationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -294,7 +319,7 @@ public class ApplicationsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateApplicationRequest, Application, OperationMetadataV1&gt;
       createApplicationOperationCallable() {
-<span class="fc" id="L297">    return stub.createApplicationOperationCallable();</span>
+<span class="fc" id="L322">    return stub.createApplicationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -328,7 +353,7 @@ public class ApplicationsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateApplicationRequest, Operation&gt; createApplicationCallable() {
-<span class="nc" id="L331">    return stub.createApplicationCallable();</span>
+<span class="nc" id="L356">    return stub.createApplicationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -363,7 +388,7 @@ public class ApplicationsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Application, OperationMetadataV1&gt; updateApplicationAsync(
       UpdateApplicationRequest request) {
-<span class="fc" id="L366">    return updateApplicationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L391">    return updateApplicationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -398,7 +423,7 @@ public class ApplicationsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateApplicationRequest, Application, OperationMetadataV1&gt;
       updateApplicationOperationCallable() {
-<span class="fc" id="L401">    return stub.updateApplicationOperationCallable();</span>
+<span class="fc" id="L426">    return stub.updateApplicationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -432,7 +457,7 @@ public class ApplicationsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateApplicationRequest, Operation&gt; updateApplicationCallable() {
-<span class="nc" id="L435">    return stub.updateApplicationCallable();</span>
+<span class="nc" id="L460">    return stub.updateApplicationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -462,7 +487,7 @@ public class ApplicationsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Application, OperationMetadataV1&gt; repairApplicationAsync(
       RepairApplicationRequest request) {
-<span class="fc" id="L465">    return repairApplicationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L490">    return repairApplicationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -492,7 +517,7 @@ public class ApplicationsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RepairApplicationRequest, Application, OperationMetadataV1&gt;
       repairApplicationOperationCallable() {
-<span class="fc" id="L495">    return stub.repairApplicationOperationCallable();</span>
+<span class="fc" id="L520">    return stub.repairApplicationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -521,37 +546,37 @@ public class ApplicationsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RepairApplicationRequest, Operation&gt; repairApplicationCallable() {
-<span class="nc" id="L524">    return stub.repairApplicationCallable();</span>
+<span class="nc" id="L549">    return stub.repairApplicationCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L529">    stub.close();</span>
-<span class="fc" id="L530">  }</span>
+<span class="fc" id="L554">    stub.close();</span>
+<span class="fc" id="L555">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L534">    stub.shutdown();</span>
-<span class="nc" id="L535">  }</span>
+<span class="nc" id="L559">    stub.shutdown();</span>
+<span class="nc" id="L560">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L539">    return stub.isShutdown();</span>
+<span class="nc" id="L564">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L544">    return stub.isTerminated();</span>
+<span class="nc" id="L569">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L549">    stub.shutdownNow();</span>
-<span class="nc" id="L550">  }</span>
+<span class="nc" id="L574">    stub.shutdownNow();</span>
+<span class="nc" id="L575">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L554">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L579">    return stub.awaitTermination(duration, unit);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

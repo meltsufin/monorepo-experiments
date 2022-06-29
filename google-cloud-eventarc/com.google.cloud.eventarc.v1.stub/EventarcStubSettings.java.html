@@ -18,6 +18,7 @@ package com.google.cloud.eventarc.v1.stub;
 
 import static com.google.cloud.eventarc.v1.EventarcClient.ListChannelConnectionsPagedResponse;
 import static com.google.cloud.eventarc.v1.EventarcClient.ListChannelsPagedResponse;
+import static com.google.cloud.eventarc.v1.EventarcClient.ListProvidersPagedResponse;
 import static com.google.cloud.eventarc.v1.EventarcClient.ListTriggersPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -30,6 +31,9 @@ import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.grpc.ProtoOperationTransformers;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.longrunning.OperationSnapshot;
 import com.google.api.gax.longrunning.OperationTimedPollAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
@@ -56,14 +60,18 @@ import com.google.cloud.eventarc.v1.DeleteChannelRequest;
 import com.google.cloud.eventarc.v1.DeleteTriggerRequest;
 import com.google.cloud.eventarc.v1.GetChannelConnectionRequest;
 import com.google.cloud.eventarc.v1.GetChannelRequest;
+import com.google.cloud.eventarc.v1.GetProviderRequest;
 import com.google.cloud.eventarc.v1.GetTriggerRequest;
 import com.google.cloud.eventarc.v1.ListChannelConnectionsRequest;
 import com.google.cloud.eventarc.v1.ListChannelConnectionsResponse;
 import com.google.cloud.eventarc.v1.ListChannelsRequest;
 import com.google.cloud.eventarc.v1.ListChannelsResponse;
+import com.google.cloud.eventarc.v1.ListProvidersRequest;
+import com.google.cloud.eventarc.v1.ListProvidersResponse;
 import com.google.cloud.eventarc.v1.ListTriggersRequest;
 import com.google.cloud.eventarc.v1.ListTriggersResponse;
 import com.google.cloud.eventarc.v1.OperationMetadata;
+import com.google.cloud.eventarc.v1.Provider;
 import com.google.cloud.eventarc.v1.Trigger;
 import com.google.cloud.eventarc.v1.UpdateChannelRequest;
 import com.google.cloud.eventarc.v1.UpdateTriggerRequest;
@@ -114,7 +122,7 @@ import org.threeten.bp.Duration;
 public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L117">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
+<span class="fc" id="L125">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
 
   private final UnaryCallSettings&lt;GetTriggerRequest, Trigger&gt; getTriggerSettings;
   private final PagedCallSettings&lt;
@@ -142,6 +150,10 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
   private final UnaryCallSettings&lt;DeleteChannelRequest, Operation&gt; deleteChannelSettings;
   private final OperationCallSettings&lt;DeleteChannelRequest, Channel, OperationMetadata&gt;
       deleteChannelOperationSettings;
+  private final UnaryCallSettings&lt;GetProviderRequest, Provider&gt; getProviderSettings;
+  private final PagedCallSettings&lt;
+          ListProvidersRequest, ListProvidersResponse, ListProvidersPagedResponse&gt;
+      listProvidersSettings;
   private final UnaryCallSettings&lt;GetChannelConnectionRequest, ChannelConnection&gt;
       getChannelConnectionSettings;
   private final PagedCallSettings&lt;
@@ -161,151 +173,204 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
       deleteChannelConnectionOperationSettings;
 
   private static final PagedListDescriptor&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt;
-<span class="fc" id="L164">      LIST_TRIGGERS_PAGE_STR_DESC =</span>
-<span class="fc" id="L165">          new PagedListDescriptor&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt;() {</span>
+<span class="fc" id="L176">      LIST_TRIGGERS_PAGE_STR_DESC =</span>
+<span class="fc" id="L177">          new PagedListDescriptor&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L168">              return &quot;&quot;;</span>
+<span class="fc" id="L180">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListTriggersRequest injectToken(ListTriggersRequest payload, String token) {
-<span class="nc" id="L173">              return ListTriggersRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L185">              return ListTriggersRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListTriggersRequest injectPageSize(ListTriggersRequest payload, int pageSize) {
-<span class="nc" id="L178">              return ListTriggersRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L190">              return ListTriggersRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListTriggersRequest payload) {
-<span class="nc" id="L183">              return payload.getPageSize();</span>
+<span class="nc" id="L195">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListTriggersResponse payload) {
-<span class="fc" id="L188">              return payload.getNextPageToken();</span>
+<span class="fc" id="L200">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Trigger&gt; extractResources(ListTriggersResponse payload) {
-<span class="pc bpc" id="L193" title="1 of 2 branches missed.">              return payload.getTriggersList() == null</span>
-<span class="nc" id="L194">                  ? ImmutableList.&lt;Trigger&gt;of()</span>
-<span class="fc" id="L195">                  : payload.getTriggersList();</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">              return payload.getTriggersList() == null</span>
+<span class="nc" id="L206">                  ? ImmutableList.&lt;Trigger&gt;of()</span>
+<span class="fc" id="L207">                  : payload.getTriggersList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt;
-<span class="fc" id="L200">      LIST_CHANNELS_PAGE_STR_DESC =</span>
-<span class="fc" id="L201">          new PagedListDescriptor&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt;() {</span>
+<span class="fc" id="L212">      LIST_CHANNELS_PAGE_STR_DESC =</span>
+<span class="fc" id="L213">          new PagedListDescriptor&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L204">              return &quot;&quot;;</span>
+<span class="fc" id="L216">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListChannelsRequest injectToken(ListChannelsRequest payload, String token) {
-<span class="nc" id="L209">              return ListChannelsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L221">              return ListChannelsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListChannelsRequest injectPageSize(ListChannelsRequest payload, int pageSize) {
-<span class="nc" id="L214">              return ListChannelsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L226">              return ListChannelsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListChannelsRequest payload) {
-<span class="nc" id="L219">              return payload.getPageSize();</span>
+<span class="nc" id="L231">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListChannelsResponse payload) {
-<span class="fc" id="L224">              return payload.getNextPageToken();</span>
+<span class="fc" id="L236">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Channel&gt; extractResources(ListChannelsResponse payload) {
-<span class="pc bpc" id="L229" title="1 of 2 branches missed.">              return payload.getChannelsList() == null</span>
-<span class="nc" id="L230">                  ? ImmutableList.&lt;Channel&gt;of()</span>
-<span class="fc" id="L231">                  : payload.getChannelsList();</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">              return payload.getChannelsList() == null</span>
+<span class="nc" id="L242">                  ? ImmutableList.&lt;Channel&gt;of()</span>
+<span class="fc" id="L243">                  : payload.getChannelsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListProvidersRequest, ListProvidersResponse, Provider&gt;
+<span class="fc" id="L248">      LIST_PROVIDERS_PAGE_STR_DESC =</span>
+<span class="fc" id="L249">          new PagedListDescriptor&lt;ListProvidersRequest, ListProvidersResponse, Provider&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L252">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListProvidersRequest injectToken(ListProvidersRequest payload, String token) {
+<span class="nc" id="L257">              return ListProvidersRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListProvidersRequest injectPageSize(ListProvidersRequest payload, int pageSize) {
+<span class="nc" id="L262">              return ListProvidersRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListProvidersRequest payload) {
+<span class="nc" id="L267">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListProvidersResponse payload) {
+<span class="fc" id="L272">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Provider&gt; extractResources(ListProvidersResponse payload) {
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">              return payload.getProvidersList() == null</span>
+<span class="nc" id="L278">                  ? ImmutableList.&lt;Provider&gt;of()</span>
+<span class="fc" id="L279">                  : payload.getProvidersList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;
           ListChannelConnectionsRequest, ListChannelConnectionsResponse, ChannelConnection&gt;
-<span class="fc" id="L237">      LIST_CHANNEL_CONNECTIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L285">      LIST_CHANNEL_CONNECTIONS_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L239">              ListChannelConnectionsRequest, ListChannelConnectionsResponse, ChannelConnection&gt;() {</span>
+<span class="fc" id="L287">              ListChannelConnectionsRequest, ListChannelConnectionsResponse, ChannelConnection&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L242">              return &quot;&quot;;</span>
+<span class="fc" id="L290">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListChannelConnectionsRequest injectToken(
                 ListChannelConnectionsRequest payload, String token) {
-<span class="nc" id="L248">              return ListChannelConnectionsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L296">              return ListChannelConnectionsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListChannelConnectionsRequest injectPageSize(
                 ListChannelConnectionsRequest payload, int pageSize) {
-<span class="nc" id="L254">              return ListChannelConnectionsRequest.newBuilder(payload)</span>
-<span class="nc" id="L255">                  .setPageSize(pageSize)</span>
-<span class="nc" id="L256">                  .build();</span>
+<span class="nc" id="L302">              return ListChannelConnectionsRequest.newBuilder(payload)</span>
+<span class="nc" id="L303">                  .setPageSize(pageSize)</span>
+<span class="nc" id="L304">                  .build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListChannelConnectionsRequest payload) {
-<span class="nc" id="L261">              return payload.getPageSize();</span>
+<span class="nc" id="L309">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListChannelConnectionsResponse payload) {
-<span class="fc" id="L266">              return payload.getNextPageToken();</span>
+<span class="fc" id="L314">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;ChannelConnection&gt; extractResources(
                 ListChannelConnectionsResponse payload) {
-<span class="pc bpc" id="L272" title="1 of 2 branches missed.">              return payload.getChannelConnectionsList() == null</span>
-<span class="nc" id="L273">                  ? ImmutableList.&lt;ChannelConnection&gt;of()</span>
-<span class="fc" id="L274">                  : payload.getChannelConnectionsList();</span>
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">              return payload.getChannelConnectionsList() == null</span>
+<span class="nc" id="L321">                  ? ImmutableList.&lt;ChannelConnection&gt;of()</span>
+<span class="fc" id="L322">                  : payload.getChannelConnectionsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListTriggersRequest, ListTriggersResponse, ListTriggersPagedResponse&gt;
-<span class="fc" id="L280">      LIST_TRIGGERS_PAGE_STR_FACT =</span>
+<span class="fc" id="L328">      LIST_TRIGGERS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L282">              ListTriggersRequest, ListTriggersResponse, ListTriggersPagedResponse&gt;() {</span>
+<span class="fc" id="L330">              ListTriggersRequest, ListTriggersResponse, ListTriggersPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListTriggersPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListTriggersRequest, ListTriggersResponse&gt; callable,
                 ListTriggersRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListTriggersResponse&gt; futureResponse) {
-<span class="fc" id="L289">              PageContext&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt; pageContext =</span>
-<span class="fc" id="L290">                  PageContext.create(callable, LIST_TRIGGERS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L291">              return ListTriggersPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L337">              PageContext&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt; pageContext =</span>
+<span class="fc" id="L338">                  PageContext.create(callable, LIST_TRIGGERS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L339">              return ListTriggersPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListChannelsRequest, ListChannelsResponse, ListChannelsPagedResponse&gt;
-<span class="fc" id="L297">      LIST_CHANNELS_PAGE_STR_FACT =</span>
+<span class="fc" id="L345">      LIST_CHANNELS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L299">              ListChannelsRequest, ListChannelsResponse, ListChannelsPagedResponse&gt;() {</span>
+<span class="fc" id="L347">              ListChannelsRequest, ListChannelsResponse, ListChannelsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListChannelsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListChannelsRequest, ListChannelsResponse&gt; callable,
                 ListChannelsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListChannelsResponse&gt; futureResponse) {
-<span class="fc" id="L306">              PageContext&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt; pageContext =</span>
-<span class="fc" id="L307">                  PageContext.create(callable, LIST_CHANNELS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L308">              return ListChannelsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L354">              PageContext&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt; pageContext =</span>
+<span class="fc" id="L355">                  PageContext.create(callable, LIST_CHANNELS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L356">              return ListChannelsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListProvidersRequest, ListProvidersResponse, ListProvidersPagedResponse&gt;
+<span class="fc" id="L362">      LIST_PROVIDERS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L364">              ListProvidersRequest, ListProvidersResponse, ListProvidersPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListProvidersPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListProvidersRequest, ListProvidersResponse&gt; callable,
+                ListProvidersRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListProvidersResponse&gt; futureResponse) {
+<span class="fc" id="L371">              PageContext&lt;ListProvidersRequest, ListProvidersResponse, Provider&gt; pageContext =</span>
+<span class="fc" id="L372">                  PageContext.create(callable, LIST_PROVIDERS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L373">              return ListProvidersPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -313,11 +378,11 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
           ListChannelConnectionsRequest,
           ListChannelConnectionsResponse,
           ListChannelConnectionsPagedResponse&gt;
-<span class="fc" id="L316">      LIST_CHANNEL_CONNECTIONS_PAGE_STR_FACT =</span>
+<span class="fc" id="L381">      LIST_CHANNEL_CONNECTIONS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListChannelConnectionsRequest,
               ListChannelConnectionsResponse,
-<span class="fc" id="L320">              ListChannelConnectionsPagedResponse&gt;() {</span>
+<span class="fc" id="L385">              ListChannelConnectionsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListChannelConnectionsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListChannelConnectionsRequest, ListChannelConnectionsResponse&gt;
@@ -329,105 +394,116 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
                       ListChannelConnectionsRequest,
                       ListChannelConnectionsResponse,
                       ChannelConnection&gt;
-<span class="fc" id="L332">                  pageContext =</span>
-<span class="fc" id="L333">                      PageContext.create(</span>
-<span class="fc" id="L334">                          callable, LIST_CHANNEL_CONNECTIONS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L335">              return ListChannelConnectionsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L397">                  pageContext =</span>
+<span class="fc" id="L398">                      PageContext.create(</span>
+<span class="fc" id="L399">                          callable, LIST_CHANNEL_CONNECTIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L400">              return ListChannelConnectionsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to getTrigger. */
   public UnaryCallSettings&lt;GetTriggerRequest, Trigger&gt; getTriggerSettings() {
-<span class="fc" id="L341">    return getTriggerSettings;</span>
+<span class="fc" id="L406">    return getTriggerSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listTriggers. */
   public PagedCallSettings&lt;ListTriggersRequest, ListTriggersResponse, ListTriggersPagedResponse&gt;
       listTriggersSettings() {
-<span class="fc" id="L347">    return listTriggersSettings;</span>
+<span class="fc" id="L412">    return listTriggersSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createTrigger. */
   public UnaryCallSettings&lt;CreateTriggerRequest, Operation&gt; createTriggerSettings() {
-<span class="fc" id="L352">    return createTriggerSettings;</span>
+<span class="fc" id="L417">    return createTriggerSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createTrigger. */
   public OperationCallSettings&lt;CreateTriggerRequest, Trigger, OperationMetadata&gt;
       createTriggerOperationSettings() {
-<span class="fc" id="L358">    return createTriggerOperationSettings;</span>
+<span class="fc" id="L423">    return createTriggerOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateTrigger. */
   public UnaryCallSettings&lt;UpdateTriggerRequest, Operation&gt; updateTriggerSettings() {
-<span class="fc" id="L363">    return updateTriggerSettings;</span>
+<span class="fc" id="L428">    return updateTriggerSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateTrigger. */
   public OperationCallSettings&lt;UpdateTriggerRequest, Trigger, OperationMetadata&gt;
       updateTriggerOperationSettings() {
-<span class="fc" id="L369">    return updateTriggerOperationSettings;</span>
+<span class="fc" id="L434">    return updateTriggerOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteTrigger. */
   public UnaryCallSettings&lt;DeleteTriggerRequest, Operation&gt; deleteTriggerSettings() {
-<span class="fc" id="L374">    return deleteTriggerSettings;</span>
+<span class="fc" id="L439">    return deleteTriggerSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteTrigger. */
   public OperationCallSettings&lt;DeleteTriggerRequest, Trigger, OperationMetadata&gt;
       deleteTriggerOperationSettings() {
-<span class="fc" id="L380">    return deleteTriggerOperationSettings;</span>
+<span class="fc" id="L445">    return deleteTriggerOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getChannel. */
   public UnaryCallSettings&lt;GetChannelRequest, Channel&gt; getChannelSettings() {
-<span class="fc" id="L385">    return getChannelSettings;</span>
+<span class="fc" id="L450">    return getChannelSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listChannels. */
   public PagedCallSettings&lt;ListChannelsRequest, ListChannelsResponse, ListChannelsPagedResponse&gt;
       listChannelsSettings() {
-<span class="fc" id="L391">    return listChannelsSettings;</span>
+<span class="fc" id="L456">    return listChannelsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createChannel. */
   public UnaryCallSettings&lt;CreateChannelRequest, Operation&gt; createChannelSettings() {
-<span class="fc" id="L396">    return createChannelSettings;</span>
+<span class="fc" id="L461">    return createChannelSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createChannel. */
   public OperationCallSettings&lt;CreateChannelRequest, Channel, OperationMetadata&gt;
       createChannelOperationSettings() {
-<span class="fc" id="L402">    return createChannelOperationSettings;</span>
+<span class="fc" id="L467">    return createChannelOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateChannel. */
   public UnaryCallSettings&lt;UpdateChannelRequest, Operation&gt; updateChannelSettings() {
-<span class="fc" id="L407">    return updateChannelSettings;</span>
+<span class="fc" id="L472">    return updateChannelSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateChannel. */
   public OperationCallSettings&lt;UpdateChannelRequest, Channel, OperationMetadata&gt;
       updateChannelOperationSettings() {
-<span class="fc" id="L413">    return updateChannelOperationSettings;</span>
+<span class="fc" id="L478">    return updateChannelOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteChannel. */
   public UnaryCallSettings&lt;DeleteChannelRequest, Operation&gt; deleteChannelSettings() {
-<span class="fc" id="L418">    return deleteChannelSettings;</span>
+<span class="fc" id="L483">    return deleteChannelSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteChannel. */
   public OperationCallSettings&lt;DeleteChannelRequest, Channel, OperationMetadata&gt;
       deleteChannelOperationSettings() {
-<span class="fc" id="L424">    return deleteChannelOperationSettings;</span>
+<span class="fc" id="L489">    return deleteChannelOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getProvider. */
+  public UnaryCallSettings&lt;GetProviderRequest, Provider&gt; getProviderSettings() {
+<span class="fc" id="L494">    return getProviderSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listProviders. */
+  public PagedCallSettings&lt;ListProvidersRequest, ListProvidersResponse, ListProvidersPagedResponse&gt;
+      listProvidersSettings() {
+<span class="fc" id="L500">    return listProvidersSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getChannelConnection. */
   public UnaryCallSettings&lt;GetChannelConnectionRequest, ChannelConnection&gt;
       getChannelConnectionSettings() {
-<span class="fc" id="L430">    return getChannelConnectionSettings;</span>
+<span class="fc" id="L506">    return getChannelConnectionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listChannelConnections. */
@@ -436,133 +512,164 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
           ListChannelConnectionsResponse,
           ListChannelConnectionsPagedResponse&gt;
       listChannelConnectionsSettings() {
-<span class="fc" id="L439">    return listChannelConnectionsSettings;</span>
+<span class="fc" id="L515">    return listChannelConnectionsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createChannelConnection. */
   public UnaryCallSettings&lt;CreateChannelConnectionRequest, Operation&gt;
       createChannelConnectionSettings() {
-<span class="fc" id="L445">    return createChannelConnectionSettings;</span>
+<span class="fc" id="L521">    return createChannelConnectionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createChannelConnection. */
   public OperationCallSettings&lt;CreateChannelConnectionRequest, ChannelConnection, OperationMetadata&gt;
       createChannelConnectionOperationSettings() {
-<span class="fc" id="L451">    return createChannelConnectionOperationSettings;</span>
+<span class="fc" id="L527">    return createChannelConnectionOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteChannelConnection. */
   public UnaryCallSettings&lt;DeleteChannelConnectionRequest, Operation&gt;
       deleteChannelConnectionSettings() {
-<span class="fc" id="L457">    return deleteChannelConnectionSettings;</span>
+<span class="fc" id="L533">    return deleteChannelConnectionSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteChannelConnection. */
   public OperationCallSettings&lt;DeleteChannelConnectionRequest, ChannelConnection, OperationMetadata&gt;
       deleteChannelConnectionOperationSettings() {
-<span class="fc" id="L463">    return deleteChannelConnectionOperationSettings;</span>
+<span class="fc" id="L539">    return deleteChannelConnectionOperationSettings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public EventarcStub createStub() throws IOException {
-<span class="fc" id="L468">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L469">        .getTransportName()</span>
-<span class="pc bpc" id="L470" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L471">      return GrpcEventarcStub.create(this);</span>
+<span class="fc" id="L543">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L544">        .getTransportName()</span>
+<span class="fc bfc" id="L545" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L546">      return GrpcEventarcStub.create(this);</span>
     }
-<span class="nc" id="L473">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L474">        String.format(</span>
-<span class="nc" id="L475">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L548">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L549">        .getTransportName()</span>
+<span class="pc bpc" id="L550" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L551">      return HttpJsonEventarcStub.create(this);</span>
+    }
+<span class="nc" id="L553">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L554">        String.format(</span>
+<span class="nc" id="L555">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L480">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L560">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L485">    return &quot;eventarc.googleapis.com:443&quot;;</span>
+<span class="fc" id="L565">    return &quot;eventarc.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L490">    return &quot;eventarc.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L570">    return &quot;eventarc.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L495">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L575">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L500">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L501">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L502">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L580">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L581">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L582">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L507">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L508">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L587">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L588">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L595">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L512">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L599">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L517">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L518">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(EventarcStubSettings.class))</span>
-<span class="fc" id="L519">        .setTransportToken(</span>
-<span class="fc" id="L520">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L604">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L605">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(EventarcStubSettings.class))</span>
+<span class="fc" id="L606">        .setTransportToken(</span>
+<span class="fc" id="L607">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L612">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L613">        .setGeneratedLibToken(&quot;gapic&quot;, GaxProperties.getLibraryVersion(EventarcStubSettings.class))</span>
+<span class="fc" id="L614">        .setTransportToken(</span>
+<span class="fc" id="L615">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L616">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L620">    return EventarcStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L525">    return Builder.createDefault();</span>
+<span class="fc" id="L625">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L630">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L530">    return new Builder(clientContext);</span>
+<span class="nc" id="L635">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L535">    return new Builder(this);</span>
+<span class="nc" id="L640">    return new Builder(this);</span>
   }
 
   protected EventarcStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L539">    super(settingsBuilder);</span>
+<span class="fc" id="L644">    super(settingsBuilder);</span>
 
-<span class="fc" id="L541">    getTriggerSettings = settingsBuilder.getTriggerSettings().build();</span>
-<span class="fc" id="L542">    listTriggersSettings = settingsBuilder.listTriggersSettings().build();</span>
-<span class="fc" id="L543">    createTriggerSettings = settingsBuilder.createTriggerSettings().build();</span>
-<span class="fc" id="L544">    createTriggerOperationSettings = settingsBuilder.createTriggerOperationSettings().build();</span>
-<span class="fc" id="L545">    updateTriggerSettings = settingsBuilder.updateTriggerSettings().build();</span>
-<span class="fc" id="L546">    updateTriggerOperationSettings = settingsBuilder.updateTriggerOperationSettings().build();</span>
-<span class="fc" id="L547">    deleteTriggerSettings = settingsBuilder.deleteTriggerSettings().build();</span>
-<span class="fc" id="L548">    deleteTriggerOperationSettings = settingsBuilder.deleteTriggerOperationSettings().build();</span>
-<span class="fc" id="L549">    getChannelSettings = settingsBuilder.getChannelSettings().build();</span>
-<span class="fc" id="L550">    listChannelsSettings = settingsBuilder.listChannelsSettings().build();</span>
-<span class="fc" id="L551">    createChannelSettings = settingsBuilder.createChannelSettings().build();</span>
-<span class="fc" id="L552">    createChannelOperationSettings = settingsBuilder.createChannelOperationSettings().build();</span>
-<span class="fc" id="L553">    updateChannelSettings = settingsBuilder.updateChannelSettings().build();</span>
-<span class="fc" id="L554">    updateChannelOperationSettings = settingsBuilder.updateChannelOperationSettings().build();</span>
-<span class="fc" id="L555">    deleteChannelSettings = settingsBuilder.deleteChannelSettings().build();</span>
-<span class="fc" id="L556">    deleteChannelOperationSettings = settingsBuilder.deleteChannelOperationSettings().build();</span>
-<span class="fc" id="L557">    getChannelConnectionSettings = settingsBuilder.getChannelConnectionSettings().build();</span>
-<span class="fc" id="L558">    listChannelConnectionsSettings = settingsBuilder.listChannelConnectionsSettings().build();</span>
-<span class="fc" id="L559">    createChannelConnectionSettings = settingsBuilder.createChannelConnectionSettings().build();</span>
-<span class="fc" id="L560">    createChannelConnectionOperationSettings =</span>
-<span class="fc" id="L561">        settingsBuilder.createChannelConnectionOperationSettings().build();</span>
-<span class="fc" id="L562">    deleteChannelConnectionSettings = settingsBuilder.deleteChannelConnectionSettings().build();</span>
-<span class="fc" id="L563">    deleteChannelConnectionOperationSettings =</span>
-<span class="fc" id="L564">        settingsBuilder.deleteChannelConnectionOperationSettings().build();</span>
-<span class="fc" id="L565">  }</span>
+<span class="fc" id="L646">    getTriggerSettings = settingsBuilder.getTriggerSettings().build();</span>
+<span class="fc" id="L647">    listTriggersSettings = settingsBuilder.listTriggersSettings().build();</span>
+<span class="fc" id="L648">    createTriggerSettings = settingsBuilder.createTriggerSettings().build();</span>
+<span class="fc" id="L649">    createTriggerOperationSettings = settingsBuilder.createTriggerOperationSettings().build();</span>
+<span class="fc" id="L650">    updateTriggerSettings = settingsBuilder.updateTriggerSettings().build();</span>
+<span class="fc" id="L651">    updateTriggerOperationSettings = settingsBuilder.updateTriggerOperationSettings().build();</span>
+<span class="fc" id="L652">    deleteTriggerSettings = settingsBuilder.deleteTriggerSettings().build();</span>
+<span class="fc" id="L653">    deleteTriggerOperationSettings = settingsBuilder.deleteTriggerOperationSettings().build();</span>
+<span class="fc" id="L654">    getChannelSettings = settingsBuilder.getChannelSettings().build();</span>
+<span class="fc" id="L655">    listChannelsSettings = settingsBuilder.listChannelsSettings().build();</span>
+<span class="fc" id="L656">    createChannelSettings = settingsBuilder.createChannelSettings().build();</span>
+<span class="fc" id="L657">    createChannelOperationSettings = settingsBuilder.createChannelOperationSettings().build();</span>
+<span class="fc" id="L658">    updateChannelSettings = settingsBuilder.updateChannelSettings().build();</span>
+<span class="fc" id="L659">    updateChannelOperationSettings = settingsBuilder.updateChannelOperationSettings().build();</span>
+<span class="fc" id="L660">    deleteChannelSettings = settingsBuilder.deleteChannelSettings().build();</span>
+<span class="fc" id="L661">    deleteChannelOperationSettings = settingsBuilder.deleteChannelOperationSettings().build();</span>
+<span class="fc" id="L662">    getProviderSettings = settingsBuilder.getProviderSettings().build();</span>
+<span class="fc" id="L663">    listProvidersSettings = settingsBuilder.listProvidersSettings().build();</span>
+<span class="fc" id="L664">    getChannelConnectionSettings = settingsBuilder.getChannelConnectionSettings().build();</span>
+<span class="fc" id="L665">    listChannelConnectionsSettings = settingsBuilder.listChannelConnectionsSettings().build();</span>
+<span class="fc" id="L666">    createChannelConnectionSettings = settingsBuilder.createChannelConnectionSettings().build();</span>
+<span class="fc" id="L667">    createChannelConnectionOperationSettings =</span>
+<span class="fc" id="L668">        settingsBuilder.createChannelConnectionOperationSettings().build();</span>
+<span class="fc" id="L669">    deleteChannelConnectionSettings = settingsBuilder.deleteChannelConnectionSettings().build();</span>
+<span class="fc" id="L670">    deleteChannelConnectionOperationSettings =</span>
+<span class="fc" id="L671">        settingsBuilder.deleteChannelConnectionOperationSettings().build();</span>
+<span class="fc" id="L672">  }</span>
 
   /** Builder for EventarcStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;EventarcStubSettings, Builder&gt; {
@@ -593,6 +700,10 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
     private final UnaryCallSettings.Builder&lt;DeleteChannelRequest, Operation&gt; deleteChannelSettings;
     private final OperationCallSettings.Builder&lt;DeleteChannelRequest, Channel, OperationMetadata&gt;
         deleteChannelOperationSettings;
+    private final UnaryCallSettings.Builder&lt;GetProviderRequest, Provider&gt; getProviderSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListProvidersRequest, ListProvidersResponse, ListProvidersPagedResponse&gt;
+        listProvidersSettings;
     private final UnaryCallSettings.Builder&lt;GetChannelConnectionRequest, ChannelConnection&gt;
         getChannelConnectionSettings;
     private final PagedCallSettings.Builder&lt;
@@ -615,54 +726,56 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L618">          ImmutableMap.builder();</span>
-<span class="fc" id="L619">      definitions.put(&quot;no_retry_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L620">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L729">          ImmutableMap.builder();</span>
+<span class="fc" id="L730">      definitions.put(&quot;no_retry_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L731">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L626">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L627">      RetrySettings settings = null;</span>
-<span class="fc" id="L628">      settings = RetrySettings.newBuilder().setRpcTimeoutMultiplier(1.0).build();</span>
-<span class="fc" id="L629">      definitions.put(&quot;no_retry_params&quot;, settings);</span>
-<span class="fc" id="L630">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L631">    }</span>
+<span class="fc" id="L737">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L738">      RetrySettings settings = null;</span>
+<span class="fc" id="L739">      settings = RetrySettings.newBuilder().setRpcTimeoutMultiplier(1.0).build();</span>
+<span class="fc" id="L740">      definitions.put(&quot;no_retry_params&quot;, settings);</span>
+<span class="fc" id="L741">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L742">    }</span>
 
     protected Builder() {
-<span class="nc" id="L634">      this(((ClientContext) null));</span>
-<span class="nc" id="L635">    }</span>
+<span class="nc" id="L745">      this(((ClientContext) null));</span>
+<span class="nc" id="L746">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L638">      super(clientContext);</span>
+<span class="fc" id="L749">      super(clientContext);</span>
 
-<span class="fc" id="L640">      getTriggerSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L641">      listTriggersSettings = PagedCallSettings.newBuilder(LIST_TRIGGERS_PAGE_STR_FACT);</span>
-<span class="fc" id="L642">      createTriggerSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L643">      createTriggerOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L644">      updateTriggerSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L645">      updateTriggerOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L646">      deleteTriggerSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L647">      deleteTriggerOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L648">      getChannelSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L649">      listChannelsSettings = PagedCallSettings.newBuilder(LIST_CHANNELS_PAGE_STR_FACT);</span>
-<span class="fc" id="L650">      createChannelSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L651">      createChannelOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L652">      updateChannelSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L653">      updateChannelOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L654">      deleteChannelSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L655">      deleteChannelOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L656">      getChannelConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L657">      listChannelConnectionsSettings =</span>
-<span class="fc" id="L658">          PagedCallSettings.newBuilder(LIST_CHANNEL_CONNECTIONS_PAGE_STR_FACT);</span>
-<span class="fc" id="L659">      createChannelConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L660">      createChannelConnectionOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L661">      deleteChannelConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L662">      deleteChannelConnectionOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L751">      getTriggerSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L752">      listTriggersSettings = PagedCallSettings.newBuilder(LIST_TRIGGERS_PAGE_STR_FACT);</span>
+<span class="fc" id="L753">      createTriggerSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L754">      createTriggerOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L755">      updateTriggerSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L756">      updateTriggerOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L757">      deleteTriggerSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L758">      deleteTriggerOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L759">      getChannelSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L760">      listChannelsSettings = PagedCallSettings.newBuilder(LIST_CHANNELS_PAGE_STR_FACT);</span>
+<span class="fc" id="L761">      createChannelSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L762">      createChannelOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L763">      updateChannelSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L764">      updateChannelOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L765">      deleteChannelSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L766">      deleteChannelOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L767">      getProviderSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L768">      listProvidersSettings = PagedCallSettings.newBuilder(LIST_PROVIDERS_PAGE_STR_FACT);</span>
+<span class="fc" id="L769">      getChannelConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L770">      listChannelConnectionsSettings =</span>
+<span class="fc" id="L771">          PagedCallSettings.newBuilder(LIST_CHANNEL_CONNECTIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L772">      createChannelConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L773">      createChannelConnectionOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L774">      deleteChannelConnectionSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L775">      deleteChannelConnectionOperationSettings = OperationCallSettings.newBuilder();</span>
 
-<span class="fc" id="L664">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L665">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L777">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L778">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               getTriggerSettings,
               listTriggersSettings,
               createTriggerSettings,
@@ -673,43 +786,47 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
               createChannelSettings,
               updateChannelSettings,
               deleteChannelSettings,
+              getProviderSettings,
+              listProvidersSettings,
               getChannelConnectionSettings,
               listChannelConnectionsSettings,
               createChannelConnectionSettings,
               deleteChannelConnectionSettings);
-<span class="fc" id="L680">      initDefaults(this);</span>
-<span class="fc" id="L681">    }</span>
+<span class="fc" id="L795">      initDefaults(this);</span>
+<span class="fc" id="L796">    }</span>
 
     protected Builder(EventarcStubSettings settings) {
-<span class="nc" id="L684">      super(settings);</span>
+<span class="nc" id="L799">      super(settings);</span>
 
-<span class="nc" id="L686">      getTriggerSettings = settings.getTriggerSettings.toBuilder();</span>
-<span class="nc" id="L687">      listTriggersSettings = settings.listTriggersSettings.toBuilder();</span>
-<span class="nc" id="L688">      createTriggerSettings = settings.createTriggerSettings.toBuilder();</span>
-<span class="nc" id="L689">      createTriggerOperationSettings = settings.createTriggerOperationSettings.toBuilder();</span>
-<span class="nc" id="L690">      updateTriggerSettings = settings.updateTriggerSettings.toBuilder();</span>
-<span class="nc" id="L691">      updateTriggerOperationSettings = settings.updateTriggerOperationSettings.toBuilder();</span>
-<span class="nc" id="L692">      deleteTriggerSettings = settings.deleteTriggerSettings.toBuilder();</span>
-<span class="nc" id="L693">      deleteTriggerOperationSettings = settings.deleteTriggerOperationSettings.toBuilder();</span>
-<span class="nc" id="L694">      getChannelSettings = settings.getChannelSettings.toBuilder();</span>
-<span class="nc" id="L695">      listChannelsSettings = settings.listChannelsSettings.toBuilder();</span>
-<span class="nc" id="L696">      createChannelSettings = settings.createChannelSettings.toBuilder();</span>
-<span class="nc" id="L697">      createChannelOperationSettings = settings.createChannelOperationSettings.toBuilder();</span>
-<span class="nc" id="L698">      updateChannelSettings = settings.updateChannelSettings.toBuilder();</span>
-<span class="nc" id="L699">      updateChannelOperationSettings = settings.updateChannelOperationSettings.toBuilder();</span>
-<span class="nc" id="L700">      deleteChannelSettings = settings.deleteChannelSettings.toBuilder();</span>
-<span class="nc" id="L701">      deleteChannelOperationSettings = settings.deleteChannelOperationSettings.toBuilder();</span>
-<span class="nc" id="L702">      getChannelConnectionSettings = settings.getChannelConnectionSettings.toBuilder();</span>
-<span class="nc" id="L703">      listChannelConnectionsSettings = settings.listChannelConnectionsSettings.toBuilder();</span>
-<span class="nc" id="L704">      createChannelConnectionSettings = settings.createChannelConnectionSettings.toBuilder();</span>
-<span class="nc" id="L705">      createChannelConnectionOperationSettings =</span>
-<span class="nc" id="L706">          settings.createChannelConnectionOperationSettings.toBuilder();</span>
-<span class="nc" id="L707">      deleteChannelConnectionSettings = settings.deleteChannelConnectionSettings.toBuilder();</span>
-<span class="nc" id="L708">      deleteChannelConnectionOperationSettings =</span>
-<span class="nc" id="L709">          settings.deleteChannelConnectionOperationSettings.toBuilder();</span>
+<span class="nc" id="L801">      getTriggerSettings = settings.getTriggerSettings.toBuilder();</span>
+<span class="nc" id="L802">      listTriggersSettings = settings.listTriggersSettings.toBuilder();</span>
+<span class="nc" id="L803">      createTriggerSettings = settings.createTriggerSettings.toBuilder();</span>
+<span class="nc" id="L804">      createTriggerOperationSettings = settings.createTriggerOperationSettings.toBuilder();</span>
+<span class="nc" id="L805">      updateTriggerSettings = settings.updateTriggerSettings.toBuilder();</span>
+<span class="nc" id="L806">      updateTriggerOperationSettings = settings.updateTriggerOperationSettings.toBuilder();</span>
+<span class="nc" id="L807">      deleteTriggerSettings = settings.deleteTriggerSettings.toBuilder();</span>
+<span class="nc" id="L808">      deleteTriggerOperationSettings = settings.deleteTriggerOperationSettings.toBuilder();</span>
+<span class="nc" id="L809">      getChannelSettings = settings.getChannelSettings.toBuilder();</span>
+<span class="nc" id="L810">      listChannelsSettings = settings.listChannelsSettings.toBuilder();</span>
+<span class="nc" id="L811">      createChannelSettings = settings.createChannelSettings.toBuilder();</span>
+<span class="nc" id="L812">      createChannelOperationSettings = settings.createChannelOperationSettings.toBuilder();</span>
+<span class="nc" id="L813">      updateChannelSettings = settings.updateChannelSettings.toBuilder();</span>
+<span class="nc" id="L814">      updateChannelOperationSettings = settings.updateChannelOperationSettings.toBuilder();</span>
+<span class="nc" id="L815">      deleteChannelSettings = settings.deleteChannelSettings.toBuilder();</span>
+<span class="nc" id="L816">      deleteChannelOperationSettings = settings.deleteChannelOperationSettings.toBuilder();</span>
+<span class="nc" id="L817">      getProviderSettings = settings.getProviderSettings.toBuilder();</span>
+<span class="nc" id="L818">      listProvidersSettings = settings.listProvidersSettings.toBuilder();</span>
+<span class="nc" id="L819">      getChannelConnectionSettings = settings.getChannelConnectionSettings.toBuilder();</span>
+<span class="nc" id="L820">      listChannelConnectionsSettings = settings.listChannelConnectionsSettings.toBuilder();</span>
+<span class="nc" id="L821">      createChannelConnectionSettings = settings.createChannelConnectionSettings.toBuilder();</span>
+<span class="nc" id="L822">      createChannelConnectionOperationSettings =</span>
+<span class="nc" id="L823">          settings.createChannelConnectionOperationSettings.toBuilder();</span>
+<span class="nc" id="L824">      deleteChannelConnectionSettings = settings.deleteChannelConnectionSettings.toBuilder();</span>
+<span class="nc" id="L825">      deleteChannelConnectionOperationSettings =</span>
+<span class="nc" id="L826">          settings.deleteChannelConnectionOperationSettings.toBuilder();</span>
 
-<span class="nc" id="L711">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L712">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L828">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L829">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               getTriggerSettings,
               listTriggersSettings,
               createTriggerSettings,
@@ -720,289 +837,314 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
               createChannelSettings,
               updateChannelSettings,
               deleteChannelSettings,
+              getProviderSettings,
+              listProvidersSettings,
               getChannelConnectionSettings,
               listChannelConnectionsSettings,
               createChannelConnectionSettings,
               deleteChannelConnectionSettings);
-<span class="nc" id="L727">    }</span>
+<span class="nc" id="L846">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L730">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L849">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L732">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L733">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L734">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L735">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L736">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L737">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L851">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L852">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L853">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L854">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L855">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L856">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L739">      return initDefaults(builder);</span>
+<span class="fc" id="L858">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L862">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L864">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L865">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L866">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L867">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L868">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L869">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L871">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L743">      builder</span>
-<span class="fc" id="L744">          .getTriggerSettings()</span>
-<span class="fc" id="L745">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L746">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+<span class="fc" id="L875">      builder</span>
+<span class="fc" id="L876">          .getTriggerSettings()</span>
+<span class="fc" id="L877">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L878">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L748">      builder</span>
-<span class="fc" id="L749">          .listTriggersSettings()</span>
-<span class="fc" id="L750">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L751">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L753">      builder</span>
-<span class="fc" id="L754">          .createTriggerSettings()</span>
-<span class="fc" id="L755">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L756">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L758">      builder</span>
-<span class="fc" id="L759">          .updateTriggerSettings()</span>
-<span class="fc" id="L760">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L761">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L763">      builder</span>
-<span class="fc" id="L764">          .deleteTriggerSettings()</span>
-<span class="fc" id="L765">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L766">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L768">      builder</span>
-<span class="fc" id="L769">          .getChannelSettings()</span>
-<span class="fc" id="L770">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L771">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L773">      builder</span>
-<span class="fc" id="L774">          .listChannelsSettings()</span>
-<span class="fc" id="L775">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L776">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L778">      builder</span>
-<span class="fc" id="L779">          .createChannelSettings()</span>
-<span class="fc" id="L780">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L781">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L783">      builder</span>
-<span class="fc" id="L784">          .updateChannelSettings()</span>
-<span class="fc" id="L785">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L786">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L788">      builder</span>
-<span class="fc" id="L789">          .deleteChannelSettings()</span>
-<span class="fc" id="L790">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L791">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L793">      builder</span>
-<span class="fc" id="L794">          .getChannelConnectionSettings()</span>
-<span class="fc" id="L795">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L796">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L798">      builder</span>
-<span class="fc" id="L799">          .listChannelConnectionsSettings()</span>
-<span class="fc" id="L800">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L801">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L803">      builder</span>
-<span class="fc" id="L804">          .createChannelConnectionSettings()</span>
-<span class="fc" id="L805">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L806">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L808">      builder</span>
-<span class="fc" id="L809">          .deleteChannelConnectionSettings()</span>
-<span class="fc" id="L810">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L811">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L813">      builder</span>
-<span class="fc" id="L814">          .createTriggerOperationSettings()</span>
-<span class="fc" id="L815">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L817">                  .&lt;CreateTriggerRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L818">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L819">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L820">                  .build())</span>
-<span class="fc" id="L821">          .setResponseTransformer(</span>
-<span class="fc" id="L822">              ProtoOperationTransformers.ResponseTransformer.create(Trigger.class))</span>
-<span class="fc" id="L823">          .setMetadataTransformer(</span>
-<span class="fc" id="L824">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L825">          .setPollingAlgorithm(</span>
-<span class="fc" id="L826">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L827">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L828">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L829">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L830">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L831">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L832">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L833">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L834">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L835">                      .build()));</span>
-
-<span class="fc" id="L837">      builder</span>
-<span class="fc" id="L838">          .updateTriggerOperationSettings()</span>
-<span class="fc" id="L839">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L841">                  .&lt;UpdateTriggerRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L842">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L843">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L844">                  .build())</span>
-<span class="fc" id="L845">          .setResponseTransformer(</span>
-<span class="fc" id="L846">              ProtoOperationTransformers.ResponseTransformer.create(Trigger.class))</span>
-<span class="fc" id="L847">          .setMetadataTransformer(</span>
-<span class="fc" id="L848">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L849">          .setPollingAlgorithm(</span>
-<span class="fc" id="L850">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L851">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L852">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L853">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L854">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L855">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L856">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L857">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L858">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L859">                      .build()));</span>
-
-<span class="fc" id="L861">      builder</span>
-<span class="fc" id="L862">          .deleteTriggerOperationSettings()</span>
-<span class="fc" id="L863">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L865">                  .&lt;DeleteTriggerRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L866">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L867">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L868">                  .build())</span>
-<span class="fc" id="L869">          .setResponseTransformer(</span>
-<span class="fc" id="L870">              ProtoOperationTransformers.ResponseTransformer.create(Trigger.class))</span>
-<span class="fc" id="L871">          .setMetadataTransformer(</span>
-<span class="fc" id="L872">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L873">          .setPollingAlgorithm(</span>
-<span class="fc" id="L874">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L875">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L876">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L877">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L878">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L879">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L880">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L881">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L882">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L883">                      .build()));</span>
+<span class="fc" id="L880">      builder</span>
+<span class="fc" id="L881">          .listTriggersSettings()</span>
+<span class="fc" id="L882">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L883">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
 <span class="fc" id="L885">      builder</span>
-<span class="fc" id="L886">          .createChannelOperationSettings()</span>
-<span class="fc" id="L887">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L889">                  .&lt;CreateChannelRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L890">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L891">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L892">                  .build())</span>
-<span class="fc" id="L893">          .setResponseTransformer(</span>
-<span class="fc" id="L894">              ProtoOperationTransformers.ResponseTransformer.create(Channel.class))</span>
-<span class="fc" id="L895">          .setMetadataTransformer(</span>
-<span class="fc" id="L896">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L897">          .setPollingAlgorithm(</span>
-<span class="fc" id="L898">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L899">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L900">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L901">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L902">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L903">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L904">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L905">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L906">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L907">                      .build()));</span>
+<span class="fc" id="L886">          .createTriggerSettings()</span>
+<span class="fc" id="L887">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L888">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L909">      builder</span>
-<span class="fc" id="L910">          .updateChannelOperationSettings()</span>
-<span class="fc" id="L911">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L913">                  .&lt;UpdateChannelRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L914">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L915">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L916">                  .build())</span>
-<span class="fc" id="L917">          .setResponseTransformer(</span>
-<span class="fc" id="L918">              ProtoOperationTransformers.ResponseTransformer.create(Channel.class))</span>
-<span class="fc" id="L919">          .setMetadataTransformer(</span>
-<span class="fc" id="L920">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L921">          .setPollingAlgorithm(</span>
-<span class="fc" id="L922">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L923">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L924">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L925">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L926">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L927">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L928">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L929">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L930">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L931">                      .build()));</span>
+<span class="fc" id="L890">      builder</span>
+<span class="fc" id="L891">          .updateTriggerSettings()</span>
+<span class="fc" id="L892">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L893">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L933">      builder</span>
-<span class="fc" id="L934">          .deleteChannelOperationSettings()</span>
-<span class="fc" id="L935">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L937">                  .&lt;DeleteChannelRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L938">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L939">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L940">                  .build())</span>
-<span class="fc" id="L941">          .setResponseTransformer(</span>
-<span class="fc" id="L942">              ProtoOperationTransformers.ResponseTransformer.create(Channel.class))</span>
-<span class="fc" id="L943">          .setMetadataTransformer(</span>
-<span class="fc" id="L944">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L945">          .setPollingAlgorithm(</span>
-<span class="fc" id="L946">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L947">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L948">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L949">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L950">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L951">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L952">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L953">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L954">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L955">                      .build()));</span>
+<span class="fc" id="L895">      builder</span>
+<span class="fc" id="L896">          .deleteTriggerSettings()</span>
+<span class="fc" id="L897">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L898">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L957">      builder</span>
-<span class="fc" id="L958">          .createChannelConnectionOperationSettings()</span>
-<span class="fc" id="L959">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L961">                  .&lt;CreateChannelConnectionRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L962">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L963">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L964">                  .build())</span>
-<span class="fc" id="L965">          .setResponseTransformer(</span>
-<span class="fc" id="L966">              ProtoOperationTransformers.ResponseTransformer.create(ChannelConnection.class))</span>
-<span class="fc" id="L967">          .setMetadataTransformer(</span>
-<span class="fc" id="L968">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L969">          .setPollingAlgorithm(</span>
-<span class="fc" id="L970">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L971">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L972">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L973">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L974">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L975">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L976">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L977">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L978">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L979">                      .build()));</span>
+<span class="fc" id="L900">      builder</span>
+<span class="fc" id="L901">          .getChannelSettings()</span>
+<span class="fc" id="L902">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L903">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L981">      builder</span>
-<span class="fc" id="L982">          .deleteChannelConnectionOperationSettings()</span>
-<span class="fc" id="L983">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L985">                  .&lt;DeleteChannelConnectionRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L986">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L987">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
-<span class="fc" id="L988">                  .build())</span>
-<span class="fc" id="L989">          .setResponseTransformer(</span>
-<span class="fc" id="L990">              ProtoOperationTransformers.ResponseTransformer.create(ChannelConnection.class))</span>
-<span class="fc" id="L991">          .setMetadataTransformer(</span>
-<span class="fc" id="L992">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L993">          .setPollingAlgorithm(</span>
-<span class="fc" id="L994">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L995">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L996">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L997">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L998">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L999">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1000">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1001">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1002">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1003">                      .build()));</span>
+<span class="fc" id="L905">      builder</span>
+<span class="fc" id="L906">          .listChannelsSettings()</span>
+<span class="fc" id="L907">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L908">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L1005">      return builder;</span>
+<span class="fc" id="L910">      builder</span>
+<span class="fc" id="L911">          .createChannelSettings()</span>
+<span class="fc" id="L912">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L913">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L915">      builder</span>
+<span class="fc" id="L916">          .updateChannelSettings()</span>
+<span class="fc" id="L917">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L918">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L920">      builder</span>
+<span class="fc" id="L921">          .deleteChannelSettings()</span>
+<span class="fc" id="L922">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L923">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L925">      builder</span>
+<span class="fc" id="L926">          .getProviderSettings()</span>
+<span class="fc" id="L927">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L928">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L930">      builder</span>
+<span class="fc" id="L931">          .listProvidersSettings()</span>
+<span class="fc" id="L932">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L933">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L935">      builder</span>
+<span class="fc" id="L936">          .getChannelConnectionSettings()</span>
+<span class="fc" id="L937">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L938">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L940">      builder</span>
+<span class="fc" id="L941">          .listChannelConnectionsSettings()</span>
+<span class="fc" id="L942">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L943">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L945">      builder</span>
+<span class="fc" id="L946">          .createChannelConnectionSettings()</span>
+<span class="fc" id="L947">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L948">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L950">      builder</span>
+<span class="fc" id="L951">          .deleteChannelConnectionSettings()</span>
+<span class="fc" id="L952">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L953">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L955">      builder</span>
+<span class="fc" id="L956">          .createTriggerOperationSettings()</span>
+<span class="fc" id="L957">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L959">                  .&lt;CreateTriggerRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L960">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L961">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L962">                  .build())</span>
+<span class="fc" id="L963">          .setResponseTransformer(</span>
+<span class="fc" id="L964">              ProtoOperationTransformers.ResponseTransformer.create(Trigger.class))</span>
+<span class="fc" id="L965">          .setMetadataTransformer(</span>
+<span class="fc" id="L966">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L967">          .setPollingAlgorithm(</span>
+<span class="fc" id="L968">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L969">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L970">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L971">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L972">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L973">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L974">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L975">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L976">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L977">                      .build()));</span>
+
+<span class="fc" id="L979">      builder</span>
+<span class="fc" id="L980">          .updateTriggerOperationSettings()</span>
+<span class="fc" id="L981">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L983">                  .&lt;UpdateTriggerRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L984">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L985">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L986">                  .build())</span>
+<span class="fc" id="L987">          .setResponseTransformer(</span>
+<span class="fc" id="L988">              ProtoOperationTransformers.ResponseTransformer.create(Trigger.class))</span>
+<span class="fc" id="L989">          .setMetadataTransformer(</span>
+<span class="fc" id="L990">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L991">          .setPollingAlgorithm(</span>
+<span class="fc" id="L992">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L993">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L994">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L995">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L996">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L997">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L998">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L999">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1000">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1001">                      .build()));</span>
+
+<span class="fc" id="L1003">      builder</span>
+<span class="fc" id="L1004">          .deleteTriggerOperationSettings()</span>
+<span class="fc" id="L1005">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1007">                  .&lt;DeleteTriggerRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1008">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L1009">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L1010">                  .build())</span>
+<span class="fc" id="L1011">          .setResponseTransformer(</span>
+<span class="fc" id="L1012">              ProtoOperationTransformers.ResponseTransformer.create(Trigger.class))</span>
+<span class="fc" id="L1013">          .setMetadataTransformer(</span>
+<span class="fc" id="L1014">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1015">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1016">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1017">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1018">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1019">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1020">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1021">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1022">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1023">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1024">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1025">                      .build()));</span>
+
+<span class="fc" id="L1027">      builder</span>
+<span class="fc" id="L1028">          .createChannelOperationSettings()</span>
+<span class="fc" id="L1029">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1031">                  .&lt;CreateChannelRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1032">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L1033">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L1034">                  .build())</span>
+<span class="fc" id="L1035">          .setResponseTransformer(</span>
+<span class="fc" id="L1036">              ProtoOperationTransformers.ResponseTransformer.create(Channel.class))</span>
+<span class="fc" id="L1037">          .setMetadataTransformer(</span>
+<span class="fc" id="L1038">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1039">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1040">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1041">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1042">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1043">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1044">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1045">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1046">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1047">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1048">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1049">                      .build()));</span>
+
+<span class="fc" id="L1051">      builder</span>
+<span class="fc" id="L1052">          .updateChannelOperationSettings()</span>
+<span class="fc" id="L1053">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1055">                  .&lt;UpdateChannelRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1056">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L1057">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L1058">                  .build())</span>
+<span class="fc" id="L1059">          .setResponseTransformer(</span>
+<span class="fc" id="L1060">              ProtoOperationTransformers.ResponseTransformer.create(Channel.class))</span>
+<span class="fc" id="L1061">          .setMetadataTransformer(</span>
+<span class="fc" id="L1062">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1063">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1064">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1065">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1066">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1067">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1068">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1069">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1070">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1071">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1072">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1073">                      .build()));</span>
+
+<span class="fc" id="L1075">      builder</span>
+<span class="fc" id="L1076">          .deleteChannelOperationSettings()</span>
+<span class="fc" id="L1077">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1079">                  .&lt;DeleteChannelRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1080">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L1081">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L1082">                  .build())</span>
+<span class="fc" id="L1083">          .setResponseTransformer(</span>
+<span class="fc" id="L1084">              ProtoOperationTransformers.ResponseTransformer.create(Channel.class))</span>
+<span class="fc" id="L1085">          .setMetadataTransformer(</span>
+<span class="fc" id="L1086">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1087">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1088">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1089">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1090">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1091">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1092">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1093">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1094">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1095">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1096">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1097">                      .build()));</span>
+
+<span class="fc" id="L1099">      builder</span>
+<span class="fc" id="L1100">          .createChannelConnectionOperationSettings()</span>
+<span class="fc" id="L1101">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1103">                  .&lt;CreateChannelConnectionRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1104">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L1105">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L1106">                  .build())</span>
+<span class="fc" id="L1107">          .setResponseTransformer(</span>
+<span class="fc" id="L1108">              ProtoOperationTransformers.ResponseTransformer.create(ChannelConnection.class))</span>
+<span class="fc" id="L1109">          .setMetadataTransformer(</span>
+<span class="fc" id="L1110">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1111">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1112">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1113">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1114">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1115">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1116">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1117">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1118">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1119">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1120">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1121">                      .build()));</span>
+
+<span class="fc" id="L1123">      builder</span>
+<span class="fc" id="L1124">          .deleteChannelConnectionOperationSettings()</span>
+<span class="fc" id="L1125">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1127">                  .&lt;DeleteChannelConnectionRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1128">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L1129">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;))</span>
+<span class="fc" id="L1130">                  .build())</span>
+<span class="fc" id="L1131">          .setResponseTransformer(</span>
+<span class="fc" id="L1132">              ProtoOperationTransformers.ResponseTransformer.create(ChannelConnection.class))</span>
+<span class="fc" id="L1133">          .setMetadataTransformer(</span>
+<span class="fc" id="L1134">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1135">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1136">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1137">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1138">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1139">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1140">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1141">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1142">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1143">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1144">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1145">                      .build()));</span>
+
+<span class="fc" id="L1147">      return builder;</span>
     }
 
     /**
@@ -1012,29 +1154,29 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L1015">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L1016">      return this;</span>
+<span class="nc" id="L1157">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L1158">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L1020">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L1162">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to getTrigger. */
     public UnaryCallSettings.Builder&lt;GetTriggerRequest, Trigger&gt; getTriggerSettings() {
-<span class="fc" id="L1025">      return getTriggerSettings;</span>
+<span class="fc" id="L1167">      return getTriggerSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listTriggers. */
     public PagedCallSettings.Builder&lt;
             ListTriggersRequest, ListTriggersResponse, ListTriggersPagedResponse&gt;
         listTriggersSettings() {
-<span class="fc" id="L1032">      return listTriggersSettings;</span>
+<span class="fc" id="L1174">      return listTriggersSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createTrigger. */
     public UnaryCallSettings.Builder&lt;CreateTriggerRequest, Operation&gt; createTriggerSettings() {
-<span class="fc" id="L1037">      return createTriggerSettings;</span>
+<span class="fc" id="L1179">      return createTriggerSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createTrigger. */
@@ -1042,12 +1184,12 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;CreateTriggerRequest, Trigger, OperationMetadata&gt;
         createTriggerOperationSettings() {
-<span class="fc" id="L1045">      return createTriggerOperationSettings;</span>
+<span class="fc" id="L1187">      return createTriggerOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateTrigger. */
     public UnaryCallSettings.Builder&lt;UpdateTriggerRequest, Operation&gt; updateTriggerSettings() {
-<span class="fc" id="L1050">      return updateTriggerSettings;</span>
+<span class="fc" id="L1192">      return updateTriggerSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateTrigger. */
@@ -1055,12 +1197,12 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;UpdateTriggerRequest, Trigger, OperationMetadata&gt;
         updateTriggerOperationSettings() {
-<span class="fc" id="L1058">      return updateTriggerOperationSettings;</span>
+<span class="fc" id="L1200">      return updateTriggerOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteTrigger. */
     public UnaryCallSettings.Builder&lt;DeleteTriggerRequest, Operation&gt; deleteTriggerSettings() {
-<span class="fc" id="L1063">      return deleteTriggerSettings;</span>
+<span class="fc" id="L1205">      return deleteTriggerSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteTrigger. */
@@ -1068,24 +1210,24 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeleteTriggerRequest, Trigger, OperationMetadata&gt;
         deleteTriggerOperationSettings() {
-<span class="fc" id="L1071">      return deleteTriggerOperationSettings;</span>
+<span class="fc" id="L1213">      return deleteTriggerOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getChannel. */
     public UnaryCallSettings.Builder&lt;GetChannelRequest, Channel&gt; getChannelSettings() {
-<span class="fc" id="L1076">      return getChannelSettings;</span>
+<span class="fc" id="L1218">      return getChannelSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listChannels. */
     public PagedCallSettings.Builder&lt;
             ListChannelsRequest, ListChannelsResponse, ListChannelsPagedResponse&gt;
         listChannelsSettings() {
-<span class="fc" id="L1083">      return listChannelsSettings;</span>
+<span class="fc" id="L1225">      return listChannelsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createChannel. */
     public UnaryCallSettings.Builder&lt;CreateChannelRequest, Operation&gt; createChannelSettings() {
-<span class="fc" id="L1088">      return createChannelSettings;</span>
+<span class="fc" id="L1230">      return createChannelSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createChannel. */
@@ -1093,12 +1235,12 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;CreateChannelRequest, Channel, OperationMetadata&gt;
         createChannelOperationSettings() {
-<span class="fc" id="L1096">      return createChannelOperationSettings;</span>
+<span class="fc" id="L1238">      return createChannelOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateChannel. */
     public UnaryCallSettings.Builder&lt;UpdateChannelRequest, Operation&gt; updateChannelSettings() {
-<span class="fc" id="L1101">      return updateChannelSettings;</span>
+<span class="fc" id="L1243">      return updateChannelSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateChannel. */
@@ -1106,12 +1248,12 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;UpdateChannelRequest, Channel, OperationMetadata&gt;
         updateChannelOperationSettings() {
-<span class="fc" id="L1109">      return updateChannelOperationSettings;</span>
+<span class="fc" id="L1251">      return updateChannelOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteChannel. */
     public UnaryCallSettings.Builder&lt;DeleteChannelRequest, Operation&gt; deleteChannelSettings() {
-<span class="fc" id="L1114">      return deleteChannelSettings;</span>
+<span class="fc" id="L1256">      return deleteChannelSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteChannel. */
@@ -1119,13 +1261,25 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeleteChannelRequest, Channel, OperationMetadata&gt;
         deleteChannelOperationSettings() {
-<span class="fc" id="L1122">      return deleteChannelOperationSettings;</span>
+<span class="fc" id="L1264">      return deleteChannelOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getProvider. */
+    public UnaryCallSettings.Builder&lt;GetProviderRequest, Provider&gt; getProviderSettings() {
+<span class="fc" id="L1269">      return getProviderSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listProviders. */
+    public PagedCallSettings.Builder&lt;
+            ListProvidersRequest, ListProvidersResponse, ListProvidersPagedResponse&gt;
+        listProvidersSettings() {
+<span class="fc" id="L1276">      return listProvidersSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getChannelConnection. */
     public UnaryCallSettings.Builder&lt;GetChannelConnectionRequest, ChannelConnection&gt;
         getChannelConnectionSettings() {
-<span class="fc" id="L1128">      return getChannelConnectionSettings;</span>
+<span class="fc" id="L1282">      return getChannelConnectionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listChannelConnections. */
@@ -1134,13 +1288,13 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
             ListChannelConnectionsResponse,
             ListChannelConnectionsPagedResponse&gt;
         listChannelConnectionsSettings() {
-<span class="fc" id="L1137">      return listChannelConnectionsSettings;</span>
+<span class="fc" id="L1291">      return listChannelConnectionsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createChannelConnection. */
     public UnaryCallSettings.Builder&lt;CreateChannelConnectionRequest, Operation&gt;
         createChannelConnectionSettings() {
-<span class="fc" id="L1143">      return createChannelConnectionSettings;</span>
+<span class="fc" id="L1297">      return createChannelConnectionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createChannelConnection. */
@@ -1149,13 +1303,13 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
     public OperationCallSettings.Builder&lt;
             CreateChannelConnectionRequest, ChannelConnection, OperationMetadata&gt;
         createChannelConnectionOperationSettings() {
-<span class="fc" id="L1152">      return createChannelConnectionOperationSettings;</span>
+<span class="fc" id="L1306">      return createChannelConnectionOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteChannelConnection. */
     public UnaryCallSettings.Builder&lt;DeleteChannelConnectionRequest, Operation&gt;
         deleteChannelConnectionSettings() {
-<span class="fc" id="L1158">      return deleteChannelConnectionSettings;</span>
+<span class="fc" id="L1312">      return deleteChannelConnectionSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteChannelConnection. */
@@ -1164,12 +1318,12 @@ public class EventarcStubSettings extends StubSettings&lt;EventarcStubSettings&g
     public OperationCallSettings.Builder&lt;
             DeleteChannelConnectionRequest, ChannelConnection, OperationMetadata&gt;
         deleteChannelConnectionOperationSettings() {
-<span class="fc" id="L1167">      return deleteChannelConnectionOperationSettings;</span>
+<span class="fc" id="L1321">      return deleteChannelConnectionOperationSettings;</span>
     }
 
     @Override
     public EventarcStubSettings build() throws IOException {
-<span class="fc" id="L1172">      return new EventarcStubSettings(this);</span>
+<span class="fc" id="L1326">      return new EventarcStubSettings(this);</span>
     }
   }
 }

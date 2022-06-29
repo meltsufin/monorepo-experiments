@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>JobControllerClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-dataproc</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.dataproc.v1</a> &gt; <span class="el_source">JobControllerClient.java</span></div><h1>JobControllerClient.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.dataproc.v1.stub.JobControllerStub;
 import com.google.cloud.dataproc.v1.stub.JobControllerStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import java.io.IOException;
 import java.util.List;
@@ -46,6 +46,8 @@ import javax.annotation.Generated;
  * calls that map to API methods. Sample code to get started:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
  *   String projectId = &quot;projectId-894832108&quot;;
  *   String region = &quot;region-934795532&quot;;
@@ -83,6 +85,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize credentials:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * JobControllerSettings jobControllerSettings =
  *     JobControllerSettings.newBuilder()
  *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
@@ -93,8 +97,24 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize the endpoint:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * JobControllerSettings jobControllerSettings =
  *     JobControllerSettings.newBuilder().setEndpoint(myEndpoint).build();
+ * JobControllerClient jobControllerClient = JobControllerClient.create(jobControllerSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * JobControllerSettings jobControllerSettings =
+ *     JobControllerSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             JobControllerSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
  * JobControllerClient jobControllerClient = JobControllerClient.create(jobControllerSettings);
  * }&lt;/pre&gt;
  *
@@ -104,11 +124,12 @@ import javax.annotation.Generated;
 public class JobControllerClient implements BackgroundResource {
   private final JobControllerSettings settings;
   private final JobControllerStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of JobControllerClient with default settings. */
   public static final JobControllerClient create() throws IOException {
-<span class="nc" id="L111">    return create(JobControllerSettings.newBuilder().build());</span>
+<span class="nc" id="L132">    return create(JobControllerSettings.newBuilder().build());</span>
   }
 
   /**
@@ -117,16 +138,15 @@ public class JobControllerClient implements BackgroundResource {
    */
   public static final JobControllerClient create(JobControllerSettings settings)
       throws IOException {
-<span class="fc" id="L120">    return new JobControllerClient(settings);</span>
+<span class="fc" id="L141">    return new JobControllerClient(settings);</span>
   }
 
   /**
    * Constructs an instance of JobControllerClient, using the given stub for making calls. This is
    * for advanced usage - prefer using create(JobControllerSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final JobControllerClient create(JobControllerStub stub) {
-<span class="nc" id="L129">    return new JobControllerClient(stub);</span>
+<span class="nc" id="L149">    return new JobControllerClient(stub);</span>
   }
 
   /**
@@ -134,34 +154,45 @@ public class JobControllerClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L137">  protected JobControllerClient(JobControllerSettings settings) throws IOException {</span>
-<span class="fc" id="L138">    this.settings = settings;</span>
-<span class="fc" id="L139">    this.stub = ((JobControllerStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L140">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L141">  }</span>
+<span class="fc" id="L157">  protected JobControllerClient(JobControllerSettings settings) throws IOException {</span>
+<span class="fc" id="L158">    this.settings = settings;</span>
+<span class="fc" id="L159">    this.stub = ((JobControllerStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L160">    this.operationsClient =</span>
+<span class="fc" id="L161">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L162">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L163">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L144">  protected JobControllerClient(JobControllerStub stub) {</span>
-<span class="nc" id="L145">    this.settings = null;</span>
-<span class="nc" id="L146">    this.stub = stub;</span>
-<span class="nc" id="L147">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L148">  }</span>
+<span class="nc" id="L165">  protected JobControllerClient(JobControllerStub stub) {</span>
+<span class="nc" id="L166">    this.settings = null;</span>
+<span class="nc" id="L167">    this.stub = stub;</span>
+<span class="nc" id="L168">    this.operationsClient =</span>
+<span class="nc" id="L169">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L170">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L171">  }</span>
 
   public final JobControllerSettings getSettings() {
-<span class="nc" id="L151">    return settings;</span>
+<span class="nc" id="L174">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public JobControllerStub getStub() {
-<span class="nc" id="L156">    return stub;</span>
+<span class="nc" id="L178">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L164">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L186">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L195">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -171,6 +202,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -186,8 +219,8 @@ public class JobControllerClient implements BackgroundResource {
    */
   public final Job submitJob(String projectId, String region, Job job) {
     SubmitJobRequest request =
-<span class="fc" id="L189">        SubmitJobRequest.newBuilder().setProjectId(projectId).setRegion(region).setJob(job).build();</span>
-<span class="fc" id="L190">    return submitJob(request);</span>
+<span class="fc" id="L222">        SubmitJobRequest.newBuilder().setProjectId(projectId).setRegion(region).setJob(job).build();</span>
+<span class="fc" id="L223">    return submitJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -197,6 +230,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   SubmitJobRequest request =
    *       SubmitJobRequest.newBuilder()
@@ -213,7 +248,7 @@ public class JobControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job submitJob(SubmitJobRequest request) {
-<span class="fc" id="L216">    return submitJobCallable().call(request);</span>
+<span class="fc" id="L251">    return submitJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -223,6 +258,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   SubmitJobRequest request =
    *       SubmitJobRequest.newBuilder()
@@ -238,7 +275,7 @@ public class JobControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SubmitJobRequest, Job&gt; submitJobCallable() {
-<span class="fc" id="L241">    return stub.submitJobCallable();</span>
+<span class="fc" id="L278">    return stub.submitJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -248,6 +285,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -264,8 +303,8 @@ public class JobControllerClient implements BackgroundResource {
   public final OperationFuture&lt;Job, JobMetadata&gt; submitJobAsOperationAsync(
       String projectId, String region, Job job) {
     SubmitJobRequest request =
-<span class="fc" id="L267">        SubmitJobRequest.newBuilder().setProjectId(projectId).setRegion(region).setJob(job).build();</span>
-<span class="fc" id="L268">    return submitJobAsOperationAsync(request);</span>
+<span class="fc" id="L306">        SubmitJobRequest.newBuilder().setProjectId(projectId).setRegion(region).setJob(job).build();</span>
+<span class="fc" id="L307">    return submitJobAsOperationAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -275,6 +314,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   SubmitJobRequest request =
    *       SubmitJobRequest.newBuilder()
@@ -292,7 +333,7 @@ public class JobControllerClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Job, JobMetadata&gt; submitJobAsOperationAsync(
       SubmitJobRequest request) {
-<span class="fc" id="L295">    return submitJobAsOperationOperationCallable().futureCall(request);</span>
+<span class="fc" id="L336">    return submitJobAsOperationOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -302,6 +343,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   SubmitJobRequest request =
    *       SubmitJobRequest.newBuilder()
@@ -319,7 +362,7 @@ public class JobControllerClient implements BackgroundResource {
    */
   public final OperationCallable&lt;SubmitJobRequest, Job, JobMetadata&gt;
       submitJobAsOperationOperationCallable() {
-<span class="fc" id="L322">    return stub.submitJobAsOperationOperationCallable();</span>
+<span class="fc" id="L365">    return stub.submitJobAsOperationOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -329,6 +372,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   SubmitJobRequest request =
    *       SubmitJobRequest.newBuilder()
@@ -345,7 +390,7 @@ public class JobControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SubmitJobRequest, Operation&gt; submitJobAsOperationCallable() {
-<span class="nc" id="L348">    return stub.submitJobAsOperationCallable();</span>
+<span class="nc" id="L393">    return stub.submitJobAsOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -355,6 +400,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -370,12 +417,12 @@ public class JobControllerClient implements BackgroundResource {
    */
   public final Job getJob(String projectId, String region, String jobId) {
     GetJobRequest request =
-<span class="fc" id="L373">        GetJobRequest.newBuilder()</span>
-<span class="fc" id="L374">            .setProjectId(projectId)</span>
-<span class="fc" id="L375">            .setRegion(region)</span>
-<span class="fc" id="L376">            .setJobId(jobId)</span>
-<span class="fc" id="L377">            .build();</span>
-<span class="fc" id="L378">    return getJob(request);</span>
+<span class="fc" id="L420">        GetJobRequest.newBuilder()</span>
+<span class="fc" id="L421">            .setProjectId(projectId)</span>
+<span class="fc" id="L422">            .setRegion(region)</span>
+<span class="fc" id="L423">            .setJobId(jobId)</span>
+<span class="fc" id="L424">            .build();</span>
+<span class="fc" id="L425">    return getJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -385,6 +432,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   GetJobRequest request =
    *       GetJobRequest.newBuilder()
@@ -400,7 +449,7 @@ public class JobControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job getJob(GetJobRequest request) {
-<span class="fc" id="L403">    return getJobCallable().call(request);</span>
+<span class="fc" id="L452">    return getJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -410,6 +459,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   GetJobRequest request =
    *       GetJobRequest.newBuilder()
@@ -424,7 +475,7 @@ public class JobControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetJobRequest, Job&gt; getJobCallable() {
-<span class="fc" id="L427">    return stub.getJobCallable();</span>
+<span class="fc" id="L478">    return stub.getJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -434,6 +485,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -449,8 +502,8 @@ public class JobControllerClient implements BackgroundResource {
    */
   public final ListJobsPagedResponse listJobs(String projectId, String region) {
     ListJobsRequest request =
-<span class="fc" id="L452">        ListJobsRequest.newBuilder().setProjectId(projectId).setRegion(region).build();</span>
-<span class="fc" id="L453">    return listJobs(request);</span>
+<span class="fc" id="L505">        ListJobsRequest.newBuilder().setProjectId(projectId).setRegion(region).build();</span>
+<span class="fc" id="L506">    return listJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -460,6 +513,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -485,12 +540,12 @@ public class JobControllerClient implements BackgroundResource {
    */
   public final ListJobsPagedResponse listJobs(String projectId, String region, String filter) {
     ListJobsRequest request =
-<span class="fc" id="L488">        ListJobsRequest.newBuilder()</span>
-<span class="fc" id="L489">            .setProjectId(projectId)</span>
-<span class="fc" id="L490">            .setRegion(region)</span>
-<span class="fc" id="L491">            .setFilter(filter)</span>
-<span class="fc" id="L492">            .build();</span>
-<span class="fc" id="L493">    return listJobs(request);</span>
+<span class="fc" id="L543">        ListJobsRequest.newBuilder()</span>
+<span class="fc" id="L544">            .setProjectId(projectId)</span>
+<span class="fc" id="L545">            .setRegion(region)</span>
+<span class="fc" id="L546">            .setFilter(filter)</span>
+<span class="fc" id="L547">            .build();</span>
+<span class="fc" id="L548">    return listJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -500,6 +555,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   ListJobsRequest request =
    *       ListJobsRequest.newBuilder()
@@ -520,7 +577,7 @@ public class JobControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListJobsPagedResponse listJobs(ListJobsRequest request) {
-<span class="fc" id="L523">    return listJobsPagedCallable().call(request);</span>
+<span class="fc" id="L580">    return listJobsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -530,6 +587,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   ListJobsRequest request =
    *       ListJobsRequest.newBuilder()
@@ -549,7 +608,7 @@ public class JobControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListJobsRequest, ListJobsPagedResponse&gt; listJobsPagedCallable() {
-<span class="fc" id="L552">    return stub.listJobsPagedCallable();</span>
+<span class="fc" id="L611">    return stub.listJobsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -559,6 +618,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   ListJobsRequest request =
    *       ListJobsRequest.newBuilder()
@@ -571,7 +632,7 @@ public class JobControllerClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListJobsResponse response = jobControllerClient.listJobsCallable().call(request);
-   *     for (Job element : response.getResponsesList()) {
+   *     for (Job element : response.getJobsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -585,7 +646,7 @@ public class JobControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListJobsRequest, ListJobsResponse&gt; listJobsCallable() {
-<span class="nc" id="L588">    return stub.listJobsCallable();</span>
+<span class="nc" id="L649">    return stub.listJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -595,6 +656,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   UpdateJobRequest request =
    *       UpdateJobRequest.newBuilder()
@@ -612,7 +675,7 @@ public class JobControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job updateJob(UpdateJobRequest request) {
-<span class="fc" id="L615">    return updateJobCallable().call(request);</span>
+<span class="fc" id="L678">    return updateJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -622,6 +685,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   UpdateJobRequest request =
    *       UpdateJobRequest.newBuilder()
@@ -638,7 +703,7 @@ public class JobControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateJobRequest, Job&gt; updateJobCallable() {
-<span class="fc" id="L641">    return stub.updateJobCallable();</span>
+<span class="fc" id="L706">    return stub.updateJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -651,6 +716,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -666,12 +733,12 @@ public class JobControllerClient implements BackgroundResource {
    */
   public final Job cancelJob(String projectId, String region, String jobId) {
     CancelJobRequest request =
-<span class="fc" id="L669">        CancelJobRequest.newBuilder()</span>
-<span class="fc" id="L670">            .setProjectId(projectId)</span>
-<span class="fc" id="L671">            .setRegion(region)</span>
-<span class="fc" id="L672">            .setJobId(jobId)</span>
-<span class="fc" id="L673">            .build();</span>
-<span class="fc" id="L674">    return cancelJob(request);</span>
+<span class="fc" id="L736">        CancelJobRequest.newBuilder()</span>
+<span class="fc" id="L737">            .setProjectId(projectId)</span>
+<span class="fc" id="L738">            .setRegion(region)</span>
+<span class="fc" id="L739">            .setJobId(jobId)</span>
+<span class="fc" id="L740">            .build();</span>
+<span class="fc" id="L741">    return cancelJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -684,6 +751,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   CancelJobRequest request =
    *       CancelJobRequest.newBuilder()
@@ -699,7 +768,7 @@ public class JobControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job cancelJob(CancelJobRequest request) {
-<span class="fc" id="L702">    return cancelJobCallable().call(request);</span>
+<span class="fc" id="L771">    return cancelJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -712,6 +781,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   CancelJobRequest request =
    *       CancelJobRequest.newBuilder()
@@ -726,7 +797,7 @@ public class JobControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CancelJobRequest, Job&gt; cancelJobCallable() {
-<span class="fc" id="L729">    return stub.cancelJobCallable();</span>
+<span class="fc" id="L800">    return stub.cancelJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -737,6 +808,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   String projectId = &quot;projectId-894832108&quot;;
    *   String region = &quot;region-934795532&quot;;
@@ -752,13 +825,13 @@ public class JobControllerClient implements BackgroundResource {
    */
   public final void deleteJob(String projectId, String region, String jobId) {
     DeleteJobRequest request =
-<span class="fc" id="L755">        DeleteJobRequest.newBuilder()</span>
-<span class="fc" id="L756">            .setProjectId(projectId)</span>
-<span class="fc" id="L757">            .setRegion(region)</span>
-<span class="fc" id="L758">            .setJobId(jobId)</span>
-<span class="fc" id="L759">            .build();</span>
-<span class="fc" id="L760">    deleteJob(request);</span>
-<span class="fc" id="L761">  }</span>
+<span class="fc" id="L828">        DeleteJobRequest.newBuilder()</span>
+<span class="fc" id="L829">            .setProjectId(projectId)</span>
+<span class="fc" id="L830">            .setRegion(region)</span>
+<span class="fc" id="L831">            .setJobId(jobId)</span>
+<span class="fc" id="L832">            .build();</span>
+<span class="fc" id="L833">    deleteJob(request);</span>
+<span class="fc" id="L834">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -768,6 +841,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   DeleteJobRequest request =
    *       DeleteJobRequest.newBuilder()
@@ -783,8 +858,8 @@ public class JobControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteJob(DeleteJobRequest request) {
-<span class="fc" id="L786">    deleteJobCallable().call(request);</span>
-<span class="fc" id="L787">  }</span>
+<span class="fc" id="L861">    deleteJobCallable().call(request);</span>
+<span class="fc" id="L862">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -794,6 +869,8 @@ public class JobControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (JobControllerClient jobControllerClient = JobControllerClient.create()) {
    *   DeleteJobRequest request =
    *       DeleteJobRequest.newBuilder()
@@ -808,37 +885,37 @@ public class JobControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteJobRequest, Empty&gt; deleteJobCallable() {
-<span class="fc" id="L811">    return stub.deleteJobCallable();</span>
+<span class="fc" id="L888">    return stub.deleteJobCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L816">    stub.close();</span>
-<span class="fc" id="L817">  }</span>
+<span class="fc" id="L893">    stub.close();</span>
+<span class="fc" id="L894">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L821">    stub.shutdown();</span>
-<span class="nc" id="L822">  }</span>
+<span class="nc" id="L898">    stub.shutdown();</span>
+<span class="nc" id="L899">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L826">    return stub.isShutdown();</span>
+<span class="nc" id="L903">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L831">    return stub.isTerminated();</span>
+<span class="nc" id="L908">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L836">    stub.shutdownNow();</span>
-<span class="nc" id="L837">  }</span>
+<span class="nc" id="L913">    stub.shutdownNow();</span>
+<span class="nc" id="L914">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L841">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L918">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListJobsPagedResponse
@@ -849,14 +926,14 @@ public class JobControllerClient implements BackgroundResource {
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context,
         ApiFuture&lt;ListJobsResponse&gt; futureResponse) {
       ApiFuture&lt;ListJobsPage&gt; futurePage =
-<span class="fc" id="L852">          ListJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L853">      return ApiFutures.transform(</span>
-<span class="fc" id="L854">          futurePage, input -&gt; new ListJobsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L929">          ListJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L930">      return ApiFutures.transform(</span>
+<span class="fc" id="L931">          futurePage, input -&gt; new ListJobsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListJobsPagedResponse(ListJobsPage page) {
-<span class="fc" id="L858">      super(page, ListJobsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L859">    }</span>
+<span class="fc" id="L935">      super(page, ListJobsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L936">    }</span>
   }
 
   public static class ListJobsPage
@@ -864,24 +941,24 @@ public class JobControllerClient implements BackgroundResource {
 
     private ListJobsPage(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context, ListJobsResponse response) {
-<span class="fc" id="L867">      super(context, response);</span>
-<span class="fc" id="L868">    }</span>
+<span class="fc" id="L944">      super(context, response);</span>
+<span class="fc" id="L945">    }</span>
 
     private static ListJobsPage createEmptyPage() {
-<span class="fc" id="L871">      return new ListJobsPage(null, null);</span>
+<span class="fc" id="L948">      return new ListJobsPage(null, null);</span>
     }
 
     @Override
     protected ListJobsPage createPage(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context, ListJobsResponse response) {
-<span class="fc" id="L877">      return new ListJobsPage(context, response);</span>
+<span class="fc" id="L954">      return new ListJobsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListJobsPage&gt; createPageAsync(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context,
         ApiFuture&lt;ListJobsResponse&gt; futureResponse) {
-<span class="fc" id="L884">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L961">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -890,17 +967,17 @@ public class JobControllerClient implements BackgroundResource {
           ListJobsRequest, ListJobsResponse, Job, ListJobsPage, ListJobsFixedSizeCollection&gt; {
 
     private ListJobsFixedSizeCollection(List&lt;ListJobsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L893">      super(pages, collectionSize);</span>
-<span class="fc" id="L894">    }</span>
+<span class="fc" id="L970">      super(pages, collectionSize);</span>
+<span class="fc" id="L971">    }</span>
 
     private static ListJobsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L897">      return new ListJobsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L974">      return new ListJobsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListJobsFixedSizeCollection createCollection(
         List&lt;ListJobsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L903">      return new ListJobsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L980">      return new ListJobsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

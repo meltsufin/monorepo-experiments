@@ -19,8 +19,7 @@ package com.google.cloud.baremetalsolution.v2.stub;
 import static com.google.cloud.baremetalsolution.v2.BareMetalSolutionClient.ListInstancesPagedResponse;
 import static com.google.cloud.baremetalsolution.v2.BareMetalSolutionClient.ListLunsPagedResponse;
 import static com.google.cloud.baremetalsolution.v2.BareMetalSolutionClient.ListNetworksPagedResponse;
-import static com.google.cloud.baremetalsolution.v2.BareMetalSolutionClient.ListSnapshotSchedulePoliciesPagedResponse;
-import static com.google.cloud.baremetalsolution.v2.BareMetalSolutionClient.ListVolumeSnapshotsPagedResponse;
+import static com.google.cloud.baremetalsolution.v2.BareMetalSolutionClient.ListNfsSharesPagedResponse;
 import static com.google.cloud.baremetalsolution.v2.BareMetalSolutionClient.ListVolumesPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -33,6 +32,9 @@ import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.grpc.ProtoOperationTransformers;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.longrunning.OperationSnapshot;
 import com.google.api.gax.longrunning.OperationTimedPollAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
@@ -49,46 +51,46 @@ import com.google.api.gax.rpc.StubSettings;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.api.gax.rpc.UnaryCallSettings;
 import com.google.api.gax.rpc.UnaryCallable;
-import com.google.cloud.baremetalsolution.v2.CreateSnapshotSchedulePolicyRequest;
-import com.google.cloud.baremetalsolution.v2.CreateVolumeSnapshotRequest;
-import com.google.cloud.baremetalsolution.v2.DeleteSnapshotSchedulePolicyRequest;
-import com.google.cloud.baremetalsolution.v2.DeleteVolumeSnapshotRequest;
+import com.google.cloud.baremetalsolution.v2.DetachLunRequest;
 import com.google.cloud.baremetalsolution.v2.GetInstanceRequest;
 import com.google.cloud.baremetalsolution.v2.GetLunRequest;
 import com.google.cloud.baremetalsolution.v2.GetNetworkRequest;
-import com.google.cloud.baremetalsolution.v2.GetSnapshotSchedulePolicyRequest;
+import com.google.cloud.baremetalsolution.v2.GetNfsShareRequest;
 import com.google.cloud.baremetalsolution.v2.GetVolumeRequest;
-import com.google.cloud.baremetalsolution.v2.GetVolumeSnapshotRequest;
 import com.google.cloud.baremetalsolution.v2.Instance;
 import com.google.cloud.baremetalsolution.v2.ListInstancesRequest;
 import com.google.cloud.baremetalsolution.v2.ListInstancesResponse;
 import com.google.cloud.baremetalsolution.v2.ListLunsRequest;
 import com.google.cloud.baremetalsolution.v2.ListLunsResponse;
+import com.google.cloud.baremetalsolution.v2.ListNetworkUsageRequest;
+import com.google.cloud.baremetalsolution.v2.ListNetworkUsageResponse;
 import com.google.cloud.baremetalsolution.v2.ListNetworksRequest;
 import com.google.cloud.baremetalsolution.v2.ListNetworksResponse;
-import com.google.cloud.baremetalsolution.v2.ListSnapshotSchedulePoliciesRequest;
-import com.google.cloud.baremetalsolution.v2.ListSnapshotSchedulePoliciesResponse;
-import com.google.cloud.baremetalsolution.v2.ListVolumeSnapshotsRequest;
-import com.google.cloud.baremetalsolution.v2.ListVolumeSnapshotsResponse;
+import com.google.cloud.baremetalsolution.v2.ListNfsSharesRequest;
+import com.google.cloud.baremetalsolution.v2.ListNfsSharesResponse;
 import com.google.cloud.baremetalsolution.v2.ListVolumesRequest;
 import com.google.cloud.baremetalsolution.v2.ListVolumesResponse;
 import com.google.cloud.baremetalsolution.v2.Lun;
 import com.google.cloud.baremetalsolution.v2.Network;
+import com.google.cloud.baremetalsolution.v2.NfsShare;
 import com.google.cloud.baremetalsolution.v2.OperationMetadata;
 import com.google.cloud.baremetalsolution.v2.ResetInstanceRequest;
 import com.google.cloud.baremetalsolution.v2.ResetInstanceResponse;
-import com.google.cloud.baremetalsolution.v2.RestoreVolumeSnapshotRequest;
-import com.google.cloud.baremetalsolution.v2.SnapshotSchedulePolicy;
-import com.google.cloud.baremetalsolution.v2.UpdateSnapshotSchedulePolicyRequest;
+import com.google.cloud.baremetalsolution.v2.ResizeVolumeRequest;
+import com.google.cloud.baremetalsolution.v2.StartInstanceRequest;
+import com.google.cloud.baremetalsolution.v2.StartInstanceResponse;
+import com.google.cloud.baremetalsolution.v2.StopInstanceRequest;
+import com.google.cloud.baremetalsolution.v2.StopInstanceResponse;
+import com.google.cloud.baremetalsolution.v2.UpdateInstanceRequest;
+import com.google.cloud.baremetalsolution.v2.UpdateNetworkRequest;
+import com.google.cloud.baremetalsolution.v2.UpdateNfsShareRequest;
 import com.google.cloud.baremetalsolution.v2.UpdateVolumeRequest;
 import com.google.cloud.baremetalsolution.v2.Volume;
-import com.google.cloud.baremetalsolution.v2.VolumeSnapshot;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.longrunning.Operation;
-import com.google.protobuf.Empty;
 import java.io.IOException;
 import java.util.List;
 import javax.annotation.Generated;
@@ -134,647 +136,618 @@ import org.threeten.bp.Duration;
 public class BareMetalSolutionStubSettings extends StubSettings&lt;BareMetalSolutionStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L137">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
+<span class="fc" id="L139">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
 
   private final PagedCallSettings&lt;
           ListInstancesRequest, ListInstancesResponse, ListInstancesPagedResponse&gt;
       listInstancesSettings;
   private final UnaryCallSettings&lt;GetInstanceRequest, Instance&gt; getInstanceSettings;
+  private final UnaryCallSettings&lt;UpdateInstanceRequest, Operation&gt; updateInstanceSettings;
+  private final OperationCallSettings&lt;UpdateInstanceRequest, Instance, OperationMetadata&gt;
+      updateInstanceOperationSettings;
   private final UnaryCallSettings&lt;ResetInstanceRequest, Operation&gt; resetInstanceSettings;
   private final OperationCallSettings&lt;
           ResetInstanceRequest, ResetInstanceResponse, OperationMetadata&gt;
       resetInstanceOperationSettings;
+  private final UnaryCallSettings&lt;StartInstanceRequest, Operation&gt; startInstanceSettings;
+  private final OperationCallSettings&lt;
+          StartInstanceRequest, StartInstanceResponse, OperationMetadata&gt;
+      startInstanceOperationSettings;
+  private final UnaryCallSettings&lt;StopInstanceRequest, Operation&gt; stopInstanceSettings;
+  private final OperationCallSettings&lt;StopInstanceRequest, StopInstanceResponse, OperationMetadata&gt;
+      stopInstanceOperationSettings;
+  private final UnaryCallSettings&lt;DetachLunRequest, Operation&gt; detachLunSettings;
+  private final OperationCallSettings&lt;DetachLunRequest, Instance, OperationMetadata&gt;
+      detachLunOperationSettings;
   private final PagedCallSettings&lt;ListVolumesRequest, ListVolumesResponse, ListVolumesPagedResponse&gt;
       listVolumesSettings;
   private final UnaryCallSettings&lt;GetVolumeRequest, Volume&gt; getVolumeSettings;
   private final UnaryCallSettings&lt;UpdateVolumeRequest, Operation&gt; updateVolumeSettings;
   private final OperationCallSettings&lt;UpdateVolumeRequest, Volume, OperationMetadata&gt;
       updateVolumeOperationSettings;
+  private final UnaryCallSettings&lt;ResizeVolumeRequest, Operation&gt; resizeVolumeSettings;
+  private final OperationCallSettings&lt;ResizeVolumeRequest, Volume, OperationMetadata&gt;
+      resizeVolumeOperationSettings;
   private final PagedCallSettings&lt;
           ListNetworksRequest, ListNetworksResponse, ListNetworksPagedResponse&gt;
       listNetworksSettings;
+  private final UnaryCallSettings&lt;ListNetworkUsageRequest, ListNetworkUsageResponse&gt;
+      listNetworkUsageSettings;
   private final UnaryCallSettings&lt;GetNetworkRequest, Network&gt; getNetworkSettings;
-  private final PagedCallSettings&lt;
-          ListSnapshotSchedulePoliciesRequest,
-          ListSnapshotSchedulePoliciesResponse,
-          ListSnapshotSchedulePoliciesPagedResponse&gt;
-      listSnapshotSchedulePoliciesSettings;
-  private final UnaryCallSettings&lt;GetSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-      getSnapshotSchedulePolicySettings;
-  private final UnaryCallSettings&lt;CreateSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-      createSnapshotSchedulePolicySettings;
-  private final UnaryCallSettings&lt;UpdateSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-      updateSnapshotSchedulePolicySettings;
-  private final UnaryCallSettings&lt;DeleteSnapshotSchedulePolicyRequest, Empty&gt;
-      deleteSnapshotSchedulePolicySettings;
-  private final UnaryCallSettings&lt;CreateVolumeSnapshotRequest, VolumeSnapshot&gt;
-      createVolumeSnapshotSettings;
-  private final UnaryCallSettings&lt;RestoreVolumeSnapshotRequest, Operation&gt;
-      restoreVolumeSnapshotSettings;
-  private final OperationCallSettings&lt;
-          RestoreVolumeSnapshotRequest, VolumeSnapshot, OperationMetadata&gt;
-      restoreVolumeSnapshotOperationSettings;
-  private final UnaryCallSettings&lt;DeleteVolumeSnapshotRequest, Empty&gt; deleteVolumeSnapshotSettings;
-  private final UnaryCallSettings&lt;GetVolumeSnapshotRequest, VolumeSnapshot&gt;
-      getVolumeSnapshotSettings;
-  private final PagedCallSettings&lt;
-          ListVolumeSnapshotsRequest, ListVolumeSnapshotsResponse, ListVolumeSnapshotsPagedResponse&gt;
-      listVolumeSnapshotsSettings;
+  private final UnaryCallSettings&lt;UpdateNetworkRequest, Operation&gt; updateNetworkSettings;
+  private final OperationCallSettings&lt;UpdateNetworkRequest, Network, OperationMetadata&gt;
+      updateNetworkOperationSettings;
   private final UnaryCallSettings&lt;GetLunRequest, Lun&gt; getLunSettings;
   private final PagedCallSettings&lt;ListLunsRequest, ListLunsResponse, ListLunsPagedResponse&gt;
       listLunsSettings;
+  private final UnaryCallSettings&lt;GetNfsShareRequest, NfsShare&gt; getNfsShareSettings;
+  private final PagedCallSettings&lt;
+          ListNfsSharesRequest, ListNfsSharesResponse, ListNfsSharesPagedResponse&gt;
+      listNfsSharesSettings;
+  private final UnaryCallSettings&lt;UpdateNfsShareRequest, Operation&gt; updateNfsShareSettings;
+  private final OperationCallSettings&lt;UpdateNfsShareRequest, NfsShare, OperationMetadata&gt;
+      updateNfsShareOperationSettings;
 
   private static final PagedListDescriptor&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt;
-<span class="fc" id="L188">      LIST_INSTANCES_PAGE_STR_DESC =</span>
-<span class="fc" id="L189">          new PagedListDescriptor&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt;() {</span>
+<span class="fc" id="L192">      LIST_INSTANCES_PAGE_STR_DESC =</span>
+<span class="fc" id="L193">          new PagedListDescriptor&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L192">              return &quot;&quot;;</span>
+<span class="fc" id="L196">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListInstancesRequest injectToken(ListInstancesRequest payload, String token) {
-<span class="nc" id="L197">              return ListInstancesRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L201">              return ListInstancesRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListInstancesRequest injectPageSize(ListInstancesRequest payload, int pageSize) {
-<span class="nc" id="L202">              return ListInstancesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L206">              return ListInstancesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListInstancesRequest payload) {
-<span class="nc" id="L207">              return payload.getPageSize();</span>
+<span class="nc" id="L211">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListInstancesResponse payload) {
-<span class="fc" id="L212">              return payload.getNextPageToken();</span>
+<span class="fc" id="L216">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Instance&gt; extractResources(ListInstancesResponse payload) {
-<span class="pc bpc" id="L217" title="1 of 2 branches missed.">              return payload.getInstancesList() == null</span>
-<span class="nc" id="L218">                  ? ImmutableList.&lt;Instance&gt;of()</span>
-<span class="fc" id="L219">                  : payload.getInstancesList();</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">              return payload.getInstancesList() == null</span>
+<span class="nc" id="L222">                  ? ImmutableList.&lt;Instance&gt;of()</span>
+<span class="fc" id="L223">                  : payload.getInstancesList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;ListVolumesRequest, ListVolumesResponse, Volume&gt;
-<span class="fc" id="L224">      LIST_VOLUMES_PAGE_STR_DESC =</span>
-<span class="fc" id="L225">          new PagedListDescriptor&lt;ListVolumesRequest, ListVolumesResponse, Volume&gt;() {</span>
+<span class="fc" id="L228">      LIST_VOLUMES_PAGE_STR_DESC =</span>
+<span class="fc" id="L229">          new PagedListDescriptor&lt;ListVolumesRequest, ListVolumesResponse, Volume&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L228">              return &quot;&quot;;</span>
+<span class="fc" id="L232">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListVolumesRequest injectToken(ListVolumesRequest payload, String token) {
-<span class="nc" id="L233">              return ListVolumesRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L237">              return ListVolumesRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListVolumesRequest injectPageSize(ListVolumesRequest payload, int pageSize) {
-<span class="nc" id="L238">              return ListVolumesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L242">              return ListVolumesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListVolumesRequest payload) {
-<span class="nc" id="L243">              return payload.getPageSize();</span>
+<span class="nc" id="L247">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListVolumesResponse payload) {
-<span class="fc" id="L248">              return payload.getNextPageToken();</span>
+<span class="fc" id="L252">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Volume&gt; extractResources(ListVolumesResponse payload) {
-<span class="pc bpc" id="L253" title="1 of 2 branches missed.">              return payload.getVolumesList() == null</span>
-<span class="nc" id="L254">                  ? ImmutableList.&lt;Volume&gt;of()</span>
-<span class="fc" id="L255">                  : payload.getVolumesList();</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">              return payload.getVolumesList() == null</span>
+<span class="nc" id="L258">                  ? ImmutableList.&lt;Volume&gt;of()</span>
+<span class="fc" id="L259">                  : payload.getVolumesList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;ListNetworksRequest, ListNetworksResponse, Network&gt;
-<span class="fc" id="L260">      LIST_NETWORKS_PAGE_STR_DESC =</span>
-<span class="fc" id="L261">          new PagedListDescriptor&lt;ListNetworksRequest, ListNetworksResponse, Network&gt;() {</span>
+<span class="fc" id="L264">      LIST_NETWORKS_PAGE_STR_DESC =</span>
+<span class="fc" id="L265">          new PagedListDescriptor&lt;ListNetworksRequest, ListNetworksResponse, Network&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L264">              return &quot;&quot;;</span>
+<span class="fc" id="L268">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListNetworksRequest injectToken(ListNetworksRequest payload, String token) {
-<span class="nc" id="L269">              return ListNetworksRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L273">              return ListNetworksRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListNetworksRequest injectPageSize(ListNetworksRequest payload, int pageSize) {
-<span class="nc" id="L274">              return ListNetworksRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L278">              return ListNetworksRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListNetworksRequest payload) {
-<span class="nc" id="L279">              return payload.getPageSize();</span>
+<span class="nc" id="L283">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListNetworksResponse payload) {
-<span class="fc" id="L284">              return payload.getNextPageToken();</span>
+<span class="fc" id="L288">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Network&gt; extractResources(ListNetworksResponse payload) {
-<span class="pc bpc" id="L289" title="1 of 2 branches missed.">              return payload.getNetworksList() == null</span>
-<span class="nc" id="L290">                  ? ImmutableList.&lt;Network&gt;of()</span>
-<span class="fc" id="L291">                  : payload.getNetworksList();</span>
-            }
-          };
-
-  private static final PagedListDescriptor&lt;
-          ListSnapshotSchedulePoliciesRequest,
-          ListSnapshotSchedulePoliciesResponse,
-          SnapshotSchedulePolicy&gt;
-<span class="fc" id="L299">      LIST_SNAPSHOT_SCHEDULE_POLICIES_PAGE_STR_DESC =</span>
-          new PagedListDescriptor&lt;
-              ListSnapshotSchedulePoliciesRequest,
-              ListSnapshotSchedulePoliciesResponse,
-<span class="fc" id="L303">              SnapshotSchedulePolicy&gt;() {</span>
-            @Override
-            public String emptyToken() {
-<span class="fc" id="L306">              return &quot;&quot;;</span>
-            }
-
-            @Override
-            public ListSnapshotSchedulePoliciesRequest injectToken(
-                ListSnapshotSchedulePoliciesRequest payload, String token) {
-<span class="nc" id="L312">              return ListSnapshotSchedulePoliciesRequest.newBuilder(payload)</span>
-<span class="nc" id="L313">                  .setPageToken(token)</span>
-<span class="nc" id="L314">                  .build();</span>
-            }
-
-            @Override
-            public ListSnapshotSchedulePoliciesRequest injectPageSize(
-                ListSnapshotSchedulePoliciesRequest payload, int pageSize) {
-<span class="nc" id="L320">              return ListSnapshotSchedulePoliciesRequest.newBuilder(payload)</span>
-<span class="nc" id="L321">                  .setPageSize(pageSize)</span>
-<span class="nc" id="L322">                  .build();</span>
-            }
-
-            @Override
-            public Integer extractPageSize(ListSnapshotSchedulePoliciesRequest payload) {
-<span class="nc" id="L327">              return payload.getPageSize();</span>
-            }
-
-            @Override
-            public String extractNextToken(ListSnapshotSchedulePoliciesResponse payload) {
-<span class="fc" id="L332">              return payload.getNextPageToken();</span>
-            }
-
-            @Override
-            public Iterable&lt;SnapshotSchedulePolicy&gt; extractResources(
-                ListSnapshotSchedulePoliciesResponse payload) {
-<span class="pc bpc" id="L338" title="1 of 2 branches missed.">              return payload.getSnapshotSchedulePoliciesList() == null</span>
-<span class="nc" id="L339">                  ? ImmutableList.&lt;SnapshotSchedulePolicy&gt;of()</span>
-<span class="fc" id="L340">                  : payload.getSnapshotSchedulePoliciesList();</span>
-            }
-          };
-
-  private static final PagedListDescriptor&lt;
-          ListVolumeSnapshotsRequest, ListVolumeSnapshotsResponse, VolumeSnapshot&gt;
-<span class="fc" id="L346">      LIST_VOLUME_SNAPSHOTS_PAGE_STR_DESC =</span>
-          new PagedListDescriptor&lt;
-<span class="fc" id="L348">              ListVolumeSnapshotsRequest, ListVolumeSnapshotsResponse, VolumeSnapshot&gt;() {</span>
-            @Override
-            public String emptyToken() {
-<span class="fc" id="L351">              return &quot;&quot;;</span>
-            }
-
-            @Override
-            public ListVolumeSnapshotsRequest injectToken(
-                ListVolumeSnapshotsRequest payload, String token) {
-<span class="nc" id="L357">              return ListVolumeSnapshotsRequest.newBuilder(payload).setPageToken(token).build();</span>
-            }
-
-            @Override
-            public ListVolumeSnapshotsRequest injectPageSize(
-                ListVolumeSnapshotsRequest payload, int pageSize) {
-<span class="nc" id="L363">              return ListVolumeSnapshotsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
-            }
-
-            @Override
-            public Integer extractPageSize(ListVolumeSnapshotsRequest payload) {
-<span class="nc" id="L368">              return payload.getPageSize();</span>
-            }
-
-            @Override
-            public String extractNextToken(ListVolumeSnapshotsResponse payload) {
-<span class="fc" id="L373">              return payload.getNextPageToken();</span>
-            }
-
-            @Override
-            public Iterable&lt;VolumeSnapshot&gt; extractResources(ListVolumeSnapshotsResponse payload) {
-<span class="pc bpc" id="L378" title="1 of 2 branches missed.">              return payload.getVolumeSnapshotsList() == null</span>
-<span class="nc" id="L379">                  ? ImmutableList.&lt;VolumeSnapshot&gt;of()</span>
-<span class="fc" id="L380">                  : payload.getVolumeSnapshotsList();</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">              return payload.getNetworksList() == null</span>
+<span class="nc" id="L294">                  ? ImmutableList.&lt;Network&gt;of()</span>
+<span class="fc" id="L295">                  : payload.getNetworksList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;ListLunsRequest, ListLunsResponse, Lun&gt;
-<span class="fc" id="L385">      LIST_LUNS_PAGE_STR_DESC =</span>
-<span class="fc" id="L386">          new PagedListDescriptor&lt;ListLunsRequest, ListLunsResponse, Lun&gt;() {</span>
+<span class="fc" id="L300">      LIST_LUNS_PAGE_STR_DESC =</span>
+<span class="fc" id="L301">          new PagedListDescriptor&lt;ListLunsRequest, ListLunsResponse, Lun&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L389">              return &quot;&quot;;</span>
+<span class="fc" id="L304">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListLunsRequest injectToken(ListLunsRequest payload, String token) {
-<span class="nc" id="L394">              return ListLunsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L309">              return ListLunsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListLunsRequest injectPageSize(ListLunsRequest payload, int pageSize) {
-<span class="nc" id="L399">              return ListLunsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L314">              return ListLunsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListLunsRequest payload) {
-<span class="nc" id="L404">              return payload.getPageSize();</span>
+<span class="nc" id="L319">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListLunsResponse payload) {
-<span class="fc" id="L409">              return payload.getNextPageToken();</span>
+<span class="fc" id="L324">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Lun&gt; extractResources(ListLunsResponse payload) {
-<span class="pc bpc" id="L414" title="1 of 2 branches missed.">              return payload.getLunsList() == null</span>
-<span class="nc" id="L415">                  ? ImmutableList.&lt;Lun&gt;of()</span>
-<span class="fc" id="L416">                  : payload.getLunsList();</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">              return payload.getLunsList() == null</span>
+<span class="nc" id="L330">                  ? ImmutableList.&lt;Lun&gt;of()</span>
+<span class="fc" id="L331">                  : payload.getLunsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListNfsSharesRequest, ListNfsSharesResponse, NfsShare&gt;
+<span class="fc" id="L336">      LIST_NFS_SHARES_PAGE_STR_DESC =</span>
+<span class="fc" id="L337">          new PagedListDescriptor&lt;ListNfsSharesRequest, ListNfsSharesResponse, NfsShare&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L340">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListNfsSharesRequest injectToken(ListNfsSharesRequest payload, String token) {
+<span class="nc" id="L345">              return ListNfsSharesRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListNfsSharesRequest injectPageSize(ListNfsSharesRequest payload, int pageSize) {
+<span class="nc" id="L350">              return ListNfsSharesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListNfsSharesRequest payload) {
+<span class="nc" id="L355">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListNfsSharesResponse payload) {
+<span class="fc" id="L360">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;NfsShare&gt; extractResources(ListNfsSharesResponse payload) {
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">              return payload.getNfsSharesList() == null</span>
+<span class="nc" id="L366">                  ? ImmutableList.&lt;NfsShare&gt;of()</span>
+<span class="fc" id="L367">                  : payload.getNfsSharesList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListInstancesRequest, ListInstancesResponse, ListInstancesPagedResponse&gt;
-<span class="fc" id="L422">      LIST_INSTANCES_PAGE_STR_FACT =</span>
+<span class="fc" id="L373">      LIST_INSTANCES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L424">              ListInstancesRequest, ListInstancesResponse, ListInstancesPagedResponse&gt;() {</span>
+<span class="fc" id="L375">              ListInstancesRequest, ListInstancesResponse, ListInstancesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListInstancesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListInstancesRequest, ListInstancesResponse&gt; callable,
                 ListInstancesRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListInstancesResponse&gt; futureResponse) {
-<span class="fc" id="L431">              PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; pageContext =</span>
-<span class="fc" id="L432">                  PageContext.create(callable, LIST_INSTANCES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L433">              return ListInstancesPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L382">              PageContext&lt;ListInstancesRequest, ListInstancesResponse, Instance&gt; pageContext =</span>
+<span class="fc" id="L383">                  PageContext.create(callable, LIST_INSTANCES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L384">              return ListInstancesPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListVolumesRequest, ListVolumesResponse, ListVolumesPagedResponse&gt;
-<span class="fc" id="L439">      LIST_VOLUMES_PAGE_STR_FACT =</span>
+<span class="fc" id="L390">      LIST_VOLUMES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L441">              ListVolumesRequest, ListVolumesResponse, ListVolumesPagedResponse&gt;() {</span>
+<span class="fc" id="L392">              ListVolumesRequest, ListVolumesResponse, ListVolumesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListVolumesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListVolumesRequest, ListVolumesResponse&gt; callable,
                 ListVolumesRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListVolumesResponse&gt; futureResponse) {
-<span class="fc" id="L448">              PageContext&lt;ListVolumesRequest, ListVolumesResponse, Volume&gt; pageContext =</span>
-<span class="fc" id="L449">                  PageContext.create(callable, LIST_VOLUMES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L450">              return ListVolumesPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L399">              PageContext&lt;ListVolumesRequest, ListVolumesResponse, Volume&gt; pageContext =</span>
+<span class="fc" id="L400">                  PageContext.create(callable, LIST_VOLUMES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L401">              return ListVolumesPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListNetworksRequest, ListNetworksResponse, ListNetworksPagedResponse&gt;
-<span class="fc" id="L456">      LIST_NETWORKS_PAGE_STR_FACT =</span>
+<span class="fc" id="L407">      LIST_NETWORKS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L458">              ListNetworksRequest, ListNetworksResponse, ListNetworksPagedResponse&gt;() {</span>
+<span class="fc" id="L409">              ListNetworksRequest, ListNetworksResponse, ListNetworksPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListNetworksPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListNetworksRequest, ListNetworksResponse&gt; callable,
                 ListNetworksRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListNetworksResponse&gt; futureResponse) {
-<span class="fc" id="L465">              PageContext&lt;ListNetworksRequest, ListNetworksResponse, Network&gt; pageContext =</span>
-<span class="fc" id="L466">                  PageContext.create(callable, LIST_NETWORKS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L467">              return ListNetworksPagedResponse.createAsync(pageContext, futureResponse);</span>
-            }
-          };
-
-  private static final PagedListResponseFactory&lt;
-          ListSnapshotSchedulePoliciesRequest,
-          ListSnapshotSchedulePoliciesResponse,
-          ListSnapshotSchedulePoliciesPagedResponse&gt;
-<span class="fc" id="L475">      LIST_SNAPSHOT_SCHEDULE_POLICIES_PAGE_STR_FACT =</span>
-          new PagedListResponseFactory&lt;
-              ListSnapshotSchedulePoliciesRequest,
-              ListSnapshotSchedulePoliciesResponse,
-<span class="fc" id="L479">              ListSnapshotSchedulePoliciesPagedResponse&gt;() {</span>
-            @Override
-            public ApiFuture&lt;ListSnapshotSchedulePoliciesPagedResponse&gt; getFuturePagedResponse(
-                UnaryCallable&lt;
-                        ListSnapshotSchedulePoliciesRequest, ListSnapshotSchedulePoliciesResponse&gt;
-                    callable,
-                ListSnapshotSchedulePoliciesRequest request,
-                ApiCallContext context,
-                ApiFuture&lt;ListSnapshotSchedulePoliciesResponse&gt; futureResponse) {
-              PageContext&lt;
-                      ListSnapshotSchedulePoliciesRequest,
-                      ListSnapshotSchedulePoliciesResponse,
-                      SnapshotSchedulePolicy&gt;
-<span class="fc" id="L492">                  pageContext =</span>
-<span class="fc" id="L493">                      PageContext.create(</span>
-                          callable,
-<span class="fc" id="L495">                          LIST_SNAPSHOT_SCHEDULE_POLICIES_PAGE_STR_DESC,</span>
-                          request,
-                          context);
-<span class="fc" id="L498">              return ListSnapshotSchedulePoliciesPagedResponse.createAsync(</span>
-                  pageContext, futureResponse);
-            }
-          };
-
-  private static final PagedListResponseFactory&lt;
-          ListVolumeSnapshotsRequest, ListVolumeSnapshotsResponse, ListVolumeSnapshotsPagedResponse&gt;
-<span class="fc" id="L505">      LIST_VOLUME_SNAPSHOTS_PAGE_STR_FACT =</span>
-          new PagedListResponseFactory&lt;
-              ListVolumeSnapshotsRequest,
-              ListVolumeSnapshotsResponse,
-<span class="fc" id="L509">              ListVolumeSnapshotsPagedResponse&gt;() {</span>
-            @Override
-            public ApiFuture&lt;ListVolumeSnapshotsPagedResponse&gt; getFuturePagedResponse(
-                UnaryCallable&lt;ListVolumeSnapshotsRequest, ListVolumeSnapshotsResponse&gt; callable,
-                ListVolumeSnapshotsRequest request,
-                ApiCallContext context,
-                ApiFuture&lt;ListVolumeSnapshotsResponse&gt; futureResponse) {
-              PageContext&lt;ListVolumeSnapshotsRequest, ListVolumeSnapshotsResponse, VolumeSnapshot&gt;
-<span class="fc" id="L517">                  pageContext =</span>
-<span class="fc" id="L518">                      PageContext.create(</span>
-<span class="fc" id="L519">                          callable, LIST_VOLUME_SNAPSHOTS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L520">              return ListVolumeSnapshotsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L416">              PageContext&lt;ListNetworksRequest, ListNetworksResponse, Network&gt; pageContext =</span>
+<span class="fc" id="L417">                  PageContext.create(callable, LIST_NETWORKS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L418">              return ListNetworksPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListLunsRequest, ListLunsResponse, ListLunsPagedResponse&gt;
-<span class="fc" id="L526">      LIST_LUNS_PAGE_STR_FACT =</span>
-<span class="fc" id="L527">          new PagedListResponseFactory&lt;ListLunsRequest, ListLunsResponse, ListLunsPagedResponse&gt;() {</span>
+<span class="fc" id="L424">      LIST_LUNS_PAGE_STR_FACT =</span>
+<span class="fc" id="L425">          new PagedListResponseFactory&lt;ListLunsRequest, ListLunsResponse, ListLunsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListLunsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListLunsRequest, ListLunsResponse&gt; callable,
                 ListLunsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListLunsResponse&gt; futureResponse) {
-<span class="fc" id="L534">              PageContext&lt;ListLunsRequest, ListLunsResponse, Lun&gt; pageContext =</span>
-<span class="fc" id="L535">                  PageContext.create(callable, LIST_LUNS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L536">              return ListLunsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L432">              PageContext&lt;ListLunsRequest, ListLunsResponse, Lun&gt; pageContext =</span>
+<span class="fc" id="L433">                  PageContext.create(callable, LIST_LUNS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L434">              return ListLunsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListNfsSharesRequest, ListNfsSharesResponse, ListNfsSharesPagedResponse&gt;
+<span class="fc" id="L440">      LIST_NFS_SHARES_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L442">              ListNfsSharesRequest, ListNfsSharesResponse, ListNfsSharesPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListNfsSharesPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListNfsSharesRequest, ListNfsSharesResponse&gt; callable,
+                ListNfsSharesRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListNfsSharesResponse&gt; futureResponse) {
+<span class="fc" id="L449">              PageContext&lt;ListNfsSharesRequest, ListNfsSharesResponse, NfsShare&gt; pageContext =</span>
+<span class="fc" id="L450">                  PageContext.create(callable, LIST_NFS_SHARES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L451">              return ListNfsSharesPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to listInstances. */
   public PagedCallSettings&lt;ListInstancesRequest, ListInstancesResponse, ListInstancesPagedResponse&gt;
       listInstancesSettings() {
-<span class="fc" id="L543">    return listInstancesSettings;</span>
+<span class="fc" id="L458">    return listInstancesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getInstance. */
   public UnaryCallSettings&lt;GetInstanceRequest, Instance&gt; getInstanceSettings() {
-<span class="fc" id="L548">    return getInstanceSettings;</span>
+<span class="fc" id="L463">    return getInstanceSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to updateInstance. */
+  public UnaryCallSettings&lt;UpdateInstanceRequest, Operation&gt; updateInstanceSettings() {
+<span class="fc" id="L468">    return updateInstanceSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to updateInstance. */
+  public OperationCallSettings&lt;UpdateInstanceRequest, Instance, OperationMetadata&gt;
+      updateInstanceOperationSettings() {
+<span class="fc" id="L474">    return updateInstanceOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to resetInstance. */
   public UnaryCallSettings&lt;ResetInstanceRequest, Operation&gt; resetInstanceSettings() {
-<span class="fc" id="L553">    return resetInstanceSettings;</span>
+<span class="fc" id="L479">    return resetInstanceSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to resetInstance. */
   public OperationCallSettings&lt;ResetInstanceRequest, ResetInstanceResponse, OperationMetadata&gt;
       resetInstanceOperationSettings() {
-<span class="fc" id="L559">    return resetInstanceOperationSettings;</span>
+<span class="fc" id="L485">    return resetInstanceOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to startInstance. */
+  public UnaryCallSettings&lt;StartInstanceRequest, Operation&gt; startInstanceSettings() {
+<span class="fc" id="L490">    return startInstanceSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to startInstance. */
+  public OperationCallSettings&lt;StartInstanceRequest, StartInstanceResponse, OperationMetadata&gt;
+      startInstanceOperationSettings() {
+<span class="fc" id="L496">    return startInstanceOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to stopInstance. */
+  public UnaryCallSettings&lt;StopInstanceRequest, Operation&gt; stopInstanceSettings() {
+<span class="fc" id="L501">    return stopInstanceSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to stopInstance. */
+  public OperationCallSettings&lt;StopInstanceRequest, StopInstanceResponse, OperationMetadata&gt;
+      stopInstanceOperationSettings() {
+<span class="fc" id="L507">    return stopInstanceOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to detachLun. */
+  public UnaryCallSettings&lt;DetachLunRequest, Operation&gt; detachLunSettings() {
+<span class="fc" id="L512">    return detachLunSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to detachLun. */
+  public OperationCallSettings&lt;DetachLunRequest, Instance, OperationMetadata&gt;
+      detachLunOperationSettings() {
+<span class="fc" id="L518">    return detachLunOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listVolumes. */
   public PagedCallSettings&lt;ListVolumesRequest, ListVolumesResponse, ListVolumesPagedResponse&gt;
       listVolumesSettings() {
-<span class="fc" id="L565">    return listVolumesSettings;</span>
+<span class="fc" id="L524">    return listVolumesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getVolume. */
   public UnaryCallSettings&lt;GetVolumeRequest, Volume&gt; getVolumeSettings() {
-<span class="fc" id="L570">    return getVolumeSettings;</span>
+<span class="fc" id="L529">    return getVolumeSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateVolume. */
   public UnaryCallSettings&lt;UpdateVolumeRequest, Operation&gt; updateVolumeSettings() {
-<span class="fc" id="L575">    return updateVolumeSettings;</span>
+<span class="fc" id="L534">    return updateVolumeSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateVolume. */
   public OperationCallSettings&lt;UpdateVolumeRequest, Volume, OperationMetadata&gt;
       updateVolumeOperationSettings() {
-<span class="fc" id="L581">    return updateVolumeOperationSettings;</span>
+<span class="fc" id="L540">    return updateVolumeOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to resizeVolume. */
+  public UnaryCallSettings&lt;ResizeVolumeRequest, Operation&gt; resizeVolumeSettings() {
+<span class="fc" id="L545">    return resizeVolumeSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to resizeVolume. */
+  public OperationCallSettings&lt;ResizeVolumeRequest, Volume, OperationMetadata&gt;
+      resizeVolumeOperationSettings() {
+<span class="fc" id="L551">    return resizeVolumeOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listNetworks. */
   public PagedCallSettings&lt;ListNetworksRequest, ListNetworksResponse, ListNetworksPagedResponse&gt;
       listNetworksSettings() {
-<span class="fc" id="L587">    return listNetworksSettings;</span>
+<span class="fc" id="L557">    return listNetworksSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listNetworkUsage. */
+  public UnaryCallSettings&lt;ListNetworkUsageRequest, ListNetworkUsageResponse&gt;
+      listNetworkUsageSettings() {
+<span class="fc" id="L563">    return listNetworkUsageSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getNetwork. */
   public UnaryCallSettings&lt;GetNetworkRequest, Network&gt; getNetworkSettings() {
-<span class="fc" id="L592">    return getNetworkSettings;</span>
+<span class="fc" id="L568">    return getNetworkSettings;</span>
   }
 
-  /** Returns the object with the settings used for calls to listSnapshotSchedulePolicies. */
-  public PagedCallSettings&lt;
-          ListSnapshotSchedulePoliciesRequest,
-          ListSnapshotSchedulePoliciesResponse,
-          ListSnapshotSchedulePoliciesPagedResponse&gt;
-      listSnapshotSchedulePoliciesSettings() {
-<span class="fc" id="L601">    return listSnapshotSchedulePoliciesSettings;</span>
+  /** Returns the object with the settings used for calls to updateNetwork. */
+  public UnaryCallSettings&lt;UpdateNetworkRequest, Operation&gt; updateNetworkSettings() {
+<span class="fc" id="L573">    return updateNetworkSettings;</span>
   }
 
-  /** Returns the object with the settings used for calls to getSnapshotSchedulePolicy. */
-  public UnaryCallSettings&lt;GetSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-      getSnapshotSchedulePolicySettings() {
-<span class="fc" id="L607">    return getSnapshotSchedulePolicySettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to createSnapshotSchedulePolicy. */
-  public UnaryCallSettings&lt;CreateSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-      createSnapshotSchedulePolicySettings() {
-<span class="fc" id="L613">    return createSnapshotSchedulePolicySettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to updateSnapshotSchedulePolicy. */
-  public UnaryCallSettings&lt;UpdateSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-      updateSnapshotSchedulePolicySettings() {
-<span class="fc" id="L619">    return updateSnapshotSchedulePolicySettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to deleteSnapshotSchedulePolicy. */
-  public UnaryCallSettings&lt;DeleteSnapshotSchedulePolicyRequest, Empty&gt;
-      deleteSnapshotSchedulePolicySettings() {
-<span class="fc" id="L625">    return deleteSnapshotSchedulePolicySettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to createVolumeSnapshot. */
-  public UnaryCallSettings&lt;CreateVolumeSnapshotRequest, VolumeSnapshot&gt;
-      createVolumeSnapshotSettings() {
-<span class="fc" id="L631">    return createVolumeSnapshotSettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to restoreVolumeSnapshot. */
-  public UnaryCallSettings&lt;RestoreVolumeSnapshotRequest, Operation&gt;
-      restoreVolumeSnapshotSettings() {
-<span class="fc" id="L637">    return restoreVolumeSnapshotSettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to restoreVolumeSnapshot. */
-  public OperationCallSettings&lt;RestoreVolumeSnapshotRequest, VolumeSnapshot, OperationMetadata&gt;
-      restoreVolumeSnapshotOperationSettings() {
-<span class="fc" id="L643">    return restoreVolumeSnapshotOperationSettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to deleteVolumeSnapshot. */
-  public UnaryCallSettings&lt;DeleteVolumeSnapshotRequest, Empty&gt; deleteVolumeSnapshotSettings() {
-<span class="fc" id="L648">    return deleteVolumeSnapshotSettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to getVolumeSnapshot. */
-  public UnaryCallSettings&lt;GetVolumeSnapshotRequest, VolumeSnapshot&gt; getVolumeSnapshotSettings() {
-<span class="fc" id="L653">    return getVolumeSnapshotSettings;</span>
-  }
-
-  /** Returns the object with the settings used for calls to listVolumeSnapshots. */
-  public PagedCallSettings&lt;
-          ListVolumeSnapshotsRequest, ListVolumeSnapshotsResponse, ListVolumeSnapshotsPagedResponse&gt;
-      listVolumeSnapshotsSettings() {
-<span class="fc" id="L660">    return listVolumeSnapshotsSettings;</span>
+  /** Returns the object with the settings used for calls to updateNetwork. */
+  public OperationCallSettings&lt;UpdateNetworkRequest, Network, OperationMetadata&gt;
+      updateNetworkOperationSettings() {
+<span class="fc" id="L579">    return updateNetworkOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getLun. */
   public UnaryCallSettings&lt;GetLunRequest, Lun&gt; getLunSettings() {
-<span class="fc" id="L665">    return getLunSettings;</span>
+<span class="fc" id="L584">    return getLunSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listLuns. */
   public PagedCallSettings&lt;ListLunsRequest, ListLunsResponse, ListLunsPagedResponse&gt;
       listLunsSettings() {
-<span class="fc" id="L671">    return listLunsSettings;</span>
+<span class="fc" id="L590">    return listLunsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getNfsShare. */
+  public UnaryCallSettings&lt;GetNfsShareRequest, NfsShare&gt; getNfsShareSettings() {
+<span class="fc" id="L595">    return getNfsShareSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listNfsShares. */
+  public PagedCallSettings&lt;ListNfsSharesRequest, ListNfsSharesResponse, ListNfsSharesPagedResponse&gt;
+      listNfsSharesSettings() {
+<span class="fc" id="L601">    return listNfsSharesSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to updateNfsShare. */
+  public UnaryCallSettings&lt;UpdateNfsShareRequest, Operation&gt; updateNfsShareSettings() {
+<span class="fc" id="L606">    return updateNfsShareSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to updateNfsShare. */
+  public OperationCallSettings&lt;UpdateNfsShareRequest, NfsShare, OperationMetadata&gt;
+      updateNfsShareOperationSettings() {
+<span class="fc" id="L612">    return updateNfsShareOperationSettings;</span>
   }
 
   public BareMetalSolutionStub createStub() throws IOException {
-<span class="fc" id="L675">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L676">        .getTransportName()</span>
-<span class="pc bpc" id="L677" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L678">      return GrpcBareMetalSolutionStub.create(this);</span>
+<span class="fc" id="L616">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L617">        .getTransportName()</span>
+<span class="fc bfc" id="L618" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L619">      return GrpcBareMetalSolutionStub.create(this);</span>
     }
-<span class="nc" id="L680">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L681">        String.format(</span>
-<span class="nc" id="L682">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L621">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L622">        .getTransportName()</span>
+<span class="pc bpc" id="L623" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L624">      return HttpJsonBareMetalSolutionStub.create(this);</span>
+    }
+<span class="nc" id="L626">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L627">        String.format(</span>
+<span class="nc" id="L628">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L687">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L633">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L692">    return &quot;baremetalsolution.googleapis.com:443&quot;;</span>
+<span class="fc" id="L638">    return &quot;baremetalsolution.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L697">    return &quot;baremetalsolution.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L643">    return &quot;baremetalsolution.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L702">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L648">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L707">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L708">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L709">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L653">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L654">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L655">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L714">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L715">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L660">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L661">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L668">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L719">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L672">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L724">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L725">        .setGeneratedLibToken(</span>
-<span class="fc" id="L726">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(BareMetalSolutionStubSettings.class))</span>
-<span class="fc" id="L727">        .setTransportToken(</span>
-<span class="fc" id="L728">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L677">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L678">        .setGeneratedLibToken(</span>
+<span class="fc" id="L679">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(BareMetalSolutionStubSettings.class))</span>
+<span class="fc" id="L680">        .setTransportToken(</span>
+<span class="fc" id="L681">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L686">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L687">        .setGeneratedLibToken(</span>
+<span class="fc" id="L688">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(BareMetalSolutionStubSettings.class))</span>
+<span class="fc" id="L689">        .setTransportToken(</span>
+<span class="fc" id="L690">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L691">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L695">    return BareMetalSolutionStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L733">    return Builder.createDefault();</span>
+<span class="fc" id="L700">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L705">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L738">    return new Builder(clientContext);</span>
+<span class="nc" id="L710">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L743">    return new Builder(this);</span>
+<span class="nc" id="L715">    return new Builder(this);</span>
   }
 
   protected BareMetalSolutionStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L747">    super(settingsBuilder);</span>
+<span class="fc" id="L719">    super(settingsBuilder);</span>
 
-<span class="fc" id="L749">    listInstancesSettings = settingsBuilder.listInstancesSettings().build();</span>
-<span class="fc" id="L750">    getInstanceSettings = settingsBuilder.getInstanceSettings().build();</span>
-<span class="fc" id="L751">    resetInstanceSettings = settingsBuilder.resetInstanceSettings().build();</span>
-<span class="fc" id="L752">    resetInstanceOperationSettings = settingsBuilder.resetInstanceOperationSettings().build();</span>
-<span class="fc" id="L753">    listVolumesSettings = settingsBuilder.listVolumesSettings().build();</span>
-<span class="fc" id="L754">    getVolumeSettings = settingsBuilder.getVolumeSettings().build();</span>
-<span class="fc" id="L755">    updateVolumeSettings = settingsBuilder.updateVolumeSettings().build();</span>
-<span class="fc" id="L756">    updateVolumeOperationSettings = settingsBuilder.updateVolumeOperationSettings().build();</span>
-<span class="fc" id="L757">    listNetworksSettings = settingsBuilder.listNetworksSettings().build();</span>
-<span class="fc" id="L758">    getNetworkSettings = settingsBuilder.getNetworkSettings().build();</span>
-<span class="fc" id="L759">    listSnapshotSchedulePoliciesSettings =</span>
-<span class="fc" id="L760">        settingsBuilder.listSnapshotSchedulePoliciesSettings().build();</span>
-<span class="fc" id="L761">    getSnapshotSchedulePolicySettings = settingsBuilder.getSnapshotSchedulePolicySettings().build();</span>
-<span class="fc" id="L762">    createSnapshotSchedulePolicySettings =</span>
-<span class="fc" id="L763">        settingsBuilder.createSnapshotSchedulePolicySettings().build();</span>
-<span class="fc" id="L764">    updateSnapshotSchedulePolicySettings =</span>
-<span class="fc" id="L765">        settingsBuilder.updateSnapshotSchedulePolicySettings().build();</span>
-<span class="fc" id="L766">    deleteSnapshotSchedulePolicySettings =</span>
-<span class="fc" id="L767">        settingsBuilder.deleteSnapshotSchedulePolicySettings().build();</span>
-<span class="fc" id="L768">    createVolumeSnapshotSettings = settingsBuilder.createVolumeSnapshotSettings().build();</span>
-<span class="fc" id="L769">    restoreVolumeSnapshotSettings = settingsBuilder.restoreVolumeSnapshotSettings().build();</span>
-<span class="fc" id="L770">    restoreVolumeSnapshotOperationSettings =</span>
-<span class="fc" id="L771">        settingsBuilder.restoreVolumeSnapshotOperationSettings().build();</span>
-<span class="fc" id="L772">    deleteVolumeSnapshotSettings = settingsBuilder.deleteVolumeSnapshotSettings().build();</span>
-<span class="fc" id="L773">    getVolumeSnapshotSettings = settingsBuilder.getVolumeSnapshotSettings().build();</span>
-<span class="fc" id="L774">    listVolumeSnapshotsSettings = settingsBuilder.listVolumeSnapshotsSettings().build();</span>
-<span class="fc" id="L775">    getLunSettings = settingsBuilder.getLunSettings().build();</span>
-<span class="fc" id="L776">    listLunsSettings = settingsBuilder.listLunsSettings().build();</span>
-<span class="fc" id="L777">  }</span>
+<span class="fc" id="L721">    listInstancesSettings = settingsBuilder.listInstancesSettings().build();</span>
+<span class="fc" id="L722">    getInstanceSettings = settingsBuilder.getInstanceSettings().build();</span>
+<span class="fc" id="L723">    updateInstanceSettings = settingsBuilder.updateInstanceSettings().build();</span>
+<span class="fc" id="L724">    updateInstanceOperationSettings = settingsBuilder.updateInstanceOperationSettings().build();</span>
+<span class="fc" id="L725">    resetInstanceSettings = settingsBuilder.resetInstanceSettings().build();</span>
+<span class="fc" id="L726">    resetInstanceOperationSettings = settingsBuilder.resetInstanceOperationSettings().build();</span>
+<span class="fc" id="L727">    startInstanceSettings = settingsBuilder.startInstanceSettings().build();</span>
+<span class="fc" id="L728">    startInstanceOperationSettings = settingsBuilder.startInstanceOperationSettings().build();</span>
+<span class="fc" id="L729">    stopInstanceSettings = settingsBuilder.stopInstanceSettings().build();</span>
+<span class="fc" id="L730">    stopInstanceOperationSettings = settingsBuilder.stopInstanceOperationSettings().build();</span>
+<span class="fc" id="L731">    detachLunSettings = settingsBuilder.detachLunSettings().build();</span>
+<span class="fc" id="L732">    detachLunOperationSettings = settingsBuilder.detachLunOperationSettings().build();</span>
+<span class="fc" id="L733">    listVolumesSettings = settingsBuilder.listVolumesSettings().build();</span>
+<span class="fc" id="L734">    getVolumeSettings = settingsBuilder.getVolumeSettings().build();</span>
+<span class="fc" id="L735">    updateVolumeSettings = settingsBuilder.updateVolumeSettings().build();</span>
+<span class="fc" id="L736">    updateVolumeOperationSettings = settingsBuilder.updateVolumeOperationSettings().build();</span>
+<span class="fc" id="L737">    resizeVolumeSettings = settingsBuilder.resizeVolumeSettings().build();</span>
+<span class="fc" id="L738">    resizeVolumeOperationSettings = settingsBuilder.resizeVolumeOperationSettings().build();</span>
+<span class="fc" id="L739">    listNetworksSettings = settingsBuilder.listNetworksSettings().build();</span>
+<span class="fc" id="L740">    listNetworkUsageSettings = settingsBuilder.listNetworkUsageSettings().build();</span>
+<span class="fc" id="L741">    getNetworkSettings = settingsBuilder.getNetworkSettings().build();</span>
+<span class="fc" id="L742">    updateNetworkSettings = settingsBuilder.updateNetworkSettings().build();</span>
+<span class="fc" id="L743">    updateNetworkOperationSettings = settingsBuilder.updateNetworkOperationSettings().build();</span>
+<span class="fc" id="L744">    getLunSettings = settingsBuilder.getLunSettings().build();</span>
+<span class="fc" id="L745">    listLunsSettings = settingsBuilder.listLunsSettings().build();</span>
+<span class="fc" id="L746">    getNfsShareSettings = settingsBuilder.getNfsShareSettings().build();</span>
+<span class="fc" id="L747">    listNfsSharesSettings = settingsBuilder.listNfsSharesSettings().build();</span>
+<span class="fc" id="L748">    updateNfsShareSettings = settingsBuilder.updateNfsShareSettings().build();</span>
+<span class="fc" id="L749">    updateNfsShareOperationSettings = settingsBuilder.updateNfsShareOperationSettings().build();</span>
+<span class="fc" id="L750">  }</span>
 
   /** Builder for BareMetalSolutionStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;BareMetalSolutionStubSettings, Builder&gt; {
@@ -783,10 +756,25 @@ public class BareMetalSolutionStubSettings extends StubSettings&lt;BareMetalSolu
             ListInstancesRequest, ListInstancesResponse, ListInstancesPagedResponse&gt;
         listInstancesSettings;
     private final UnaryCallSettings.Builder&lt;GetInstanceRequest, Instance&gt; getInstanceSettings;
+    private final UnaryCallSettings.Builder&lt;UpdateInstanceRequest, Operation&gt;
+        updateInstanceSettings;
+    private final OperationCallSettings.Builder&lt;UpdateInstanceRequest, Instance, OperationMetadata&gt;
+        updateInstanceOperationSettings;
     private final UnaryCallSettings.Builder&lt;ResetInstanceRequest, Operation&gt; resetInstanceSettings;
     private final OperationCallSettings.Builder&lt;
             ResetInstanceRequest, ResetInstanceResponse, OperationMetadata&gt;
         resetInstanceOperationSettings;
+    private final UnaryCallSettings.Builder&lt;StartInstanceRequest, Operation&gt; startInstanceSettings;
+    private final OperationCallSettings.Builder&lt;
+            StartInstanceRequest, StartInstanceResponse, OperationMetadata&gt;
+        startInstanceOperationSettings;
+    private final UnaryCallSettings.Builder&lt;StopInstanceRequest, Operation&gt; stopInstanceSettings;
+    private final OperationCallSettings.Builder&lt;
+            StopInstanceRequest, StopInstanceResponse, OperationMetadata&gt;
+        stopInstanceOperationSettings;
+    private final UnaryCallSettings.Builder&lt;DetachLunRequest, Operation&gt; detachLunSettings;
+    private final OperationCallSettings.Builder&lt;DetachLunRequest, Instance, OperationMetadata&gt;
+        detachLunOperationSettings;
     private final PagedCallSettings.Builder&lt;
             ListVolumesRequest, ListVolumesResponse, ListVolumesPagedResponse&gt;
         listVolumesSettings;
@@ -794,374 +782,519 @@ public class BareMetalSolutionStubSettings extends StubSettings&lt;BareMetalSolu
     private final UnaryCallSettings.Builder&lt;UpdateVolumeRequest, Operation&gt; updateVolumeSettings;
     private final OperationCallSettings.Builder&lt;UpdateVolumeRequest, Volume, OperationMetadata&gt;
         updateVolumeOperationSettings;
+    private final UnaryCallSettings.Builder&lt;ResizeVolumeRequest, Operation&gt; resizeVolumeSettings;
+    private final OperationCallSettings.Builder&lt;ResizeVolumeRequest, Volume, OperationMetadata&gt;
+        resizeVolumeOperationSettings;
     private final PagedCallSettings.Builder&lt;
             ListNetworksRequest, ListNetworksResponse, ListNetworksPagedResponse&gt;
         listNetworksSettings;
+    private final UnaryCallSettings.Builder&lt;ListNetworkUsageRequest, ListNetworkUsageResponse&gt;
+        listNetworkUsageSettings;
     private final UnaryCallSettings.Builder&lt;GetNetworkRequest, Network&gt; getNetworkSettings;
-    private final PagedCallSettings.Builder&lt;
-            ListSnapshotSchedulePoliciesRequest,
-            ListSnapshotSchedulePoliciesResponse,
-            ListSnapshotSchedulePoliciesPagedResponse&gt;
-        listSnapshotSchedulePoliciesSettings;
-    private final UnaryCallSettings.Builder&lt;
-            GetSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-        getSnapshotSchedulePolicySettings;
-    private final UnaryCallSettings.Builder&lt;
-            CreateSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-        createSnapshotSchedulePolicySettings;
-    private final UnaryCallSettings.Builder&lt;
-            UpdateSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-        updateSnapshotSchedulePolicySettings;
-    private final UnaryCallSettings.Builder&lt;DeleteSnapshotSchedulePolicyRequest, Empty&gt;
-        deleteSnapshotSchedulePolicySettings;
-    private final UnaryCallSettings.Builder&lt;CreateVolumeSnapshotRequest, VolumeSnapshot&gt;
-        createVolumeSnapshotSettings;
-    private final UnaryCallSettings.Builder&lt;RestoreVolumeSnapshotRequest, Operation&gt;
-        restoreVolumeSnapshotSettings;
-    private final OperationCallSettings.Builder&lt;
-            RestoreVolumeSnapshotRequest, VolumeSnapshot, OperationMetadata&gt;
-        restoreVolumeSnapshotOperationSettings;
-    private final UnaryCallSettings.Builder&lt;DeleteVolumeSnapshotRequest, Empty&gt;
-        deleteVolumeSnapshotSettings;
-    private final UnaryCallSettings.Builder&lt;GetVolumeSnapshotRequest, VolumeSnapshot&gt;
-        getVolumeSnapshotSettings;
-    private final PagedCallSettings.Builder&lt;
-            ListVolumeSnapshotsRequest,
-            ListVolumeSnapshotsResponse,
-            ListVolumeSnapshotsPagedResponse&gt;
-        listVolumeSnapshotsSettings;
+    private final UnaryCallSettings.Builder&lt;UpdateNetworkRequest, Operation&gt; updateNetworkSettings;
+    private final OperationCallSettings.Builder&lt;UpdateNetworkRequest, Network, OperationMetadata&gt;
+        updateNetworkOperationSettings;
     private final UnaryCallSettings.Builder&lt;GetLunRequest, Lun&gt; getLunSettings;
     private final PagedCallSettings.Builder&lt;
             ListLunsRequest, ListLunsResponse, ListLunsPagedResponse&gt;
         listLunsSettings;
+    private final UnaryCallSettings.Builder&lt;GetNfsShareRequest, NfsShare&gt; getNfsShareSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListNfsSharesRequest, ListNfsSharesResponse, ListNfsSharesPagedResponse&gt;
+        listNfsSharesSettings;
+    private final UnaryCallSettings.Builder&lt;UpdateNfsShareRequest, Operation&gt;
+        updateNfsShareSettings;
+    private final OperationCallSettings.Builder&lt;UpdateNfsShareRequest, NfsShare, OperationMetadata&gt;
+        updateNfsShareOperationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L842">          ImmutableMap.builder();</span>
-<span class="fc" id="L843">      definitions.put(</span>
-<span class="fc" id="L844">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L845">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L814">          ImmutableMap.builder();</span>
+<span class="fc" id="L815">      definitions.put(</span>
+<span class="fc" id="L816">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L817">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L851">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L852">      RetrySettings settings = null;</span>
+<span class="fc" id="L823">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L824">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L854">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L855">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L856">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L857">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L858">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L859">              .build();</span>
-<span class="fc" id="L860">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
-<span class="fc" id="L861">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L862">    }</span>
+<span class="fc" id="L826">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L827">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L828">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L829">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L830">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L831">              .build();</span>
+<span class="fc" id="L832">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
+<span class="fc" id="L833">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L834">    }</span>
 
     protected Builder() {
-<span class="nc" id="L865">      this(((ClientContext) null));</span>
-<span class="nc" id="L866">    }</span>
+<span class="nc" id="L837">      this(((ClientContext) null));</span>
+<span class="nc" id="L838">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L869">      super(clientContext);</span>
+<span class="fc" id="L841">      super(clientContext);</span>
 
-<span class="fc" id="L871">      listInstancesSettings = PagedCallSettings.newBuilder(LIST_INSTANCES_PAGE_STR_FACT);</span>
-<span class="fc" id="L872">      getInstanceSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L873">      resetInstanceSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L874">      resetInstanceOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L875">      listVolumesSettings = PagedCallSettings.newBuilder(LIST_VOLUMES_PAGE_STR_FACT);</span>
-<span class="fc" id="L876">      getVolumeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L877">      updateVolumeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L878">      updateVolumeOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L879">      listNetworksSettings = PagedCallSettings.newBuilder(LIST_NETWORKS_PAGE_STR_FACT);</span>
-<span class="fc" id="L880">      getNetworkSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L881">      listSnapshotSchedulePoliciesSettings =</span>
-<span class="fc" id="L882">          PagedCallSettings.newBuilder(LIST_SNAPSHOT_SCHEDULE_POLICIES_PAGE_STR_FACT);</span>
-<span class="fc" id="L883">      getSnapshotSchedulePolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L884">      createSnapshotSchedulePolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L885">      updateSnapshotSchedulePolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L886">      deleteSnapshotSchedulePolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L887">      createVolumeSnapshotSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L888">      restoreVolumeSnapshotSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L889">      restoreVolumeSnapshotOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L890">      deleteVolumeSnapshotSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L891">      getVolumeSnapshotSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L892">      listVolumeSnapshotsSettings =</span>
-<span class="fc" id="L893">          PagedCallSettings.newBuilder(LIST_VOLUME_SNAPSHOTS_PAGE_STR_FACT);</span>
-<span class="fc" id="L894">      getLunSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L895">      listLunsSettings = PagedCallSettings.newBuilder(LIST_LUNS_PAGE_STR_FACT);</span>
+<span class="fc" id="L843">      listInstancesSettings = PagedCallSettings.newBuilder(LIST_INSTANCES_PAGE_STR_FACT);</span>
+<span class="fc" id="L844">      getInstanceSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L845">      updateInstanceSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L846">      updateInstanceOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L847">      resetInstanceSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L848">      resetInstanceOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L849">      startInstanceSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L850">      startInstanceOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L851">      stopInstanceSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L852">      stopInstanceOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L853">      detachLunSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L854">      detachLunOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L855">      listVolumesSettings = PagedCallSettings.newBuilder(LIST_VOLUMES_PAGE_STR_FACT);</span>
+<span class="fc" id="L856">      getVolumeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L857">      updateVolumeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L858">      updateVolumeOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L859">      resizeVolumeSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L860">      resizeVolumeOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L861">      listNetworksSettings = PagedCallSettings.newBuilder(LIST_NETWORKS_PAGE_STR_FACT);</span>
+<span class="fc" id="L862">      listNetworkUsageSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L863">      getNetworkSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L864">      updateNetworkSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L865">      updateNetworkOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L866">      getLunSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L867">      listLunsSettings = PagedCallSettings.newBuilder(LIST_LUNS_PAGE_STR_FACT);</span>
+<span class="fc" id="L868">      getNfsShareSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L869">      listNfsSharesSettings = PagedCallSettings.newBuilder(LIST_NFS_SHARES_PAGE_STR_FACT);</span>
+<span class="fc" id="L870">      updateNfsShareSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L871">      updateNfsShareOperationSettings = OperationCallSettings.newBuilder();</span>
 
-<span class="fc" id="L897">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L898">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L873">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L874">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listInstancesSettings,
               getInstanceSettings,
+              updateInstanceSettings,
               resetInstanceSettings,
+              startInstanceSettings,
+              stopInstanceSettings,
+              detachLunSettings,
               listVolumesSettings,
               getVolumeSettings,
               updateVolumeSettings,
+              resizeVolumeSettings,
               listNetworksSettings,
+              listNetworkUsageSettings,
               getNetworkSettings,
-              listSnapshotSchedulePoliciesSettings,
-              getSnapshotSchedulePolicySettings,
-              createSnapshotSchedulePolicySettings,
-              updateSnapshotSchedulePolicySettings,
-              deleteSnapshotSchedulePolicySettings,
-              createVolumeSnapshotSettings,
-              restoreVolumeSnapshotSettings,
-              deleteVolumeSnapshotSettings,
-              getVolumeSnapshotSettings,
-              listVolumeSnapshotsSettings,
+              updateNetworkSettings,
               getLunSettings,
-              listLunsSettings);
-<span class="fc" id="L919">      initDefaults(this);</span>
-<span class="fc" id="L920">    }</span>
+              listLunsSettings,
+              getNfsShareSettings,
+              listNfsSharesSettings,
+              updateNfsShareSettings);
+<span class="fc" id="L895">      initDefaults(this);</span>
+<span class="fc" id="L896">    }</span>
 
     protected Builder(BareMetalSolutionStubSettings settings) {
-<span class="nc" id="L923">      super(settings);</span>
+<span class="nc" id="L899">      super(settings);</span>
 
-<span class="nc" id="L925">      listInstancesSettings = settings.listInstancesSettings.toBuilder();</span>
-<span class="nc" id="L926">      getInstanceSettings = settings.getInstanceSettings.toBuilder();</span>
-<span class="nc" id="L927">      resetInstanceSettings = settings.resetInstanceSettings.toBuilder();</span>
-<span class="nc" id="L928">      resetInstanceOperationSettings = settings.resetInstanceOperationSettings.toBuilder();</span>
-<span class="nc" id="L929">      listVolumesSettings = settings.listVolumesSettings.toBuilder();</span>
-<span class="nc" id="L930">      getVolumeSettings = settings.getVolumeSettings.toBuilder();</span>
-<span class="nc" id="L931">      updateVolumeSettings = settings.updateVolumeSettings.toBuilder();</span>
-<span class="nc" id="L932">      updateVolumeOperationSettings = settings.updateVolumeOperationSettings.toBuilder();</span>
-<span class="nc" id="L933">      listNetworksSettings = settings.listNetworksSettings.toBuilder();</span>
-<span class="nc" id="L934">      getNetworkSettings = settings.getNetworkSettings.toBuilder();</span>
-<span class="nc" id="L935">      listSnapshotSchedulePoliciesSettings =</span>
-<span class="nc" id="L936">          settings.listSnapshotSchedulePoliciesSettings.toBuilder();</span>
-<span class="nc" id="L937">      getSnapshotSchedulePolicySettings = settings.getSnapshotSchedulePolicySettings.toBuilder();</span>
-<span class="nc" id="L938">      createSnapshotSchedulePolicySettings =</span>
-<span class="nc" id="L939">          settings.createSnapshotSchedulePolicySettings.toBuilder();</span>
-<span class="nc" id="L940">      updateSnapshotSchedulePolicySettings =</span>
-<span class="nc" id="L941">          settings.updateSnapshotSchedulePolicySettings.toBuilder();</span>
-<span class="nc" id="L942">      deleteSnapshotSchedulePolicySettings =</span>
-<span class="nc" id="L943">          settings.deleteSnapshotSchedulePolicySettings.toBuilder();</span>
-<span class="nc" id="L944">      createVolumeSnapshotSettings = settings.createVolumeSnapshotSettings.toBuilder();</span>
-<span class="nc" id="L945">      restoreVolumeSnapshotSettings = settings.restoreVolumeSnapshotSettings.toBuilder();</span>
-<span class="nc" id="L946">      restoreVolumeSnapshotOperationSettings =</span>
-<span class="nc" id="L947">          settings.restoreVolumeSnapshotOperationSettings.toBuilder();</span>
-<span class="nc" id="L948">      deleteVolumeSnapshotSettings = settings.deleteVolumeSnapshotSettings.toBuilder();</span>
-<span class="nc" id="L949">      getVolumeSnapshotSettings = settings.getVolumeSnapshotSettings.toBuilder();</span>
-<span class="nc" id="L950">      listVolumeSnapshotsSettings = settings.listVolumeSnapshotsSettings.toBuilder();</span>
-<span class="nc" id="L951">      getLunSettings = settings.getLunSettings.toBuilder();</span>
-<span class="nc" id="L952">      listLunsSettings = settings.listLunsSettings.toBuilder();</span>
+<span class="nc" id="L901">      listInstancesSettings = settings.listInstancesSettings.toBuilder();</span>
+<span class="nc" id="L902">      getInstanceSettings = settings.getInstanceSettings.toBuilder();</span>
+<span class="nc" id="L903">      updateInstanceSettings = settings.updateInstanceSettings.toBuilder();</span>
+<span class="nc" id="L904">      updateInstanceOperationSettings = settings.updateInstanceOperationSettings.toBuilder();</span>
+<span class="nc" id="L905">      resetInstanceSettings = settings.resetInstanceSettings.toBuilder();</span>
+<span class="nc" id="L906">      resetInstanceOperationSettings = settings.resetInstanceOperationSettings.toBuilder();</span>
+<span class="nc" id="L907">      startInstanceSettings = settings.startInstanceSettings.toBuilder();</span>
+<span class="nc" id="L908">      startInstanceOperationSettings = settings.startInstanceOperationSettings.toBuilder();</span>
+<span class="nc" id="L909">      stopInstanceSettings = settings.stopInstanceSettings.toBuilder();</span>
+<span class="nc" id="L910">      stopInstanceOperationSettings = settings.stopInstanceOperationSettings.toBuilder();</span>
+<span class="nc" id="L911">      detachLunSettings = settings.detachLunSettings.toBuilder();</span>
+<span class="nc" id="L912">      detachLunOperationSettings = settings.detachLunOperationSettings.toBuilder();</span>
+<span class="nc" id="L913">      listVolumesSettings = settings.listVolumesSettings.toBuilder();</span>
+<span class="nc" id="L914">      getVolumeSettings = settings.getVolumeSettings.toBuilder();</span>
+<span class="nc" id="L915">      updateVolumeSettings = settings.updateVolumeSettings.toBuilder();</span>
+<span class="nc" id="L916">      updateVolumeOperationSettings = settings.updateVolumeOperationSettings.toBuilder();</span>
+<span class="nc" id="L917">      resizeVolumeSettings = settings.resizeVolumeSettings.toBuilder();</span>
+<span class="nc" id="L918">      resizeVolumeOperationSettings = settings.resizeVolumeOperationSettings.toBuilder();</span>
+<span class="nc" id="L919">      listNetworksSettings = settings.listNetworksSettings.toBuilder();</span>
+<span class="nc" id="L920">      listNetworkUsageSettings = settings.listNetworkUsageSettings.toBuilder();</span>
+<span class="nc" id="L921">      getNetworkSettings = settings.getNetworkSettings.toBuilder();</span>
+<span class="nc" id="L922">      updateNetworkSettings = settings.updateNetworkSettings.toBuilder();</span>
+<span class="nc" id="L923">      updateNetworkOperationSettings = settings.updateNetworkOperationSettings.toBuilder();</span>
+<span class="nc" id="L924">      getLunSettings = settings.getLunSettings.toBuilder();</span>
+<span class="nc" id="L925">      listLunsSettings = settings.listLunsSettings.toBuilder();</span>
+<span class="nc" id="L926">      getNfsShareSettings = settings.getNfsShareSettings.toBuilder();</span>
+<span class="nc" id="L927">      listNfsSharesSettings = settings.listNfsSharesSettings.toBuilder();</span>
+<span class="nc" id="L928">      updateNfsShareSettings = settings.updateNfsShareSettings.toBuilder();</span>
+<span class="nc" id="L929">      updateNfsShareOperationSettings = settings.updateNfsShareOperationSettings.toBuilder();</span>
 
-<span class="nc" id="L954">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L955">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L931">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L932">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listInstancesSettings,
               getInstanceSettings,
+              updateInstanceSettings,
               resetInstanceSettings,
+              startInstanceSettings,
+              stopInstanceSettings,
+              detachLunSettings,
               listVolumesSettings,
               getVolumeSettings,
               updateVolumeSettings,
+              resizeVolumeSettings,
               listNetworksSettings,
+              listNetworkUsageSettings,
               getNetworkSettings,
-              listSnapshotSchedulePoliciesSettings,
-              getSnapshotSchedulePolicySettings,
-              createSnapshotSchedulePolicySettings,
-              updateSnapshotSchedulePolicySettings,
-              deleteSnapshotSchedulePolicySettings,
-              createVolumeSnapshotSettings,
-              restoreVolumeSnapshotSettings,
-              deleteVolumeSnapshotSettings,
-              getVolumeSnapshotSettings,
-              listVolumeSnapshotsSettings,
+              updateNetworkSettings,
               getLunSettings,
-              listLunsSettings);
-<span class="nc" id="L976">    }</span>
+              listLunsSettings,
+              getNfsShareSettings,
+              listNfsSharesSettings,
+              updateNfsShareSettings);
+<span class="nc" id="L953">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L979">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L956">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L981">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L982">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L983">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L984">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L985">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L986">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L958">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L959">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L960">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L961">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L962">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L963">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L988">      return initDefaults(builder);</span>
+<span class="fc" id="L965">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L969">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L971">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L972">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L973">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L974">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L975">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L976">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L978">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
+<span class="fc" id="L982">      builder</span>
+<span class="fc" id="L983">          .listInstancesSettings()</span>
+<span class="fc" id="L984">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L985">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L987">      builder</span>
+<span class="fc" id="L988">          .getInstanceSettings()</span>
+<span class="fc" id="L989">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L990">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
 <span class="fc" id="L992">      builder</span>
-<span class="fc" id="L993">          .listInstancesSettings()</span>
+<span class="fc" id="L993">          .updateInstanceSettings()</span>
 <span class="fc" id="L994">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L995">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L997">      builder</span>
-<span class="fc" id="L998">          .getInstanceSettings()</span>
+<span class="fc" id="L998">          .resetInstanceSettings()</span>
 <span class="fc" id="L999">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1000">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1002">      builder</span>
-<span class="fc" id="L1003">          .resetInstanceSettings()</span>
+<span class="fc" id="L1003">          .startInstanceSettings()</span>
 <span class="fc" id="L1004">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1005">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1007">      builder</span>
-<span class="fc" id="L1008">          .listVolumesSettings()</span>
+<span class="fc" id="L1008">          .stopInstanceSettings()</span>
 <span class="fc" id="L1009">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1010">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1012">      builder</span>
-<span class="fc" id="L1013">          .getVolumeSettings()</span>
+<span class="fc" id="L1013">          .detachLunSettings()</span>
 <span class="fc" id="L1014">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1015">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1017">      builder</span>
-<span class="fc" id="L1018">          .updateVolumeSettings()</span>
+<span class="fc" id="L1018">          .listVolumesSettings()</span>
 <span class="fc" id="L1019">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1020">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1022">      builder</span>
-<span class="fc" id="L1023">          .listNetworksSettings()</span>
+<span class="fc" id="L1023">          .getVolumeSettings()</span>
 <span class="fc" id="L1024">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1025">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1027">      builder</span>
-<span class="fc" id="L1028">          .getNetworkSettings()</span>
+<span class="fc" id="L1028">          .updateVolumeSettings()</span>
 <span class="fc" id="L1029">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1030">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1032">      builder</span>
-<span class="fc" id="L1033">          .listSnapshotSchedulePoliciesSettings()</span>
+<span class="fc" id="L1033">          .resizeVolumeSettings()</span>
 <span class="fc" id="L1034">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1035">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1037">      builder</span>
-<span class="fc" id="L1038">          .getSnapshotSchedulePolicySettings()</span>
+<span class="fc" id="L1038">          .listNetworksSettings()</span>
 <span class="fc" id="L1039">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1040">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1042">      builder</span>
-<span class="fc" id="L1043">          .createSnapshotSchedulePolicySettings()</span>
+<span class="fc" id="L1043">          .listNetworkUsageSettings()</span>
 <span class="fc" id="L1044">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1045">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1047">      builder</span>
-<span class="fc" id="L1048">          .updateSnapshotSchedulePolicySettings()</span>
+<span class="fc" id="L1048">          .getNetworkSettings()</span>
 <span class="fc" id="L1049">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1050">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1052">      builder</span>
-<span class="fc" id="L1053">          .deleteSnapshotSchedulePolicySettings()</span>
+<span class="fc" id="L1053">          .updateNetworkSettings()</span>
 <span class="fc" id="L1054">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1055">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1057">      builder</span>
-<span class="fc" id="L1058">          .createVolumeSnapshotSettings()</span>
+<span class="fc" id="L1058">          .getLunSettings()</span>
 <span class="fc" id="L1059">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1060">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1062">      builder</span>
-<span class="fc" id="L1063">          .restoreVolumeSnapshotSettings()</span>
+<span class="fc" id="L1063">          .listLunsSettings()</span>
 <span class="fc" id="L1064">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1065">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1067">      builder</span>
-<span class="fc" id="L1068">          .deleteVolumeSnapshotSettings()</span>
+<span class="fc" id="L1068">          .getNfsShareSettings()</span>
 <span class="fc" id="L1069">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1070">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1072">      builder</span>
-<span class="fc" id="L1073">          .getVolumeSnapshotSettings()</span>
+<span class="fc" id="L1073">          .listNfsSharesSettings()</span>
 <span class="fc" id="L1074">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1075">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1077">      builder</span>
-<span class="fc" id="L1078">          .listVolumeSnapshotsSettings()</span>
+<span class="fc" id="L1078">          .updateNfsShareSettings()</span>
 <span class="fc" id="L1079">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
 <span class="fc" id="L1080">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1082">      builder</span>
-<span class="fc" id="L1083">          .getLunSettings()</span>
-<span class="fc" id="L1084">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1085">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L1087">      builder</span>
-<span class="fc" id="L1088">          .listLunsSettings()</span>
-<span class="fc" id="L1089">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1090">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L1092">      builder</span>
-<span class="fc" id="L1093">          .resetInstanceOperationSettings()</span>
-<span class="fc" id="L1094">          .setInitialCallSettings(</span>
+<span class="fc" id="L1083">          .updateInstanceOperationSettings()</span>
+<span class="fc" id="L1084">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L1096">                  .&lt;ResetInstanceRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1097">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1098">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1099">                  .build())</span>
-<span class="fc" id="L1100">          .setResponseTransformer(</span>
-<span class="fc" id="L1101">              ProtoOperationTransformers.ResponseTransformer.create(ResetInstanceResponse.class))</span>
-<span class="fc" id="L1102">          .setMetadataTransformer(</span>
-<span class="fc" id="L1103">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1104">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1105">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1106">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1107">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1108">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1109">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1110">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1111">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1112">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1113">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1114">                      .build()));</span>
+<span class="fc" id="L1086">                  .&lt;UpdateInstanceRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1087">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1088">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1089">                  .build())</span>
+<span class="fc" id="L1090">          .setResponseTransformer(</span>
+<span class="fc" id="L1091">              ProtoOperationTransformers.ResponseTransformer.create(Instance.class))</span>
+<span class="fc" id="L1092">          .setMetadataTransformer(</span>
+<span class="fc" id="L1093">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1094">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1095">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1096">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1097">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1098">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1099">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1100">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1101">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1102">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1103">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1104">                      .build()));</span>
 
-<span class="fc" id="L1116">      builder</span>
-<span class="fc" id="L1117">          .updateVolumeOperationSettings()</span>
-<span class="fc" id="L1118">          .setInitialCallSettings(</span>
+<span class="fc" id="L1106">      builder</span>
+<span class="fc" id="L1107">          .resetInstanceOperationSettings()</span>
+<span class="fc" id="L1108">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L1120">                  .&lt;UpdateVolumeRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1121">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1122">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1123">                  .build())</span>
-<span class="fc" id="L1124">          .setResponseTransformer(</span>
-<span class="fc" id="L1125">              ProtoOperationTransformers.ResponseTransformer.create(Volume.class))</span>
-<span class="fc" id="L1126">          .setMetadataTransformer(</span>
-<span class="fc" id="L1127">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1128">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1129">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1130">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1131">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1132">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1133">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1134">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1135">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1136">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1137">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1138">                      .build()));</span>
+<span class="fc" id="L1110">                  .&lt;ResetInstanceRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1111">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1112">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1113">                  .build())</span>
+<span class="fc" id="L1114">          .setResponseTransformer(</span>
+<span class="fc" id="L1115">              ProtoOperationTransformers.ResponseTransformer.create(ResetInstanceResponse.class))</span>
+<span class="fc" id="L1116">          .setMetadataTransformer(</span>
+<span class="fc" id="L1117">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1118">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1119">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1120">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1121">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1122">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1123">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1124">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1125">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1126">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1127">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1128">                      .build()));</span>
 
-<span class="fc" id="L1140">      builder</span>
-<span class="fc" id="L1141">          .restoreVolumeSnapshotOperationSettings()</span>
-<span class="fc" id="L1142">          .setInitialCallSettings(</span>
+<span class="fc" id="L1130">      builder</span>
+<span class="fc" id="L1131">          .startInstanceOperationSettings()</span>
+<span class="fc" id="L1132">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L1144">                  .&lt;RestoreVolumeSnapshotRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1145">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1146">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1147">                  .build())</span>
-<span class="fc" id="L1148">          .setResponseTransformer(</span>
-<span class="fc" id="L1149">              ProtoOperationTransformers.ResponseTransformer.create(VolumeSnapshot.class))</span>
-<span class="fc" id="L1150">          .setMetadataTransformer(</span>
-<span class="fc" id="L1151">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1152">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1153">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1154">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1155">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1156">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1157">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1158">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1159">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1160">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1161">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1162">                      .build()));</span>
+<span class="fc" id="L1134">                  .&lt;StartInstanceRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1135">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1136">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1137">                  .build())</span>
+<span class="fc" id="L1138">          .setResponseTransformer(</span>
+<span class="fc" id="L1139">              ProtoOperationTransformers.ResponseTransformer.create(StartInstanceResponse.class))</span>
+<span class="fc" id="L1140">          .setMetadataTransformer(</span>
+<span class="fc" id="L1141">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1142">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1143">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1144">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1145">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1146">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1147">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1148">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1149">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1150">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1151">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1152">                      .build()));</span>
 
-<span class="fc" id="L1164">      return builder;</span>
+<span class="fc" id="L1154">      builder</span>
+<span class="fc" id="L1155">          .stopInstanceOperationSettings()</span>
+<span class="fc" id="L1156">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1158">                  .&lt;StopInstanceRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1159">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1160">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1161">                  .build())</span>
+<span class="fc" id="L1162">          .setResponseTransformer(</span>
+<span class="fc" id="L1163">              ProtoOperationTransformers.ResponseTransformer.create(StopInstanceResponse.class))</span>
+<span class="fc" id="L1164">          .setMetadataTransformer(</span>
+<span class="fc" id="L1165">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1166">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1167">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1168">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1169">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1170">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1171">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1172">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1173">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1174">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1175">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1176">                      .build()));</span>
+
+<span class="fc" id="L1178">      builder</span>
+<span class="fc" id="L1179">          .detachLunOperationSettings()</span>
+<span class="fc" id="L1180">          .setInitialCallSettings(</span>
+<span class="fc" id="L1181">              UnaryCallSettings.&lt;DetachLunRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1182">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1183">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1184">                  .build())</span>
+<span class="fc" id="L1185">          .setResponseTransformer(</span>
+<span class="fc" id="L1186">              ProtoOperationTransformers.ResponseTransformer.create(Instance.class))</span>
+<span class="fc" id="L1187">          .setMetadataTransformer(</span>
+<span class="fc" id="L1188">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1189">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1190">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1191">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1192">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1193">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1194">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1195">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1196">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1197">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1198">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1199">                      .build()));</span>
+
+<span class="fc" id="L1201">      builder</span>
+<span class="fc" id="L1202">          .updateVolumeOperationSettings()</span>
+<span class="fc" id="L1203">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1205">                  .&lt;UpdateVolumeRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1206">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1207">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1208">                  .build())</span>
+<span class="fc" id="L1209">          .setResponseTransformer(</span>
+<span class="fc" id="L1210">              ProtoOperationTransformers.ResponseTransformer.create(Volume.class))</span>
+<span class="fc" id="L1211">          .setMetadataTransformer(</span>
+<span class="fc" id="L1212">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1213">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1214">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1215">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1216">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1217">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1218">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1219">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1220">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1221">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1222">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1223">                      .build()));</span>
+
+<span class="fc" id="L1225">      builder</span>
+<span class="fc" id="L1226">          .resizeVolumeOperationSettings()</span>
+<span class="fc" id="L1227">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1229">                  .&lt;ResizeVolumeRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1230">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1231">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1232">                  .build())</span>
+<span class="fc" id="L1233">          .setResponseTransformer(</span>
+<span class="fc" id="L1234">              ProtoOperationTransformers.ResponseTransformer.create(Volume.class))</span>
+<span class="fc" id="L1235">          .setMetadataTransformer(</span>
+<span class="fc" id="L1236">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1237">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1238">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1239">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1240">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1241">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1242">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1243">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1244">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1245">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1246">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1247">                      .build()));</span>
+
+<span class="fc" id="L1249">      builder</span>
+<span class="fc" id="L1250">          .updateNetworkOperationSettings()</span>
+<span class="fc" id="L1251">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1253">                  .&lt;UpdateNetworkRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1254">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1255">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1256">                  .build())</span>
+<span class="fc" id="L1257">          .setResponseTransformer(</span>
+<span class="fc" id="L1258">              ProtoOperationTransformers.ResponseTransformer.create(Network.class))</span>
+<span class="fc" id="L1259">          .setMetadataTransformer(</span>
+<span class="fc" id="L1260">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1261">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1262">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1263">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1264">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1265">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1266">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1267">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1268">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1269">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1270">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1271">                      .build()));</span>
+
+<span class="fc" id="L1273">      builder</span>
+<span class="fc" id="L1274">          .updateNfsShareOperationSettings()</span>
+<span class="fc" id="L1275">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1277">                  .&lt;UpdateNfsShareRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1278">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1279">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1280">                  .build())</span>
+<span class="fc" id="L1281">          .setResponseTransformer(</span>
+<span class="fc" id="L1282">              ProtoOperationTransformers.ResponseTransformer.create(NfsShare.class))</span>
+<span class="fc" id="L1283">          .setMetadataTransformer(</span>
+<span class="fc" id="L1284">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1285">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1286">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1287">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1288">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1289">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1290">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1291">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1292">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1293">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1294">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1295">                      .build()));</span>
+
+<span class="fc" id="L1297">      return builder;</span>
     }
 
     /**
@@ -1171,29 +1304,42 @@ public class BareMetalSolutionStubSettings extends StubSettings&lt;BareMetalSolu
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L1174">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L1175">      return this;</span>
+<span class="nc" id="L1307">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L1308">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L1179">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L1312">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listInstances. */
     public PagedCallSettings.Builder&lt;
             ListInstancesRequest, ListInstancesResponse, ListInstancesPagedResponse&gt;
         listInstancesSettings() {
-<span class="fc" id="L1186">      return listInstancesSettings;</span>
+<span class="fc" id="L1319">      return listInstancesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getInstance. */
     public UnaryCallSettings.Builder&lt;GetInstanceRequest, Instance&gt; getInstanceSettings() {
-<span class="fc" id="L1191">      return getInstanceSettings;</span>
+<span class="fc" id="L1324">      return getInstanceSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to updateInstance. */
+    public UnaryCallSettings.Builder&lt;UpdateInstanceRequest, Operation&gt; updateInstanceSettings() {
+<span class="fc" id="L1329">      return updateInstanceSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to updateInstance. */
+    @BetaApi(
+        &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
+    public OperationCallSettings.Builder&lt;UpdateInstanceRequest, Instance, OperationMetadata&gt;
+        updateInstanceOperationSettings() {
+<span class="fc" id="L1337">      return updateInstanceOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to resetInstance. */
     public UnaryCallSettings.Builder&lt;ResetInstanceRequest, Operation&gt; resetInstanceSettings() {
-<span class="fc" id="L1196">      return resetInstanceSettings;</span>
+<span class="fc" id="L1342">      return resetInstanceSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to resetInstance. */
@@ -1202,24 +1348,65 @@ public class BareMetalSolutionStubSettings extends StubSettings&lt;BareMetalSolu
     public OperationCallSettings.Builder&lt;
             ResetInstanceRequest, ResetInstanceResponse, OperationMetadata&gt;
         resetInstanceOperationSettings() {
-<span class="fc" id="L1205">      return resetInstanceOperationSettings;</span>
+<span class="fc" id="L1351">      return resetInstanceOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to startInstance. */
+    public UnaryCallSettings.Builder&lt;StartInstanceRequest, Operation&gt; startInstanceSettings() {
+<span class="fc" id="L1356">      return startInstanceSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to startInstance. */
+    @BetaApi(
+        &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
+    public OperationCallSettings.Builder&lt;
+            StartInstanceRequest, StartInstanceResponse, OperationMetadata&gt;
+        startInstanceOperationSettings() {
+<span class="fc" id="L1365">      return startInstanceOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to stopInstance. */
+    public UnaryCallSettings.Builder&lt;StopInstanceRequest, Operation&gt; stopInstanceSettings() {
+<span class="fc" id="L1370">      return stopInstanceSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to stopInstance. */
+    @BetaApi(
+        &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
+    public OperationCallSettings.Builder&lt;
+            StopInstanceRequest, StopInstanceResponse, OperationMetadata&gt;
+        stopInstanceOperationSettings() {
+<span class="fc" id="L1379">      return stopInstanceOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to detachLun. */
+    public UnaryCallSettings.Builder&lt;DetachLunRequest, Operation&gt; detachLunSettings() {
+<span class="fc" id="L1384">      return detachLunSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to detachLun. */
+    @BetaApi(
+        &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
+    public OperationCallSettings.Builder&lt;DetachLunRequest, Instance, OperationMetadata&gt;
+        detachLunOperationSettings() {
+<span class="fc" id="L1392">      return detachLunOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listVolumes. */
     public PagedCallSettings.Builder&lt;
             ListVolumesRequest, ListVolumesResponse, ListVolumesPagedResponse&gt;
         listVolumesSettings() {
-<span class="fc" id="L1212">      return listVolumesSettings;</span>
+<span class="fc" id="L1399">      return listVolumesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getVolume. */
     public UnaryCallSettings.Builder&lt;GetVolumeRequest, Volume&gt; getVolumeSettings() {
-<span class="fc" id="L1217">      return getVolumeSettings;</span>
+<span class="fc" id="L1404">      return getVolumeSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateVolume. */
     public UnaryCallSettings.Builder&lt;UpdateVolumeRequest, Operation&gt; updateVolumeSettings() {
-<span class="fc" id="L1222">      return updateVolumeSettings;</span>
+<span class="fc" id="L1409">      return updateVolumeSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateVolume. */
@@ -1227,110 +1414,92 @@ public class BareMetalSolutionStubSettings extends StubSettings&lt;BareMetalSolu
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;UpdateVolumeRequest, Volume, OperationMetadata&gt;
         updateVolumeOperationSettings() {
-<span class="fc" id="L1230">      return updateVolumeOperationSettings;</span>
+<span class="fc" id="L1417">      return updateVolumeOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to resizeVolume. */
+    public UnaryCallSettings.Builder&lt;ResizeVolumeRequest, Operation&gt; resizeVolumeSettings() {
+<span class="fc" id="L1422">      return resizeVolumeSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to resizeVolume. */
+    @BetaApi(
+        &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
+    public OperationCallSettings.Builder&lt;ResizeVolumeRequest, Volume, OperationMetadata&gt;
+        resizeVolumeOperationSettings() {
+<span class="fc" id="L1430">      return resizeVolumeOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listNetworks. */
     public PagedCallSettings.Builder&lt;
             ListNetworksRequest, ListNetworksResponse, ListNetworksPagedResponse&gt;
         listNetworksSettings() {
-<span class="fc" id="L1237">      return listNetworksSettings;</span>
+<span class="fc" id="L1437">      return listNetworksSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listNetworkUsage. */
+    public UnaryCallSettings.Builder&lt;ListNetworkUsageRequest, ListNetworkUsageResponse&gt;
+        listNetworkUsageSettings() {
+<span class="fc" id="L1443">      return listNetworkUsageSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getNetwork. */
     public UnaryCallSettings.Builder&lt;GetNetworkRequest, Network&gt; getNetworkSettings() {
-<span class="fc" id="L1242">      return getNetworkSettings;</span>
+<span class="fc" id="L1448">      return getNetworkSettings;</span>
     }
 
-    /** Returns the builder for the settings used for calls to listSnapshotSchedulePolicies. */
-    public PagedCallSettings.Builder&lt;
-            ListSnapshotSchedulePoliciesRequest,
-            ListSnapshotSchedulePoliciesResponse,
-            ListSnapshotSchedulePoliciesPagedResponse&gt;
-        listSnapshotSchedulePoliciesSettings() {
-<span class="fc" id="L1251">      return listSnapshotSchedulePoliciesSettings;</span>
+    /** Returns the builder for the settings used for calls to updateNetwork. */
+    public UnaryCallSettings.Builder&lt;UpdateNetworkRequest, Operation&gt; updateNetworkSettings() {
+<span class="fc" id="L1453">      return updateNetworkSettings;</span>
     }
 
-    /** Returns the builder for the settings used for calls to getSnapshotSchedulePolicy. */
-    public UnaryCallSettings.Builder&lt;GetSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-        getSnapshotSchedulePolicySettings() {
-<span class="fc" id="L1257">      return getSnapshotSchedulePolicySettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to createSnapshotSchedulePolicy. */
-    public UnaryCallSettings.Builder&lt;CreateSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-        createSnapshotSchedulePolicySettings() {
-<span class="fc" id="L1263">      return createSnapshotSchedulePolicySettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to updateSnapshotSchedulePolicy. */
-    public UnaryCallSettings.Builder&lt;UpdateSnapshotSchedulePolicyRequest, SnapshotSchedulePolicy&gt;
-        updateSnapshotSchedulePolicySettings() {
-<span class="fc" id="L1269">      return updateSnapshotSchedulePolicySettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to deleteSnapshotSchedulePolicy. */
-    public UnaryCallSettings.Builder&lt;DeleteSnapshotSchedulePolicyRequest, Empty&gt;
-        deleteSnapshotSchedulePolicySettings() {
-<span class="fc" id="L1275">      return deleteSnapshotSchedulePolicySettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to createVolumeSnapshot. */
-    public UnaryCallSettings.Builder&lt;CreateVolumeSnapshotRequest, VolumeSnapshot&gt;
-        createVolumeSnapshotSettings() {
-<span class="fc" id="L1281">      return createVolumeSnapshotSettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to restoreVolumeSnapshot. */
-    public UnaryCallSettings.Builder&lt;RestoreVolumeSnapshotRequest, Operation&gt;
-        restoreVolumeSnapshotSettings() {
-<span class="fc" id="L1287">      return restoreVolumeSnapshotSettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to restoreVolumeSnapshot. */
+    /** Returns the builder for the settings used for calls to updateNetwork. */
     @BetaApi(
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
-    public OperationCallSettings.Builder&lt;
-            RestoreVolumeSnapshotRequest, VolumeSnapshot, OperationMetadata&gt;
-        restoreVolumeSnapshotOperationSettings() {
-<span class="fc" id="L1296">      return restoreVolumeSnapshotOperationSettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to deleteVolumeSnapshot. */
-    public UnaryCallSettings.Builder&lt;DeleteVolumeSnapshotRequest, Empty&gt;
-        deleteVolumeSnapshotSettings() {
-<span class="fc" id="L1302">      return deleteVolumeSnapshotSettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to getVolumeSnapshot. */
-    public UnaryCallSettings.Builder&lt;GetVolumeSnapshotRequest, VolumeSnapshot&gt;
-        getVolumeSnapshotSettings() {
-<span class="fc" id="L1308">      return getVolumeSnapshotSettings;</span>
-    }
-
-    /** Returns the builder for the settings used for calls to listVolumeSnapshots. */
-    public PagedCallSettings.Builder&lt;
-            ListVolumeSnapshotsRequest,
-            ListVolumeSnapshotsResponse,
-            ListVolumeSnapshotsPagedResponse&gt;
-        listVolumeSnapshotsSettings() {
-<span class="fc" id="L1317">      return listVolumeSnapshotsSettings;</span>
+    public OperationCallSettings.Builder&lt;UpdateNetworkRequest, Network, OperationMetadata&gt;
+        updateNetworkOperationSettings() {
+<span class="fc" id="L1461">      return updateNetworkOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getLun. */
     public UnaryCallSettings.Builder&lt;GetLunRequest, Lun&gt; getLunSettings() {
-<span class="fc" id="L1322">      return getLunSettings;</span>
+<span class="fc" id="L1466">      return getLunSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listLuns. */
     public PagedCallSettings.Builder&lt;ListLunsRequest, ListLunsResponse, ListLunsPagedResponse&gt;
         listLunsSettings() {
-<span class="fc" id="L1328">      return listLunsSettings;</span>
+<span class="fc" id="L1472">      return listLunsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getNfsShare. */
+    public UnaryCallSettings.Builder&lt;GetNfsShareRequest, NfsShare&gt; getNfsShareSettings() {
+<span class="fc" id="L1477">      return getNfsShareSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listNfsShares. */
+    public PagedCallSettings.Builder&lt;
+            ListNfsSharesRequest, ListNfsSharesResponse, ListNfsSharesPagedResponse&gt;
+        listNfsSharesSettings() {
+<span class="fc" id="L1484">      return listNfsSharesSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to updateNfsShare. */
+    public UnaryCallSettings.Builder&lt;UpdateNfsShareRequest, Operation&gt; updateNfsShareSettings() {
+<span class="fc" id="L1489">      return updateNfsShareSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to updateNfsShare. */
+    @BetaApi(
+        &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
+    public OperationCallSettings.Builder&lt;UpdateNfsShareRequest, NfsShare, OperationMetadata&gt;
+        updateNfsShareOperationSettings() {
+<span class="fc" id="L1497">      return updateNfsShareOperationSettings;</span>
     }
 
     @Override
     public BareMetalSolutionStubSettings build() throws IOException {
-<span class="fc" id="L1333">      return new BareMetalSolutionStubSettings(this);</span>
+<span class="fc" id="L1502">      return new BareMetalSolutionStubSettings(this);</span>
     }
   }
 }

@@ -18,7 +18,9 @@ package com.google.cloud.devtools.cloudbuild.v1;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -63,7 +65,6 @@ import com.google.cloudbuild.v1.WorkerPool;
 import com.google.cloudbuild.v1.WorkerPoolName;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -142,17 +143,32 @@ import javax.annotation.Generated;
  * CloudBuildClient cloudBuildClient = CloudBuildClient.create(cloudBuildSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * CloudBuildSettings cloudBuildSettings =
+ *     CloudBuildSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             CloudBuildSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * CloudBuildClient cloudBuildClient = CloudBuildClient.create(cloudBuildSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class CloudBuildClient implements BackgroundResource {
   private final CloudBuildSettings settings;
   private final CloudBuildStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of CloudBuildClient with default settings. */
   public static final CloudBuildClient create() throws IOException {
-<span class="nc" id="L155">    return create(CloudBuildSettings.newBuilder().build());</span>
+<span class="nc" id="L171">    return create(CloudBuildSettings.newBuilder().build());</span>
   }
 
   /**
@@ -160,7 +176,7 @@ public class CloudBuildClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final CloudBuildClient create(CloudBuildSettings settings) throws IOException {
-<span class="fc" id="L163">    return new CloudBuildClient(settings);</span>
+<span class="fc" id="L179">    return new CloudBuildClient(settings);</span>
   }
 
   /**
@@ -168,39 +184,52 @@ public class CloudBuildClient implements BackgroundResource {
    * advanced usage - prefer using create(CloudBuildSettings).
    */
   public static final CloudBuildClient create(CloudBuildStub stub) {
-<span class="nc" id="L171">    return new CloudBuildClient(stub);</span>
+<span class="nc" id="L187">    return new CloudBuildClient(stub);</span>
   }
 
   /**
    * Constructs an instance of CloudBuildClient, using the given settings. This is protected so that
    * it is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L178">  protected CloudBuildClient(CloudBuildSettings settings) throws IOException {</span>
-<span class="fc" id="L179">    this.settings = settings;</span>
-<span class="fc" id="L180">    this.stub = ((CloudBuildStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L181">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L182">  }</span>
+<span class="fc" id="L194">  protected CloudBuildClient(CloudBuildSettings settings) throws IOException {</span>
+<span class="fc" id="L195">    this.settings = settings;</span>
+<span class="fc" id="L196">    this.stub = ((CloudBuildStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L197">    this.operationsClient =</span>
+<span class="fc" id="L198">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L199">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L200">  }</span>
 
-<span class="nc" id="L184">  protected CloudBuildClient(CloudBuildStub stub) {</span>
-<span class="nc" id="L185">    this.settings = null;</span>
-<span class="nc" id="L186">    this.stub = stub;</span>
-<span class="nc" id="L187">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L188">  }</span>
+<span class="nc" id="L202">  protected CloudBuildClient(CloudBuildStub stub) {</span>
+<span class="nc" id="L203">    this.settings = null;</span>
+<span class="nc" id="L204">    this.stub = stub;</span>
+<span class="nc" id="L205">    this.operationsClient =</span>
+<span class="nc" id="L206">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L207">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L208">  }</span>
 
   public final CloudBuildSettings getSettings() {
-<span class="nc" id="L191">    return settings;</span>
+<span class="nc" id="L211">    return settings;</span>
   }
 
   public CloudBuildStub getStub() {
-<span class="nc" id="L195">    return stub;</span>
+<span class="nc" id="L215">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L203">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L223">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L232">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -229,8 +258,8 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationFuture&lt;Build, BuildOperationMetadata&gt; createBuildAsync(
       String projectId, Build build) {
     CreateBuildRequest request =
-<span class="fc" id="L232">        CreateBuildRequest.newBuilder().setProjectId(projectId).setBuild(build).build();</span>
-<span class="fc" id="L233">    return createBuildAsync(request);</span>
+<span class="fc" id="L261">        CreateBuildRequest.newBuilder().setProjectId(projectId).setBuild(build).build();</span>
+<span class="fc" id="L262">    return createBuildAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -261,7 +290,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Build, BuildOperationMetadata&gt; createBuildAsync(
       CreateBuildRequest request) {
-<span class="fc" id="L264">    return createBuildOperationCallable().futureCall(request);</span>
+<span class="fc" id="L293">    return createBuildOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -292,7 +321,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateBuildRequest, Build, BuildOperationMetadata&gt;
       createBuildOperationCallable() {
-<span class="fc" id="L295">    return stub.createBuildOperationCallable();</span>
+<span class="fc" id="L324">    return stub.createBuildOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -321,7 +350,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateBuildRequest, Operation&gt; createBuildCallable() {
-<span class="nc" id="L324">    return stub.createBuildCallable();</span>
+<span class="nc" id="L353">    return stub.createBuildCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -349,8 +378,8 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final Build getBuild(String projectId, String id) {
     GetBuildRequest request =
-<span class="fc" id="L352">        GetBuildRequest.newBuilder().setProjectId(projectId).setId(id).build();</span>
-<span class="fc" id="L353">    return getBuild(request);</span>
+<span class="fc" id="L381">        GetBuildRequest.newBuilder().setProjectId(projectId).setId(id).build();</span>
+<span class="fc" id="L382">    return getBuild(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -380,7 +409,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Build getBuild(GetBuildRequest request) {
-<span class="fc" id="L383">    return getBuildCallable().call(request);</span>
+<span class="fc" id="L412">    return getBuildCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -409,7 +438,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetBuildRequest, Build&gt; getBuildCallable() {
-<span class="fc" id="L412">    return stub.getBuildCallable();</span>
+<span class="fc" id="L441">    return stub.getBuildCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -439,8 +468,8 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final ListBuildsPagedResponse listBuilds(String projectId, String filter) {
     ListBuildsRequest request =
-<span class="fc" id="L442">        ListBuildsRequest.newBuilder().setProjectId(projectId).setFilter(filter).build();</span>
-<span class="fc" id="L443">    return listBuilds(request);</span>
+<span class="fc" id="L471">        ListBuildsRequest.newBuilder().setProjectId(projectId).setFilter(filter).build();</span>
+<span class="fc" id="L472">    return listBuilds(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -474,7 +503,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListBuildsPagedResponse listBuilds(ListBuildsRequest request) {
-<span class="fc" id="L477">    return listBuildsPagedCallable().call(request);</span>
+<span class="fc" id="L506">    return listBuildsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -507,7 +536,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListBuildsRequest, ListBuildsPagedResponse&gt; listBuildsPagedCallable() {
-<span class="fc" id="L510">    return stub.listBuildsPagedCallable();</span>
+<span class="fc" id="L539">    return stub.listBuildsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -547,7 +576,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListBuildsRequest, ListBuildsResponse&gt; listBuildsCallable() {
-<span class="nc" id="L550">    return stub.listBuildsCallable();</span>
+<span class="nc" id="L579">    return stub.listBuildsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -572,8 +601,8 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final Build cancelBuild(String projectId, String id) {
     CancelBuildRequest request =
-<span class="fc" id="L575">        CancelBuildRequest.newBuilder().setProjectId(projectId).setId(id).build();</span>
-<span class="fc" id="L576">    return cancelBuild(request);</span>
+<span class="fc" id="L604">        CancelBuildRequest.newBuilder().setProjectId(projectId).setId(id).build();</span>
+<span class="fc" id="L605">    return cancelBuild(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -600,7 +629,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Build cancelBuild(CancelBuildRequest request) {
-<span class="fc" id="L603">    return cancelBuildCallable().call(request);</span>
+<span class="fc" id="L632">    return cancelBuildCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -626,7 +655,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CancelBuildRequest, Build&gt; cancelBuildCallable() {
-<span class="fc" id="L629">    return stub.cancelBuildCallable();</span>
+<span class="fc" id="L658">    return stub.cancelBuildCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -682,8 +711,8 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationFuture&lt;Build, BuildOperationMetadata&gt; retryBuildAsync(
       String projectId, String id) {
     RetryBuildRequest request =
-<span class="fc" id="L685">        RetryBuildRequest.newBuilder().setProjectId(projectId).setId(id).build();</span>
-<span class="fc" id="L686">    return retryBuildAsync(request);</span>
+<span class="fc" id="L714">        RetryBuildRequest.newBuilder().setProjectId(projectId).setId(id).build();</span>
+<span class="fc" id="L715">    return retryBuildAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -741,7 +770,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Build, BuildOperationMetadata&gt; retryBuildAsync(
       RetryBuildRequest request) {
-<span class="fc" id="L744">    return retryBuildOperationCallable().futureCall(request);</span>
+<span class="fc" id="L773">    return retryBuildOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -799,7 +828,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RetryBuildRequest, Build, BuildOperationMetadata&gt;
       retryBuildOperationCallable() {
-<span class="fc" id="L802">    return stub.retryBuildOperationCallable();</span>
+<span class="fc" id="L831">    return stub.retryBuildOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -855,7 +884,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RetryBuildRequest, Operation&gt; retryBuildCallable() {
-<span class="nc" id="L858">    return stub.retryBuildCallable();</span>
+<span class="nc" id="L887">    return stub.retryBuildCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -886,8 +915,8 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationFuture&lt;Build, BuildOperationMetadata&gt; approveBuildAsync(
       String name, ApprovalResult approvalResult) {
     ApproveBuildRequest request =
-<span class="fc" id="L889">        ApproveBuildRequest.newBuilder().setName(name).setApprovalResult(approvalResult).build();</span>
-<span class="fc" id="L890">    return approveBuildAsync(request);</span>
+<span class="fc" id="L918">        ApproveBuildRequest.newBuilder().setName(name).setApprovalResult(approvalResult).build();</span>
+<span class="fc" id="L919">    return approveBuildAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -918,7 +947,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Build, BuildOperationMetadata&gt; approveBuildAsync(
       ApproveBuildRequest request) {
-<span class="fc" id="L921">    return approveBuildOperationCallable().futureCall(request);</span>
+<span class="fc" id="L950">    return approveBuildOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -949,7 +978,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationCallable&lt;ApproveBuildRequest, Build, BuildOperationMetadata&gt;
       approveBuildOperationCallable() {
-<span class="fc" id="L952">    return stub.approveBuildOperationCallable();</span>
+<span class="fc" id="L981">    return stub.approveBuildOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -978,7 +1007,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ApproveBuildRequest, Operation&gt; approveBuildCallable() {
-<span class="nc" id="L981">    return stub.approveBuildCallable();</span>
+<span class="nc" id="L1010">    return stub.approveBuildCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1005,8 +1034,8 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final BuildTrigger createBuildTrigger(String projectId, BuildTrigger trigger) {
     CreateBuildTriggerRequest request =
-<span class="fc" id="L1008">        CreateBuildTriggerRequest.newBuilder().setProjectId(projectId).setTrigger(trigger).build();</span>
-<span class="fc" id="L1009">    return createBuildTrigger(request);</span>
+<span class="fc" id="L1037">        CreateBuildTriggerRequest.newBuilder().setProjectId(projectId).setTrigger(trigger).build();</span>
+<span class="fc" id="L1038">    return createBuildTrigger(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1035,7 +1064,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final BuildTrigger createBuildTrigger(CreateBuildTriggerRequest request) {
-<span class="fc" id="L1038">    return createBuildTriggerCallable().call(request);</span>
+<span class="fc" id="L1067">    return createBuildTriggerCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1064,7 +1093,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateBuildTriggerRequest, BuildTrigger&gt; createBuildTriggerCallable() {
-<span class="fc" id="L1067">    return stub.createBuildTriggerCallable();</span>
+<span class="fc" id="L1096">    return stub.createBuildTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1091,8 +1120,8 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final BuildTrigger getBuildTrigger(String projectId, String triggerId) {
     GetBuildTriggerRequest request =
-<span class="fc" id="L1094">        GetBuildTriggerRequest.newBuilder().setProjectId(projectId).setTriggerId(triggerId).build();</span>
-<span class="fc" id="L1095">    return getBuildTrigger(request);</span>
+<span class="fc" id="L1123">        GetBuildTriggerRequest.newBuilder().setProjectId(projectId).setTriggerId(triggerId).build();</span>
+<span class="fc" id="L1124">    return getBuildTrigger(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1121,7 +1150,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final BuildTrigger getBuildTrigger(GetBuildTriggerRequest request) {
-<span class="fc" id="L1124">    return getBuildTriggerCallable().call(request);</span>
+<span class="fc" id="L1153">    return getBuildTriggerCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1150,7 +1179,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetBuildTriggerRequest, BuildTrigger&gt; getBuildTriggerCallable() {
-<span class="fc" id="L1153">    return stub.getBuildTriggerCallable();</span>
+<span class="fc" id="L1182">    return stub.getBuildTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1177,8 +1206,8 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final ListBuildTriggersPagedResponse listBuildTriggers(String projectId) {
     ListBuildTriggersRequest request =
-<span class="fc" id="L1180">        ListBuildTriggersRequest.newBuilder().setProjectId(projectId).build();</span>
-<span class="fc" id="L1181">    return listBuildTriggers(request);</span>
+<span class="fc" id="L1209">        ListBuildTriggersRequest.newBuilder().setProjectId(projectId).build();</span>
+<span class="fc" id="L1210">    return listBuildTriggers(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1210,7 +1239,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListBuildTriggersPagedResponse listBuildTriggers(ListBuildTriggersRequest request) {
-<span class="fc" id="L1213">    return listBuildTriggersPagedCallable().call(request);</span>
+<span class="fc" id="L1242">    return listBuildTriggersPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1243,7 +1272,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListBuildTriggersRequest, ListBuildTriggersPagedResponse&gt;
       listBuildTriggersPagedCallable() {
-<span class="fc" id="L1246">    return stub.listBuildTriggersPagedCallable();</span>
+<span class="fc" id="L1275">    return stub.listBuildTriggersPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1283,7 +1312,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListBuildTriggersRequest, ListBuildTriggersResponse&gt;
       listBuildTriggersCallable() {
-<span class="nc" id="L1286">    return stub.listBuildTriggersCallable();</span>
+<span class="nc" id="L1315">    return stub.listBuildTriggersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1310,12 +1339,12 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final void deleteBuildTrigger(String projectId, String triggerId) {
     DeleteBuildTriggerRequest request =
-<span class="fc" id="L1313">        DeleteBuildTriggerRequest.newBuilder()</span>
-<span class="fc" id="L1314">            .setProjectId(projectId)</span>
-<span class="fc" id="L1315">            .setTriggerId(triggerId)</span>
-<span class="fc" id="L1316">            .build();</span>
-<span class="fc" id="L1317">    deleteBuildTrigger(request);</span>
-<span class="fc" id="L1318">  }</span>
+<span class="fc" id="L1342">        DeleteBuildTriggerRequest.newBuilder()</span>
+<span class="fc" id="L1343">            .setProjectId(projectId)</span>
+<span class="fc" id="L1344">            .setTriggerId(triggerId)</span>
+<span class="fc" id="L1345">            .build();</span>
+<span class="fc" id="L1346">    deleteBuildTrigger(request);</span>
+<span class="fc" id="L1347">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1343,8 +1372,8 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteBuildTrigger(DeleteBuildTriggerRequest request) {
-<span class="fc" id="L1346">    deleteBuildTriggerCallable().call(request);</span>
-<span class="fc" id="L1347">  }</span>
+<span class="fc" id="L1375">    deleteBuildTriggerCallable().call(request);</span>
+<span class="fc" id="L1376">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1371,7 +1400,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteBuildTriggerRequest, Empty&gt; deleteBuildTriggerCallable() {
-<span class="fc" id="L1374">    return stub.deleteBuildTriggerCallable();</span>
+<span class="fc" id="L1403">    return stub.deleteBuildTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1401,12 +1430,12 @@ public class CloudBuildClient implements BackgroundResource {
   public final BuildTrigger updateBuildTrigger(
       String projectId, String triggerId, BuildTrigger trigger) {
     UpdateBuildTriggerRequest request =
-<span class="fc" id="L1404">        UpdateBuildTriggerRequest.newBuilder()</span>
-<span class="fc" id="L1405">            .setProjectId(projectId)</span>
-<span class="fc" id="L1406">            .setTriggerId(triggerId)</span>
-<span class="fc" id="L1407">            .setTrigger(trigger)</span>
-<span class="fc" id="L1408">            .build();</span>
-<span class="fc" id="L1409">    return updateBuildTrigger(request);</span>
+<span class="fc" id="L1433">        UpdateBuildTriggerRequest.newBuilder()</span>
+<span class="fc" id="L1434">            .setProjectId(projectId)</span>
+<span class="fc" id="L1435">            .setTriggerId(triggerId)</span>
+<span class="fc" id="L1436">            .setTrigger(trigger)</span>
+<span class="fc" id="L1437">            .build();</span>
+<span class="fc" id="L1438">    return updateBuildTrigger(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1435,7 +1464,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final BuildTrigger updateBuildTrigger(UpdateBuildTriggerRequest request) {
-<span class="fc" id="L1438">    return updateBuildTriggerCallable().call(request);</span>
+<span class="fc" id="L1467">    return updateBuildTriggerCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1464,7 +1493,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateBuildTriggerRequest, BuildTrigger&gt; updateBuildTriggerCallable() {
-<span class="fc" id="L1467">    return stub.updateBuildTriggerCallable();</span>
+<span class="fc" id="L1496">    return stub.updateBuildTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1492,12 +1521,12 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationFuture&lt;Build, BuildOperationMetadata&gt; runBuildTriggerAsync(
       String projectId, String triggerId, RepoSource source) {
     RunBuildTriggerRequest request =
-<span class="fc" id="L1495">        RunBuildTriggerRequest.newBuilder()</span>
-<span class="fc" id="L1496">            .setProjectId(projectId)</span>
-<span class="fc" id="L1497">            .setTriggerId(triggerId)</span>
-<span class="fc" id="L1498">            .setSource(source)</span>
-<span class="fc" id="L1499">            .build();</span>
-<span class="fc" id="L1500">    return runBuildTriggerAsync(request);</span>
+<span class="fc" id="L1524">        RunBuildTriggerRequest.newBuilder()</span>
+<span class="fc" id="L1525">            .setProjectId(projectId)</span>
+<span class="fc" id="L1526">            .setTriggerId(triggerId)</span>
+<span class="fc" id="L1527">            .setSource(source)</span>
+<span class="fc" id="L1528">            .build();</span>
+<span class="fc" id="L1529">    return runBuildTriggerAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1526,7 +1555,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Build, BuildOperationMetadata&gt; runBuildTriggerAsync(
       RunBuildTriggerRequest request) {
-<span class="fc" id="L1529">    return runBuildTriggerOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1558">    return runBuildTriggerOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1555,7 +1584,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationCallable&lt;RunBuildTriggerRequest, Build, BuildOperationMetadata&gt;
       runBuildTriggerOperationCallable() {
-<span class="fc" id="L1558">    return stub.runBuildTriggerOperationCallable();</span>
+<span class="fc" id="L1587">    return stub.runBuildTriggerOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1582,7 +1611,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;RunBuildTriggerRequest, Operation&gt; runBuildTriggerCallable() {
-<span class="nc" id="L1585">    return stub.runBuildTriggerCallable();</span>
+<span class="nc" id="L1614">    return stub.runBuildTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1613,7 +1642,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final ReceiveTriggerWebhookResponse receiveTriggerWebhook(
       ReceiveTriggerWebhookRequest request) {
-<span class="fc" id="L1616">    return receiveTriggerWebhookCallable().call(request);</span>
+<span class="fc" id="L1645">    return receiveTriggerWebhookCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1644,7 +1673,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ReceiveTriggerWebhookRequest, ReceiveTriggerWebhookResponse&gt;
       receiveTriggerWebhookCallable() {
-<span class="fc" id="L1647">    return stub.receiveTriggerWebhookCallable();</span>
+<span class="fc" id="L1676">    return stub.receiveTriggerWebhookCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1676,12 +1705,12 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationFuture&lt;WorkerPool, CreateWorkerPoolOperationMetadata&gt; createWorkerPoolAsync(
       LocationName parent, WorkerPool workerPool, String workerPoolId) {
     CreateWorkerPoolRequest request =
-<span class="fc" id="L1679">        CreateWorkerPoolRequest.newBuilder()</span>
-<span class="pc bpc" id="L1680" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1681">            .setWorkerPool(workerPool)</span>
-<span class="fc" id="L1682">            .setWorkerPoolId(workerPoolId)</span>
-<span class="fc" id="L1683">            .build();</span>
-<span class="fc" id="L1684">    return createWorkerPoolAsync(request);</span>
+<span class="fc" id="L1708">        CreateWorkerPoolRequest.newBuilder()</span>
+<span class="pc bpc" id="L1709" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1710">            .setWorkerPool(workerPool)</span>
+<span class="fc" id="L1711">            .setWorkerPoolId(workerPoolId)</span>
+<span class="fc" id="L1712">            .build();</span>
+<span class="fc" id="L1713">    return createWorkerPoolAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1713,12 +1742,12 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationFuture&lt;WorkerPool, CreateWorkerPoolOperationMetadata&gt; createWorkerPoolAsync(
       String parent, WorkerPool workerPool, String workerPoolId) {
     CreateWorkerPoolRequest request =
-<span class="fc" id="L1716">        CreateWorkerPoolRequest.newBuilder()</span>
-<span class="fc" id="L1717">            .setParent(parent)</span>
-<span class="fc" id="L1718">            .setWorkerPool(workerPool)</span>
-<span class="fc" id="L1719">            .setWorkerPoolId(workerPoolId)</span>
-<span class="fc" id="L1720">            .build();</span>
-<span class="fc" id="L1721">    return createWorkerPoolAsync(request);</span>
+<span class="fc" id="L1745">        CreateWorkerPoolRequest.newBuilder()</span>
+<span class="fc" id="L1746">            .setParent(parent)</span>
+<span class="fc" id="L1747">            .setWorkerPool(workerPool)</span>
+<span class="fc" id="L1748">            .setWorkerPoolId(workerPoolId)</span>
+<span class="fc" id="L1749">            .build();</span>
+<span class="fc" id="L1750">    return createWorkerPoolAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1747,7 +1776,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationFuture&lt;WorkerPool, CreateWorkerPoolOperationMetadata&gt; createWorkerPoolAsync(
       CreateWorkerPoolRequest request) {
-<span class="fc" id="L1750">    return createWorkerPoolOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1779">    return createWorkerPoolOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1777,7 +1806,7 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateWorkerPoolRequest, WorkerPool, CreateWorkerPoolOperationMetadata&gt;
       createWorkerPoolOperationCallable() {
-<span class="fc" id="L1780">    return stub.createWorkerPoolOperationCallable();</span>
+<span class="fc" id="L1809">    return stub.createWorkerPoolOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1804,7 +1833,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateWorkerPoolRequest, Operation&gt; createWorkerPoolCallable() {
-<span class="nc" id="L1807">    return stub.createWorkerPoolCallable();</span>
+<span class="nc" id="L1836">    return stub.createWorkerPoolCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1828,8 +1857,8 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final WorkerPool getWorkerPool(WorkerPoolName name) {
     GetWorkerPoolRequest request =
-<span class="pc bpc" id="L1831" title="1 of 2 branches missed.">        GetWorkerPoolRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1832">    return getWorkerPool(request);</span>
+<span class="pc bpc" id="L1860" title="1 of 2 branches missed.">        GetWorkerPoolRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1861">    return getWorkerPool(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1852,8 +1881,8 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final WorkerPool getWorkerPool(String name) {
-<span class="fc" id="L1855">    GetWorkerPoolRequest request = GetWorkerPoolRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1856">    return getWorkerPool(request);</span>
+<span class="fc" id="L1884">    GetWorkerPoolRequest request = GetWorkerPoolRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1885">    return getWorkerPool(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1878,7 +1907,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final WorkerPool getWorkerPool(GetWorkerPoolRequest request) {
-<span class="fc" id="L1881">    return getWorkerPoolCallable().call(request);</span>
+<span class="fc" id="L1910">    return getWorkerPoolCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1902,7 +1931,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetWorkerPoolRequest, WorkerPool&gt; getWorkerPoolCallable() {
-<span class="fc" id="L1905">    return stub.getWorkerPoolCallable();</span>
+<span class="fc" id="L1934">    return stub.getWorkerPoolCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1927,8 +1956,8 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteWorkerPoolOperationMetadata&gt; deleteWorkerPoolAsync(
       WorkerPoolName name) {
     DeleteWorkerPoolRequest request =
-<span class="pc bpc" id="L1930" title="1 of 2 branches missed.">        DeleteWorkerPoolRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1931">    return deleteWorkerPoolAsync(request);</span>
+<span class="pc bpc" id="L1959" title="1 of 2 branches missed.">        DeleteWorkerPoolRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1960">    return deleteWorkerPoolAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1952,8 +1981,8 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteWorkerPoolOperationMetadata&gt; deleteWorkerPoolAsync(
       String name) {
-<span class="fc" id="L1955">    DeleteWorkerPoolRequest request = DeleteWorkerPoolRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1956">    return deleteWorkerPoolAsync(request);</span>
+<span class="fc" id="L1984">    DeleteWorkerPoolRequest request = DeleteWorkerPoolRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1985">    return deleteWorkerPoolAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1982,7 +2011,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteWorkerPoolOperationMetadata&gt; deleteWorkerPoolAsync(
       DeleteWorkerPoolRequest request) {
-<span class="fc" id="L1985">    return deleteWorkerPoolOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2014">    return deleteWorkerPoolOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2011,7 +2040,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteWorkerPoolRequest, Empty, DeleteWorkerPoolOperationMetadata&gt;
       deleteWorkerPoolOperationCallable() {
-<span class="fc" id="L2014">    return stub.deleteWorkerPoolOperationCallable();</span>
+<span class="fc" id="L2043">    return stub.deleteWorkerPoolOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2038,7 +2067,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteWorkerPoolRequest, Operation&gt; deleteWorkerPoolCallable() {
-<span class="nc" id="L2041">    return stub.deleteWorkerPoolCallable();</span>
+<span class="nc" id="L2070">    return stub.deleteWorkerPoolCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2066,11 +2095,11 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationFuture&lt;WorkerPool, UpdateWorkerPoolOperationMetadata&gt; updateWorkerPoolAsync(
       WorkerPool workerPool, FieldMask updateMask) {
     UpdateWorkerPoolRequest request =
-<span class="fc" id="L2069">        UpdateWorkerPoolRequest.newBuilder()</span>
-<span class="fc" id="L2070">            .setWorkerPool(workerPool)</span>
-<span class="fc" id="L2071">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L2072">            .build();</span>
-<span class="fc" id="L2073">    return updateWorkerPoolAsync(request);</span>
+<span class="fc" id="L2098">        UpdateWorkerPoolRequest.newBuilder()</span>
+<span class="fc" id="L2099">            .setWorkerPool(workerPool)</span>
+<span class="fc" id="L2100">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L2101">            .build();</span>
+<span class="fc" id="L2102">    return updateWorkerPoolAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2098,7 +2127,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final OperationFuture&lt;WorkerPool, UpdateWorkerPoolOperationMetadata&gt; updateWorkerPoolAsync(
       UpdateWorkerPoolRequest request) {
-<span class="fc" id="L2101">    return updateWorkerPoolOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2130">    return updateWorkerPoolOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2127,7 +2156,7 @@ public class CloudBuildClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateWorkerPoolRequest, WorkerPool, UpdateWorkerPoolOperationMetadata&gt;
       updateWorkerPoolOperationCallable() {
-<span class="fc" id="L2130">    return stub.updateWorkerPoolOperationCallable();</span>
+<span class="fc" id="L2159">    return stub.updateWorkerPoolOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2153,7 +2182,7 @@ public class CloudBuildClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateWorkerPoolRequest, Operation&gt; updateWorkerPoolCallable() {
-<span class="nc" id="L2156">    return stub.updateWorkerPoolCallable();</span>
+<span class="nc" id="L2185">    return stub.updateWorkerPoolCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2179,10 +2208,10 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final ListWorkerPoolsPagedResponse listWorkerPools(LocationName parent) {
     ListWorkerPoolsRequest request =
-<span class="fc" id="L2182">        ListWorkerPoolsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2183" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2184">            .build();</span>
-<span class="fc" id="L2185">    return listWorkerPools(request);</span>
+<span class="fc" id="L2211">        ListWorkerPoolsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2212" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2213">            .build();</span>
+<span class="fc" id="L2214">    return listWorkerPools(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2207,8 +2236,8 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListWorkerPoolsPagedResponse listWorkerPools(String parent) {
-<span class="fc" id="L2210">    ListWorkerPoolsRequest request = ListWorkerPoolsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2211">    return listWorkerPools(request);</span>
+<span class="fc" id="L2239">    ListWorkerPoolsRequest request = ListWorkerPoolsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2240">    return listWorkerPools(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2237,7 +2266,7 @@ public class CloudBuildClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListWorkerPoolsPagedResponse listWorkerPools(ListWorkerPoolsRequest request) {
-<span class="fc" id="L2240">    return listWorkerPoolsPagedCallable().call(request);</span>
+<span class="fc" id="L2269">    return listWorkerPoolsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2267,7 +2296,7 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListWorkerPoolsRequest, ListWorkerPoolsPagedResponse&gt;
       listWorkerPoolsPagedCallable() {
-<span class="fc" id="L2270">    return stub.listWorkerPoolsPagedCallable();</span>
+<span class="fc" id="L2299">    return stub.listWorkerPoolsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2303,37 +2332,37 @@ public class CloudBuildClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListWorkerPoolsRequest, ListWorkerPoolsResponse&gt;
       listWorkerPoolsCallable() {
-<span class="nc" id="L2306">    return stub.listWorkerPoolsCallable();</span>
+<span class="nc" id="L2335">    return stub.listWorkerPoolsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2311">    stub.close();</span>
-<span class="fc" id="L2312">  }</span>
+<span class="fc" id="L2340">    stub.close();</span>
+<span class="fc" id="L2341">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2316">    stub.shutdown();</span>
-<span class="nc" id="L2317">  }</span>
+<span class="nc" id="L2345">    stub.shutdown();</span>
+<span class="nc" id="L2346">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2321">    return stub.isShutdown();</span>
+<span class="nc" id="L2350">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2326">    return stub.isTerminated();</span>
+<span class="nc" id="L2355">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2331">    stub.shutdownNow();</span>
-<span class="nc" id="L2332">  }</span>
+<span class="nc" id="L2360">    stub.shutdownNow();</span>
+<span class="nc" id="L2361">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2336">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2365">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListBuildsPagedResponse
@@ -2348,14 +2377,14 @@ public class CloudBuildClient implements BackgroundResource {
         PageContext&lt;ListBuildsRequest, ListBuildsResponse, Build&gt; context,
         ApiFuture&lt;ListBuildsResponse&gt; futureResponse) {
       ApiFuture&lt;ListBuildsPage&gt; futurePage =
-<span class="fc" id="L2351">          ListBuildsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2352">      return ApiFutures.transform(</span>
-<span class="fc" id="L2353">          futurePage, input -&gt; new ListBuildsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2380">          ListBuildsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2381">      return ApiFutures.transform(</span>
+<span class="fc" id="L2382">          futurePage, input -&gt; new ListBuildsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListBuildsPagedResponse(ListBuildsPage page) {
-<span class="fc" id="L2357">      super(page, ListBuildsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2358">    }</span>
+<span class="fc" id="L2386">      super(page, ListBuildsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2387">    }</span>
   }
 
   public static class ListBuildsPage
@@ -2364,25 +2393,25 @@ public class CloudBuildClient implements BackgroundResource {
     private ListBuildsPage(
         PageContext&lt;ListBuildsRequest, ListBuildsResponse, Build&gt; context,
         ListBuildsResponse response) {
-<span class="fc" id="L2367">      super(context, response);</span>
-<span class="fc" id="L2368">    }</span>
+<span class="fc" id="L2396">      super(context, response);</span>
+<span class="fc" id="L2397">    }</span>
 
     private static ListBuildsPage createEmptyPage() {
-<span class="fc" id="L2371">      return new ListBuildsPage(null, null);</span>
+<span class="fc" id="L2400">      return new ListBuildsPage(null, null);</span>
     }
 
     @Override
     protected ListBuildsPage createPage(
         PageContext&lt;ListBuildsRequest, ListBuildsResponse, Build&gt; context,
         ListBuildsResponse response) {
-<span class="fc" id="L2378">      return new ListBuildsPage(context, response);</span>
+<span class="fc" id="L2407">      return new ListBuildsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListBuildsPage&gt; createPageAsync(
         PageContext&lt;ListBuildsRequest, ListBuildsResponse, Build&gt; context,
         ApiFuture&lt;ListBuildsResponse&gt; futureResponse) {
-<span class="fc" id="L2385">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2414">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2395,17 +2424,17 @@ public class CloudBuildClient implements BackgroundResource {
           ListBuildsFixedSizeCollection&gt; {
 
     private ListBuildsFixedSizeCollection(List&lt;ListBuildsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2398">      super(pages, collectionSize);</span>
-<span class="fc" id="L2399">    }</span>
+<span class="fc" id="L2427">      super(pages, collectionSize);</span>
+<span class="fc" id="L2428">    }</span>
 
     private static ListBuildsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2402">      return new ListBuildsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2431">      return new ListBuildsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListBuildsFixedSizeCollection createCollection(
         List&lt;ListBuildsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2408">      return new ListBuildsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2437">      return new ListBuildsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2421,16 +2450,16 @@ public class CloudBuildClient implements BackgroundResource {
         PageContext&lt;ListBuildTriggersRequest, ListBuildTriggersResponse, BuildTrigger&gt; context,
         ApiFuture&lt;ListBuildTriggersResponse&gt; futureResponse) {
       ApiFuture&lt;ListBuildTriggersPage&gt; futurePage =
-<span class="fc" id="L2424">          ListBuildTriggersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2425">      return ApiFutures.transform(</span>
+<span class="fc" id="L2453">          ListBuildTriggersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2454">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2427">          input -&gt; new ListBuildTriggersPagedResponse(input),</span>
-<span class="fc" id="L2428">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2456">          input -&gt; new ListBuildTriggersPagedResponse(input),</span>
+<span class="fc" id="L2457">          MoreExecutors.directExecutor());</span>
     }
 
     private ListBuildTriggersPagedResponse(ListBuildTriggersPage page) {
-<span class="fc" id="L2432">      super(page, ListBuildTriggersFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2433">    }</span>
+<span class="fc" id="L2461">      super(page, ListBuildTriggersFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2462">    }</span>
   }
 
   public static class ListBuildTriggersPage
@@ -2443,25 +2472,25 @@ public class CloudBuildClient implements BackgroundResource {
     private ListBuildTriggersPage(
         PageContext&lt;ListBuildTriggersRequest, ListBuildTriggersResponse, BuildTrigger&gt; context,
         ListBuildTriggersResponse response) {
-<span class="fc" id="L2446">      super(context, response);</span>
-<span class="fc" id="L2447">    }</span>
+<span class="fc" id="L2475">      super(context, response);</span>
+<span class="fc" id="L2476">    }</span>
 
     private static ListBuildTriggersPage createEmptyPage() {
-<span class="fc" id="L2450">      return new ListBuildTriggersPage(null, null);</span>
+<span class="fc" id="L2479">      return new ListBuildTriggersPage(null, null);</span>
     }
 
     @Override
     protected ListBuildTriggersPage createPage(
         PageContext&lt;ListBuildTriggersRequest, ListBuildTriggersResponse, BuildTrigger&gt; context,
         ListBuildTriggersResponse response) {
-<span class="fc" id="L2457">      return new ListBuildTriggersPage(context, response);</span>
+<span class="fc" id="L2486">      return new ListBuildTriggersPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListBuildTriggersPage&gt; createPageAsync(
         PageContext&lt;ListBuildTriggersRequest, ListBuildTriggersResponse, BuildTrigger&gt; context,
         ApiFuture&lt;ListBuildTriggersResponse&gt; futureResponse) {
-<span class="fc" id="L2464">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2493">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2475,17 +2504,17 @@ public class CloudBuildClient implements BackgroundResource {
 
     private ListBuildTriggersFixedSizeCollection(
         List&lt;ListBuildTriggersPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2478">      super(pages, collectionSize);</span>
-<span class="fc" id="L2479">    }</span>
+<span class="fc" id="L2507">      super(pages, collectionSize);</span>
+<span class="fc" id="L2508">    }</span>
 
     private static ListBuildTriggersFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2482">      return new ListBuildTriggersFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2511">      return new ListBuildTriggersFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListBuildTriggersFixedSizeCollection createCollection(
         List&lt;ListBuildTriggersPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2488">      return new ListBuildTriggersFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2517">      return new ListBuildTriggersFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2501,16 +2530,16 @@ public class CloudBuildClient implements BackgroundResource {
         PageContext&lt;ListWorkerPoolsRequest, ListWorkerPoolsResponse, WorkerPool&gt; context,
         ApiFuture&lt;ListWorkerPoolsResponse&gt; futureResponse) {
       ApiFuture&lt;ListWorkerPoolsPage&gt; futurePage =
-<span class="fc" id="L2504">          ListWorkerPoolsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2505">      return ApiFutures.transform(</span>
+<span class="fc" id="L2533">          ListWorkerPoolsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2534">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2507">          input -&gt; new ListWorkerPoolsPagedResponse(input),</span>
-<span class="fc" id="L2508">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2536">          input -&gt; new ListWorkerPoolsPagedResponse(input),</span>
+<span class="fc" id="L2537">          MoreExecutors.directExecutor());</span>
     }
 
     private ListWorkerPoolsPagedResponse(ListWorkerPoolsPage page) {
-<span class="fc" id="L2512">      super(page, ListWorkerPoolsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2513">    }</span>
+<span class="fc" id="L2541">      super(page, ListWorkerPoolsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2542">    }</span>
   }
 
   public static class ListWorkerPoolsPage
@@ -2520,25 +2549,25 @@ public class CloudBuildClient implements BackgroundResource {
     private ListWorkerPoolsPage(
         PageContext&lt;ListWorkerPoolsRequest, ListWorkerPoolsResponse, WorkerPool&gt; context,
         ListWorkerPoolsResponse response) {
-<span class="fc" id="L2523">      super(context, response);</span>
-<span class="fc" id="L2524">    }</span>
+<span class="fc" id="L2552">      super(context, response);</span>
+<span class="fc" id="L2553">    }</span>
 
     private static ListWorkerPoolsPage createEmptyPage() {
-<span class="fc" id="L2527">      return new ListWorkerPoolsPage(null, null);</span>
+<span class="fc" id="L2556">      return new ListWorkerPoolsPage(null, null);</span>
     }
 
     @Override
     protected ListWorkerPoolsPage createPage(
         PageContext&lt;ListWorkerPoolsRequest, ListWorkerPoolsResponse, WorkerPool&gt; context,
         ListWorkerPoolsResponse response) {
-<span class="fc" id="L2534">      return new ListWorkerPoolsPage(context, response);</span>
+<span class="fc" id="L2563">      return new ListWorkerPoolsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListWorkerPoolsPage&gt; createPageAsync(
         PageContext&lt;ListWorkerPoolsRequest, ListWorkerPoolsResponse, WorkerPool&gt; context,
         ApiFuture&lt;ListWorkerPoolsResponse&gt; futureResponse) {
-<span class="fc" id="L2541">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2570">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2552,17 +2581,17 @@ public class CloudBuildClient implements BackgroundResource {
 
     private ListWorkerPoolsFixedSizeCollection(
         List&lt;ListWorkerPoolsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2555">      super(pages, collectionSize);</span>
-<span class="fc" id="L2556">    }</span>
+<span class="fc" id="L2584">      super(pages, collectionSize);</span>
+<span class="fc" id="L2585">    }</span>
 
     private static ListWorkerPoolsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2559">      return new ListWorkerPoolsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2588">      return new ListWorkerPoolsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListWorkerPoolsFixedSizeCollection createCollection(
         List&lt;ListWorkerPoolsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2565">      return new ListWorkerPoolsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2594">      return new ListWorkerPoolsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

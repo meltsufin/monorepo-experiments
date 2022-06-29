@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>WorkflowTemplateServiceClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-dataproc</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.dataproc.v1</a> &gt; <span class="el_source">WorkflowTemplateServiceClient.java</span></div><h1>WorkflowTemplateServiceClient.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.dataproc.v1.stub.WorkflowTemplateServiceStub;
 import com.google.cloud.dataproc.v1.stub.WorkflowTemplateServiceStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import java.io.IOException;
 import java.util.List;
@@ -47,6 +47,8 @@ import javax.annotation.Generated;
  * calls that map to API methods. Sample code to get started:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
  *     WorkflowTemplateServiceClient.create()) {
  *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
@@ -86,6 +88,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize credentials:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * WorkflowTemplateServiceSettings workflowTemplateServiceSettings =
  *     WorkflowTemplateServiceSettings.newBuilder()
  *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
@@ -97,8 +101,25 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize the endpoint:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * WorkflowTemplateServiceSettings workflowTemplateServiceSettings =
  *     WorkflowTemplateServiceSettings.newBuilder().setEndpoint(myEndpoint).build();
+ * WorkflowTemplateServiceClient workflowTemplateServiceClient =
+ *     WorkflowTemplateServiceClient.create(workflowTemplateServiceSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * WorkflowTemplateServiceSettings workflowTemplateServiceSettings =
+ *     WorkflowTemplateServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             WorkflowTemplateServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
  * WorkflowTemplateServiceClient workflowTemplateServiceClient =
  *     WorkflowTemplateServiceClient.create(workflowTemplateServiceSettings);
  * }&lt;/pre&gt;
@@ -109,11 +130,12 @@ import javax.annotation.Generated;
 public class WorkflowTemplateServiceClient implements BackgroundResource {
   private final WorkflowTemplateServiceSettings settings;
   private final WorkflowTemplateServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of WorkflowTemplateServiceClient with default settings. */
   public static final WorkflowTemplateServiceClient create() throws IOException {
-<span class="nc" id="L116">    return create(WorkflowTemplateServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L138">    return create(WorkflowTemplateServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -122,16 +144,15 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public static final WorkflowTemplateServiceClient create(WorkflowTemplateServiceSettings settings)
       throws IOException {
-<span class="fc" id="L125">    return new WorkflowTemplateServiceClient(settings);</span>
+<span class="fc" id="L147">    return new WorkflowTemplateServiceClient(settings);</span>
   }
 
   /**
    * Constructs an instance of WorkflowTemplateServiceClient, using the given stub for making calls.
    * This is for advanced usage - prefer using create(WorkflowTemplateServiceSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final WorkflowTemplateServiceClient create(WorkflowTemplateServiceStub stub) {
-<span class="nc" id="L134">    return new WorkflowTemplateServiceClient(stub);</span>
+<span class="nc" id="L155">    return new WorkflowTemplateServiceClient(stub);</span>
   }
 
   /**
@@ -140,34 +161,45 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * should be preferred.
    */
   protected WorkflowTemplateServiceClient(WorkflowTemplateServiceSettings settings)
-<span class="fc" id="L143">      throws IOException {</span>
-<span class="fc" id="L144">    this.settings = settings;</span>
-<span class="fc" id="L145">    this.stub = ((WorkflowTemplateServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L146">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L147">  }</span>
+<span class="fc" id="L164">      throws IOException {</span>
+<span class="fc" id="L165">    this.settings = settings;</span>
+<span class="fc" id="L166">    this.stub = ((WorkflowTemplateServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L167">    this.operationsClient =</span>
+<span class="fc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L170">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L150">  protected WorkflowTemplateServiceClient(WorkflowTemplateServiceStub stub) {</span>
-<span class="nc" id="L151">    this.settings = null;</span>
-<span class="nc" id="L152">    this.stub = stub;</span>
-<span class="nc" id="L153">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L154">  }</span>
+<span class="nc" id="L172">  protected WorkflowTemplateServiceClient(WorkflowTemplateServiceStub stub) {</span>
+<span class="nc" id="L173">    this.settings = null;</span>
+<span class="nc" id="L174">    this.stub = stub;</span>
+<span class="nc" id="L175">    this.operationsClient =</span>
+<span class="nc" id="L176">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L177">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L178">  }</span>
 
   public final WorkflowTemplateServiceSettings getSettings() {
-<span class="nc" id="L157">    return settings;</span>
+<span class="nc" id="L181">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public WorkflowTemplateServiceStub getStub() {
-<span class="nc" id="L162">    return stub;</span>
+<span class="nc" id="L185">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L170">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L193">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L202">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -177,6 +209,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
@@ -203,11 +237,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final WorkflowTemplate createWorkflowTemplate(
       LocationName parent, WorkflowTemplate template) {
     CreateWorkflowTemplateRequest request =
-<span class="fc" id="L206">        CreateWorkflowTemplateRequest.newBuilder()</span>
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L208">            .setTemplate(template)</span>
-<span class="fc" id="L209">            .build();</span>
-<span class="fc" id="L210">    return createWorkflowTemplate(request);</span>
+<span class="fc" id="L240">        CreateWorkflowTemplateRequest.newBuilder()</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L242">            .setTemplate(template)</span>
+<span class="fc" id="L243">            .build();</span>
+<span class="fc" id="L244">    return createWorkflowTemplate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -217,6 +251,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   RegionName parent = RegionName.of(&quot;[PROJECT]&quot;, &quot;[REGION]&quot;);
@@ -243,11 +279,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final WorkflowTemplate createWorkflowTemplate(
       RegionName parent, WorkflowTemplate template) {
     CreateWorkflowTemplateRequest request =
-<span class="fc" id="L246">        CreateWorkflowTemplateRequest.newBuilder()</span>
-<span class="pc bpc" id="L247" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L248">            .setTemplate(template)</span>
-<span class="fc" id="L249">            .build();</span>
-<span class="fc" id="L250">    return createWorkflowTemplate(request);</span>
+<span class="fc" id="L282">        CreateWorkflowTemplateRequest.newBuilder()</span>
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L284">            .setTemplate(template)</span>
+<span class="fc" id="L285">            .build();</span>
+<span class="fc" id="L286">    return createWorkflowTemplate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -257,6 +293,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   String parent = RegionName.of(&quot;[PROJECT]&quot;, &quot;[REGION]&quot;).toString();
@@ -282,8 +320,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final WorkflowTemplate createWorkflowTemplate(String parent, WorkflowTemplate template) {
     CreateWorkflowTemplateRequest request =
-<span class="fc" id="L285">        CreateWorkflowTemplateRequest.newBuilder().setParent(parent).setTemplate(template).build();</span>
-<span class="fc" id="L286">    return createWorkflowTemplate(request);</span>
+<span class="fc" id="L323">        CreateWorkflowTemplateRequest.newBuilder().setParent(parent).setTemplate(template).build();</span>
+<span class="fc" id="L324">    return createWorkflowTemplate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -293,6 +331,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   CreateWorkflowTemplateRequest request =
@@ -308,7 +348,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final WorkflowTemplate createWorkflowTemplate(CreateWorkflowTemplateRequest request) {
-<span class="fc" id="L311">    return createWorkflowTemplateCallable().call(request);</span>
+<span class="fc" id="L351">    return createWorkflowTemplateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -318,6 +358,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   CreateWorkflowTemplateRequest request =
@@ -334,7 +376,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateWorkflowTemplateRequest, WorkflowTemplate&gt;
       createWorkflowTemplateCallable() {
-<span class="fc" id="L337">    return stub.createWorkflowTemplateCallable();</span>
+<span class="fc" id="L379">    return stub.createWorkflowTemplateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -346,11 +388,13 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   WorkflowTemplateName name =
-   *       WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *           &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;);
+   *       WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *           &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;);
    *   WorkflowTemplate response = workflowTemplateServiceClient.getWorkflowTemplate(name);
    * }
    * }&lt;/pre&gt;
@@ -372,10 +416,10 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final WorkflowTemplate getWorkflowTemplate(WorkflowTemplateName name) {
     GetWorkflowTemplateRequest request =
-<span class="fc" id="L375">        GetWorkflowTemplateRequest.newBuilder()</span>
-<span class="pc bpc" id="L376" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L377">            .build();</span>
-<span class="fc" id="L378">    return getWorkflowTemplate(request);</span>
+<span class="fc" id="L419">        GetWorkflowTemplateRequest.newBuilder()</span>
+<span class="pc bpc" id="L420" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L421">            .build();</span>
+<span class="fc" id="L422">    return getWorkflowTemplate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -387,6 +431,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   String name =
@@ -414,8 +460,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final WorkflowTemplate getWorkflowTemplate(String name) {
     GetWorkflowTemplateRequest request =
-<span class="fc" id="L417">        GetWorkflowTemplateRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L418">    return getWorkflowTemplate(request);</span>
+<span class="fc" id="L463">        GetWorkflowTemplateRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L464">    return getWorkflowTemplate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -427,13 +473,15 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   GetWorkflowTemplateRequest request =
    *       GetWorkflowTemplateRequest.newBuilder()
    *           .setName(
-   *               WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *                       &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
+   *               WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *                       &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
    *                   .toString())
    *           .setVersion(351608024)
    *           .build();
@@ -445,7 +493,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final WorkflowTemplate getWorkflowTemplate(GetWorkflowTemplateRequest request) {
-<span class="fc" id="L448">    return getWorkflowTemplateCallable().call(request);</span>
+<span class="fc" id="L496">    return getWorkflowTemplateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -457,13 +505,15 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   GetWorkflowTemplateRequest request =
    *       GetWorkflowTemplateRequest.newBuilder()
    *           .setName(
-   *               WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *                       &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
+   *               WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *                       &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
    *                   .toString())
    *           .setVersion(351608024)
    *           .build();
@@ -476,7 +526,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetWorkflowTemplateRequest, WorkflowTemplate&gt;
       getWorkflowTemplateCallable() {
-<span class="fc" id="L479">    return stub.getWorkflowTemplateCallable();</span>
+<span class="fc" id="L529">    return stub.getWorkflowTemplateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -502,11 +552,13 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   WorkflowTemplateName name =
-   *       WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *           &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;);
+   *       WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *           &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;);
    *   workflowTemplateServiceClient.instantiateWorkflowTemplateAsync(name).get();
    * }
    * }&lt;/pre&gt;
@@ -529,10 +581,10 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateWorkflowTemplateAsync(
       WorkflowTemplateName name) {
     InstantiateWorkflowTemplateRequest request =
-<span class="fc" id="L532">        InstantiateWorkflowTemplateRequest.newBuilder()</span>
-<span class="pc bpc" id="L533" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L534">            .build();</span>
-<span class="fc" id="L535">    return instantiateWorkflowTemplateAsync(request);</span>
+<span class="fc" id="L584">        InstantiateWorkflowTemplateRequest.newBuilder()</span>
+<span class="pc bpc" id="L585" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L586">            .build();</span>
+<span class="fc" id="L587">    return instantiateWorkflowTemplateAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -558,6 +610,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   String name =
@@ -586,8 +640,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateWorkflowTemplateAsync(
       String name) {
     InstantiateWorkflowTemplateRequest request =
-<span class="fc" id="L589">        InstantiateWorkflowTemplateRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L590">    return instantiateWorkflowTemplateAsync(request);</span>
+<span class="fc" id="L643">        InstantiateWorkflowTemplateRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L644">    return instantiateWorkflowTemplateAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -613,11 +667,13 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   WorkflowTemplateName name =
-   *       WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *           &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;);
+   *       WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *           &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;);
    *   Map&lt;String, String&gt; parameters = new HashMap&lt;&gt;();
    *   workflowTemplateServiceClient.instantiateWorkflowTemplateAsync(name, parameters).get();
    * }
@@ -643,11 +699,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateWorkflowTemplateAsync(
       WorkflowTemplateName name, Map&lt;String, String&gt; parameters) {
     InstantiateWorkflowTemplateRequest request =
-<span class="fc" id="L646">        InstantiateWorkflowTemplateRequest.newBuilder()</span>
-<span class="pc bpc" id="L647" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L648">            .putAllParameters(parameters)</span>
-<span class="fc" id="L649">            .build();</span>
-<span class="fc" id="L650">    return instantiateWorkflowTemplateAsync(request);</span>
+<span class="fc" id="L702">        InstantiateWorkflowTemplateRequest.newBuilder()</span>
+<span class="pc bpc" id="L703" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L704">            .putAllParameters(parameters)</span>
+<span class="fc" id="L705">            .build();</span>
+<span class="fc" id="L706">    return instantiateWorkflowTemplateAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -673,6 +729,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   String name =
@@ -704,11 +762,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateWorkflowTemplateAsync(
       String name, Map&lt;String, String&gt; parameters) {
     InstantiateWorkflowTemplateRequest request =
-<span class="fc" id="L707">        InstantiateWorkflowTemplateRequest.newBuilder()</span>
-<span class="fc" id="L708">            .setName(name)</span>
-<span class="fc" id="L709">            .putAllParameters(parameters)</span>
-<span class="fc" id="L710">            .build();</span>
-<span class="fc" id="L711">    return instantiateWorkflowTemplateAsync(request);</span>
+<span class="fc" id="L765">        InstantiateWorkflowTemplateRequest.newBuilder()</span>
+<span class="fc" id="L766">            .setName(name)</span>
+<span class="fc" id="L767">            .putAllParameters(parameters)</span>
+<span class="fc" id="L768">            .build();</span>
+<span class="fc" id="L769">    return instantiateWorkflowTemplateAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -734,13 +792,15 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   InstantiateWorkflowTemplateRequest request =
    *       InstantiateWorkflowTemplateRequest.newBuilder()
    *           .setName(
-   *               WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *                       &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
+   *               WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *                       &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
    *                   .toString())
    *           .setVersion(351608024)
    *           .setRequestId(&quot;requestId693933066&quot;)
@@ -755,7 +815,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateWorkflowTemplateAsync(
       InstantiateWorkflowTemplateRequest request) {
-<span class="fc" id="L758">    return instantiateWorkflowTemplateOperationCallable().futureCall(request);</span>
+<span class="fc" id="L818">    return instantiateWorkflowTemplateOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -781,13 +841,15 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   InstantiateWorkflowTemplateRequest request =
    *       InstantiateWorkflowTemplateRequest.newBuilder()
    *           .setName(
-   *               WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *                       &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
+   *               WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *                       &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
    *                   .toString())
    *           .setVersion(351608024)
    *           .setRequestId(&quot;requestId693933066&quot;)
@@ -804,7 +866,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;InstantiateWorkflowTemplateRequest, Empty, WorkflowMetadata&gt;
       instantiateWorkflowTemplateOperationCallable() {
-<span class="fc" id="L807">    return stub.instantiateWorkflowTemplateOperationCallable();</span>
+<span class="fc" id="L869">    return stub.instantiateWorkflowTemplateOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -830,13 +892,15 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   InstantiateWorkflowTemplateRequest request =
    *       InstantiateWorkflowTemplateRequest.newBuilder()
    *           .setName(
-   *               WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *                       &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
+   *               WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *                       &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
    *                   .toString())
    *           .setVersion(351608024)
    *           .setRequestId(&quot;requestId693933066&quot;)
@@ -851,7 +915,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;InstantiateWorkflowTemplateRequest, Operation&gt;
       instantiateWorkflowTemplateCallable() {
-<span class="nc" id="L854">    return stub.instantiateWorkflowTemplateCallable();</span>
+<span class="nc" id="L918">    return stub.instantiateWorkflowTemplateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -882,6 +946,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
@@ -907,11 +973,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateInlineWorkflowTemplateAsync(
       LocationName parent, WorkflowTemplate template) {
     InstantiateInlineWorkflowTemplateRequest request =
-<span class="fc" id="L910">        InstantiateInlineWorkflowTemplateRequest.newBuilder()</span>
-<span class="pc bpc" id="L911" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L912">            .setTemplate(template)</span>
-<span class="fc" id="L913">            .build();</span>
-<span class="fc" id="L914">    return instantiateInlineWorkflowTemplateAsync(request);</span>
+<span class="fc" id="L976">        InstantiateInlineWorkflowTemplateRequest.newBuilder()</span>
+<span class="pc bpc" id="L977" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L978">            .setTemplate(template)</span>
+<span class="fc" id="L979">            .build();</span>
+<span class="fc" id="L980">    return instantiateInlineWorkflowTemplateAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -942,6 +1008,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   RegionName parent = RegionName.of(&quot;[PROJECT]&quot;, &quot;[REGION]&quot;);
@@ -967,11 +1035,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateInlineWorkflowTemplateAsync(
       RegionName parent, WorkflowTemplate template) {
     InstantiateInlineWorkflowTemplateRequest request =
-<span class="fc" id="L970">        InstantiateInlineWorkflowTemplateRequest.newBuilder()</span>
-<span class="pc bpc" id="L971" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L972">            .setTemplate(template)</span>
-<span class="fc" id="L973">            .build();</span>
-<span class="fc" id="L974">    return instantiateInlineWorkflowTemplateAsync(request);</span>
+<span class="fc" id="L1038">        InstantiateInlineWorkflowTemplateRequest.newBuilder()</span>
+<span class="pc bpc" id="L1039" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1040">            .setTemplate(template)</span>
+<span class="fc" id="L1041">            .build();</span>
+<span class="fc" id="L1042">    return instantiateInlineWorkflowTemplateAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1002,6 +1070,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   String parent = RegionName.of(&quot;[PROJECT]&quot;, &quot;[REGION]&quot;).toString();
@@ -1027,11 +1097,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateInlineWorkflowTemplateAsync(
       String parent, WorkflowTemplate template) {
     InstantiateInlineWorkflowTemplateRequest request =
-<span class="fc" id="L1030">        InstantiateInlineWorkflowTemplateRequest.newBuilder()</span>
-<span class="fc" id="L1031">            .setParent(parent)</span>
-<span class="fc" id="L1032">            .setTemplate(template)</span>
-<span class="fc" id="L1033">            .build();</span>
-<span class="fc" id="L1034">    return instantiateInlineWorkflowTemplateAsync(request);</span>
+<span class="fc" id="L1100">        InstantiateInlineWorkflowTemplateRequest.newBuilder()</span>
+<span class="fc" id="L1101">            .setParent(parent)</span>
+<span class="fc" id="L1102">            .setTemplate(template)</span>
+<span class="fc" id="L1103">            .build();</span>
+<span class="fc" id="L1104">    return instantiateInlineWorkflowTemplateAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1062,6 +1132,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   InstantiateInlineWorkflowTemplateRequest request =
@@ -1079,7 +1151,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, WorkflowMetadata&gt; instantiateInlineWorkflowTemplateAsync(
       InstantiateInlineWorkflowTemplateRequest request) {
-<span class="fc" id="L1082">    return instantiateInlineWorkflowTemplateOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1154">    return instantiateInlineWorkflowTemplateOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1110,6 +1182,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   InstantiateInlineWorkflowTemplateRequest request =
@@ -1129,7 +1203,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;InstantiateInlineWorkflowTemplateRequest, Empty, WorkflowMetadata&gt;
       instantiateInlineWorkflowTemplateOperationCallable() {
-<span class="fc" id="L1132">    return stub.instantiateInlineWorkflowTemplateOperationCallable();</span>
+<span class="fc" id="L1206">    return stub.instantiateInlineWorkflowTemplateOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1160,6 +1234,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   InstantiateInlineWorkflowTemplateRequest request =
@@ -1179,7 +1255,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;InstantiateInlineWorkflowTemplateRequest, Operation&gt;
       instantiateInlineWorkflowTemplateCallable() {
-<span class="nc" id="L1182">    return stub.instantiateInlineWorkflowTemplateCallable();</span>
+<span class="nc" id="L1258">    return stub.instantiateInlineWorkflowTemplateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1190,6 +1266,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   WorkflowTemplate template = WorkflowTemplate.newBuilder().build();
@@ -1203,8 +1281,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final WorkflowTemplate updateWorkflowTemplate(WorkflowTemplate template) {
     UpdateWorkflowTemplateRequest request =
-<span class="fc" id="L1206">        UpdateWorkflowTemplateRequest.newBuilder().setTemplate(template).build();</span>
-<span class="fc" id="L1207">    return updateWorkflowTemplate(request);</span>
+<span class="fc" id="L1284">        UpdateWorkflowTemplateRequest.newBuilder().setTemplate(template).build();</span>
+<span class="fc" id="L1285">    return updateWorkflowTemplate(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1215,6 +1293,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   UpdateWorkflowTemplateRequest request =
@@ -1229,7 +1309,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final WorkflowTemplate updateWorkflowTemplate(UpdateWorkflowTemplateRequest request) {
-<span class="fc" id="L1232">    return updateWorkflowTemplateCallable().call(request);</span>
+<span class="fc" id="L1312">    return updateWorkflowTemplateCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1240,6 +1320,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   UpdateWorkflowTemplateRequest request =
@@ -1255,7 +1337,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateWorkflowTemplateRequest, WorkflowTemplate&gt;
       updateWorkflowTemplateCallable() {
-<span class="fc" id="L1258">    return stub.updateWorkflowTemplateCallable();</span>
+<span class="fc" id="L1340">    return stub.updateWorkflowTemplateCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1265,6 +1347,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
@@ -1290,10 +1374,10 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final ListWorkflowTemplatesPagedResponse listWorkflowTemplates(LocationName parent) {
     ListWorkflowTemplatesRequest request =
-<span class="fc" id="L1293">        ListWorkflowTemplatesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1294" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1295">            .build();</span>
-<span class="fc" id="L1296">    return listWorkflowTemplates(request);</span>
+<span class="fc" id="L1377">        ListWorkflowTemplatesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1378" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1379">            .build();</span>
+<span class="fc" id="L1380">    return listWorkflowTemplates(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1303,6 +1387,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   RegionName parent = RegionName.of(&quot;[PROJECT]&quot;, &quot;[REGION]&quot;);
@@ -1328,10 +1414,10 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final ListWorkflowTemplatesPagedResponse listWorkflowTemplates(RegionName parent) {
     ListWorkflowTemplatesRequest request =
-<span class="fc" id="L1331">        ListWorkflowTemplatesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1332" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1333">            .build();</span>
-<span class="fc" id="L1334">    return listWorkflowTemplates(request);</span>
+<span class="fc" id="L1417">        ListWorkflowTemplatesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1418" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1419">            .build();</span>
+<span class="fc" id="L1420">    return listWorkflowTemplates(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1341,6 +1427,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   String parent = RegionName.of(&quot;[PROJECT]&quot;, &quot;[REGION]&quot;).toString();
@@ -1366,8 +1454,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final ListWorkflowTemplatesPagedResponse listWorkflowTemplates(String parent) {
     ListWorkflowTemplatesRequest request =
-<span class="fc" id="L1369">        ListWorkflowTemplatesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1370">    return listWorkflowTemplates(request);</span>
+<span class="fc" id="L1457">        ListWorkflowTemplatesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1458">    return listWorkflowTemplates(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1377,6 +1465,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   ListWorkflowTemplatesRequest request =
@@ -1397,7 +1487,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final ListWorkflowTemplatesPagedResponse listWorkflowTemplates(
       ListWorkflowTemplatesRequest request) {
-<span class="fc" id="L1400">    return listWorkflowTemplatesPagedCallable().call(request);</span>
+<span class="fc" id="L1490">    return listWorkflowTemplatesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1407,6 +1497,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   ListWorkflowTemplatesRequest request =
@@ -1426,7 +1518,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListWorkflowTemplatesRequest, ListWorkflowTemplatesPagedResponse&gt;
       listWorkflowTemplatesPagedCallable() {
-<span class="fc" id="L1429">    return stub.listWorkflowTemplatesPagedCallable();</span>
+<span class="fc" id="L1521">    return stub.listWorkflowTemplatesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1436,6 +1528,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   ListWorkflowTemplatesRequest request =
@@ -1447,7 +1541,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    *   while (true) {
    *     ListWorkflowTemplatesResponse response =
    *         workflowTemplateServiceClient.listWorkflowTemplatesCallable().call(request);
-   *     for (WorkflowTemplate element : response.getResponsesList()) {
+   *     for (WorkflowTemplate element : response.getTemplatesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1462,7 +1556,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListWorkflowTemplatesRequest, ListWorkflowTemplatesResponse&gt;
       listWorkflowTemplatesCallable() {
-<span class="nc" id="L1465">    return stub.listWorkflowTemplatesCallable();</span>
+<span class="nc" id="L1559">    return stub.listWorkflowTemplatesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1472,11 +1566,13 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   WorkflowTemplateName name =
-   *       WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *           &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;);
+   *       WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *           &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;);
    *   workflowTemplateServiceClient.deleteWorkflowTemplate(name);
    * }
    * }&lt;/pre&gt;
@@ -1498,11 +1594,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final void deleteWorkflowTemplate(WorkflowTemplateName name) {
     DeleteWorkflowTemplateRequest request =
-<span class="fc" id="L1501">        DeleteWorkflowTemplateRequest.newBuilder()</span>
-<span class="pc bpc" id="L1502" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1503">            .build();</span>
-<span class="fc" id="L1504">    deleteWorkflowTemplate(request);</span>
-<span class="fc" id="L1505">  }</span>
+<span class="fc" id="L1597">        DeleteWorkflowTemplateRequest.newBuilder()</span>
+<span class="pc bpc" id="L1598" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1599">            .build();</span>
+<span class="fc" id="L1600">    deleteWorkflowTemplate(request);</span>
+<span class="fc" id="L1601">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1511,6 +1607,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   String name =
@@ -1538,9 +1636,9 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final void deleteWorkflowTemplate(String name) {
     DeleteWorkflowTemplateRequest request =
-<span class="fc" id="L1541">        DeleteWorkflowTemplateRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1542">    deleteWorkflowTemplate(request);</span>
-<span class="fc" id="L1543">  }</span>
+<span class="fc" id="L1639">        DeleteWorkflowTemplateRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1640">    deleteWorkflowTemplate(request);</span>
+<span class="fc" id="L1641">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1549,13 +1647,15 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   DeleteWorkflowTemplateRequest request =
    *       DeleteWorkflowTemplateRequest.newBuilder()
    *           .setName(
-   *               WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *                       &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
+   *               WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *                       &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
    *                   .toString())
    *           .setVersion(351608024)
    *           .build();
@@ -1567,8 +1667,8 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteWorkflowTemplate(DeleteWorkflowTemplateRequest request) {
-<span class="fc" id="L1570">    deleteWorkflowTemplateCallable().call(request);</span>
-<span class="fc" id="L1571">  }</span>
+<span class="fc" id="L1670">    deleteWorkflowTemplateCallable().call(request);</span>
+<span class="fc" id="L1671">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1577,13 +1677,15 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (WorkflowTemplateServiceClient workflowTemplateServiceClient =
    *     WorkflowTemplateServiceClient.create()) {
    *   DeleteWorkflowTemplateRequest request =
    *       DeleteWorkflowTemplateRequest.newBuilder()
    *           .setName(
-   *               WorkflowTemplateName.ofProjectRegionWorkflowTemplateName(
-   *                       &quot;[PROJECT]&quot;, &quot;[REGION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
+   *               WorkflowTemplateName.ofProjectLocationWorkflowTemplateName(
+   *                       &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[WORKFLOW_TEMPLATE]&quot;)
    *                   .toString())
    *           .setVersion(351608024)
    *           .build();
@@ -1596,37 +1698,37 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteWorkflowTemplateRequest, Empty&gt;
       deleteWorkflowTemplateCallable() {
-<span class="fc" id="L1599">    return stub.deleteWorkflowTemplateCallable();</span>
+<span class="fc" id="L1701">    return stub.deleteWorkflowTemplateCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L1604">    stub.close();</span>
-<span class="fc" id="L1605">  }</span>
+<span class="fc" id="L1706">    stub.close();</span>
+<span class="fc" id="L1707">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L1609">    stub.shutdown();</span>
-<span class="nc" id="L1610">  }</span>
+<span class="nc" id="L1711">    stub.shutdown();</span>
+<span class="nc" id="L1712">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L1614">    return stub.isShutdown();</span>
+<span class="nc" id="L1716">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L1619">    return stub.isTerminated();</span>
+<span class="nc" id="L1721">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L1624">    stub.shutdownNow();</span>
-<span class="nc" id="L1625">  }</span>
+<span class="nc" id="L1726">    stub.shutdownNow();</span>
+<span class="nc" id="L1727">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L1629">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L1731">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListWorkflowTemplatesPagedResponse
@@ -1642,16 +1744,16 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListWorkflowTemplatesResponse&gt; futureResponse) {
       ApiFuture&lt;ListWorkflowTemplatesPage&gt; futurePage =
-<span class="fc" id="L1645">          ListWorkflowTemplatesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L1646">      return ApiFutures.transform(</span>
+<span class="fc" id="L1747">          ListWorkflowTemplatesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1748">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L1648">          input -&gt; new ListWorkflowTemplatesPagedResponse(input),</span>
-<span class="fc" id="L1649">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L1750">          input -&gt; new ListWorkflowTemplatesPagedResponse(input),</span>
+<span class="fc" id="L1751">          MoreExecutors.directExecutor());</span>
     }
 
     private ListWorkflowTemplatesPagedResponse(ListWorkflowTemplatesPage page) {
-<span class="fc" id="L1653">      super(page, ListWorkflowTemplatesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L1654">    }</span>
+<span class="fc" id="L1755">      super(page, ListWorkflowTemplatesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1756">    }</span>
   }
 
   public static class ListWorkflowTemplatesPage
@@ -1665,11 +1767,11 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
         PageContext&lt;ListWorkflowTemplatesRequest, ListWorkflowTemplatesResponse, WorkflowTemplate&gt;
             context,
         ListWorkflowTemplatesResponse response) {
-<span class="fc" id="L1668">      super(context, response);</span>
-<span class="fc" id="L1669">    }</span>
+<span class="fc" id="L1770">      super(context, response);</span>
+<span class="fc" id="L1771">    }</span>
 
     private static ListWorkflowTemplatesPage createEmptyPage() {
-<span class="fc" id="L1672">      return new ListWorkflowTemplatesPage(null, null);</span>
+<span class="fc" id="L1774">      return new ListWorkflowTemplatesPage(null, null);</span>
     }
 
     @Override
@@ -1677,7 +1779,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
         PageContext&lt;ListWorkflowTemplatesRequest, ListWorkflowTemplatesResponse, WorkflowTemplate&gt;
             context,
         ListWorkflowTemplatesResponse response) {
-<span class="fc" id="L1680">      return new ListWorkflowTemplatesPage(context, response);</span>
+<span class="fc" id="L1782">      return new ListWorkflowTemplatesPage(context, response);</span>
     }
 
     @Override
@@ -1685,7 +1787,7 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
         PageContext&lt;ListWorkflowTemplatesRequest, ListWorkflowTemplatesResponse, WorkflowTemplate&gt;
             context,
         ApiFuture&lt;ListWorkflowTemplatesResponse&gt; futureResponse) {
-<span class="fc" id="L1688">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1790">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -1699,17 +1801,17 @@ public class WorkflowTemplateServiceClient implements BackgroundResource {
 
     private ListWorkflowTemplatesFixedSizeCollection(
         List&lt;ListWorkflowTemplatesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L1702">      super(pages, collectionSize);</span>
-<span class="fc" id="L1703">    }</span>
+<span class="fc" id="L1804">      super(pages, collectionSize);</span>
+<span class="fc" id="L1805">    }</span>
 
     private static ListWorkflowTemplatesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L1706">      return new ListWorkflowTemplatesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L1808">      return new ListWorkflowTemplatesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListWorkflowTemplatesFixedSizeCollection createCollection(
         List&lt;ListWorkflowTemplatesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L1712">      return new ListWorkflowTemplatesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L1814">      return new ListWorkflowTemplatesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

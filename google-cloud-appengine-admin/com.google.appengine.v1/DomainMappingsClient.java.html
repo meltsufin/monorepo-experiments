@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.appengine.v1.stub.DomainMappingsStub;
 import com.google.appengine.v1.stub.DomainMappingsStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import java.io.IOException;
 import java.util.List;
@@ -103,17 +103,32 @@ import javax.annotation.Generated;
  * DomainMappingsClient domainMappingsClient = DomainMappingsClient.create(domainMappingsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * DomainMappingsSettings domainMappingsSettings =
+ *     DomainMappingsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             DomainMappingsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * DomainMappingsClient domainMappingsClient = DomainMappingsClient.create(domainMappingsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class DomainMappingsClient implements BackgroundResource {
   private final DomainMappingsSettings settings;
   private final DomainMappingsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of DomainMappingsClient with default settings. */
   public static final DomainMappingsClient create() throws IOException {
-<span class="nc" id="L116">    return create(DomainMappingsSettings.newBuilder().build());</span>
+<span class="nc" id="L131">    return create(DomainMappingsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -122,16 +137,15 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public static final DomainMappingsClient create(DomainMappingsSettings settings)
       throws IOException {
-<span class="fc" id="L125">    return new DomainMappingsClient(settings);</span>
+<span class="fc" id="L140">    return new DomainMappingsClient(settings);</span>
   }
 
   /**
    * Constructs an instance of DomainMappingsClient, using the given stub for making calls. This is
    * for advanced usage - prefer using create(DomainMappingsSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final DomainMappingsClient create(DomainMappingsStub stub) {
-<span class="nc" id="L134">    return new DomainMappingsClient(stub);</span>
+<span class="nc" id="L148">    return new DomainMappingsClient(stub);</span>
   }
 
   /**
@@ -139,34 +153,45 @@ public class DomainMappingsClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L142">  protected DomainMappingsClient(DomainMappingsSettings settings) throws IOException {</span>
-<span class="fc" id="L143">    this.settings = settings;</span>
-<span class="fc" id="L144">    this.stub = ((DomainMappingsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L145">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L146">  }</span>
+<span class="fc" id="L156">  protected DomainMappingsClient(DomainMappingsSettings settings) throws IOException {</span>
+<span class="fc" id="L157">    this.settings = settings;</span>
+<span class="fc" id="L158">    this.stub = ((DomainMappingsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L159">    this.operationsClient =</span>
+<span class="fc" id="L160">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L161">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L162">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L149">  protected DomainMappingsClient(DomainMappingsStub stub) {</span>
-<span class="nc" id="L150">    this.settings = null;</span>
-<span class="nc" id="L151">    this.stub = stub;</span>
-<span class="nc" id="L152">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L153">  }</span>
+<span class="nc" id="L164">  protected DomainMappingsClient(DomainMappingsStub stub) {</span>
+<span class="nc" id="L165">    this.settings = null;</span>
+<span class="nc" id="L166">    this.stub = stub;</span>
+<span class="nc" id="L167">    this.operationsClient =</span>
+<span class="nc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L170">  }</span>
 
   public final DomainMappingsSettings getSettings() {
-<span class="nc" id="L156">    return settings;</span>
+<span class="nc" id="L173">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public DomainMappingsStub getStub() {
-<span class="nc" id="L161">    return stub;</span>
+<span class="nc" id="L177">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L169">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L185">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L194">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -196,7 +221,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final ListDomainMappingsPagedResponse listDomainMappings(
       ListDomainMappingsRequest request) {
-<span class="fc" id="L199">    return listDomainMappingsPagedCallable().call(request);</span>
+<span class="fc" id="L224">    return listDomainMappingsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -226,7 +251,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDomainMappingsRequest, ListDomainMappingsPagedResponse&gt;
       listDomainMappingsPagedCallable() {
-<span class="fc" id="L229">    return stub.listDomainMappingsPagedCallable();</span>
+<span class="fc" id="L254">    return stub.listDomainMappingsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -248,7 +273,7 @@ public class DomainMappingsClient implements BackgroundResource {
    *   while (true) {
    *     ListDomainMappingsResponse response =
    *         domainMappingsClient.listDomainMappingsCallable().call(request);
-   *     for (DomainMapping element : response.getResponsesList()) {
+   *     for (DomainMapping element : response.getDomainMappingsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -263,7 +288,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDomainMappingsRequest, ListDomainMappingsResponse&gt;
       listDomainMappingsCallable() {
-<span class="nc" id="L266">    return stub.listDomainMappingsCallable();</span>
+<span class="nc" id="L291">    return stub.listDomainMappingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -286,7 +311,7 @@ public class DomainMappingsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final DomainMapping getDomainMapping(GetDomainMappingRequest request) {
-<span class="fc" id="L289">    return getDomainMappingCallable().call(request);</span>
+<span class="fc" id="L314">    return getDomainMappingCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -309,7 +334,7 @@ public class DomainMappingsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetDomainMappingRequest, DomainMapping&gt; getDomainMappingCallable() {
-<span class="fc" id="L312">    return stub.getDomainMappingCallable();</span>
+<span class="fc" id="L337">    return stub.getDomainMappingCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -339,7 +364,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DomainMapping, OperationMetadataV1&gt; createDomainMappingAsync(
       CreateDomainMappingRequest request) {
-<span class="fc" id="L342">    return createDomainMappingOperationCallable().futureCall(request);</span>
+<span class="fc" id="L367">    return createDomainMappingOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -369,7 +394,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateDomainMappingRequest, DomainMapping, OperationMetadataV1&gt;
       createDomainMappingOperationCallable() {
-<span class="fc" id="L372">    return stub.createDomainMappingOperationCallable();</span>
+<span class="fc" id="L397">    return stub.createDomainMappingOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -398,7 +423,7 @@ public class DomainMappingsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateDomainMappingRequest, Operation&gt; createDomainMappingCallable() {
-<span class="nc" id="L401">    return stub.createDomainMappingCallable();</span>
+<span class="nc" id="L426">    return stub.createDomainMappingCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -428,7 +453,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DomainMapping, OperationMetadataV1&gt; updateDomainMappingAsync(
       UpdateDomainMappingRequest request) {
-<span class="fc" id="L431">    return updateDomainMappingOperationCallable().futureCall(request);</span>
+<span class="fc" id="L456">    return updateDomainMappingOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -458,7 +483,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateDomainMappingRequest, DomainMapping, OperationMetadataV1&gt;
       updateDomainMappingOperationCallable() {
-<span class="fc" id="L461">    return stub.updateDomainMappingOperationCallable();</span>
+<span class="fc" id="L486">    return stub.updateDomainMappingOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -487,7 +512,7 @@ public class DomainMappingsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateDomainMappingRequest, Operation&gt; updateDomainMappingCallable() {
-<span class="nc" id="L490">    return stub.updateDomainMappingCallable();</span>
+<span class="nc" id="L515">    return stub.updateDomainMappingCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -512,7 +537,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadataV1&gt; deleteDomainMappingAsync(
       DeleteDomainMappingRequest request) {
-<span class="fc" id="L515">    return deleteDomainMappingOperationCallable().futureCall(request);</span>
+<span class="fc" id="L540">    return deleteDomainMappingOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -537,7 +562,7 @@ public class DomainMappingsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteDomainMappingRequest, Empty, OperationMetadataV1&gt;
       deleteDomainMappingOperationCallable() {
-<span class="fc" id="L540">    return stub.deleteDomainMappingOperationCallable();</span>
+<span class="fc" id="L565">    return stub.deleteDomainMappingOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -561,37 +586,37 @@ public class DomainMappingsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteDomainMappingRequest, Operation&gt; deleteDomainMappingCallable() {
-<span class="nc" id="L564">    return stub.deleteDomainMappingCallable();</span>
+<span class="nc" id="L589">    return stub.deleteDomainMappingCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L569">    stub.close();</span>
-<span class="fc" id="L570">  }</span>
+<span class="fc" id="L594">    stub.close();</span>
+<span class="fc" id="L595">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L574">    stub.shutdown();</span>
-<span class="nc" id="L575">  }</span>
+<span class="nc" id="L599">    stub.shutdown();</span>
+<span class="nc" id="L600">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L579">    return stub.isShutdown();</span>
+<span class="nc" id="L604">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L584">    return stub.isTerminated();</span>
+<span class="nc" id="L609">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L589">    stub.shutdownNow();</span>
-<span class="nc" id="L590">  }</span>
+<span class="nc" id="L614">    stub.shutdownNow();</span>
+<span class="nc" id="L615">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L594">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L619">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListDomainMappingsPagedResponse
@@ -606,16 +631,16 @@ public class DomainMappingsClient implements BackgroundResource {
         PageContext&lt;ListDomainMappingsRequest, ListDomainMappingsResponse, DomainMapping&gt; context,
         ApiFuture&lt;ListDomainMappingsResponse&gt; futureResponse) {
       ApiFuture&lt;ListDomainMappingsPage&gt; futurePage =
-<span class="fc" id="L609">          ListDomainMappingsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L610">      return ApiFutures.transform(</span>
+<span class="fc" id="L634">          ListDomainMappingsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L635">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L612">          input -&gt; new ListDomainMappingsPagedResponse(input),</span>
-<span class="fc" id="L613">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L637">          input -&gt; new ListDomainMappingsPagedResponse(input),</span>
+<span class="fc" id="L638">          MoreExecutors.directExecutor());</span>
     }
 
     private ListDomainMappingsPagedResponse(ListDomainMappingsPage page) {
-<span class="fc" id="L617">      super(page, ListDomainMappingsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L618">    }</span>
+<span class="fc" id="L642">      super(page, ListDomainMappingsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L643">    }</span>
   }
 
   public static class ListDomainMappingsPage
@@ -628,25 +653,25 @@ public class DomainMappingsClient implements BackgroundResource {
     private ListDomainMappingsPage(
         PageContext&lt;ListDomainMappingsRequest, ListDomainMappingsResponse, DomainMapping&gt; context,
         ListDomainMappingsResponse response) {
-<span class="fc" id="L631">      super(context, response);</span>
-<span class="fc" id="L632">    }</span>
+<span class="fc" id="L656">      super(context, response);</span>
+<span class="fc" id="L657">    }</span>
 
     private static ListDomainMappingsPage createEmptyPage() {
-<span class="fc" id="L635">      return new ListDomainMappingsPage(null, null);</span>
+<span class="fc" id="L660">      return new ListDomainMappingsPage(null, null);</span>
     }
 
     @Override
     protected ListDomainMappingsPage createPage(
         PageContext&lt;ListDomainMappingsRequest, ListDomainMappingsResponse, DomainMapping&gt; context,
         ListDomainMappingsResponse response) {
-<span class="fc" id="L642">      return new ListDomainMappingsPage(context, response);</span>
+<span class="fc" id="L667">      return new ListDomainMappingsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListDomainMappingsPage&gt; createPageAsync(
         PageContext&lt;ListDomainMappingsRequest, ListDomainMappingsResponse, DomainMapping&gt; context,
         ApiFuture&lt;ListDomainMappingsResponse&gt; futureResponse) {
-<span class="fc" id="L649">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L674">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -660,17 +685,17 @@ public class DomainMappingsClient implements BackgroundResource {
 
     private ListDomainMappingsFixedSizeCollection(
         List&lt;ListDomainMappingsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L663">      super(pages, collectionSize);</span>
-<span class="fc" id="L664">    }</span>
+<span class="fc" id="L688">      super(pages, collectionSize);</span>
+<span class="fc" id="L689">    }</span>
 
     private static ListDomainMappingsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L667">      return new ListDomainMappingsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L692">      return new ListDomainMappingsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListDomainMappingsFixedSizeCollection createCollection(
         List&lt;ListDomainMappingsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L673">      return new ListDomainMappingsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L698">      return new ListDomainMappingsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

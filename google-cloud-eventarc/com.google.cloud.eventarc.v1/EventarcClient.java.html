@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.eventarc.v1.stub.EventarcStub;
 import com.google.cloud.eventarc.v1.stub.EventarcStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
 import java.util.List;
@@ -103,17 +103,32 @@ import javax.annotation.Generated;
  * EventarcClient eventarcClient = EventarcClient.create(eventarcSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * EventarcSettings eventarcSettings =
+ *     EventarcSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             EventarcSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * EventarcClient eventarcClient = EventarcClient.create(eventarcSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class EventarcClient implements BackgroundResource {
   private final EventarcSettings settings;
   private final EventarcStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of EventarcClient with default settings. */
   public static final EventarcClient create() throws IOException {
-<span class="nc" id="L116">    return create(EventarcSettings.newBuilder().build());</span>
+<span class="nc" id="L131">    return create(EventarcSettings.newBuilder().build());</span>
   }
 
   /**
@@ -121,50 +136,60 @@ public class EventarcClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final EventarcClient create(EventarcSettings settings) throws IOException {
-<span class="fc" id="L124">    return new EventarcClient(settings);</span>
+<span class="fc" id="L139">    return new EventarcClient(settings);</span>
   }
 
   /**
    * Constructs an instance of EventarcClient, using the given stub for making calls. This is for
    * advanced usage - prefer using create(EventarcSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final EventarcClient create(EventarcStub stub) {
-<span class="nc" id="L133">    return new EventarcClient(stub);</span>
+<span class="nc" id="L147">    return new EventarcClient(stub);</span>
   }
 
   /**
    * Constructs an instance of EventarcClient, using the given settings. This is protected so that
    * it is easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L140">  protected EventarcClient(EventarcSettings settings) throws IOException {</span>
-<span class="fc" id="L141">    this.settings = settings;</span>
-<span class="fc" id="L142">    this.stub = ((EventarcStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L143">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L144">  }</span>
+<span class="fc" id="L154">  protected EventarcClient(EventarcSettings settings) throws IOException {</span>
+<span class="fc" id="L155">    this.settings = settings;</span>
+<span class="fc" id="L156">    this.stub = ((EventarcStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L157">    this.operationsClient =</span>
+<span class="fc" id="L158">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L159">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L160">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L147">  protected EventarcClient(EventarcStub stub) {</span>
-<span class="nc" id="L148">    this.settings = null;</span>
-<span class="nc" id="L149">    this.stub = stub;</span>
-<span class="nc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L151">  }</span>
+<span class="nc" id="L162">  protected EventarcClient(EventarcStub stub) {</span>
+<span class="nc" id="L163">    this.settings = null;</span>
+<span class="nc" id="L164">    this.stub = stub;</span>
+<span class="nc" id="L165">    this.operationsClient =</span>
+<span class="nc" id="L166">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L167">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L168">  }</span>
 
   public final EventarcSettings getSettings() {
-<span class="nc" id="L154">    return settings;</span>
+<span class="nc" id="L171">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public EventarcStub getStub() {
-<span class="nc" id="L159">    return stub;</span>
+<span class="nc" id="L175">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L167">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L183">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L192">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -187,8 +212,8 @@ public class EventarcClient implements BackgroundResource {
    */
   public final Trigger getTrigger(TriggerName name) {
     GetTriggerRequest request =
-<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        GetTriggerRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L191">    return getTrigger(request);</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        GetTriggerRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L216">    return getTrigger(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -210,8 +235,8 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Trigger getTrigger(String name) {
-<span class="fc" id="L213">    GetTriggerRequest request = GetTriggerRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L214">    return getTrigger(request);</span>
+<span class="fc" id="L238">    GetTriggerRequest request = GetTriggerRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L239">    return getTrigger(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -236,7 +261,7 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Trigger getTrigger(GetTriggerRequest request) {
-<span class="fc" id="L239">    return getTriggerCallable().call(request);</span>
+<span class="fc" id="L264">    return getTriggerCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -260,7 +285,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTriggerRequest, Trigger&gt; getTriggerCallable() {
-<span class="fc" id="L263">    return stub.getTriggerCallable();</span>
+<span class="fc" id="L288">    return stub.getTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -285,10 +310,10 @@ public class EventarcClient implements BackgroundResource {
    */
   public final ListTriggersPagedResponse listTriggers(LocationName parent) {
     ListTriggersRequest request =
-<span class="fc" id="L288">        ListTriggersRequest.newBuilder()</span>
-<span class="pc bpc" id="L289" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L290">            .build();</span>
-<span class="fc" id="L291">    return listTriggers(request);</span>
+<span class="fc" id="L313">        ListTriggersRequest.newBuilder()</span>
+<span class="pc bpc" id="L314" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L315">            .build();</span>
+<span class="fc" id="L316">    return listTriggers(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -312,8 +337,8 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTriggersPagedResponse listTriggers(String parent) {
-<span class="fc" id="L315">    ListTriggersRequest request = ListTriggersRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L316">    return listTriggers(request);</span>
+<span class="fc" id="L340">    ListTriggersRequest request = ListTriggersRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L341">    return listTriggers(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -343,7 +368,7 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTriggersPagedResponse listTriggers(ListTriggersRequest request) {
-<span class="fc" id="L346">    return listTriggersPagedCallable().call(request);</span>
+<span class="fc" id="L371">    return listTriggersPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -373,7 +398,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTriggersRequest, ListTriggersPagedResponse&gt;
       listTriggersPagedCallable() {
-<span class="fc" id="L376">    return stub.listTriggersPagedCallable();</span>
+<span class="fc" id="L401">    return stub.listTriggersPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -395,7 +420,7 @@ public class EventarcClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListTriggersResponse response = eventarcClient.listTriggersCallable().call(request);
-   *     for (Trigger element : response.getResponsesList()) {
+   *     for (Trigger element : response.getTriggersList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -409,7 +434,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListTriggersRequest, ListTriggersResponse&gt; listTriggersCallable() {
-<span class="nc" id="L412">    return stub.listTriggersCallable();</span>
+<span class="nc" id="L437">    return stub.listTriggersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -437,12 +462,12 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;Trigger, OperationMetadata&gt; createTriggerAsync(
       LocationName parent, Trigger trigger, String triggerId) {
     CreateTriggerRequest request =
-<span class="fc" id="L440">        CreateTriggerRequest.newBuilder()</span>
-<span class="pc bpc" id="L441" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L442">            .setTrigger(trigger)</span>
-<span class="fc" id="L443">            .setTriggerId(triggerId)</span>
-<span class="fc" id="L444">            .build();</span>
-<span class="fc" id="L445">    return createTriggerAsync(request);</span>
+<span class="fc" id="L465">        CreateTriggerRequest.newBuilder()</span>
+<span class="pc bpc" id="L466" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L467">            .setTrigger(trigger)</span>
+<span class="fc" id="L468">            .setTriggerId(triggerId)</span>
+<span class="fc" id="L469">            .build();</span>
+<span class="fc" id="L470">    return createTriggerAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -470,12 +495,12 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;Trigger, OperationMetadata&gt; createTriggerAsync(
       String parent, Trigger trigger, String triggerId) {
     CreateTriggerRequest request =
-<span class="fc" id="L473">        CreateTriggerRequest.newBuilder()</span>
-<span class="fc" id="L474">            .setParent(parent)</span>
-<span class="fc" id="L475">            .setTrigger(trigger)</span>
-<span class="fc" id="L476">            .setTriggerId(triggerId)</span>
-<span class="fc" id="L477">            .build();</span>
-<span class="fc" id="L478">    return createTriggerAsync(request);</span>
+<span class="fc" id="L498">        CreateTriggerRequest.newBuilder()</span>
+<span class="fc" id="L499">            .setParent(parent)</span>
+<span class="fc" id="L500">            .setTrigger(trigger)</span>
+<span class="fc" id="L501">            .setTriggerId(triggerId)</span>
+<span class="fc" id="L502">            .build();</span>
+<span class="fc" id="L503">    return createTriggerAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -504,7 +529,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Trigger, OperationMetadata&gt; createTriggerAsync(
       CreateTriggerRequest request) {
-<span class="fc" id="L507">    return createTriggerOperationCallable().futureCall(request);</span>
+<span class="fc" id="L532">    return createTriggerOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -533,7 +558,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateTriggerRequest, Trigger, OperationMetadata&gt;
       createTriggerOperationCallable() {
-<span class="fc" id="L536">    return stub.createTriggerOperationCallable();</span>
+<span class="fc" id="L561">    return stub.createTriggerOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -560,7 +585,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateTriggerRequest, Operation&gt; createTriggerCallable() {
-<span class="nc" id="L563">    return stub.createTriggerCallable();</span>
+<span class="nc" id="L588">    return stub.createTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -591,12 +616,12 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;Trigger, OperationMetadata&gt; updateTriggerAsync(
       Trigger trigger, FieldMask updateMask, boolean allowMissing) {
     UpdateTriggerRequest request =
-<span class="fc" id="L594">        UpdateTriggerRequest.newBuilder()</span>
-<span class="fc" id="L595">            .setTrigger(trigger)</span>
-<span class="fc" id="L596">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L597">            .setAllowMissing(allowMissing)</span>
-<span class="fc" id="L598">            .build();</span>
-<span class="fc" id="L599">    return updateTriggerAsync(request);</span>
+<span class="fc" id="L619">        UpdateTriggerRequest.newBuilder()</span>
+<span class="fc" id="L620">            .setTrigger(trigger)</span>
+<span class="fc" id="L621">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L622">            .setAllowMissing(allowMissing)</span>
+<span class="fc" id="L623">            .build();</span>
+<span class="fc" id="L624">    return updateTriggerAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -625,7 +650,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Trigger, OperationMetadata&gt; updateTriggerAsync(
       UpdateTriggerRequest request) {
-<span class="fc" id="L628">    return updateTriggerOperationCallable().futureCall(request);</span>
+<span class="fc" id="L653">    return updateTriggerOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -654,7 +679,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateTriggerRequest, Trigger, OperationMetadata&gt;
       updateTriggerOperationCallable() {
-<span class="fc" id="L657">    return stub.updateTriggerOperationCallable();</span>
+<span class="fc" id="L682">    return stub.updateTriggerOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -681,7 +706,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateTriggerRequest, Operation&gt; updateTriggerCallable() {
-<span class="nc" id="L684">    return stub.updateTriggerCallable();</span>
+<span class="nc" id="L709">    return stub.updateTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -708,11 +733,11 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;Trigger, OperationMetadata&gt; deleteTriggerAsync(
       TriggerName name, boolean allowMissing) {
     DeleteTriggerRequest request =
-<span class="fc" id="L711">        DeleteTriggerRequest.newBuilder()</span>
-<span class="pc bpc" id="L712" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L713">            .setAllowMissing(allowMissing)</span>
-<span class="fc" id="L714">            .build();</span>
-<span class="fc" id="L715">    return deleteTriggerAsync(request);</span>
+<span class="fc" id="L736">        DeleteTriggerRequest.newBuilder()</span>
+<span class="pc bpc" id="L737" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L738">            .setAllowMissing(allowMissing)</span>
+<span class="fc" id="L739">            .build();</span>
+<span class="fc" id="L740">    return deleteTriggerAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -739,8 +764,8 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;Trigger, OperationMetadata&gt; deleteTriggerAsync(
       String name, boolean allowMissing) {
     DeleteTriggerRequest request =
-<span class="fc" id="L742">        DeleteTriggerRequest.newBuilder().setName(name).setAllowMissing(allowMissing).build();</span>
-<span class="fc" id="L743">    return deleteTriggerAsync(request);</span>
+<span class="fc" id="L767">        DeleteTriggerRequest.newBuilder().setName(name).setAllowMissing(allowMissing).build();</span>
+<span class="fc" id="L768">    return deleteTriggerAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -769,7 +794,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Trigger, OperationMetadata&gt; deleteTriggerAsync(
       DeleteTriggerRequest request) {
-<span class="fc" id="L772">    return deleteTriggerOperationCallable().futureCall(request);</span>
+<span class="fc" id="L797">    return deleteTriggerOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -798,7 +823,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTriggerRequest, Trigger, OperationMetadata&gt;
       deleteTriggerOperationCallable() {
-<span class="fc" id="L801">    return stub.deleteTriggerOperationCallable();</span>
+<span class="fc" id="L826">    return stub.deleteTriggerOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -825,7 +850,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteTriggerRequest, Operation&gt; deleteTriggerCallable() {
-<span class="nc" id="L828">    return stub.deleteTriggerCallable();</span>
+<span class="nc" id="L853">    return stub.deleteTriggerCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -848,8 +873,8 @@ public class EventarcClient implements BackgroundResource {
    */
   public final Channel getChannel(ChannelName name) {
     GetChannelRequest request =
-<span class="pc bpc" id="L851" title="1 of 2 branches missed.">        GetChannelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L852">    return getChannel(request);</span>
+<span class="pc bpc" id="L876" title="1 of 2 branches missed.">        GetChannelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L877">    return getChannel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -871,8 +896,8 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Channel getChannel(String name) {
-<span class="fc" id="L874">    GetChannelRequest request = GetChannelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L875">    return getChannel(request);</span>
+<span class="fc" id="L899">    GetChannelRequest request = GetChannelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L900">    return getChannel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -897,7 +922,7 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Channel getChannel(GetChannelRequest request) {
-<span class="fc" id="L900">    return getChannelCallable().call(request);</span>
+<span class="fc" id="L925">    return getChannelCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -921,7 +946,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetChannelRequest, Channel&gt; getChannelCallable() {
-<span class="fc" id="L924">    return stub.getChannelCallable();</span>
+<span class="fc" id="L949">    return stub.getChannelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -946,10 +971,10 @@ public class EventarcClient implements BackgroundResource {
    */
   public final ListChannelsPagedResponse listChannels(LocationName parent) {
     ListChannelsRequest request =
-<span class="fc" id="L949">        ListChannelsRequest.newBuilder()</span>
-<span class="pc bpc" id="L950" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L951">            .build();</span>
-<span class="fc" id="L952">    return listChannels(request);</span>
+<span class="fc" id="L974">        ListChannelsRequest.newBuilder()</span>
+<span class="pc bpc" id="L975" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L976">            .build();</span>
+<span class="fc" id="L977">    return listChannels(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -973,8 +998,8 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListChannelsPagedResponse listChannels(String parent) {
-<span class="fc" id="L976">    ListChannelsRequest request = ListChannelsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L977">    return listChannels(request);</span>
+<span class="fc" id="L1001">    ListChannelsRequest request = ListChannelsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1002">    return listChannels(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1004,7 +1029,7 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListChannelsPagedResponse listChannels(ListChannelsRequest request) {
-<span class="fc" id="L1007">    return listChannelsPagedCallable().call(request);</span>
+<span class="fc" id="L1032">    return listChannelsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1034,7 +1059,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListChannelsRequest, ListChannelsPagedResponse&gt;
       listChannelsPagedCallable() {
-<span class="fc" id="L1037">    return stub.listChannelsPagedCallable();</span>
+<span class="fc" id="L1062">    return stub.listChannelsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1056,7 +1081,7 @@ public class EventarcClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListChannelsResponse response = eventarcClient.listChannelsCallable().call(request);
-   *     for (Channel element : response.getResponsesList()) {
+   *     for (Channel element : response.getChannelsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1070,7 +1095,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListChannelsRequest, ListChannelsResponse&gt; listChannelsCallable() {
-<span class="nc" id="L1073">    return stub.listChannelsCallable();</span>
+<span class="nc" id="L1098">    return stub.listChannelsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1098,12 +1123,12 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;Channel, OperationMetadata&gt; createChannelAsync(
       LocationName parent, Channel channel, String channelId) {
     CreateChannelRequest request =
-<span class="fc" id="L1101">        CreateChannelRequest.newBuilder()</span>
-<span class="pc bpc" id="L1102" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1103">            .setChannel(channel)</span>
-<span class="fc" id="L1104">            .setChannelId(channelId)</span>
-<span class="fc" id="L1105">            .build();</span>
-<span class="fc" id="L1106">    return createChannelAsync(request);</span>
+<span class="fc" id="L1126">        CreateChannelRequest.newBuilder()</span>
+<span class="pc bpc" id="L1127" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1128">            .setChannel(channel)</span>
+<span class="fc" id="L1129">            .setChannelId(channelId)</span>
+<span class="fc" id="L1130">            .build();</span>
+<span class="fc" id="L1131">    return createChannelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1131,12 +1156,12 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;Channel, OperationMetadata&gt; createChannelAsync(
       String parent, Channel channel, String channelId) {
     CreateChannelRequest request =
-<span class="fc" id="L1134">        CreateChannelRequest.newBuilder()</span>
-<span class="fc" id="L1135">            .setParent(parent)</span>
-<span class="fc" id="L1136">            .setChannel(channel)</span>
-<span class="fc" id="L1137">            .setChannelId(channelId)</span>
-<span class="fc" id="L1138">            .build();</span>
-<span class="fc" id="L1139">    return createChannelAsync(request);</span>
+<span class="fc" id="L1159">        CreateChannelRequest.newBuilder()</span>
+<span class="fc" id="L1160">            .setParent(parent)</span>
+<span class="fc" id="L1161">            .setChannel(channel)</span>
+<span class="fc" id="L1162">            .setChannelId(channelId)</span>
+<span class="fc" id="L1163">            .build();</span>
+<span class="fc" id="L1164">    return createChannelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1165,7 +1190,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Channel, OperationMetadata&gt; createChannelAsync(
       CreateChannelRequest request) {
-<span class="fc" id="L1168">    return createChannelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1193">    return createChannelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1194,7 +1219,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateChannelRequest, Channel, OperationMetadata&gt;
       createChannelOperationCallable() {
-<span class="fc" id="L1197">    return stub.createChannelOperationCallable();</span>
+<span class="fc" id="L1222">    return stub.createChannelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1221,7 +1246,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateChannelRequest, Operation&gt; createChannelCallable() {
-<span class="nc" id="L1224">    return stub.createChannelCallable();</span>
+<span class="nc" id="L1249">    return stub.createChannelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1249,8 +1274,8 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;Channel, OperationMetadata&gt; updateChannelAsync(
       Channel channel, FieldMask updateMask) {
     UpdateChannelRequest request =
-<span class="fc" id="L1252">        UpdateChannelRequest.newBuilder().setChannel(channel).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L1253">    return updateChannelAsync(request);</span>
+<span class="fc" id="L1277">        UpdateChannelRequest.newBuilder().setChannel(channel).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L1278">    return updateChannelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1278,7 +1303,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Channel, OperationMetadata&gt; updateChannelAsync(
       UpdateChannelRequest request) {
-<span class="fc" id="L1281">    return updateChannelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1306">    return updateChannelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1306,7 +1331,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateChannelRequest, Channel, OperationMetadata&gt;
       updateChannelOperationCallable() {
-<span class="fc" id="L1309">    return stub.updateChannelOperationCallable();</span>
+<span class="fc" id="L1334">    return stub.updateChannelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1332,7 +1357,7 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateChannelRequest, Operation&gt; updateChannelCallable() {
-<span class="nc" id="L1335">    return stub.updateChannelCallable();</span>
+<span class="nc" id="L1360">    return stub.updateChannelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1355,8 +1380,8 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Channel, OperationMetadata&gt; deleteChannelAsync(ChannelName name) {
     DeleteChannelRequest request =
-<span class="pc bpc" id="L1358" title="1 of 2 branches missed.">        DeleteChannelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1359">    return deleteChannelAsync(request);</span>
+<span class="pc bpc" id="L1383" title="1 of 2 branches missed.">        DeleteChannelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1384">    return deleteChannelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1378,8 +1403,8 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Channel, OperationMetadata&gt; deleteChannelAsync(String name) {
-<span class="fc" id="L1381">    DeleteChannelRequest request = DeleteChannelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1382">    return deleteChannelAsync(request);</span>
+<span class="fc" id="L1406">    DeleteChannelRequest request = DeleteChannelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1407">    return deleteChannelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1406,7 +1431,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Channel, OperationMetadata&gt; deleteChannelAsync(
       DeleteChannelRequest request) {
-<span class="fc" id="L1409">    return deleteChannelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1434">    return deleteChannelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1433,7 +1458,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteChannelRequest, Channel, OperationMetadata&gt;
       deleteChannelOperationCallable() {
-<span class="fc" id="L1436">    return stub.deleteChannelOperationCallable();</span>
+<span class="fc" id="L1461">    return stub.deleteChannelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1458,7 +1483,255 @@ public class EventarcClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteChannelRequest, Operation&gt; deleteChannelCallable() {
-<span class="nc" id="L1461">    return stub.deleteChannelCallable();</span>
+<span class="nc" id="L1486">    return stub.deleteChannelCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Get a single Provider.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   ProviderName name = ProviderName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PROVIDER]&quot;);
+   *   Provider response = eventarcClient.getProvider(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the provider to get.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Provider getProvider(ProviderName name) {
+    GetProviderRequest request =
+<span class="pc bpc" id="L1509" title="1 of 2 branches missed.">        GetProviderRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1510">    return getProvider(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Get a single Provider.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   String name = ProviderName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PROVIDER]&quot;).toString();
+   *   Provider response = eventarcClient.getProvider(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the provider to get.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Provider getProvider(String name) {
+<span class="fc" id="L1532">    GetProviderRequest request = GetProviderRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1533">    return getProvider(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Get a single Provider.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   GetProviderRequest request =
+   *       GetProviderRequest.newBuilder()
+   *           .setName(ProviderName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PROVIDER]&quot;).toString())
+   *           .build();
+   *   Provider response = eventarcClient.getProvider(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Provider getProvider(GetProviderRequest request) {
+<span class="fc" id="L1558">    return getProviderCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Get a single Provider.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   GetProviderRequest request =
+   *       GetProviderRequest.newBuilder()
+   *           .setName(ProviderName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PROVIDER]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Provider&gt; future = eventarcClient.getProviderCallable().futureCall(request);
+   *   // Do something.
+   *   Provider response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetProviderRequest, Provider&gt; getProviderCallable() {
+<span class="fc" id="L1582">    return stub.getProviderCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * List providers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   for (Provider element : eventarcClient.listProviders(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The parent of the provider to get.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListProvidersPagedResponse listProviders(LocationName parent) {
+    ListProvidersRequest request =
+<span class="fc" id="L1607">        ListProvidersRequest.newBuilder()</span>
+<span class="pc bpc" id="L1608" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1609">            .build();</span>
+<span class="fc" id="L1610">    return listProviders(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * List providers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   for (Provider element : eventarcClient.listProviders(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The parent of the provider to get.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListProvidersPagedResponse listProviders(String parent) {
+<span class="fc" id="L1634">    ListProvidersRequest request = ListProvidersRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1635">    return listProviders(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * List providers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   ListProvidersRequest request =
+   *       ListProvidersRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .build();
+   *   for (Provider element : eventarcClient.listProviders(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListProvidersPagedResponse listProviders(ListProvidersRequest request) {
+<span class="fc" id="L1666">    return listProvidersPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * List providers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   ListProvidersRequest request =
+   *       ListProvidersRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .build();
+   *   ApiFuture&lt;Provider&gt; future = eventarcClient.listProvidersPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Provider element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListProvidersRequest, ListProvidersPagedResponse&gt;
+      listProvidersPagedCallable() {
+<span class="fc" id="L1697">    return stub.listProvidersPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * List providers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (EventarcClient eventarcClient = EventarcClient.create()) {
+   *   ListProvidersRequest request =
+   *       ListProvidersRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListProvidersResponse response = eventarcClient.listProvidersCallable().call(request);
+   *     for (Provider element : response.getProvidersList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListProvidersRequest, ListProvidersResponse&gt; listProvidersCallable() {
+<span class="nc" id="L1734">    return stub.listProvidersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1482,10 +1755,10 @@ public class EventarcClient implements BackgroundResource {
    */
   public final ChannelConnection getChannelConnection(ChannelConnectionName name) {
     GetChannelConnectionRequest request =
-<span class="fc" id="L1485">        GetChannelConnectionRequest.newBuilder()</span>
-<span class="pc bpc" id="L1486" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1487">            .build();</span>
-<span class="fc" id="L1488">    return getChannelConnection(request);</span>
+<span class="fc" id="L1758">        GetChannelConnectionRequest.newBuilder()</span>
+<span class="pc bpc" id="L1759" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1760">            .build();</span>
+<span class="fc" id="L1761">    return getChannelConnection(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1509,8 +1782,8 @@ public class EventarcClient implements BackgroundResource {
    */
   public final ChannelConnection getChannelConnection(String name) {
     GetChannelConnectionRequest request =
-<span class="fc" id="L1512">        GetChannelConnectionRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1513">    return getChannelConnection(request);</span>
+<span class="fc" id="L1785">        GetChannelConnectionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1786">    return getChannelConnection(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1537,7 +1810,7 @@ public class EventarcClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ChannelConnection getChannelConnection(GetChannelConnectionRequest request) {
-<span class="fc" id="L1540">    return getChannelConnectionCallable().call(request);</span>
+<span class="fc" id="L1813">    return getChannelConnectionCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1565,7 +1838,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetChannelConnectionRequest, ChannelConnection&gt;
       getChannelConnectionCallable() {
-<span class="fc" id="L1568">    return stub.getChannelConnectionCallable();</span>
+<span class="fc" id="L1841">    return stub.getChannelConnectionCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1590,10 +1863,10 @@ public class EventarcClient implements BackgroundResource {
    */
   public final ListChannelConnectionsPagedResponse listChannelConnections(LocationName parent) {
     ListChannelConnectionsRequest request =
-<span class="fc" id="L1593">        ListChannelConnectionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1594" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1595">            .build();</span>
-<span class="fc" id="L1596">    return listChannelConnections(request);</span>
+<span class="fc" id="L1866">        ListChannelConnectionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1867" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1868">            .build();</span>
+<span class="fc" id="L1869">    return listChannelConnections(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1618,8 +1891,8 @@ public class EventarcClient implements BackgroundResource {
    */
   public final ListChannelConnectionsPagedResponse listChannelConnections(String parent) {
     ListChannelConnectionsRequest request =
-<span class="fc" id="L1621">        ListChannelConnectionsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1622">    return listChannelConnections(request);</span>
+<span class="fc" id="L1894">        ListChannelConnectionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1895">    return listChannelConnections(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1650,7 +1923,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final ListChannelConnectionsPagedResponse listChannelConnections(
       ListChannelConnectionsRequest request) {
-<span class="fc" id="L1653">    return listChannelConnectionsPagedCallable().call(request);</span>
+<span class="fc" id="L1926">    return listChannelConnectionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1680,7 +1953,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListChannelConnectionsRequest, ListChannelConnectionsPagedResponse&gt;
       listChannelConnectionsPagedCallable() {
-<span class="fc" id="L1683">    return stub.listChannelConnectionsPagedCallable();</span>
+<span class="fc" id="L1956">    return stub.listChannelConnectionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1702,7 +1975,7 @@ public class EventarcClient implements BackgroundResource {
    *   while (true) {
    *     ListChannelConnectionsResponse response =
    *         eventarcClient.listChannelConnectionsCallable().call(request);
-   *     for (ChannelConnection element : response.getResponsesList()) {
+   *     for (ChannelConnection element : response.getChannelConnectionsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1717,7 +1990,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListChannelConnectionsRequest, ListChannelConnectionsResponse&gt;
       listChannelConnectionsCallable() {
-<span class="nc" id="L1720">    return stub.listChannelConnectionsCallable();</span>
+<span class="nc" id="L1993">    return stub.listChannelConnectionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1749,12 +2022,12 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;ChannelConnection, OperationMetadata&gt; createChannelConnectionAsync(
       LocationName parent, ChannelConnection channelConnection, String channelConnectionId) {
     CreateChannelConnectionRequest request =
-<span class="fc" id="L1752">        CreateChannelConnectionRequest.newBuilder()</span>
-<span class="pc bpc" id="L1753" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1754">            .setChannelConnection(channelConnection)</span>
-<span class="fc" id="L1755">            .setChannelConnectionId(channelConnectionId)</span>
-<span class="fc" id="L1756">            .build();</span>
-<span class="fc" id="L1757">    return createChannelConnectionAsync(request);</span>
+<span class="fc" id="L2025">        CreateChannelConnectionRequest.newBuilder()</span>
+<span class="pc bpc" id="L2026" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2027">            .setChannelConnection(channelConnection)</span>
+<span class="fc" id="L2028">            .setChannelConnectionId(channelConnectionId)</span>
+<span class="fc" id="L2029">            .build();</span>
+<span class="fc" id="L2030">    return createChannelConnectionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1786,12 +2059,12 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;ChannelConnection, OperationMetadata&gt; createChannelConnectionAsync(
       String parent, ChannelConnection channelConnection, String channelConnectionId) {
     CreateChannelConnectionRequest request =
-<span class="fc" id="L1789">        CreateChannelConnectionRequest.newBuilder()</span>
-<span class="fc" id="L1790">            .setParent(parent)</span>
-<span class="fc" id="L1791">            .setChannelConnection(channelConnection)</span>
-<span class="fc" id="L1792">            .setChannelConnectionId(channelConnectionId)</span>
-<span class="fc" id="L1793">            .build();</span>
-<span class="fc" id="L1794">    return createChannelConnectionAsync(request);</span>
+<span class="fc" id="L2062">        CreateChannelConnectionRequest.newBuilder()</span>
+<span class="fc" id="L2063">            .setParent(parent)</span>
+<span class="fc" id="L2064">            .setChannelConnection(channelConnection)</span>
+<span class="fc" id="L2065">            .setChannelConnectionId(channelConnectionId)</span>
+<span class="fc" id="L2066">            .build();</span>
+<span class="fc" id="L2067">    return createChannelConnectionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1819,7 +2092,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ChannelConnection, OperationMetadata&gt; createChannelConnectionAsync(
       CreateChannelConnectionRequest request) {
-<span class="fc" id="L1822">    return createChannelConnectionOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2095">    return createChannelConnectionOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1848,7 +2121,7 @@ public class EventarcClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateChannelConnectionRequest, ChannelConnection, OperationMetadata&gt;
       createChannelConnectionOperationCallable() {
-<span class="fc" id="L1851">    return stub.createChannelConnectionOperationCallable();</span>
+<span class="fc" id="L2124">    return stub.createChannelConnectionOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1876,7 +2149,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateChannelConnectionRequest, Operation&gt;
       createChannelConnectionCallable() {
-<span class="nc" id="L1879">    return stub.createChannelConnectionCallable();</span>
+<span class="nc" id="L2152">    return stub.createChannelConnectionCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1901,10 +2174,10 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;ChannelConnection, OperationMetadata&gt; deleteChannelConnectionAsync(
       ChannelConnectionName name) {
     DeleteChannelConnectionRequest request =
-<span class="fc" id="L1904">        DeleteChannelConnectionRequest.newBuilder()</span>
-<span class="pc bpc" id="L1905" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1906">            .build();</span>
-<span class="fc" id="L1907">    return deleteChannelConnectionAsync(request);</span>
+<span class="fc" id="L2177">        DeleteChannelConnectionRequest.newBuilder()</span>
+<span class="pc bpc" id="L2178" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2179">            .build();</span>
+<span class="fc" id="L2180">    return deleteChannelConnectionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1929,8 +2202,8 @@ public class EventarcClient implements BackgroundResource {
   public final OperationFuture&lt;ChannelConnection, OperationMetadata&gt; deleteChannelConnectionAsync(
       String name) {
     DeleteChannelConnectionRequest request =
-<span class="fc" id="L1932">        DeleteChannelConnectionRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1933">    return deleteChannelConnectionAsync(request);</span>
+<span class="fc" id="L2205">        DeleteChannelConnectionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2206">    return deleteChannelConnectionAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1958,7 +2231,7 @@ public class EventarcClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ChannelConnection, OperationMetadata&gt; deleteChannelConnectionAsync(
       DeleteChannelConnectionRequest request) {
-<span class="fc" id="L1961">    return deleteChannelConnectionOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2234">    return deleteChannelConnectionOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1987,7 +2260,7 @@ public class EventarcClient implements BackgroundResource {
   public final OperationCallable&lt;
           DeleteChannelConnectionRequest, ChannelConnection, OperationMetadata&gt;
       deleteChannelConnectionOperationCallable() {
-<span class="fc" id="L1990">    return stub.deleteChannelConnectionOperationCallable();</span>
+<span class="fc" id="L2263">    return stub.deleteChannelConnectionOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2015,37 +2288,37 @@ public class EventarcClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteChannelConnectionRequest, Operation&gt;
       deleteChannelConnectionCallable() {
-<span class="nc" id="L2018">    return stub.deleteChannelConnectionCallable();</span>
+<span class="nc" id="L2291">    return stub.deleteChannelConnectionCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2023">    stub.close();</span>
-<span class="fc" id="L2024">  }</span>
+<span class="fc" id="L2296">    stub.close();</span>
+<span class="fc" id="L2297">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2028">    stub.shutdown();</span>
-<span class="nc" id="L2029">  }</span>
+<span class="nc" id="L2301">    stub.shutdown();</span>
+<span class="nc" id="L2302">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2033">    return stub.isShutdown();</span>
+<span class="nc" id="L2306">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2038">    return stub.isTerminated();</span>
+<span class="nc" id="L2311">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2043">    stub.shutdownNow();</span>
-<span class="nc" id="L2044">  }</span>
+<span class="nc" id="L2316">    stub.shutdownNow();</span>
+<span class="nc" id="L2317">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2048">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2321">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListTriggersPagedResponse
@@ -2060,16 +2333,16 @@ public class EventarcClient implements BackgroundResource {
         PageContext&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt; context,
         ApiFuture&lt;ListTriggersResponse&gt; futureResponse) {
       ApiFuture&lt;ListTriggersPage&gt; futurePage =
-<span class="fc" id="L2063">          ListTriggersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2064">      return ApiFutures.transform(</span>
+<span class="fc" id="L2336">          ListTriggersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2337">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2066">          input -&gt; new ListTriggersPagedResponse(input),</span>
-<span class="fc" id="L2067">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2339">          input -&gt; new ListTriggersPagedResponse(input),</span>
+<span class="fc" id="L2340">          MoreExecutors.directExecutor());</span>
     }
 
     private ListTriggersPagedResponse(ListTriggersPage page) {
-<span class="fc" id="L2071">      super(page, ListTriggersFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2072">    }</span>
+<span class="fc" id="L2344">      super(page, ListTriggersFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2345">    }</span>
   }
 
   public static class ListTriggersPage
@@ -2078,25 +2351,25 @@ public class EventarcClient implements BackgroundResource {
     private ListTriggersPage(
         PageContext&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt; context,
         ListTriggersResponse response) {
-<span class="fc" id="L2081">      super(context, response);</span>
-<span class="fc" id="L2082">    }</span>
+<span class="fc" id="L2354">      super(context, response);</span>
+<span class="fc" id="L2355">    }</span>
 
     private static ListTriggersPage createEmptyPage() {
-<span class="fc" id="L2085">      return new ListTriggersPage(null, null);</span>
+<span class="fc" id="L2358">      return new ListTriggersPage(null, null);</span>
     }
 
     @Override
     protected ListTriggersPage createPage(
         PageContext&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt; context,
         ListTriggersResponse response) {
-<span class="fc" id="L2092">      return new ListTriggersPage(context, response);</span>
+<span class="fc" id="L2365">      return new ListTriggersPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListTriggersPage&gt; createPageAsync(
         PageContext&lt;ListTriggersRequest, ListTriggersResponse, Trigger&gt; context,
         ApiFuture&lt;ListTriggersResponse&gt; futureResponse) {
-<span class="fc" id="L2099">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2372">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2109,17 +2382,17 @@ public class EventarcClient implements BackgroundResource {
           ListTriggersFixedSizeCollection&gt; {
 
     private ListTriggersFixedSizeCollection(List&lt;ListTriggersPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2112">      super(pages, collectionSize);</span>
-<span class="fc" id="L2113">    }</span>
+<span class="fc" id="L2385">      super(pages, collectionSize);</span>
+<span class="fc" id="L2386">    }</span>
 
     private static ListTriggersFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2116">      return new ListTriggersFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2389">      return new ListTriggersFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTriggersFixedSizeCollection createCollection(
         List&lt;ListTriggersPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2122">      return new ListTriggersFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2395">      return new ListTriggersFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2135,16 +2408,16 @@ public class EventarcClient implements BackgroundResource {
         PageContext&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt; context,
         ApiFuture&lt;ListChannelsResponse&gt; futureResponse) {
       ApiFuture&lt;ListChannelsPage&gt; futurePage =
-<span class="fc" id="L2138">          ListChannelsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2139">      return ApiFutures.transform(</span>
+<span class="fc" id="L2411">          ListChannelsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2412">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2141">          input -&gt; new ListChannelsPagedResponse(input),</span>
-<span class="fc" id="L2142">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2414">          input -&gt; new ListChannelsPagedResponse(input),</span>
+<span class="fc" id="L2415">          MoreExecutors.directExecutor());</span>
     }
 
     private ListChannelsPagedResponse(ListChannelsPage page) {
-<span class="fc" id="L2146">      super(page, ListChannelsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2147">    }</span>
+<span class="fc" id="L2419">      super(page, ListChannelsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2420">    }</span>
   }
 
   public static class ListChannelsPage
@@ -2153,25 +2426,25 @@ public class EventarcClient implements BackgroundResource {
     private ListChannelsPage(
         PageContext&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt; context,
         ListChannelsResponse response) {
-<span class="fc" id="L2156">      super(context, response);</span>
-<span class="fc" id="L2157">    }</span>
+<span class="fc" id="L2429">      super(context, response);</span>
+<span class="fc" id="L2430">    }</span>
 
     private static ListChannelsPage createEmptyPage() {
-<span class="fc" id="L2160">      return new ListChannelsPage(null, null);</span>
+<span class="fc" id="L2433">      return new ListChannelsPage(null, null);</span>
     }
 
     @Override
     protected ListChannelsPage createPage(
         PageContext&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt; context,
         ListChannelsResponse response) {
-<span class="fc" id="L2167">      return new ListChannelsPage(context, response);</span>
+<span class="fc" id="L2440">      return new ListChannelsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListChannelsPage&gt; createPageAsync(
         PageContext&lt;ListChannelsRequest, ListChannelsResponse, Channel&gt; context,
         ApiFuture&lt;ListChannelsResponse&gt; futureResponse) {
-<span class="fc" id="L2174">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2447">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2184,17 +2457,93 @@ public class EventarcClient implements BackgroundResource {
           ListChannelsFixedSizeCollection&gt; {
 
     private ListChannelsFixedSizeCollection(List&lt;ListChannelsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2187">      super(pages, collectionSize);</span>
-<span class="fc" id="L2188">    }</span>
+<span class="fc" id="L2460">      super(pages, collectionSize);</span>
+<span class="fc" id="L2461">    }</span>
 
     private static ListChannelsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2191">      return new ListChannelsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2464">      return new ListChannelsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListChannelsFixedSizeCollection createCollection(
         List&lt;ListChannelsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2197">      return new ListChannelsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2470">      return new ListChannelsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListProvidersPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListProvidersRequest,
+          ListProvidersResponse,
+          Provider,
+          ListProvidersPage,
+          ListProvidersFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListProvidersPagedResponse&gt; createAsync(
+        PageContext&lt;ListProvidersRequest, ListProvidersResponse, Provider&gt; context,
+        ApiFuture&lt;ListProvidersResponse&gt; futureResponse) {
+      ApiFuture&lt;ListProvidersPage&gt; futurePage =
+<span class="fc" id="L2486">          ListProvidersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2487">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L2489">          input -&gt; new ListProvidersPagedResponse(input),</span>
+<span class="fc" id="L2490">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListProvidersPagedResponse(ListProvidersPage page) {
+<span class="fc" id="L2494">      super(page, ListProvidersFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2495">    }</span>
+  }
+
+  public static class ListProvidersPage
+      extends AbstractPage&lt;
+          ListProvidersRequest, ListProvidersResponse, Provider, ListProvidersPage&gt; {
+
+    private ListProvidersPage(
+        PageContext&lt;ListProvidersRequest, ListProvidersResponse, Provider&gt; context,
+        ListProvidersResponse response) {
+<span class="fc" id="L2505">      super(context, response);</span>
+<span class="fc" id="L2506">    }</span>
+
+    private static ListProvidersPage createEmptyPage() {
+<span class="fc" id="L2509">      return new ListProvidersPage(null, null);</span>
+    }
+
+    @Override
+    protected ListProvidersPage createPage(
+        PageContext&lt;ListProvidersRequest, ListProvidersResponse, Provider&gt; context,
+        ListProvidersResponse response) {
+<span class="fc" id="L2516">      return new ListProvidersPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListProvidersPage&gt; createPageAsync(
+        PageContext&lt;ListProvidersRequest, ListProvidersResponse, Provider&gt; context,
+        ApiFuture&lt;ListProvidersResponse&gt; futureResponse) {
+<span class="fc" id="L2523">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListProvidersFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListProvidersRequest,
+          ListProvidersResponse,
+          Provider,
+          ListProvidersPage,
+          ListProvidersFixedSizeCollection&gt; {
+
+    private ListProvidersFixedSizeCollection(List&lt;ListProvidersPage&gt; pages, int collectionSize) {
+<span class="fc" id="L2536">      super(pages, collectionSize);</span>
+<span class="fc" id="L2537">    }</span>
+
+    private static ListProvidersFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L2540">      return new ListProvidersFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListProvidersFixedSizeCollection createCollection(
+        List&lt;ListProvidersPage&gt; pages, int collectionSize) {
+<span class="nc" id="L2546">      return new ListProvidersFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2212,16 +2561,16 @@ public class EventarcClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListChannelConnectionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListChannelConnectionsPage&gt; futurePage =
-<span class="fc" id="L2215">          ListChannelConnectionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2216">      return ApiFutures.transform(</span>
+<span class="fc" id="L2564">          ListChannelConnectionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2565">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2218">          input -&gt; new ListChannelConnectionsPagedResponse(input),</span>
-<span class="fc" id="L2219">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2567">          input -&gt; new ListChannelConnectionsPagedResponse(input),</span>
+<span class="fc" id="L2568">          MoreExecutors.directExecutor());</span>
     }
 
     private ListChannelConnectionsPagedResponse(ListChannelConnectionsPage page) {
-<span class="fc" id="L2223">      super(page, ListChannelConnectionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2224">    }</span>
+<span class="fc" id="L2572">      super(page, ListChannelConnectionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2573">    }</span>
   }
 
   public static class ListChannelConnectionsPage
@@ -2236,11 +2585,11 @@ public class EventarcClient implements BackgroundResource {
                 ListChannelConnectionsRequest, ListChannelConnectionsResponse, ChannelConnection&gt;
             context,
         ListChannelConnectionsResponse response) {
-<span class="fc" id="L2239">      super(context, response);</span>
-<span class="fc" id="L2240">    }</span>
+<span class="fc" id="L2588">      super(context, response);</span>
+<span class="fc" id="L2589">    }</span>
 
     private static ListChannelConnectionsPage createEmptyPage() {
-<span class="fc" id="L2243">      return new ListChannelConnectionsPage(null, null);</span>
+<span class="fc" id="L2592">      return new ListChannelConnectionsPage(null, null);</span>
     }
 
     @Override
@@ -2249,7 +2598,7 @@ public class EventarcClient implements BackgroundResource {
                 ListChannelConnectionsRequest, ListChannelConnectionsResponse, ChannelConnection&gt;
             context,
         ListChannelConnectionsResponse response) {
-<span class="fc" id="L2252">      return new ListChannelConnectionsPage(context, response);</span>
+<span class="fc" id="L2601">      return new ListChannelConnectionsPage(context, response);</span>
     }
 
     @Override
@@ -2258,7 +2607,7 @@ public class EventarcClient implements BackgroundResource {
                 ListChannelConnectionsRequest, ListChannelConnectionsResponse, ChannelConnection&gt;
             context,
         ApiFuture&lt;ListChannelConnectionsResponse&gt; futureResponse) {
-<span class="fc" id="L2261">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2610">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2272,17 +2621,17 @@ public class EventarcClient implements BackgroundResource {
 
     private ListChannelConnectionsFixedSizeCollection(
         List&lt;ListChannelConnectionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2275">      super(pages, collectionSize);</span>
-<span class="fc" id="L2276">    }</span>
+<span class="fc" id="L2624">      super(pages, collectionSize);</span>
+<span class="fc" id="L2625">    }</span>
 
     private static ListChannelConnectionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2279">      return new ListChannelConnectionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2628">      return new ListChannelConnectionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListChannelConnectionsFixedSizeCollection createCollection(
         List&lt;ListChannelConnectionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2285">      return new ListChannelConnectionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2634">      return new ListChannelConnectionsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }

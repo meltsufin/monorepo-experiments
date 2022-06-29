@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BatchControllerClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-dataproc</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.dataproc.v1</a> &gt; <span class="el_source">BatchControllerClient.java</span></div><h1>BatchControllerClient.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.dataproc.v1.stub.BatchControllerStub;
 import com.google.cloud.dataproc.v1.stub.BatchControllerStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import java.io.IOException;
 import java.util.List;
@@ -46,6 +46,8 @@ import javax.annotation.Generated;
  * calls that map to API methods. Sample code to get started:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
  *   BatchName name = BatchName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[BATCH]&quot;);
  *   Batch response = batchControllerClient.getBatch(name);
@@ -82,6 +84,8 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize credentials:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * BatchControllerSettings batchControllerSettings =
  *     BatchControllerSettings.newBuilder()
  *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
@@ -93,8 +97,25 @@ import javax.annotation.Generated;
  * &lt;p&gt;To customize the endpoint:
  *
  * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
  * BatchControllerSettings batchControllerSettings =
  *     BatchControllerSettings.newBuilder().setEndpoint(myEndpoint).build();
+ * BatchControllerClient batchControllerClient =
+ *     BatchControllerClient.create(batchControllerSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * BatchControllerSettings batchControllerSettings =
+ *     BatchControllerSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             BatchControllerSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
  * BatchControllerClient batchControllerClient =
  *     BatchControllerClient.create(batchControllerSettings);
  * }&lt;/pre&gt;
@@ -105,11 +126,12 @@ import javax.annotation.Generated;
 public class BatchControllerClient implements BackgroundResource {
   private final BatchControllerSettings settings;
   private final BatchControllerStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of BatchControllerClient with default settings. */
   public static final BatchControllerClient create() throws IOException {
-<span class="nc" id="L112">    return create(BatchControllerSettings.newBuilder().build());</span>
+<span class="nc" id="L134">    return create(BatchControllerSettings.newBuilder().build());</span>
   }
 
   /**
@@ -118,16 +140,15 @@ public class BatchControllerClient implements BackgroundResource {
    */
   public static final BatchControllerClient create(BatchControllerSettings settings)
       throws IOException {
-<span class="fc" id="L121">    return new BatchControllerClient(settings);</span>
+<span class="fc" id="L143">    return new BatchControllerClient(settings);</span>
   }
 
   /**
    * Constructs an instance of BatchControllerClient, using the given stub for making calls. This is
    * for advanced usage - prefer using create(BatchControllerSettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final BatchControllerClient create(BatchControllerStub stub) {
-<span class="nc" id="L130">    return new BatchControllerClient(stub);</span>
+<span class="nc" id="L151">    return new BatchControllerClient(stub);</span>
   }
 
   /**
@@ -135,34 +156,45 @@ public class BatchControllerClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L138">  protected BatchControllerClient(BatchControllerSettings settings) throws IOException {</span>
-<span class="fc" id="L139">    this.settings = settings;</span>
-<span class="fc" id="L140">    this.stub = ((BatchControllerStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L141">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L142">  }</span>
+<span class="fc" id="L159">  protected BatchControllerClient(BatchControllerSettings settings) throws IOException {</span>
+<span class="fc" id="L160">    this.settings = settings;</span>
+<span class="fc" id="L161">    this.stub = ((BatchControllerStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L162">    this.operationsClient =</span>
+<span class="fc" id="L163">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L164">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L165">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L145">  protected BatchControllerClient(BatchControllerStub stub) {</span>
-<span class="nc" id="L146">    this.settings = null;</span>
-<span class="nc" id="L147">    this.stub = stub;</span>
-<span class="nc" id="L148">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L149">  }</span>
+<span class="nc" id="L167">  protected BatchControllerClient(BatchControllerStub stub) {</span>
+<span class="nc" id="L168">    this.settings = null;</span>
+<span class="nc" id="L169">    this.stub = stub;</span>
+<span class="nc" id="L170">    this.operationsClient =</span>
+<span class="nc" id="L171">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L172">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L173">  }</span>
 
   public final BatchControllerSettings getSettings() {
-<span class="nc" id="L152">    return settings;</span>
+<span class="nc" id="L176">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public BatchControllerStub getStub() {
-<span class="nc" id="L157">    return stub;</span>
+<span class="nc" id="L180">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L165">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L188">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L197">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -172,6 +204,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   Batch batch = Batch.newBuilder().build();
@@ -190,12 +224,12 @@ public class BatchControllerClient implements BackgroundResource {
   public final OperationFuture&lt;Batch, BatchOperationMetadata&gt; createBatchAsync(
       LocationName parent, Batch batch, String batchId) {
     CreateBatchRequest request =
-<span class="fc" id="L193">        CreateBatchRequest.newBuilder()</span>
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L195">            .setBatch(batch)</span>
-<span class="fc" id="L196">            .setBatchId(batchId)</span>
-<span class="fc" id="L197">            .build();</span>
-<span class="fc" id="L198">    return createBatchAsync(request);</span>
+<span class="fc" id="L227">        CreateBatchRequest.newBuilder()</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L229">            .setBatch(batch)</span>
+<span class="fc" id="L230">            .setBatchId(batchId)</span>
+<span class="fc" id="L231">            .build();</span>
+<span class="fc" id="L232">    return createBatchAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -205,6 +239,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   Batch batch = Batch.newBuilder().build();
@@ -223,12 +259,12 @@ public class BatchControllerClient implements BackgroundResource {
   public final OperationFuture&lt;Batch, BatchOperationMetadata&gt; createBatchAsync(
       String parent, Batch batch, String batchId) {
     CreateBatchRequest request =
-<span class="fc" id="L226">        CreateBatchRequest.newBuilder()</span>
-<span class="fc" id="L227">            .setParent(parent)</span>
-<span class="fc" id="L228">            .setBatch(batch)</span>
-<span class="fc" id="L229">            .setBatchId(batchId)</span>
-<span class="fc" id="L230">            .build();</span>
-<span class="fc" id="L231">    return createBatchAsync(request);</span>
+<span class="fc" id="L262">        CreateBatchRequest.newBuilder()</span>
+<span class="fc" id="L263">            .setParent(parent)</span>
+<span class="fc" id="L264">            .setBatch(batch)</span>
+<span class="fc" id="L265">            .setBatchId(batchId)</span>
+<span class="fc" id="L266">            .build();</span>
+<span class="fc" id="L267">    return createBatchAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -238,6 +274,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   CreateBatchRequest request =
    *       CreateBatchRequest.newBuilder()
@@ -255,7 +293,7 @@ public class BatchControllerClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Batch, BatchOperationMetadata&gt; createBatchAsync(
       CreateBatchRequest request) {
-<span class="fc" id="L258">    return createBatchOperationCallable().futureCall(request);</span>
+<span class="fc" id="L296">    return createBatchOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -265,6 +303,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   CreateBatchRequest request =
    *       CreateBatchRequest.newBuilder()
@@ -282,7 +322,7 @@ public class BatchControllerClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateBatchRequest, Batch, BatchOperationMetadata&gt;
       createBatchOperationCallable() {
-<span class="fc" id="L285">    return stub.createBatchOperationCallable();</span>
+<span class="fc" id="L325">    return stub.createBatchOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -292,6 +332,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   CreateBatchRequest request =
    *       CreateBatchRequest.newBuilder()
@@ -307,7 +349,7 @@ public class BatchControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateBatchRequest, Operation&gt; createBatchCallable() {
-<span class="nc" id="L310">    return stub.createBatchCallable();</span>
+<span class="nc" id="L352">    return stub.createBatchCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -317,6 +359,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   BatchName name = BatchName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[BATCH]&quot;);
    *   Batch response = batchControllerClient.getBatch(name);
@@ -328,8 +372,8 @@ public class BatchControllerClient implements BackgroundResource {
    */
   public final Batch getBatch(BatchName name) {
     GetBatchRequest request =
-<span class="pc bpc" id="L331" title="1 of 2 branches missed.">        GetBatchRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L332">    return getBatch(request);</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">        GetBatchRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L376">    return getBatch(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -339,6 +383,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   String name = BatchName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[BATCH]&quot;).toString();
    *   Batch response = batchControllerClient.getBatch(name);
@@ -349,8 +395,8 @@ public class BatchControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Batch getBatch(String name) {
-<span class="fc" id="L352">    GetBatchRequest request = GetBatchRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L353">    return getBatch(request);</span>
+<span class="fc" id="L398">    GetBatchRequest request = GetBatchRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L399">    return getBatch(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -360,6 +406,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   GetBatchRequest request =
    *       GetBatchRequest.newBuilder()
@@ -373,7 +421,7 @@ public class BatchControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Batch getBatch(GetBatchRequest request) {
-<span class="fc" id="L376">    return getBatchCallable().call(request);</span>
+<span class="fc" id="L424">    return getBatchCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -383,6 +431,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   GetBatchRequest request =
    *       GetBatchRequest.newBuilder()
@@ -395,7 +445,7 @@ public class BatchControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetBatchRequest, Batch&gt; getBatchCallable() {
-<span class="fc" id="L398">    return stub.getBatchCallable();</span>
+<span class="fc" id="L448">    return stub.getBatchCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -405,6 +455,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   for (Batch element : batchControllerClient.listBatches(parent).iterateAll()) {
@@ -418,10 +470,10 @@ public class BatchControllerClient implements BackgroundResource {
    */
   public final ListBatchesPagedResponse listBatches(LocationName parent) {
     ListBatchesRequest request =
-<span class="fc" id="L421">        ListBatchesRequest.newBuilder()</span>
-<span class="pc bpc" id="L422" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L423">            .build();</span>
-<span class="fc" id="L424">    return listBatches(request);</span>
+<span class="fc" id="L473">        ListBatchesRequest.newBuilder()</span>
+<span class="pc bpc" id="L474" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L475">            .build();</span>
+<span class="fc" id="L476">    return listBatches(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -431,6 +483,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   for (Batch element : batchControllerClient.listBatches(parent).iterateAll()) {
@@ -443,8 +497,8 @@ public class BatchControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListBatchesPagedResponse listBatches(String parent) {
-<span class="fc" id="L446">    ListBatchesRequest request = ListBatchesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L447">    return listBatches(request);</span>
+<span class="fc" id="L500">    ListBatchesRequest request = ListBatchesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L501">    return listBatches(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -454,6 +508,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   ListBatchesRequest request =
    *       ListBatchesRequest.newBuilder()
@@ -471,7 +527,7 @@ public class BatchControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListBatchesPagedResponse listBatches(ListBatchesRequest request) {
-<span class="fc" id="L474">    return listBatchesPagedCallable().call(request);</span>
+<span class="fc" id="L530">    return listBatchesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -481,6 +537,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   ListBatchesRequest request =
    *       ListBatchesRequest.newBuilder()
@@ -499,7 +557,7 @@ public class BatchControllerClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListBatchesRequest, ListBatchesPagedResponse&gt;
       listBatchesPagedCallable() {
-<span class="fc" id="L502">    return stub.listBatchesPagedCallable();</span>
+<span class="fc" id="L560">    return stub.listBatchesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -509,6 +567,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   ListBatchesRequest request =
    *       ListBatchesRequest.newBuilder()
@@ -518,7 +578,7 @@ public class BatchControllerClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListBatchesResponse response = batchControllerClient.listBatchesCallable().call(request);
-   *     for (Batch element : response.getResponsesList()) {
+   *     for (Batch element : response.getBatchesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -532,7 +592,7 @@ public class BatchControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListBatchesRequest, ListBatchesResponse&gt; listBatchesCallable() {
-<span class="nc" id="L535">    return stub.listBatchesCallable();</span>
+<span class="nc" id="L595">    return stub.listBatchesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -543,6 +603,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   BatchName name = BatchName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[BATCH]&quot;);
    *   batchControllerClient.deleteBatch(name);
@@ -554,9 +616,9 @@ public class BatchControllerClient implements BackgroundResource {
    */
   public final void deleteBatch(BatchName name) {
     DeleteBatchRequest request =
-<span class="pc bpc" id="L557" title="1 of 2 branches missed.">        DeleteBatchRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L558">    deleteBatch(request);</span>
-<span class="fc" id="L559">  }</span>
+<span class="pc bpc" id="L619" title="1 of 2 branches missed.">        DeleteBatchRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L620">    deleteBatch(request);</span>
+<span class="fc" id="L621">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -566,6 +628,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   String name = BatchName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[BATCH]&quot;).toString();
    *   batchControllerClient.deleteBatch(name);
@@ -576,9 +640,9 @@ public class BatchControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteBatch(String name) {
-<span class="fc" id="L579">    DeleteBatchRequest request = DeleteBatchRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L580">    deleteBatch(request);</span>
-<span class="fc" id="L581">  }</span>
+<span class="fc" id="L643">    DeleteBatchRequest request = DeleteBatchRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L644">    deleteBatch(request);</span>
+<span class="fc" id="L645">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -588,6 +652,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   DeleteBatchRequest request =
    *       DeleteBatchRequest.newBuilder()
@@ -601,8 +667,8 @@ public class BatchControllerClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteBatch(DeleteBatchRequest request) {
-<span class="fc" id="L604">    deleteBatchCallable().call(request);</span>
-<span class="fc" id="L605">  }</span>
+<span class="fc" id="L670">    deleteBatchCallable().call(request);</span>
+<span class="fc" id="L671">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -612,6 +678,8 @@ public class BatchControllerClient implements BackgroundResource {
    * &lt;p&gt;Sample code:
    *
    * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
    * try (BatchControllerClient batchControllerClient = BatchControllerClient.create()) {
    *   DeleteBatchRequest request =
    *       DeleteBatchRequest.newBuilder()
@@ -624,37 +692,37 @@ public class BatchControllerClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteBatchRequest, Empty&gt; deleteBatchCallable() {
-<span class="fc" id="L627">    return stub.deleteBatchCallable();</span>
+<span class="fc" id="L695">    return stub.deleteBatchCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L632">    stub.close();</span>
-<span class="fc" id="L633">  }</span>
+<span class="fc" id="L700">    stub.close();</span>
+<span class="fc" id="L701">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L637">    stub.shutdown();</span>
-<span class="nc" id="L638">  }</span>
+<span class="nc" id="L705">    stub.shutdown();</span>
+<span class="nc" id="L706">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L642">    return stub.isShutdown();</span>
+<span class="nc" id="L710">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L647">    return stub.isTerminated();</span>
+<span class="nc" id="L715">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L652">    stub.shutdownNow();</span>
-<span class="nc" id="L653">  }</span>
+<span class="nc" id="L720">    stub.shutdownNow();</span>
+<span class="nc" id="L721">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L657">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L725">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListBatchesPagedResponse
@@ -669,14 +737,14 @@ public class BatchControllerClient implements BackgroundResource {
         PageContext&lt;ListBatchesRequest, ListBatchesResponse, Batch&gt; context,
         ApiFuture&lt;ListBatchesResponse&gt; futureResponse) {
       ApiFuture&lt;ListBatchesPage&gt; futurePage =
-<span class="fc" id="L672">          ListBatchesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L673">      return ApiFutures.transform(</span>
-<span class="fc" id="L674">          futurePage, input -&gt; new ListBatchesPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L740">          ListBatchesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L741">      return ApiFutures.transform(</span>
+<span class="fc" id="L742">          futurePage, input -&gt; new ListBatchesPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListBatchesPagedResponse(ListBatchesPage page) {
-<span class="fc" id="L678">      super(page, ListBatchesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L679">    }</span>
+<span class="fc" id="L746">      super(page, ListBatchesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L747">    }</span>
   }
 
   public static class ListBatchesPage
@@ -685,25 +753,25 @@ public class BatchControllerClient implements BackgroundResource {
     private ListBatchesPage(
         PageContext&lt;ListBatchesRequest, ListBatchesResponse, Batch&gt; context,
         ListBatchesResponse response) {
-<span class="fc" id="L688">      super(context, response);</span>
-<span class="fc" id="L689">    }</span>
+<span class="fc" id="L756">      super(context, response);</span>
+<span class="fc" id="L757">    }</span>
 
     private static ListBatchesPage createEmptyPage() {
-<span class="fc" id="L692">      return new ListBatchesPage(null, null);</span>
+<span class="fc" id="L760">      return new ListBatchesPage(null, null);</span>
     }
 
     @Override
     protected ListBatchesPage createPage(
         PageContext&lt;ListBatchesRequest, ListBatchesResponse, Batch&gt; context,
         ListBatchesResponse response) {
-<span class="fc" id="L699">      return new ListBatchesPage(context, response);</span>
+<span class="fc" id="L767">      return new ListBatchesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListBatchesPage&gt; createPageAsync(
         PageContext&lt;ListBatchesRequest, ListBatchesResponse, Batch&gt; context,
         ApiFuture&lt;ListBatchesResponse&gt; futureResponse) {
-<span class="fc" id="L706">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L774">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -716,17 +784,17 @@ public class BatchControllerClient implements BackgroundResource {
           ListBatchesFixedSizeCollection&gt; {
 
     private ListBatchesFixedSizeCollection(List&lt;ListBatchesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L719">      super(pages, collectionSize);</span>
-<span class="fc" id="L720">    }</span>
+<span class="fc" id="L787">      super(pages, collectionSize);</span>
+<span class="fc" id="L788">    }</span>
 
     private static ListBatchesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L723">      return new ListBatchesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L791">      return new ListBatchesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListBatchesFixedSizeCollection createCollection(
         List&lt;ListBatchesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L729">      return new ListBatchesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L797">      return new ListBatchesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
