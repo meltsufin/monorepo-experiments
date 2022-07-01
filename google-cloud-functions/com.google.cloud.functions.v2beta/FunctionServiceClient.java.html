@@ -1,0 +1,1584 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>FunctionServiceClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-functions</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.functions.v2beta</a> &gt; <span class="el_source">FunctionServiceClient.java</span></div><h1>FunctionServiceClient.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.cloud.functions.v2beta;
+
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
+import com.google.api.core.BetaApi;
+import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
+import com.google.api.gax.longrunning.OperationFuture;
+import com.google.api.gax.paging.AbstractFixedSizeCollection;
+import com.google.api.gax.paging.AbstractPage;
+import com.google.api.gax.paging.AbstractPagedListResponse;
+import com.google.api.gax.rpc.OperationCallable;
+import com.google.api.gax.rpc.PageContext;
+import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.functions.v2beta.stub.FunctionServiceStub;
+import com.google.cloud.functions.v2beta.stub.FunctionServiceStubSettings;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
+import com.google.longrunning.Operation;
+import com.google.protobuf.Empty;
+import com.google.protobuf.FieldMask;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.Generated;
+
+// AUTO-GENERATED DOCUMENTATION AND CLASS.
+/**
+ * Service Description: Google Cloud Functions is used to deploy functions that are executed by
+ * Google in response to various events. Data connected with that event is passed to a function as
+ * the input data.
+ *
+ * &lt;p&gt;A &amp;#42;&amp;#42;function&amp;#42;&amp;#42; is a resource which describes a function that should be
+ * executed and how it is triggered.
+ *
+ * &lt;p&gt;This class provides the ability to make remote calls to the backing service through method
+ * calls that map to API methods. Sample code to get started:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+ *   FunctionName name = FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;);
+ *   Function response = functionServiceClient.getFunction(name);
+ * }
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;Note: close() needs to be called on the FunctionServiceClient object to clean up resources
+ * such as threads. In the example above, try-with-resources is used, which automatically calls
+ * close().
+ *
+ * &lt;p&gt;The surface of this class includes several types of Java methods for each of the API's
+ * methods:
+ *
+ * &lt;ol&gt;
+ *   &lt;li&gt;A &quot;flattened&quot; method. With this type of method, the fields of the request type have been
+ *       converted into function parameters. It may be the case that not all fields are available as
+ *       parameters, and not every API method will have a flattened method entry point.
+ *   &lt;li&gt;A &quot;request object&quot; method. This type of method only takes one parameter, a request object,
+ *       which must be constructed before the call. Not every API method will have a request object
+ *       method.
+ *   &lt;li&gt;A &quot;callable&quot; method. This type of method takes no parameters and returns an immutable API
+ *       callable object, which can be used to initiate calls to the service.
+ * &lt;/ol&gt;
+ *
+ * &lt;p&gt;See the individual methods for example code.
+ *
+ * &lt;p&gt;Many parameters require resource names to be formatted in a particular way. To assist with
+ * these names, this class includes a format method for each type of name, and additionally a parse
+ * method to extract the individual identifiers contained within names that are returned.
+ *
+ * &lt;p&gt;This class can be customized by passing in a custom instance of FunctionServiceSettings to
+ * create(). For example:
+ *
+ * &lt;p&gt;To customize credentials:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * FunctionServiceSettings functionServiceSettings =
+ *     FunctionServiceSettings.newBuilder()
+ *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
+ *         .build();
+ * FunctionServiceClient functionServiceClient =
+ *     FunctionServiceClient.create(functionServiceSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;To customize the endpoint:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * FunctionServiceSettings functionServiceSettings =
+ *     FunctionServiceSettings.newBuilder().setEndpoint(myEndpoint).build();
+ * FunctionServiceClient functionServiceClient =
+ *     FunctionServiceClient.create(functionServiceSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * FunctionServiceSettings functionServiceSettings =
+ *     FunctionServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             FunctionServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * FunctionServiceClient functionServiceClient =
+ *     FunctionServiceClient.create(functionServiceSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
+ */
+@BetaApi
+@Generated(&quot;by gapic-generator-java&quot;)
+public class FunctionServiceClient implements BackgroundResource {
+  private final FunctionServiceSettings settings;
+  private final FunctionServiceStub stub;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
+
+  /** Constructs an instance of FunctionServiceClient with default settings. */
+  public static final FunctionServiceClient create() throws IOException {
+<span class="nc" id="L149">    return create(FunctionServiceSettings.newBuilder().build());</span>
+  }
+
+  /**
+   * Constructs an instance of FunctionServiceClient, using the given settings. The channels are
+   * created based on the settings passed in, or defaults for any settings that are not set.
+   */
+  public static final FunctionServiceClient create(FunctionServiceSettings settings)
+      throws IOException {
+<span class="fc" id="L158">    return new FunctionServiceClient(settings);</span>
+  }
+
+  /**
+   * Constructs an instance of FunctionServiceClient, using the given stub for making calls. This is
+   * for advanced usage - prefer using create(FunctionServiceSettings).
+   */
+  public static final FunctionServiceClient create(FunctionServiceStub stub) {
+<span class="nc" id="L166">    return new FunctionServiceClient(stub);</span>
+  }
+
+  /**
+   * Constructs an instance of FunctionServiceClient, using the given settings. This is protected so
+   * that it is easy to make a subclass, but otherwise, the static factory methods should be
+   * preferred.
+   */
+<span class="fc" id="L174">  protected FunctionServiceClient(FunctionServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L175">    this.settings = settings;</span>
+<span class="fc" id="L176">    this.stub = ((FunctionServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L177">    this.operationsClient =</span>
+<span class="fc" id="L178">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L179">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L180">  }</span>
+
+<span class="nc" id="L182">  protected FunctionServiceClient(FunctionServiceStub stub) {</span>
+<span class="nc" id="L183">    this.settings = null;</span>
+<span class="nc" id="L184">    this.stub = stub;</span>
+<span class="nc" id="L185">    this.operationsClient =</span>
+<span class="nc" id="L186">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L187">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L188">  }</span>
+
+  public final FunctionServiceSettings getSettings() {
+<span class="nc" id="L191">    return settings;</span>
+  }
+
+  public FunctionServiceStub getStub() {
+<span class="nc" id="L195">    return stub;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L203">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L212">    return httpJsonOperationsClient;</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a function with the given name from the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   FunctionName name = FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;);
+   *   Function response = functionServiceClient.getFunction(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the function which details should be obtained.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Function getFunction(FunctionName name) {
+    GetFunctionRequest request =
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">        GetFunctionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L236">    return getFunction(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a function with the given name from the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   String name = FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString();
+   *   Function response = functionServiceClient.getFunction(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the function which details should be obtained.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Function getFunction(String name) {
+<span class="fc" id="L258">    GetFunctionRequest request = GetFunctionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L259">    return getFunction(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a function with the given name from the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   GetFunctionRequest request =
+   *       GetFunctionRequest.newBuilder()
+   *           .setName(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .build();
+   *   Function response = functionServiceClient.getFunction(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Function getFunction(GetFunctionRequest request) {
+<span class="fc" id="L284">    return getFunctionCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a function with the given name from the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   GetFunctionRequest request =
+   *       GetFunctionRequest.newBuilder()
+   *           .setName(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Function&gt; future = functionServiceClient.getFunctionCallable().futureCall(request);
+   *   // Do something.
+   *   Function response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetFunctionRequest, Function&gt; getFunctionCallable() {
+<span class="fc" id="L308">    return stub.getFunctionCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of functions that belong to the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   for (Function element : functionServiceClient.listFunctions(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location from which the function should be listed,
+   *     specified in the format `projects/&amp;#42;/locations/&amp;#42;` If you want to list functions in
+   *     all locations, use &quot;-&quot; in place of a location. When listing functions in all locations, if
+   *     one or more location(s) are unreachable, the response will contain functions from all
+   *     reachable locations along with the names of any unreachable locations.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListFunctionsPagedResponse listFunctions(LocationName parent) {
+    ListFunctionsRequest request =
+<span class="fc" id="L337">        ListFunctionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L339">            .build();</span>
+<span class="fc" id="L340">    return listFunctions(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of functions that belong to the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   for (Function element : functionServiceClient.listFunctions(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location from which the function should be listed,
+   *     specified in the format `projects/&amp;#42;/locations/&amp;#42;` If you want to list functions in
+   *     all locations, use &quot;-&quot; in place of a location. When listing functions in all locations, if
+   *     one or more location(s) are unreachable, the response will contain functions from all
+   *     reachable locations along with the names of any unreachable locations.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListFunctionsPagedResponse listFunctions(String parent) {
+<span class="fc" id="L368">    ListFunctionsRequest request = ListFunctionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L369">    return listFunctions(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of functions that belong to the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   ListFunctionsRequest request =
+   *       ListFunctionsRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .build();
+   *   for (Function element : functionServiceClient.listFunctions(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListFunctionsPagedResponse listFunctions(ListFunctionsRequest request) {
+<span class="fc" id="L400">    return listFunctionsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of functions that belong to the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   ListFunctionsRequest request =
+   *       ListFunctionsRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .build();
+   *   ApiFuture&lt;Function&gt; future =
+   *       functionServiceClient.listFunctionsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Function element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListFunctionsRequest, ListFunctionsPagedResponse&gt;
+      listFunctionsPagedCallable() {
+<span class="fc" id="L432">    return stub.listFunctionsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of functions that belong to the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   ListFunctionsRequest request =
+   *       ListFunctionsRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListFunctionsResponse response =
+   *         functionServiceClient.listFunctionsCallable().call(request);
+   *     for (Function element : response.getFunctionsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListFunctionsRequest, ListFunctionsResponse&gt; listFunctionsCallable() {
+<span class="nc" id="L470">    return stub.listFunctionsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new function. If a function with the given name already exists in the specified
+   * project, the long running operation will return `ALREADY_EXISTS` error.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   Function function = Function.newBuilder().build();
+   *   String functionId = &quot;functionId-62789869&quot;;
+   *   Function response =
+   *       functionServiceClient.createFunctionAsync(parent, function, functionId).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location in which the function should be created,
+   *     specified in the format `projects/&amp;#42;/locations/&amp;#42;`
+   * @param function Required. Function to be created.
+   * @param functionId The ID to use for the function, which will become the final component of the
+   *     function's resource name.
+   *     &lt;p&gt;This value should be 4-63 characters, and valid characters are /[a-z][0-9]-/.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Function, OperationMetadata&gt; createFunctionAsync(
+      LocationName parent, Function function, String functionId) {
+    CreateFunctionRequest request =
+<span class="fc" id="L503">        CreateFunctionRequest.newBuilder()</span>
+<span class="pc bpc" id="L504" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L505">            .setFunction(function)</span>
+<span class="fc" id="L506">            .setFunctionId(functionId)</span>
+<span class="fc" id="L507">            .build();</span>
+<span class="fc" id="L508">    return createFunctionAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new function. If a function with the given name already exists in the specified
+   * project, the long running operation will return `ALREADY_EXISTS` error.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   Function function = Function.newBuilder().build();
+   *   String functionId = &quot;functionId-62789869&quot;;
+   *   Function response =
+   *       functionServiceClient.createFunctionAsync(parent, function, functionId).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location in which the function should be created,
+   *     specified in the format `projects/&amp;#42;/locations/&amp;#42;`
+   * @param function Required. Function to be created.
+   * @param functionId The ID to use for the function, which will become the final component of the
+   *     function's resource name.
+   *     &lt;p&gt;This value should be 4-63 characters, and valid characters are /[a-z][0-9]-/.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Function, OperationMetadata&gt; createFunctionAsync(
+      String parent, Function function, String functionId) {
+    CreateFunctionRequest request =
+<span class="fc" id="L541">        CreateFunctionRequest.newBuilder()</span>
+<span class="fc" id="L542">            .setParent(parent)</span>
+<span class="fc" id="L543">            .setFunction(function)</span>
+<span class="fc" id="L544">            .setFunctionId(functionId)</span>
+<span class="fc" id="L545">            .build();</span>
+<span class="fc" id="L546">    return createFunctionAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new function. If a function with the given name already exists in the specified
+   * project, the long running operation will return `ALREADY_EXISTS` error.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   CreateFunctionRequest request =
+   *       CreateFunctionRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setFunction(Function.newBuilder().build())
+   *           .setFunctionId(&quot;functionId-62789869&quot;)
+   *           .build();
+   *   Function response = functionServiceClient.createFunctionAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Function, OperationMetadata&gt; createFunctionAsync(
+      CreateFunctionRequest request) {
+<span class="fc" id="L575">    return createFunctionOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new function. If a function with the given name already exists in the specified
+   * project, the long running operation will return `ALREADY_EXISTS` error.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   CreateFunctionRequest request =
+   *       CreateFunctionRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setFunction(Function.newBuilder().build())
+   *           .setFunctionId(&quot;functionId-62789869&quot;)
+   *           .build();
+   *   OperationFuture&lt;Function, OperationMetadata&gt; future =
+   *       functionServiceClient.createFunctionOperationCallable().futureCall(request);
+   *   // Do something.
+   *   Function response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;CreateFunctionRequest, Function, OperationMetadata&gt;
+      createFunctionOperationCallable() {
+<span class="fc" id="L604">    return stub.createFunctionOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a new function. If a function with the given name already exists in the specified
+   * project, the long running operation will return `ALREADY_EXISTS` error.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   CreateFunctionRequest request =
+   *       CreateFunctionRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setFunction(Function.newBuilder().build())
+   *           .setFunctionId(&quot;functionId-62789869&quot;)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future =
+   *       functionServiceClient.createFunctionCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;CreateFunctionRequest, Operation&gt; createFunctionCallable() {
+<span class="nc" id="L632">    return stub.createFunctionCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates existing function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   Function function = Function.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   Function response = functionServiceClient.updateFunctionAsync(function, updateMask).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param function Required. New version of the function.
+   * @param updateMask The list of fields to be updated. If no field mask is provided, all provided
+   *     fields in the request will be updated.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Function, OperationMetadata&gt; updateFunctionAsync(
+      Function function, FieldMask updateMask) {
+    UpdateFunctionRequest request =
+<span class="fc" id="L659">        UpdateFunctionRequest.newBuilder().setFunction(function).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L660">    return updateFunctionAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates existing function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   UpdateFunctionRequest request =
+   *       UpdateFunctionRequest.newBuilder()
+   *           .setFunction(Function.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Function response = functionServiceClient.updateFunctionAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Function, OperationMetadata&gt; updateFunctionAsync(
+      UpdateFunctionRequest request) {
+<span class="fc" id="L687">    return updateFunctionOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates existing function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   UpdateFunctionRequest request =
+   *       UpdateFunctionRequest.newBuilder()
+   *           .setFunction(Function.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   OperationFuture&lt;Function, OperationMetadata&gt; future =
+   *       functionServiceClient.updateFunctionOperationCallable().futureCall(request);
+   *   // Do something.
+   *   Function response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;UpdateFunctionRequest, Function, OperationMetadata&gt;
+      updateFunctionOperationCallable() {
+<span class="fc" id="L714">    return stub.updateFunctionOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates existing function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   UpdateFunctionRequest request =
+   *       UpdateFunctionRequest.newBuilder()
+   *           .setFunction(Function.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future =
+   *       functionServiceClient.updateFunctionCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;UpdateFunctionRequest, Operation&gt; updateFunctionCallable() {
+<span class="nc" id="L740">    return stub.updateFunctionCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a function with the given name from the specified project. If the given function is
+   * used by some trigger, the trigger will be updated to remove this function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   FunctionName name = FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;);
+   *   functionServiceClient.deleteFunctionAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the function which should be deleted.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteFunctionAsync(FunctionName name) {
+    DeleteFunctionRequest request =
+<span class="pc bpc" id="L764" title="1 of 2 branches missed.">        DeleteFunctionRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L765">    return deleteFunctionAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a function with the given name from the specified project. If the given function is
+   * used by some trigger, the trigger will be updated to remove this function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   String name = FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString();
+   *   functionServiceClient.deleteFunctionAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the function which should be deleted.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteFunctionAsync(String name) {
+<span class="fc" id="L788">    DeleteFunctionRequest request = DeleteFunctionRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L789">    return deleteFunctionAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a function with the given name from the specified project. If the given function is
+   * used by some trigger, the trigger will be updated to remove this function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   DeleteFunctionRequest request =
+   *       DeleteFunctionRequest.newBuilder()
+   *           .setName(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .build();
+   *   functionServiceClient.deleteFunctionAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteFunctionAsync(
+      DeleteFunctionRequest request) {
+<span class="fc" id="L816">    return deleteFunctionOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a function with the given name from the specified project. If the given function is
+   * used by some trigger, the trigger will be updated to remove this function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   DeleteFunctionRequest request =
+   *       DeleteFunctionRequest.newBuilder()
+   *           .setName(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .build();
+   *   OperationFuture&lt;Empty, OperationMetadata&gt; future =
+   *       functionServiceClient.deleteFunctionOperationCallable().futureCall(request);
+   *   // Do something.
+   *   future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;DeleteFunctionRequest, Empty, OperationMetadata&gt;
+      deleteFunctionOperationCallable() {
+<span class="fc" id="L843">    return stub.deleteFunctionOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes a function with the given name from the specified project. If the given function is
+   * used by some trigger, the trigger will be updated to remove this function.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   DeleteFunctionRequest request =
+   *       DeleteFunctionRequest.newBuilder()
+   *           .setName(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future =
+   *       functionServiceClient.deleteFunctionCallable().futureCall(request);
+   *   // Do something.
+   *   future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;DeleteFunctionRequest, Operation&gt; deleteFunctionCallable() {
+<span class="nc" id="L869">    return stub.deleteFunctionCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a signed URL for uploading a function source code. For more information about the
+   * signed URL usage see: https://cloud.google.com/storage/docs/access-control/signed-urls. Once
+   * the function source code upload is complete, the used signed URL should be provided in
+   * CreateFunction or UpdateFunction request as a reference to the function source code.
+   *
+   * &lt;p&gt;When uploading source code to the generated signed URL, please follow these restrictions:
+   *
+   * &lt;ul&gt;
+   *   &lt;li&gt;Source file type should be a zip file.
+   *   &lt;li&gt;No credentials should be attached - the signed URLs provide access to the target bucket
+   *       using internal service identity; if credentials were attached, the identity from the
+   *       credentials would be used, but that identity does not have permissions to upload files to
+   *       the URL.
+   * &lt;/ul&gt;
+   *
+   * &lt;p&gt;When making a HTTP PUT request, these two headers need to be specified:
+   *
+   * &lt;ul&gt;
+   *   &lt;li&gt;`content-type: application/zip`
+   * &lt;/ul&gt;
+   *
+   * &lt;p&gt;And this header SHOULD NOT be specified:
+   *
+   * &lt;ul&gt;
+   *   &lt;li&gt;`Authorization: Bearer YOUR_TOKEN`
+   * &lt;/ul&gt;
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   GenerateUploadUrlRequest request =
+   *       GenerateUploadUrlRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   GenerateUploadUrlResponse response = functionServiceClient.generateUploadUrl(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final GenerateUploadUrlResponse generateUploadUrl(GenerateUploadUrlRequest request) {
+<span class="fc" id="L919">    return generateUploadUrlCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a signed URL for uploading a function source code. For more information about the
+   * signed URL usage see: https://cloud.google.com/storage/docs/access-control/signed-urls. Once
+   * the function source code upload is complete, the used signed URL should be provided in
+   * CreateFunction or UpdateFunction request as a reference to the function source code.
+   *
+   * &lt;p&gt;When uploading source code to the generated signed URL, please follow these restrictions:
+   *
+   * &lt;ul&gt;
+   *   &lt;li&gt;Source file type should be a zip file.
+   *   &lt;li&gt;No credentials should be attached - the signed URLs provide access to the target bucket
+   *       using internal service identity; if credentials were attached, the identity from the
+   *       credentials would be used, but that identity does not have permissions to upload files to
+   *       the URL.
+   * &lt;/ul&gt;
+   *
+   * &lt;p&gt;When making a HTTP PUT request, these two headers need to be specified:
+   *
+   * &lt;ul&gt;
+   *   &lt;li&gt;`content-type: application/zip`
+   * &lt;/ul&gt;
+   *
+   * &lt;p&gt;And this header SHOULD NOT be specified:
+   *
+   * &lt;ul&gt;
+   *   &lt;li&gt;`Authorization: Bearer YOUR_TOKEN`
+   * &lt;/ul&gt;
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   GenerateUploadUrlRequest request =
+   *       GenerateUploadUrlRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;GenerateUploadUrlResponse&gt; future =
+   *       functionServiceClient.generateUploadUrlCallable().futureCall(request);
+   *   // Do something.
+   *   GenerateUploadUrlResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GenerateUploadUrlRequest, GenerateUploadUrlResponse&gt;
+      generateUploadUrlCallable() {
+<span class="fc" id="L970">    return stub.generateUploadUrlCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a signed URL for downloading deployed function source code. The URL is only valid for a
+   * limited period and should be used within 30 minutes of generation. For more information about
+   * the signed URL usage see: https://cloud.google.com/storage/docs/access-control/signed-urls
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   GenerateDownloadUrlRequest request =
+   *       GenerateDownloadUrlRequest.newBuilder()
+   *           .setName(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .build();
+   *   GenerateDownloadUrlResponse response = functionServiceClient.generateDownloadUrl(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final GenerateDownloadUrlResponse generateDownloadUrl(GenerateDownloadUrlRequest request) {
+<span class="fc" id="L997">    return generateDownloadUrlCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a signed URL for downloading deployed function source code. The URL is only valid for a
+   * limited period and should be used within 30 minutes of generation. For more information about
+   * the signed URL usage see: https://cloud.google.com/storage/docs/access-control/signed-urls
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   GenerateDownloadUrlRequest request =
+   *       GenerateDownloadUrlRequest.newBuilder()
+   *           .setName(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;GenerateDownloadUrlResponse&gt; future =
+   *       functionServiceClient.generateDownloadUrlCallable().futureCall(request);
+   *   // Do something.
+   *   GenerateDownloadUrlResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GenerateDownloadUrlRequest, GenerateDownloadUrlResponse&gt;
+      generateDownloadUrlCallable() {
+<span class="fc" id="L1025">    return stub.generateDownloadUrlCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of runtimes that are supported for the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   ListRuntimesResponse response = functionServiceClient.listRuntimes(parent);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location from which the runtimes should be listed,
+   *     specified in the format `projects/&amp;#42;/locations/&amp;#42;`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListRuntimesResponse listRuntimes(LocationName parent) {
+    ListRuntimesRequest request =
+<span class="fc" id="L1049">        ListRuntimesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1050" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1051">            .build();</span>
+<span class="fc" id="L1052">    return listRuntimes(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of runtimes that are supported for the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   ListRuntimesResponse response = functionServiceClient.listRuntimes(parent);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location from which the runtimes should be listed,
+   *     specified in the format `projects/&amp;#42;/locations/&amp;#42;`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListRuntimesResponse listRuntimes(String parent) {
+<span class="fc" id="L1075">    ListRuntimesRequest request = ListRuntimesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1076">    return listRuntimes(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of runtimes that are supported for the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   ListRuntimesRequest request =
+   *       ListRuntimesRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .build();
+   *   ListRuntimesResponse response = functionServiceClient.listRuntimes(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListRuntimesResponse listRuntimes(ListRuntimesRequest request) {
+<span class="fc" id="L1102">    return listRuntimesCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns a list of runtimes that are supported for the requested project.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   ListRuntimesRequest request =
+   *       ListRuntimesRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .build();
+   *   ApiFuture&lt;ListRuntimesResponse&gt; future =
+   *       functionServiceClient.listRuntimesCallable().futureCall(request);
+   *   // Do something.
+   *   ListRuntimesResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListRuntimesRequest, ListRuntimesResponse&gt; listRuntimesCallable() {
+<span class="fc" id="L1128">    return stub.listRuntimesCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : functionServiceClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L1158">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       functionServiceClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L1189">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response =
+   *         functionServiceClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L1226">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Policy response = functionServiceClient.setIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(SetIamPolicyRequest request) {
+<span class="fc" id="L1255">    return setIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = functionServiceClient.setIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
+<span class="fc" id="L1283">    return stub.setIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   Policy response = functionServiceClient.getIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(GetIamPolicyRequest request) {
+<span class="fc" id="L1310">    return getIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = functionServiceClient.getIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
+<span class="fc" id="L1336">    return stub.getIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   TestIamPermissionsResponse response = functionServiceClient.testIamPermissions(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
+<span class="fc" id="L1367">    return testIamPermissionsCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (FunctionServiceClient functionServiceClient = FunctionServiceClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(FunctionName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[FUNCTION]&quot;).toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   ApiFuture&lt;TestIamPermissionsResponse&gt; future =
+   *       functionServiceClient.testIamPermissionsCallable().futureCall(request);
+   *   // Do something.
+   *   TestIamPermissionsResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable() {
+<span class="fc" id="L1399">    return stub.testIamPermissionsCallable();</span>
+  }
+
+  @Override
+  public final void close() {
+<span class="fc" id="L1404">    stub.close();</span>
+<span class="fc" id="L1405">  }</span>
+
+  @Override
+  public void shutdown() {
+<span class="nc" id="L1409">    stub.shutdown();</span>
+<span class="nc" id="L1410">  }</span>
+
+  @Override
+  public boolean isShutdown() {
+<span class="nc" id="L1414">    return stub.isShutdown();</span>
+  }
+
+  @Override
+  public boolean isTerminated() {
+<span class="nc" id="L1419">    return stub.isTerminated();</span>
+  }
+
+  @Override
+  public void shutdownNow() {
+<span class="nc" id="L1424">    stub.shutdownNow();</span>
+<span class="nc" id="L1425">  }</span>
+
+  @Override
+  public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
+<span class="nc" id="L1429">    return stub.awaitTermination(duration, unit);</span>
+  }
+
+  public static class ListFunctionsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListFunctionsRequest,
+          ListFunctionsResponse,
+          Function,
+          ListFunctionsPage,
+          ListFunctionsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListFunctionsPagedResponse&gt; createAsync(
+        PageContext&lt;ListFunctionsRequest, ListFunctionsResponse, Function&gt; context,
+        ApiFuture&lt;ListFunctionsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListFunctionsPage&gt; futurePage =
+<span class="fc" id="L1444">          ListFunctionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1445">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1447">          input -&gt; new ListFunctionsPagedResponse(input),</span>
+<span class="fc" id="L1448">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListFunctionsPagedResponse(ListFunctionsPage page) {
+<span class="fc" id="L1452">      super(page, ListFunctionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1453">    }</span>
+  }
+
+  public static class ListFunctionsPage
+      extends AbstractPage&lt;
+          ListFunctionsRequest, ListFunctionsResponse, Function, ListFunctionsPage&gt; {
+
+    private ListFunctionsPage(
+        PageContext&lt;ListFunctionsRequest, ListFunctionsResponse, Function&gt; context,
+        ListFunctionsResponse response) {
+<span class="fc" id="L1463">      super(context, response);</span>
+<span class="fc" id="L1464">    }</span>
+
+    private static ListFunctionsPage createEmptyPage() {
+<span class="fc" id="L1467">      return new ListFunctionsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListFunctionsPage createPage(
+        PageContext&lt;ListFunctionsRequest, ListFunctionsResponse, Function&gt; context,
+        ListFunctionsResponse response) {
+<span class="fc" id="L1474">      return new ListFunctionsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListFunctionsPage&gt; createPageAsync(
+        PageContext&lt;ListFunctionsRequest, ListFunctionsResponse, Function&gt; context,
+        ApiFuture&lt;ListFunctionsResponse&gt; futureResponse) {
+<span class="fc" id="L1481">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListFunctionsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListFunctionsRequest,
+          ListFunctionsResponse,
+          Function,
+          ListFunctionsPage,
+          ListFunctionsFixedSizeCollection&gt; {
+
+    private ListFunctionsFixedSizeCollection(List&lt;ListFunctionsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1494">      super(pages, collectionSize);</span>
+<span class="fc" id="L1495">    }</span>
+
+    private static ListFunctionsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1498">      return new ListFunctionsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListFunctionsFixedSizeCollection createCollection(
+        List&lt;ListFunctionsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1504">      return new ListFunctionsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L1520">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L1521">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L1523">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L1524">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L1528">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L1529">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1539">      super(context, response);</span>
+<span class="fc" id="L1540">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L1543">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L1550">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L1557">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L1570">      super(pages, collectionSize);</span>
+<span class="fc" id="L1571">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L1574">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L1580">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

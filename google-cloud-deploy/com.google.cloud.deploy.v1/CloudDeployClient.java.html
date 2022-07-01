@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -31,7 +32,6 @@ import com.google.cloud.deploy.v1.stub.CloudDeployStub;
 import com.google.cloud.deploy.v1.stub.CloudDeployStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -105,17 +105,32 @@ import javax.annotation.Generated;
  * CloudDeployClient cloudDeployClient = CloudDeployClient.create(cloudDeploySettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * CloudDeploySettings cloudDeploySettings =
+ *     CloudDeploySettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             CloudDeploySettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * CloudDeployClient cloudDeployClient = CloudDeployClient.create(cloudDeploySettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class CloudDeployClient implements BackgroundResource {
   private final CloudDeploySettings settings;
   private final CloudDeployStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of CloudDeployClient with default settings. */
   public static final CloudDeployClient create() throws IOException {
-<span class="nc" id="L118">    return create(CloudDeploySettings.newBuilder().build());</span>
+<span class="nc" id="L133">    return create(CloudDeploySettings.newBuilder().build());</span>
   }
 
   /**
@@ -123,16 +138,15 @@ public class CloudDeployClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final CloudDeployClient create(CloudDeploySettings settings) throws IOException {
-<span class="fc" id="L126">    return new CloudDeployClient(settings);</span>
+<span class="fc" id="L141">    return new CloudDeployClient(settings);</span>
   }
 
   /**
    * Constructs an instance of CloudDeployClient, using the given stub for making calls. This is for
    * advanced usage - prefer using create(CloudDeploySettings).
    */
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public static final CloudDeployClient create(CloudDeployStub stub) {
-<span class="nc" id="L135">    return new CloudDeployClient(stub);</span>
+<span class="nc" id="L149">    return new CloudDeployClient(stub);</span>
   }
 
   /**
@@ -140,34 +154,45 @@ public class CloudDeployClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L143">  protected CloudDeployClient(CloudDeploySettings settings) throws IOException {</span>
-<span class="fc" id="L144">    this.settings = settings;</span>
-<span class="fc" id="L145">    this.stub = ((CloudDeployStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L146">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L147">  }</span>
+<span class="fc" id="L157">  protected CloudDeployClient(CloudDeploySettings settings) throws IOException {</span>
+<span class="fc" id="L158">    this.settings = settings;</span>
+<span class="fc" id="L159">    this.stub = ((CloudDeployStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L160">    this.operationsClient =</span>
+<span class="fc" id="L161">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L162">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L163">  }</span>
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
-<span class="nc" id="L150">  protected CloudDeployClient(CloudDeployStub stub) {</span>
-<span class="nc" id="L151">    this.settings = null;</span>
-<span class="nc" id="L152">    this.stub = stub;</span>
-<span class="nc" id="L153">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L154">  }</span>
+<span class="nc" id="L165">  protected CloudDeployClient(CloudDeployStub stub) {</span>
+<span class="nc" id="L166">    this.settings = null;</span>
+<span class="nc" id="L167">    this.stub = stub;</span>
+<span class="nc" id="L168">    this.operationsClient =</span>
+<span class="nc" id="L169">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L170">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L171">  }</span>
 
   public final CloudDeploySettings getSettings() {
-<span class="nc" id="L157">    return settings;</span>
+<span class="nc" id="L174">    return settings;</span>
   }
 
-  @BetaApi(&quot;A restructuring of stub classes is planned, so this may break in the future&quot;)
   public CloudDeployStub getStub() {
-<span class="nc" id="L162">    return stub;</span>
+<span class="nc" id="L178">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L170">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L186">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L195">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -194,10 +219,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListDeliveryPipelinesPagedResponse listDeliveryPipelines(LocationName parent) {
     ListDeliveryPipelinesRequest request =
-<span class="fc" id="L197">        ListDeliveryPipelinesRequest.newBuilder()</span>
-<span class="pc bpc" id="L198" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L199">            .build();</span>
-<span class="fc" id="L200">    return listDeliveryPipelines(request);</span>
+<span class="fc" id="L222">        ListDeliveryPipelinesRequest.newBuilder()</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L224">            .build();</span>
+<span class="fc" id="L225">    return listDeliveryPipelines(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -224,8 +249,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListDeliveryPipelinesPagedResponse listDeliveryPipelines(String parent) {
     ListDeliveryPipelinesRequest request =
-<span class="fc" id="L227">        ListDeliveryPipelinesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L228">    return listDeliveryPipelines(request);</span>
+<span class="fc" id="L252">        ListDeliveryPipelinesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L253">    return listDeliveryPipelines(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -258,7 +283,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListDeliveryPipelinesPagedResponse listDeliveryPipelines(
       ListDeliveryPipelinesRequest request) {
-<span class="fc" id="L261">    return listDeliveryPipelinesPagedCallable().call(request);</span>
+<span class="fc" id="L286">    return listDeliveryPipelinesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -290,7 +315,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesPagedResponse&gt;
       listDeliveryPipelinesPagedCallable() {
-<span class="fc" id="L293">    return stub.listDeliveryPipelinesPagedCallable();</span>
+<span class="fc" id="L318">    return stub.listDeliveryPipelinesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -314,7 +339,7 @@ public class CloudDeployClient implements BackgroundResource {
    *   while (true) {
    *     ListDeliveryPipelinesResponse response =
    *         cloudDeployClient.listDeliveryPipelinesCallable().call(request);
-   *     for (DeliveryPipeline element : response.getResponsesList()) {
+   *     for (DeliveryPipeline element : response.getDeliveryPipelinesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -329,7 +354,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesResponse&gt;
       listDeliveryPipelinesCallable() {
-<span class="nc" id="L332">    return stub.listDeliveryPipelinesCallable();</span>
+<span class="nc" id="L357">    return stub.listDeliveryPipelinesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -354,10 +379,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final DeliveryPipeline getDeliveryPipeline(DeliveryPipelineName name) {
     GetDeliveryPipelineRequest request =
-<span class="fc" id="L357">        GetDeliveryPipelineRequest.newBuilder()</span>
-<span class="pc bpc" id="L358" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L359">            .build();</span>
-<span class="fc" id="L360">    return getDeliveryPipeline(request);</span>
+<span class="fc" id="L382">        GetDeliveryPipelineRequest.newBuilder()</span>
+<span class="pc bpc" id="L383" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L384">            .build();</span>
+<span class="fc" id="L385">    return getDeliveryPipeline(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -382,8 +407,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final DeliveryPipeline getDeliveryPipeline(String name) {
     GetDeliveryPipelineRequest request =
-<span class="fc" id="L385">        GetDeliveryPipelineRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L386">    return getDeliveryPipeline(request);</span>
+<span class="fc" id="L410">        GetDeliveryPipelineRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L411">    return getDeliveryPipeline(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -410,7 +435,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final DeliveryPipeline getDeliveryPipeline(GetDeliveryPipelineRequest request) {
-<span class="fc" id="L413">    return getDeliveryPipelineCallable().call(request);</span>
+<span class="fc" id="L438">    return getDeliveryPipelineCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -438,7 +463,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetDeliveryPipelineRequest, DeliveryPipeline&gt;
       getDeliveryPipelineCallable() {
-<span class="fc" id="L441">    return stub.getDeliveryPipelineCallable();</span>
+<span class="fc" id="L466">    return stub.getDeliveryPipelineCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -470,12 +495,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; createDeliveryPipelineAsync(
       LocationName parent, DeliveryPipeline deliveryPipeline, String deliveryPipelineId) {
     CreateDeliveryPipelineRequest request =
-<span class="fc" id="L473">        CreateDeliveryPipelineRequest.newBuilder()</span>
-<span class="pc bpc" id="L474" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L475">            .setDeliveryPipeline(deliveryPipeline)</span>
-<span class="fc" id="L476">            .setDeliveryPipelineId(deliveryPipelineId)</span>
-<span class="fc" id="L477">            .build();</span>
-<span class="fc" id="L478">    return createDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L498">        CreateDeliveryPipelineRequest.newBuilder()</span>
+<span class="pc bpc" id="L499" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L500">            .setDeliveryPipeline(deliveryPipeline)</span>
+<span class="fc" id="L501">            .setDeliveryPipelineId(deliveryPipelineId)</span>
+<span class="fc" id="L502">            .build();</span>
+<span class="fc" id="L503">    return createDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -507,12 +532,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; createDeliveryPipelineAsync(
       String parent, DeliveryPipeline deliveryPipeline, String deliveryPipelineId) {
     CreateDeliveryPipelineRequest request =
-<span class="fc" id="L510">        CreateDeliveryPipelineRequest.newBuilder()</span>
-<span class="fc" id="L511">            .setParent(parent)</span>
-<span class="fc" id="L512">            .setDeliveryPipeline(deliveryPipeline)</span>
-<span class="fc" id="L513">            .setDeliveryPipelineId(deliveryPipelineId)</span>
-<span class="fc" id="L514">            .build();</span>
-<span class="fc" id="L515">    return createDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L535">        CreateDeliveryPipelineRequest.newBuilder()</span>
+<span class="fc" id="L536">            .setParent(parent)</span>
+<span class="fc" id="L537">            .setDeliveryPipeline(deliveryPipeline)</span>
+<span class="fc" id="L538">            .setDeliveryPipelineId(deliveryPipelineId)</span>
+<span class="fc" id="L539">            .build();</span>
+<span class="fc" id="L540">    return createDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -542,7 +567,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; createDeliveryPipelineAsync(
       CreateDeliveryPipelineRequest request) {
-<span class="fc" id="L545">    return createDeliveryPipelineOperationCallable().futureCall(request);</span>
+<span class="fc" id="L570">    return createDeliveryPipelineOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -572,7 +597,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateDeliveryPipelineRequest, DeliveryPipeline, OperationMetadata&gt;
       createDeliveryPipelineOperationCallable() {
-<span class="fc" id="L575">    return stub.createDeliveryPipelineOperationCallable();</span>
+<span class="fc" id="L600">    return stub.createDeliveryPipelineOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -602,7 +627,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateDeliveryPipelineRequest, Operation&gt;
       createDeliveryPipelineCallable() {
-<span class="nc" id="L605">    return stub.createDeliveryPipelineCallable();</span>
+<span class="nc" id="L630">    return stub.createDeliveryPipelineCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -632,11 +657,11 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; updateDeliveryPipelineAsync(
       DeliveryPipeline deliveryPipeline, FieldMask updateMask) {
     UpdateDeliveryPipelineRequest request =
-<span class="fc" id="L635">        UpdateDeliveryPipelineRequest.newBuilder()</span>
-<span class="fc" id="L636">            .setDeliveryPipeline(deliveryPipeline)</span>
-<span class="fc" id="L637">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L638">            .build();</span>
-<span class="fc" id="L639">    return updateDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L660">        UpdateDeliveryPipelineRequest.newBuilder()</span>
+<span class="fc" id="L661">            .setDeliveryPipeline(deliveryPipeline)</span>
+<span class="fc" id="L662">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L663">            .build();</span>
+<span class="fc" id="L664">    return updateDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -666,7 +691,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; updateDeliveryPipelineAsync(
       UpdateDeliveryPipelineRequest request) {
-<span class="fc" id="L669">    return updateDeliveryPipelineOperationCallable().futureCall(request);</span>
+<span class="fc" id="L694">    return updateDeliveryPipelineOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -696,7 +721,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateDeliveryPipelineRequest, DeliveryPipeline, OperationMetadata&gt;
       updateDeliveryPipelineOperationCallable() {
-<span class="fc" id="L699">    return stub.updateDeliveryPipelineOperationCallable();</span>
+<span class="fc" id="L724">    return stub.updateDeliveryPipelineOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -726,7 +751,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateDeliveryPipelineRequest, Operation&gt;
       updateDeliveryPipelineCallable() {
-<span class="nc" id="L729">    return stub.updateDeliveryPipelineCallable();</span>
+<span class="nc" id="L754">    return stub.updateDeliveryPipelineCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -752,10 +777,10 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDeliveryPipelineAsync(
       DeliveryPipelineName name) {
     DeleteDeliveryPipelineRequest request =
-<span class="fc" id="L755">        DeleteDeliveryPipelineRequest.newBuilder()</span>
-<span class="pc bpc" id="L756" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L757">            .build();</span>
-<span class="fc" id="L758">    return deleteDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L780">        DeleteDeliveryPipelineRequest.newBuilder()</span>
+<span class="pc bpc" id="L781" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L782">            .build();</span>
+<span class="fc" id="L783">    return deleteDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -780,8 +805,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDeliveryPipelineAsync(String name) {
     DeleteDeliveryPipelineRequest request =
-<span class="fc" id="L783">        DeleteDeliveryPipelineRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L784">    return deleteDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L808">        DeleteDeliveryPipelineRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L809">    return deleteDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -814,7 +839,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDeliveryPipelineAsync(
       DeleteDeliveryPipelineRequest request) {
-<span class="fc" id="L817">    return deleteDeliveryPipelineOperationCallable().futureCall(request);</span>
+<span class="fc" id="L842">    return deleteDeliveryPipelineOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -847,7 +872,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteDeliveryPipelineRequest, Empty, OperationMetadata&gt;
       deleteDeliveryPipelineOperationCallable() {
-<span class="fc" id="L850">    return stub.deleteDeliveryPipelineOperationCallable();</span>
+<span class="fc" id="L875">    return stub.deleteDeliveryPipelineOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -880,7 +905,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteDeliveryPipelineRequest, Operation&gt;
       deleteDeliveryPipelineCallable() {
-<span class="nc" id="L883">    return stub.deleteDeliveryPipelineCallable();</span>
+<span class="nc" id="L908">    return stub.deleteDeliveryPipelineCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -906,10 +931,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListTargetsPagedResponse listTargets(LocationName parent) {
     ListTargetsRequest request =
-<span class="fc" id="L909">        ListTargetsRequest.newBuilder()</span>
-<span class="pc bpc" id="L910" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L911">            .build();</span>
-<span class="fc" id="L912">    return listTargets(request);</span>
+<span class="fc" id="L934">        ListTargetsRequest.newBuilder()</span>
+<span class="pc bpc" id="L935" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L936">            .build();</span>
+<span class="fc" id="L937">    return listTargets(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -934,8 +959,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTargetsPagedResponse listTargets(String parent) {
-<span class="fc" id="L937">    ListTargetsRequest request = ListTargetsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L938">    return listTargets(request);</span>
+<span class="fc" id="L962">    ListTargetsRequest request = ListTargetsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L963">    return listTargets(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -966,7 +991,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTargetsPagedResponse listTargets(ListTargetsRequest request) {
-<span class="fc" id="L969">    return listTargetsPagedCallable().call(request);</span>
+<span class="fc" id="L994">    return listTargetsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -997,7 +1022,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTargetsRequest, ListTargetsPagedResponse&gt;
       listTargetsPagedCallable() {
-<span class="fc" id="L1000">    return stub.listTargetsPagedCallable();</span>
+<span class="fc" id="L1025">    return stub.listTargetsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1020,7 +1045,7 @@ public class CloudDeployClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListTargetsResponse response = cloudDeployClient.listTargetsCallable().call(request);
-   *     for (Target element : response.getResponsesList()) {
+   *     for (Target element : response.getTargetsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1034,7 +1059,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListTargetsRequest, ListTargetsResponse&gt; listTargetsCallable() {
-<span class="nc" id="L1037">    return stub.listTargetsCallable();</span>
+<span class="nc" id="L1062">    return stub.listTargetsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1058,8 +1083,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final Target getTarget(TargetName name) {
     GetTargetRequest request =
-<span class="pc bpc" id="L1061" title="1 of 2 branches missed.">        GetTargetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1062">    return getTarget(request);</span>
+<span class="pc bpc" id="L1086" title="1 of 2 branches missed.">        GetTargetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1087">    return getTarget(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1082,8 +1107,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Target getTarget(String name) {
-<span class="fc" id="L1085">    GetTargetRequest request = GetTargetRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1086">    return getTarget(request);</span>
+<span class="fc" id="L1110">    GetTargetRequest request = GetTargetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1111">    return getTarget(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1108,7 +1133,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Target getTarget(GetTargetRequest request) {
-<span class="fc" id="L1111">    return getTargetCallable().call(request);</span>
+<span class="fc" id="L1136">    return getTargetCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1132,7 +1157,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTargetRequest, Target&gt; getTargetCallable() {
-<span class="fc" id="L1135">    return stub.getTargetCallable();</span>
+<span class="fc" id="L1160">    return stub.getTargetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1161,12 +1186,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Target, OperationMetadata&gt; createTargetAsync(
       LocationName parent, Target target, String targetId) {
     CreateTargetRequest request =
-<span class="fc" id="L1164">        CreateTargetRequest.newBuilder()</span>
-<span class="pc bpc" id="L1165" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1166">            .setTarget(target)</span>
-<span class="fc" id="L1167">            .setTargetId(targetId)</span>
-<span class="fc" id="L1168">            .build();</span>
-<span class="fc" id="L1169">    return createTargetAsync(request);</span>
+<span class="fc" id="L1189">        CreateTargetRequest.newBuilder()</span>
+<span class="pc bpc" id="L1190" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1191">            .setTarget(target)</span>
+<span class="fc" id="L1192">            .setTargetId(targetId)</span>
+<span class="fc" id="L1193">            .build();</span>
+<span class="fc" id="L1194">    return createTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1195,12 +1220,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Target, OperationMetadata&gt; createTargetAsync(
       String parent, Target target, String targetId) {
     CreateTargetRequest request =
-<span class="fc" id="L1198">        CreateTargetRequest.newBuilder()</span>
-<span class="fc" id="L1199">            .setParent(parent)</span>
-<span class="fc" id="L1200">            .setTarget(target)</span>
-<span class="fc" id="L1201">            .setTargetId(targetId)</span>
-<span class="fc" id="L1202">            .build();</span>
-<span class="fc" id="L1203">    return createTargetAsync(request);</span>
+<span class="fc" id="L1223">        CreateTargetRequest.newBuilder()</span>
+<span class="fc" id="L1224">            .setParent(parent)</span>
+<span class="fc" id="L1225">            .setTarget(target)</span>
+<span class="fc" id="L1226">            .setTargetId(targetId)</span>
+<span class="fc" id="L1227">            .build();</span>
+<span class="fc" id="L1228">    return createTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1230,7 +1255,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Target, OperationMetadata&gt; createTargetAsync(
       CreateTargetRequest request) {
-<span class="fc" id="L1233">    return createTargetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1258">    return createTargetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1260,7 +1285,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateTargetRequest, Target, OperationMetadata&gt;
       createTargetOperationCallable() {
-<span class="fc" id="L1263">    return stub.createTargetOperationCallable();</span>
+<span class="fc" id="L1288">    return stub.createTargetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1288,7 +1313,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateTargetRequest, Operation&gt; createTargetCallable() {
-<span class="nc" id="L1291">    return stub.createTargetCallable();</span>
+<span class="nc" id="L1316">    return stub.createTargetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1317,8 +1342,8 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Target, OperationMetadata&gt; updateTargetAsync(
       Target target, FieldMask updateMask) {
     UpdateTargetRequest request =
-<span class="fc" id="L1320">        UpdateTargetRequest.newBuilder().setTarget(target).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L1321">    return updateTargetAsync(request);</span>
+<span class="fc" id="L1345">        UpdateTargetRequest.newBuilder().setTarget(target).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L1346">    return updateTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1348,7 +1373,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Target, OperationMetadata&gt; updateTargetAsync(
       UpdateTargetRequest request) {
-<span class="fc" id="L1351">    return updateTargetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1376">    return updateTargetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1378,7 +1403,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateTargetRequest, Target, OperationMetadata&gt;
       updateTargetOperationCallable() {
-<span class="fc" id="L1381">    return stub.updateTargetOperationCallable();</span>
+<span class="fc" id="L1406">    return stub.updateTargetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1406,7 +1431,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateTargetRequest, Operation&gt; updateTargetCallable() {
-<span class="nc" id="L1409">    return stub.updateTargetCallable();</span>
+<span class="nc" id="L1434">    return stub.updateTargetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1430,8 +1455,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetAsync(TargetName name) {
     DeleteTargetRequest request =
-<span class="pc bpc" id="L1433" title="1 of 2 branches missed.">        DeleteTargetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1434">    return deleteTargetAsync(request);</span>
+<span class="pc bpc" id="L1458" title="1 of 2 branches missed.">        DeleteTargetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1459">    return deleteTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1454,8 +1479,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetAsync(String name) {
-<span class="fc" id="L1457">    DeleteTargetRequest request = DeleteTargetRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1458">    return deleteTargetAsync(request);</span>
+<span class="fc" id="L1482">    DeleteTargetRequest request = DeleteTargetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1483">    return deleteTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1485,7 +1510,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetAsync(
       DeleteTargetRequest request) {
-<span class="fc" id="L1488">    return deleteTargetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1513">    return deleteTargetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1515,7 +1540,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTargetRequest, Empty, OperationMetadata&gt;
       deleteTargetOperationCallable() {
-<span class="fc" id="L1518">    return stub.deleteTargetOperationCallable();</span>
+<span class="fc" id="L1543">    return stub.deleteTargetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1543,7 +1568,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteTargetRequest, Operation&gt; deleteTargetCallable() {
-<span class="nc" id="L1546">    return stub.deleteTargetCallable();</span>
+<span class="nc" id="L1571">    return stub.deleteTargetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1569,10 +1594,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListReleasesPagedResponse listReleases(DeliveryPipelineName parent) {
     ListReleasesRequest request =
-<span class="fc" id="L1572">        ListReleasesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1573" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1574">            .build();</span>
-<span class="fc" id="L1575">    return listReleases(request);</span>
+<span class="fc" id="L1597">        ListReleasesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1598" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1599">            .build();</span>
+<span class="fc" id="L1600">    return listReleases(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1597,8 +1622,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListReleasesPagedResponse listReleases(String parent) {
-<span class="fc" id="L1600">    ListReleasesRequest request = ListReleasesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1601">    return listReleases(request);</span>
+<span class="fc" id="L1625">    ListReleasesRequest request = ListReleasesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1626">    return listReleases(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1631,7 +1656,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListReleasesPagedResponse listReleases(ListReleasesRequest request) {
-<span class="fc" id="L1634">    return listReleasesPagedCallable().call(request);</span>
+<span class="fc" id="L1659">    return listReleasesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1664,7 +1689,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListReleasesRequest, ListReleasesPagedResponse&gt;
       listReleasesPagedCallable() {
-<span class="fc" id="L1667">    return stub.listReleasesPagedCallable();</span>
+<span class="fc" id="L1692">    return stub.listReleasesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1689,7 +1714,7 @@ public class CloudDeployClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListReleasesResponse response = cloudDeployClient.listReleasesCallable().call(request);
-   *     for (Release element : response.getResponsesList()) {
+   *     for (Release element : response.getReleasesList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1703,7 +1728,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListReleasesRequest, ListReleasesResponse&gt; listReleasesCallable() {
-<span class="nc" id="L1706">    return stub.listReleasesCallable();</span>
+<span class="nc" id="L1731">    return stub.listReleasesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1728,8 +1753,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final Release getRelease(ReleaseName name) {
     GetReleaseRequest request =
-<span class="pc bpc" id="L1731" title="1 of 2 branches missed.">        GetReleaseRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1732">    return getRelease(request);</span>
+<span class="pc bpc" id="L1756" title="1 of 2 branches missed.">        GetReleaseRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1757">    return getRelease(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1753,8 +1778,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Release getRelease(String name) {
-<span class="fc" id="L1756">    GetReleaseRequest request = GetReleaseRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1757">    return getRelease(request);</span>
+<span class="fc" id="L1781">    GetReleaseRequest request = GetReleaseRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1782">    return getRelease(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1781,7 +1806,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Release getRelease(GetReleaseRequest request) {
-<span class="fc" id="L1784">    return getReleaseCallable().call(request);</span>
+<span class="fc" id="L1809">    return getReleaseCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1807,7 +1832,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetReleaseRequest, Release&gt; getReleaseCallable() {
-<span class="fc" id="L1810">    return stub.getReleaseCallable();</span>
+<span class="fc" id="L1835">    return stub.getReleaseCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1838,12 +1863,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Release, OperationMetadata&gt; createReleaseAsync(
       DeliveryPipelineName parent, Release release, String releaseId) {
     CreateReleaseRequest request =
-<span class="fc" id="L1841">        CreateReleaseRequest.newBuilder()</span>
-<span class="pc bpc" id="L1842" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1843">            .setRelease(release)</span>
-<span class="fc" id="L1844">            .setReleaseId(releaseId)</span>
-<span class="fc" id="L1845">            .build();</span>
-<span class="fc" id="L1846">    return createReleaseAsync(request);</span>
+<span class="fc" id="L1866">        CreateReleaseRequest.newBuilder()</span>
+<span class="pc bpc" id="L1867" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1868">            .setRelease(release)</span>
+<span class="fc" id="L1869">            .setReleaseId(releaseId)</span>
+<span class="fc" id="L1870">            .build();</span>
+<span class="fc" id="L1871">    return createReleaseAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1874,12 +1899,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Release, OperationMetadata&gt; createReleaseAsync(
       String parent, Release release, String releaseId) {
     CreateReleaseRequest request =
-<span class="fc" id="L1877">        CreateReleaseRequest.newBuilder()</span>
-<span class="fc" id="L1878">            .setParent(parent)</span>
-<span class="fc" id="L1879">            .setRelease(release)</span>
-<span class="fc" id="L1880">            .setReleaseId(releaseId)</span>
-<span class="fc" id="L1881">            .build();</span>
-<span class="fc" id="L1882">    return createReleaseAsync(request);</span>
+<span class="fc" id="L1902">        CreateReleaseRequest.newBuilder()</span>
+<span class="fc" id="L1903">            .setParent(parent)</span>
+<span class="fc" id="L1904">            .setRelease(release)</span>
+<span class="fc" id="L1905">            .setReleaseId(releaseId)</span>
+<span class="fc" id="L1906">            .build();</span>
+<span class="fc" id="L1907">    return createReleaseAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1911,7 +1936,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Release, OperationMetadata&gt; createReleaseAsync(
       CreateReleaseRequest request) {
-<span class="fc" id="L1914">    return createReleaseOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1939">    return createReleaseOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1943,7 +1968,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateReleaseRequest, Release, OperationMetadata&gt;
       createReleaseOperationCallable() {
-<span class="fc" id="L1946">    return stub.createReleaseOperationCallable();</span>
+<span class="fc" id="L1971">    return stub.createReleaseOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1973,7 +1998,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateReleaseRequest, Operation&gt; createReleaseCallable() {
-<span class="nc" id="L1976">    return stub.createReleaseCallable();</span>
+<span class="nc" id="L2001">    return stub.createReleaseCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2000,8 +2025,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ApproveRolloutResponse approveRollout(RolloutName name) {
     ApproveRolloutRequest request =
-<span class="pc bpc" id="L2003" title="1 of 2 branches missed.">        ApproveRolloutRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2004">    return approveRollout(request);</span>
+<span class="pc bpc" id="L2028" title="1 of 2 branches missed.">        ApproveRolloutRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2029">    return approveRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2027,8 +2052,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ApproveRolloutResponse approveRollout(String name) {
-<span class="fc" id="L2030">    ApproveRolloutRequest request = ApproveRolloutRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2031">    return approveRollout(request);</span>
+<span class="fc" id="L2055">    ApproveRolloutRequest request = ApproveRolloutRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2056">    return approveRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2061,7 +2086,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ApproveRolloutResponse approveRollout(ApproveRolloutRequest request) {
-<span class="fc" id="L2064">    return approveRolloutCallable().call(request);</span>
+<span class="fc" id="L2089">    return approveRolloutCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2095,7 +2120,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ApproveRolloutRequest, ApproveRolloutResponse&gt;
       approveRolloutCallable() {
-<span class="fc" id="L2098">    return stub.approveRolloutCallable();</span>
+<span class="fc" id="L2123">    return stub.approveRolloutCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2121,10 +2146,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListRolloutsPagedResponse listRollouts(ReleaseName parent) {
     ListRolloutsRequest request =
-<span class="fc" id="L2124">        ListRolloutsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2125" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2126">            .build();</span>
-<span class="fc" id="L2127">    return listRollouts(request);</span>
+<span class="fc" id="L2149">        ListRolloutsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2150" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2151">            .build();</span>
+<span class="fc" id="L2152">    return listRollouts(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2149,8 +2174,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListRolloutsPagedResponse listRollouts(String parent) {
-<span class="fc" id="L2152">    ListRolloutsRequest request = ListRolloutsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2153">    return listRollouts(request);</span>
+<span class="fc" id="L2177">    ListRolloutsRequest request = ListRolloutsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2178">    return listRollouts(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2183,7 +2208,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListRolloutsPagedResponse listRollouts(ListRolloutsRequest request) {
-<span class="fc" id="L2186">    return listRolloutsPagedCallable().call(request);</span>
+<span class="fc" id="L2211">    return listRolloutsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2216,7 +2241,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListRolloutsRequest, ListRolloutsPagedResponse&gt;
       listRolloutsPagedCallable() {
-<span class="fc" id="L2219">    return stub.listRolloutsPagedCallable();</span>
+<span class="fc" id="L2244">    return stub.listRolloutsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2241,7 +2266,7 @@ public class CloudDeployClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListRolloutsResponse response = cloudDeployClient.listRolloutsCallable().call(request);
-   *     for (Rollout element : response.getResponsesList()) {
+   *     for (Rollout element : response.getRolloutsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -2255,7 +2280,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListRolloutsRequest, ListRolloutsResponse&gt; listRolloutsCallable() {
-<span class="nc" id="L2258">    return stub.listRolloutsCallable();</span>
+<span class="nc" id="L2283">    return stub.listRolloutsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2281,8 +2306,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final Rollout getRollout(RolloutName name) {
     GetRolloutRequest request =
-<span class="pc bpc" id="L2284" title="1 of 2 branches missed.">        GetRolloutRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2285">    return getRollout(request);</span>
+<span class="pc bpc" id="L2309" title="1 of 2 branches missed.">        GetRolloutRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2310">    return getRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2307,8 +2332,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Rollout getRollout(String name) {
-<span class="fc" id="L2310">    GetRolloutRequest request = GetRolloutRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2311">    return getRollout(request);</span>
+<span class="fc" id="L2335">    GetRolloutRequest request = GetRolloutRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2336">    return getRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2340,7 +2365,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Rollout getRollout(GetRolloutRequest request) {
-<span class="fc" id="L2343">    return getRolloutCallable().call(request);</span>
+<span class="fc" id="L2368">    return getRolloutCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2371,7 +2396,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetRolloutRequest, Rollout&gt; getRolloutCallable() {
-<span class="fc" id="L2374">    return stub.getRolloutCallable();</span>
+<span class="fc" id="L2399">    return stub.getRolloutCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2402,12 +2427,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Rollout, OperationMetadata&gt; createRolloutAsync(
       ReleaseName parent, Rollout rollout, String rolloutId) {
     CreateRolloutRequest request =
-<span class="fc" id="L2405">        CreateRolloutRequest.newBuilder()</span>
-<span class="pc bpc" id="L2406" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2407">            .setRollout(rollout)</span>
-<span class="fc" id="L2408">            .setRolloutId(rolloutId)</span>
-<span class="fc" id="L2409">            .build();</span>
-<span class="fc" id="L2410">    return createRolloutAsync(request);</span>
+<span class="fc" id="L2430">        CreateRolloutRequest.newBuilder()</span>
+<span class="pc bpc" id="L2431" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2432">            .setRollout(rollout)</span>
+<span class="fc" id="L2433">            .setRolloutId(rolloutId)</span>
+<span class="fc" id="L2434">            .build();</span>
+<span class="fc" id="L2435">    return createRolloutAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2438,12 +2463,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Rollout, OperationMetadata&gt; createRolloutAsync(
       String parent, Rollout rollout, String rolloutId) {
     CreateRolloutRequest request =
-<span class="fc" id="L2441">        CreateRolloutRequest.newBuilder()</span>
-<span class="fc" id="L2442">            .setParent(parent)</span>
-<span class="fc" id="L2443">            .setRollout(rollout)</span>
-<span class="fc" id="L2444">            .setRolloutId(rolloutId)</span>
-<span class="fc" id="L2445">            .build();</span>
-<span class="fc" id="L2446">    return createRolloutAsync(request);</span>
+<span class="fc" id="L2466">        CreateRolloutRequest.newBuilder()</span>
+<span class="fc" id="L2467">            .setParent(parent)</span>
+<span class="fc" id="L2468">            .setRollout(rollout)</span>
+<span class="fc" id="L2469">            .setRolloutId(rolloutId)</span>
+<span class="fc" id="L2470">            .build();</span>
+<span class="fc" id="L2471">    return createRolloutAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2475,7 +2500,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Rollout, OperationMetadata&gt; createRolloutAsync(
       CreateRolloutRequest request) {
-<span class="fc" id="L2478">    return createRolloutOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2503">    return createRolloutOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2507,7 +2532,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateRolloutRequest, Rollout, OperationMetadata&gt;
       createRolloutOperationCallable() {
-<span class="fc" id="L2510">    return stub.createRolloutOperationCallable();</span>
+<span class="fc" id="L2535">    return stub.createRolloutOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2537,7 +2562,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateRolloutRequest, Operation&gt; createRolloutCallable() {
-<span class="nc" id="L2540">    return stub.createRolloutCallable();</span>
+<span class="nc" id="L2565">    return stub.createRolloutCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2560,8 +2585,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final Config getConfig(ConfigName name) {
     GetConfigRequest request =
-<span class="pc bpc" id="L2563" title="1 of 2 branches missed.">        GetConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2564">    return getConfig(request);</span>
+<span class="pc bpc" id="L2588" title="1 of 2 branches missed.">        GetConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2589">    return getConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2583,8 +2608,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Config getConfig(String name) {
-<span class="fc" id="L2586">    GetConfigRequest request = GetConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2587">    return getConfig(request);</span>
+<span class="fc" id="L2611">    GetConfigRequest request = GetConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2612">    return getConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2609,7 +2634,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Config getConfig(GetConfigRequest request) {
-<span class="fc" id="L2612">    return getConfigCallable().call(request);</span>
+<span class="fc" id="L2637">    return getConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2633,37 +2658,37 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetConfigRequest, Config&gt; getConfigCallable() {
-<span class="fc" id="L2636">    return stub.getConfigCallable();</span>
+<span class="fc" id="L2661">    return stub.getConfigCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2641">    stub.close();</span>
-<span class="fc" id="L2642">  }</span>
+<span class="fc" id="L2666">    stub.close();</span>
+<span class="fc" id="L2667">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2646">    stub.shutdown();</span>
-<span class="nc" id="L2647">  }</span>
+<span class="nc" id="L2671">    stub.shutdown();</span>
+<span class="nc" id="L2672">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2651">    return stub.isShutdown();</span>
+<span class="nc" id="L2676">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2656">    return stub.isTerminated();</span>
+<span class="nc" id="L2681">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2661">    stub.shutdownNow();</span>
-<span class="nc" id="L2662">  }</span>
+<span class="nc" id="L2686">    stub.shutdownNow();</span>
+<span class="nc" id="L2687">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2666">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2691">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListDeliveryPipelinesPagedResponse
@@ -2679,16 +2704,16 @@ public class CloudDeployClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListDeliveryPipelinesResponse&gt; futureResponse) {
       ApiFuture&lt;ListDeliveryPipelinesPage&gt; futurePage =
-<span class="fc" id="L2682">          ListDeliveryPipelinesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2683">      return ApiFutures.transform(</span>
+<span class="fc" id="L2707">          ListDeliveryPipelinesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2708">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2685">          input -&gt; new ListDeliveryPipelinesPagedResponse(input),</span>
-<span class="fc" id="L2686">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2710">          input -&gt; new ListDeliveryPipelinesPagedResponse(input),</span>
+<span class="fc" id="L2711">          MoreExecutors.directExecutor());</span>
     }
 
     private ListDeliveryPipelinesPagedResponse(ListDeliveryPipelinesPage page) {
-<span class="fc" id="L2690">      super(page, ListDeliveryPipelinesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2691">    }</span>
+<span class="fc" id="L2715">      super(page, ListDeliveryPipelinesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2716">    }</span>
   }
 
   public static class ListDeliveryPipelinesPage
@@ -2702,11 +2727,11 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesResponse, DeliveryPipeline&gt;
             context,
         ListDeliveryPipelinesResponse response) {
-<span class="fc" id="L2705">      super(context, response);</span>
-<span class="fc" id="L2706">    }</span>
+<span class="fc" id="L2730">      super(context, response);</span>
+<span class="fc" id="L2731">    }</span>
 
     private static ListDeliveryPipelinesPage createEmptyPage() {
-<span class="fc" id="L2709">      return new ListDeliveryPipelinesPage(null, null);</span>
+<span class="fc" id="L2734">      return new ListDeliveryPipelinesPage(null, null);</span>
     }
 
     @Override
@@ -2714,7 +2739,7 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesResponse, DeliveryPipeline&gt;
             context,
         ListDeliveryPipelinesResponse response) {
-<span class="fc" id="L2717">      return new ListDeliveryPipelinesPage(context, response);</span>
+<span class="fc" id="L2742">      return new ListDeliveryPipelinesPage(context, response);</span>
     }
 
     @Override
@@ -2722,7 +2747,7 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesResponse, DeliveryPipeline&gt;
             context,
         ApiFuture&lt;ListDeliveryPipelinesResponse&gt; futureResponse) {
-<span class="fc" id="L2725">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2750">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2736,17 +2761,17 @@ public class CloudDeployClient implements BackgroundResource {
 
     private ListDeliveryPipelinesFixedSizeCollection(
         List&lt;ListDeliveryPipelinesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2739">      super(pages, collectionSize);</span>
-<span class="fc" id="L2740">    }</span>
+<span class="fc" id="L2764">      super(pages, collectionSize);</span>
+<span class="fc" id="L2765">    }</span>
 
     private static ListDeliveryPipelinesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2743">      return new ListDeliveryPipelinesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2768">      return new ListDeliveryPipelinesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListDeliveryPipelinesFixedSizeCollection createCollection(
         List&lt;ListDeliveryPipelinesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2749">      return new ListDeliveryPipelinesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2774">      return new ListDeliveryPipelinesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2762,14 +2787,14 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListTargetsRequest, ListTargetsResponse, Target&gt; context,
         ApiFuture&lt;ListTargetsResponse&gt; futureResponse) {
       ApiFuture&lt;ListTargetsPage&gt; futurePage =
-<span class="fc" id="L2765">          ListTargetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2766">      return ApiFutures.transform(</span>
-<span class="fc" id="L2767">          futurePage, input -&gt; new ListTargetsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2790">          ListTargetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2791">      return ApiFutures.transform(</span>
+<span class="fc" id="L2792">          futurePage, input -&gt; new ListTargetsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListTargetsPagedResponse(ListTargetsPage page) {
-<span class="fc" id="L2771">      super(page, ListTargetsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2772">    }</span>
+<span class="fc" id="L2796">      super(page, ListTargetsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2797">    }</span>
   }
 
   public static class ListTargetsPage
@@ -2778,25 +2803,25 @@ public class CloudDeployClient implements BackgroundResource {
     private ListTargetsPage(
         PageContext&lt;ListTargetsRequest, ListTargetsResponse, Target&gt; context,
         ListTargetsResponse response) {
-<span class="fc" id="L2781">      super(context, response);</span>
-<span class="fc" id="L2782">    }</span>
+<span class="fc" id="L2806">      super(context, response);</span>
+<span class="fc" id="L2807">    }</span>
 
     private static ListTargetsPage createEmptyPage() {
-<span class="fc" id="L2785">      return new ListTargetsPage(null, null);</span>
+<span class="fc" id="L2810">      return new ListTargetsPage(null, null);</span>
     }
 
     @Override
     protected ListTargetsPage createPage(
         PageContext&lt;ListTargetsRequest, ListTargetsResponse, Target&gt; context,
         ListTargetsResponse response) {
-<span class="fc" id="L2792">      return new ListTargetsPage(context, response);</span>
+<span class="fc" id="L2817">      return new ListTargetsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListTargetsPage&gt; createPageAsync(
         PageContext&lt;ListTargetsRequest, ListTargetsResponse, Target&gt; context,
         ApiFuture&lt;ListTargetsResponse&gt; futureResponse) {
-<span class="fc" id="L2799">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2824">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2809,17 +2834,17 @@ public class CloudDeployClient implements BackgroundResource {
           ListTargetsFixedSizeCollection&gt; {
 
     private ListTargetsFixedSizeCollection(List&lt;ListTargetsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2812">      super(pages, collectionSize);</span>
-<span class="fc" id="L2813">    }</span>
+<span class="fc" id="L2837">      super(pages, collectionSize);</span>
+<span class="fc" id="L2838">    }</span>
 
     private static ListTargetsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2816">      return new ListTargetsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2841">      return new ListTargetsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTargetsFixedSizeCollection createCollection(
         List&lt;ListTargetsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2822">      return new ListTargetsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2847">      return new ListTargetsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2835,16 +2860,16 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListReleasesRequest, ListReleasesResponse, Release&gt; context,
         ApiFuture&lt;ListReleasesResponse&gt; futureResponse) {
       ApiFuture&lt;ListReleasesPage&gt; futurePage =
-<span class="fc" id="L2838">          ListReleasesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2839">      return ApiFutures.transform(</span>
+<span class="fc" id="L2863">          ListReleasesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2864">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2841">          input -&gt; new ListReleasesPagedResponse(input),</span>
-<span class="fc" id="L2842">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2866">          input -&gt; new ListReleasesPagedResponse(input),</span>
+<span class="fc" id="L2867">          MoreExecutors.directExecutor());</span>
     }
 
     private ListReleasesPagedResponse(ListReleasesPage page) {
-<span class="fc" id="L2846">      super(page, ListReleasesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2847">    }</span>
+<span class="fc" id="L2871">      super(page, ListReleasesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2872">    }</span>
   }
 
   public static class ListReleasesPage
@@ -2853,25 +2878,25 @@ public class CloudDeployClient implements BackgroundResource {
     private ListReleasesPage(
         PageContext&lt;ListReleasesRequest, ListReleasesResponse, Release&gt; context,
         ListReleasesResponse response) {
-<span class="fc" id="L2856">      super(context, response);</span>
-<span class="fc" id="L2857">    }</span>
+<span class="fc" id="L2881">      super(context, response);</span>
+<span class="fc" id="L2882">    }</span>
 
     private static ListReleasesPage createEmptyPage() {
-<span class="fc" id="L2860">      return new ListReleasesPage(null, null);</span>
+<span class="fc" id="L2885">      return new ListReleasesPage(null, null);</span>
     }
 
     @Override
     protected ListReleasesPage createPage(
         PageContext&lt;ListReleasesRequest, ListReleasesResponse, Release&gt; context,
         ListReleasesResponse response) {
-<span class="fc" id="L2867">      return new ListReleasesPage(context, response);</span>
+<span class="fc" id="L2892">      return new ListReleasesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListReleasesPage&gt; createPageAsync(
         PageContext&lt;ListReleasesRequest, ListReleasesResponse, Release&gt; context,
         ApiFuture&lt;ListReleasesResponse&gt; futureResponse) {
-<span class="fc" id="L2874">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2899">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2884,17 +2909,17 @@ public class CloudDeployClient implements BackgroundResource {
           ListReleasesFixedSizeCollection&gt; {
 
     private ListReleasesFixedSizeCollection(List&lt;ListReleasesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2887">      super(pages, collectionSize);</span>
-<span class="fc" id="L2888">    }</span>
+<span class="fc" id="L2912">      super(pages, collectionSize);</span>
+<span class="fc" id="L2913">    }</span>
 
     private static ListReleasesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2891">      return new ListReleasesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2916">      return new ListReleasesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListReleasesFixedSizeCollection createCollection(
         List&lt;ListReleasesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2897">      return new ListReleasesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2922">      return new ListReleasesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2910,16 +2935,16 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListRolloutsRequest, ListRolloutsResponse, Rollout&gt; context,
         ApiFuture&lt;ListRolloutsResponse&gt; futureResponse) {
       ApiFuture&lt;ListRolloutsPage&gt; futurePage =
-<span class="fc" id="L2913">          ListRolloutsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2914">      return ApiFutures.transform(</span>
+<span class="fc" id="L2938">          ListRolloutsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2939">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2916">          input -&gt; new ListRolloutsPagedResponse(input),</span>
-<span class="fc" id="L2917">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2941">          input -&gt; new ListRolloutsPagedResponse(input),</span>
+<span class="fc" id="L2942">          MoreExecutors.directExecutor());</span>
     }
 
     private ListRolloutsPagedResponse(ListRolloutsPage page) {
-<span class="fc" id="L2921">      super(page, ListRolloutsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2922">    }</span>
+<span class="fc" id="L2946">      super(page, ListRolloutsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2947">    }</span>
   }
 
   public static class ListRolloutsPage
@@ -2928,25 +2953,25 @@ public class CloudDeployClient implements BackgroundResource {
     private ListRolloutsPage(
         PageContext&lt;ListRolloutsRequest, ListRolloutsResponse, Rollout&gt; context,
         ListRolloutsResponse response) {
-<span class="fc" id="L2931">      super(context, response);</span>
-<span class="fc" id="L2932">    }</span>
+<span class="fc" id="L2956">      super(context, response);</span>
+<span class="fc" id="L2957">    }</span>
 
     private static ListRolloutsPage createEmptyPage() {
-<span class="fc" id="L2935">      return new ListRolloutsPage(null, null);</span>
+<span class="fc" id="L2960">      return new ListRolloutsPage(null, null);</span>
     }
 
     @Override
     protected ListRolloutsPage createPage(
         PageContext&lt;ListRolloutsRequest, ListRolloutsResponse, Rollout&gt; context,
         ListRolloutsResponse response) {
-<span class="fc" id="L2942">      return new ListRolloutsPage(context, response);</span>
+<span class="fc" id="L2967">      return new ListRolloutsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListRolloutsPage&gt; createPageAsync(
         PageContext&lt;ListRolloutsRequest, ListRolloutsResponse, Rollout&gt; context,
         ApiFuture&lt;ListRolloutsResponse&gt; futureResponse) {
-<span class="fc" id="L2949">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2974">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2959,17 +2984,17 @@ public class CloudDeployClient implements BackgroundResource {
           ListRolloutsFixedSizeCollection&gt; {
 
     private ListRolloutsFixedSizeCollection(List&lt;ListRolloutsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2962">      super(pages, collectionSize);</span>
-<span class="fc" id="L2963">    }</span>
+<span class="fc" id="L2987">      super(pages, collectionSize);</span>
+<span class="fc" id="L2988">    }</span>
 
     private static ListRolloutsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2966">      return new ListRolloutsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2991">      return new ListRolloutsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListRolloutsFixedSizeCollection createCollection(
         List&lt;ListRolloutsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2972">      return new ListRolloutsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2997">      return new ListRolloutsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
