@@ -18,7 +18,9 @@ package com.google.cloud.contactcenterinsights.v1;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -30,7 +32,6 @@ import com.google.cloud.contactcenterinsights.v1.stub.ContactCenterInsightsStub;
 import com.google.cloud.contactcenterinsights.v1.stub.ContactCenterInsightsStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -109,17 +110,33 @@ import javax.annotation.Generated;
  *     ContactCenterInsightsClient.create(contactCenterInsightsSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * ContactCenterInsightsSettings contactCenterInsightsSettings =
+ *     ContactCenterInsightsSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             ContactCenterInsightsSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * ContactCenterInsightsClient contactCenterInsightsClient =
+ *     ContactCenterInsightsClient.create(contactCenterInsightsSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class ContactCenterInsightsClient implements BackgroundResource {
   private final ContactCenterInsightsSettings settings;
   private final ContactCenterInsightsStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of ContactCenterInsightsClient with default settings. */
   public static final ContactCenterInsightsClient create() throws IOException {
-<span class="nc" id="L122">    return create(ContactCenterInsightsSettings.newBuilder().build());</span>
+<span class="nc" id="L139">    return create(ContactCenterInsightsSettings.newBuilder().build());</span>
   }
 
   /**
@@ -128,7 +145,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public static final ContactCenterInsightsClient create(ContactCenterInsightsSettings settings)
       throws IOException {
-<span class="fc" id="L131">    return new ContactCenterInsightsClient(settings);</span>
+<span class="fc" id="L148">    return new ContactCenterInsightsClient(settings);</span>
   }
 
   /**
@@ -136,7 +153,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * This is for advanced usage - prefer using create(ContactCenterInsightsSettings).
    */
   public static final ContactCenterInsightsClient create(ContactCenterInsightsStub stub) {
-<span class="nc" id="L139">    return new ContactCenterInsightsClient(stub);</span>
+<span class="nc" id="L156">    return new ContactCenterInsightsClient(stub);</span>
   }
 
   /**
@@ -144,32 +161,45 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * protected so that it is easy to make a subclass, but otherwise, the static factory methods
    * should be preferred.
    */
-<span class="fc" id="L147">  protected ContactCenterInsightsClient(ContactCenterInsightsSettings settings) throws IOException {</span>
-<span class="fc" id="L148">    this.settings = settings;</span>
-<span class="fc" id="L149">    this.stub = ((ContactCenterInsightsStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L151">  }</span>
+<span class="fc" id="L164">  protected ContactCenterInsightsClient(ContactCenterInsightsSettings settings) throws IOException {</span>
+<span class="fc" id="L165">    this.settings = settings;</span>
+<span class="fc" id="L166">    this.stub = ((ContactCenterInsightsStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L167">    this.operationsClient =</span>
+<span class="fc" id="L168">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L169">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L170">  }</span>
 
-<span class="nc" id="L153">  protected ContactCenterInsightsClient(ContactCenterInsightsStub stub) {</span>
-<span class="nc" id="L154">    this.settings = null;</span>
-<span class="nc" id="L155">    this.stub = stub;</span>
-<span class="nc" id="L156">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L157">  }</span>
+<span class="nc" id="L172">  protected ContactCenterInsightsClient(ContactCenterInsightsStub stub) {</span>
+<span class="nc" id="L173">    this.settings = null;</span>
+<span class="nc" id="L174">    this.stub = stub;</span>
+<span class="nc" id="L175">    this.operationsClient =</span>
+<span class="nc" id="L176">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L177">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L178">  }</span>
 
   public final ContactCenterInsightsSettings getSettings() {
-<span class="nc" id="L160">    return settings;</span>
+<span class="nc" id="L181">    return settings;</span>
   }
 
   public ContactCenterInsightsStub getStub() {
-<span class="nc" id="L164">    return stub;</span>
+<span class="nc" id="L185">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L172">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L193">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L202">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -203,12 +233,12 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final Conversation createConversation(
       LocationName parent, Conversation conversation, String conversationId) {
     CreateConversationRequest request =
-<span class="fc" id="L206">        CreateConversationRequest.newBuilder()</span>
-<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L208">            .setConversation(conversation)</span>
-<span class="fc" id="L209">            .setConversationId(conversationId)</span>
-<span class="fc" id="L210">            .build();</span>
-<span class="fc" id="L211">    return createConversation(request);</span>
+<span class="fc" id="L236">        CreateConversationRequest.newBuilder()</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L238">            .setConversation(conversation)</span>
+<span class="fc" id="L239">            .setConversationId(conversationId)</span>
+<span class="fc" id="L240">            .build();</span>
+<span class="fc" id="L241">    return createConversation(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -242,12 +272,12 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final Conversation createConversation(
       String parent, Conversation conversation, String conversationId) {
     CreateConversationRequest request =
-<span class="fc" id="L245">        CreateConversationRequest.newBuilder()</span>
-<span class="fc" id="L246">            .setParent(parent)</span>
-<span class="fc" id="L247">            .setConversation(conversation)</span>
-<span class="fc" id="L248">            .setConversationId(conversationId)</span>
-<span class="fc" id="L249">            .build();</span>
-<span class="fc" id="L250">    return createConversation(request);</span>
+<span class="fc" id="L275">        CreateConversationRequest.newBuilder()</span>
+<span class="fc" id="L276">            .setParent(parent)</span>
+<span class="fc" id="L277">            .setConversation(conversation)</span>
+<span class="fc" id="L278">            .setConversationId(conversationId)</span>
+<span class="fc" id="L279">            .build();</span>
+<span class="fc" id="L280">    return createConversation(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -275,7 +305,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Conversation createConversation(CreateConversationRequest request) {
-<span class="fc" id="L278">    return createConversationCallable().call(request);</span>
+<span class="fc" id="L308">    return createConversationCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -303,7 +333,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateConversationRequest, Conversation&gt; createConversationCallable() {
-<span class="fc" id="L306">    return stub.createConversationCallable();</span>
+<span class="fc" id="L336">    return stub.createConversationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -330,11 +360,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final Conversation updateConversation(Conversation conversation, FieldMask updateMask) {
     UpdateConversationRequest request =
-<span class="fc" id="L333">        UpdateConversationRequest.newBuilder()</span>
-<span class="fc" id="L334">            .setConversation(conversation)</span>
-<span class="fc" id="L335">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L336">            .build();</span>
-<span class="fc" id="L337">    return updateConversation(request);</span>
+<span class="fc" id="L363">        UpdateConversationRequest.newBuilder()</span>
+<span class="fc" id="L364">            .setConversation(conversation)</span>
+<span class="fc" id="L365">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L366">            .build();</span>
+<span class="fc" id="L367">    return updateConversation(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -361,7 +391,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Conversation updateConversation(UpdateConversationRequest request) {
-<span class="fc" id="L364">    return updateConversationCallable().call(request);</span>
+<span class="fc" id="L394">    return updateConversationCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -388,7 +418,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateConversationRequest, Conversation&gt; updateConversationCallable() {
-<span class="fc" id="L391">    return stub.updateConversationCallable();</span>
+<span class="fc" id="L421">    return stub.updateConversationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -412,8 +442,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final Conversation getConversation(ConversationName name) {
     GetConversationRequest request =
-<span class="pc bpc" id="L415" title="1 of 2 branches missed.">        GetConversationRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L416">    return getConversation(request);</span>
+<span class="pc bpc" id="L445" title="1 of 2 branches missed.">        GetConversationRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L446">    return getConversation(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -436,8 +466,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Conversation getConversation(String name) {
-<span class="fc" id="L439">    GetConversationRequest request = GetConversationRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L440">    return getConversation(request);</span>
+<span class="fc" id="L469">    GetConversationRequest request = GetConversationRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L470">    return getConversation(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -464,7 +494,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Conversation getConversation(GetConversationRequest request) {
-<span class="fc" id="L467">    return getConversationCallable().call(request);</span>
+<span class="fc" id="L497">    return getConversationCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -491,7 +521,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetConversationRequest, Conversation&gt; getConversationCallable() {
-<span class="fc" id="L494">    return stub.getConversationCallable();</span>
+<span class="fc" id="L524">    return stub.getConversationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -518,10 +548,10 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListConversationsPagedResponse listConversations(LocationName parent) {
     ListConversationsRequest request =
-<span class="fc" id="L521">        ListConversationsRequest.newBuilder()</span>
-<span class="pc bpc" id="L522" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L523">            .build();</span>
-<span class="fc" id="L524">    return listConversations(request);</span>
+<span class="fc" id="L551">        ListConversationsRequest.newBuilder()</span>
+<span class="pc bpc" id="L552" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L553">            .build();</span>
+<span class="fc" id="L554">    return listConversations(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -548,8 +578,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListConversationsPagedResponse listConversations(String parent) {
     ListConversationsRequest request =
-<span class="fc" id="L551">        ListConversationsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L552">    return listConversations(request);</span>
+<span class="fc" id="L581">        ListConversationsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L582">    return listConversations(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -582,7 +612,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListConversationsPagedResponse listConversations(ListConversationsRequest request) {
-<span class="fc" id="L585">    return listConversationsPagedCallable().call(request);</span>
+<span class="fc" id="L615">    return listConversationsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -615,7 +645,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConversationsRequest, ListConversationsPagedResponse&gt;
       listConversationsPagedCallable() {
-<span class="fc" id="L618">    return stub.listConversationsPagedCallable();</span>
+<span class="fc" id="L648">    return stub.listConversationsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -655,7 +685,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListConversationsRequest, ListConversationsResponse&gt;
       listConversationsCallable() {
-<span class="nc" id="L658">    return stub.listConversationsCallable();</span>
+<span class="nc" id="L688">    return stub.listConversationsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -679,11 +709,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final void deleteConversation(ConversationName name) {
     DeleteConversationRequest request =
-<span class="fc" id="L682">        DeleteConversationRequest.newBuilder()</span>
-<span class="pc bpc" id="L683" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L684">            .build();</span>
-<span class="fc" id="L685">    deleteConversation(request);</span>
-<span class="fc" id="L686">  }</span>
+<span class="fc" id="L712">        DeleteConversationRequest.newBuilder()</span>
+<span class="pc bpc" id="L713" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L714">            .build();</span>
+<span class="fc" id="L715">    deleteConversation(request);</span>
+<span class="fc" id="L716">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -706,9 +736,9 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final void deleteConversation(String name) {
     DeleteConversationRequest request =
-<span class="fc" id="L709">        DeleteConversationRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L710">    deleteConversation(request);</span>
-<span class="fc" id="L711">  }</span>
+<span class="fc" id="L739">        DeleteConversationRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L740">    deleteConversation(request);</span>
+<span class="fc" id="L741">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -734,8 +764,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteConversation(DeleteConversationRequest request) {
-<span class="fc" id="L737">    deleteConversationCallable().call(request);</span>
-<span class="fc" id="L738">  }</span>
+<span class="fc" id="L767">    deleteConversationCallable().call(request);</span>
+<span class="fc" id="L768">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -761,7 +791,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteConversationRequest, Empty&gt; deleteConversationCallable() {
-<span class="fc" id="L764">    return stub.deleteConversationCallable();</span>
+<span class="fc" id="L794">    return stub.deleteConversationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -788,11 +818,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;Analysis, CreateAnalysisOperationMetadata&gt; createAnalysisAsync(
       ConversationName parent, Analysis analysis) {
     CreateAnalysisRequest request =
-<span class="fc" id="L791">        CreateAnalysisRequest.newBuilder()</span>
-<span class="pc bpc" id="L792" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L793">            .setAnalysis(analysis)</span>
-<span class="fc" id="L794">            .build();</span>
-<span class="fc" id="L795">    return createAnalysisAsync(request);</span>
+<span class="fc" id="L821">        CreateAnalysisRequest.newBuilder()</span>
+<span class="pc bpc" id="L822" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L823">            .setAnalysis(analysis)</span>
+<span class="fc" id="L824">            .build();</span>
+<span class="fc" id="L825">    return createAnalysisAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -819,8 +849,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;Analysis, CreateAnalysisOperationMetadata&gt; createAnalysisAsync(
       String parent, Analysis analysis) {
     CreateAnalysisRequest request =
-<span class="fc" id="L822">        CreateAnalysisRequest.newBuilder().setParent(parent).setAnalysis(analysis).build();</span>
-<span class="fc" id="L823">    return createAnalysisAsync(request);</span>
+<span class="fc" id="L852">        CreateAnalysisRequest.newBuilder().setParent(parent).setAnalysis(analysis).build();</span>
+<span class="fc" id="L853">    return createAnalysisAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -849,7 +879,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Analysis, CreateAnalysisOperationMetadata&gt; createAnalysisAsync(
       CreateAnalysisRequest request) {
-<span class="fc" id="L852">    return createAnalysisOperationCallable().futureCall(request);</span>
+<span class="fc" id="L882">    return createAnalysisOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -878,7 +908,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateAnalysisRequest, Analysis, CreateAnalysisOperationMetadata&gt;
       createAnalysisOperationCallable() {
-<span class="fc" id="L881">    return stub.createAnalysisOperationCallable();</span>
+<span class="fc" id="L911">    return stub.createAnalysisOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -906,7 +936,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateAnalysisRequest, Operation&gt; createAnalysisCallable() {
-<span class="nc" id="L909">    return stub.createAnalysisCallable();</span>
+<span class="nc" id="L939">    return stub.createAnalysisCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -931,8 +961,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final Analysis getAnalysis(AnalysisName name) {
     GetAnalysisRequest request =
-<span class="pc bpc" id="L934" title="1 of 2 branches missed.">        GetAnalysisRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L935">    return getAnalysis(request);</span>
+<span class="pc bpc" id="L964" title="1 of 2 branches missed.">        GetAnalysisRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L965">    return getAnalysis(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -956,8 +986,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Analysis getAnalysis(String name) {
-<span class="fc" id="L959">    GetAnalysisRequest request = GetAnalysisRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L960">    return getAnalysis(request);</span>
+<span class="fc" id="L989">    GetAnalysisRequest request = GetAnalysisRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L990">    return getAnalysis(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -985,7 +1015,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Analysis getAnalysis(GetAnalysisRequest request) {
-<span class="fc" id="L988">    return getAnalysisCallable().call(request);</span>
+<span class="fc" id="L1018">    return getAnalysisCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1013,7 +1043,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetAnalysisRequest, Analysis&gt; getAnalysisCallable() {
-<span class="fc" id="L1016">    return stub.getAnalysisCallable();</span>
+<span class="fc" id="L1046">    return stub.getAnalysisCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1039,10 +1069,10 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListAnalysesPagedResponse listAnalyses(ConversationName parent) {
     ListAnalysesRequest request =
-<span class="fc" id="L1042">        ListAnalysesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1043" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1044">            .build();</span>
-<span class="fc" id="L1045">    return listAnalyses(request);</span>
+<span class="fc" id="L1072">        ListAnalysesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1073" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1074">            .build();</span>
+<span class="fc" id="L1075">    return listAnalyses(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1067,8 +1097,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListAnalysesPagedResponse listAnalyses(String parent) {
-<span class="fc" id="L1070">    ListAnalysesRequest request = ListAnalysesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1071">    return listAnalyses(request);</span>
+<span class="fc" id="L1100">    ListAnalysesRequest request = ListAnalysesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1101">    return listAnalyses(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1100,7 +1130,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListAnalysesPagedResponse listAnalyses(ListAnalysesRequest request) {
-<span class="fc" id="L1103">    return listAnalysesPagedCallable().call(request);</span>
+<span class="fc" id="L1133">    return listAnalysesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1133,7 +1163,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListAnalysesRequest, ListAnalysesPagedResponse&gt;
       listAnalysesPagedCallable() {
-<span class="fc" id="L1136">    return stub.listAnalysesPagedCallable();</span>
+<span class="fc" id="L1166">    return stub.listAnalysesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1172,7 +1202,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListAnalysesRequest, ListAnalysesResponse&gt; listAnalysesCallable() {
-<span class="nc" id="L1175">    return stub.listAnalysesCallable();</span>
+<span class="nc" id="L1205">    return stub.listAnalysesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1197,9 +1227,9 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final void deleteAnalysis(AnalysisName name) {
     DeleteAnalysisRequest request =
-<span class="pc bpc" id="L1200" title="1 of 2 branches missed.">        DeleteAnalysisRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1201">    deleteAnalysis(request);</span>
-<span class="fc" id="L1202">  }</span>
+<span class="pc bpc" id="L1230" title="1 of 2 branches missed.">        DeleteAnalysisRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1231">    deleteAnalysis(request);</span>
+<span class="fc" id="L1232">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1222,9 +1252,9 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteAnalysis(String name) {
-<span class="fc" id="L1225">    DeleteAnalysisRequest request = DeleteAnalysisRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1226">    deleteAnalysis(request);</span>
-<span class="fc" id="L1227">  }</span>
+<span class="fc" id="L1255">    DeleteAnalysisRequest request = DeleteAnalysisRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1256">    deleteAnalysis(request);</span>
+<span class="fc" id="L1257">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1251,8 +1281,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteAnalysis(DeleteAnalysisRequest request) {
-<span class="fc" id="L1254">    deleteAnalysisCallable().call(request);</span>
-<span class="fc" id="L1255">  }</span>
+<span class="fc" id="L1284">    deleteAnalysisCallable().call(request);</span>
+<span class="fc" id="L1285">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1279,7 +1309,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteAnalysisRequest, Empty&gt; deleteAnalysisCallable() {
-<span class="fc" id="L1282">    return stub.deleteAnalysisCallable();</span>
+<span class="fc" id="L1312">    return stub.deleteAnalysisCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1305,10 +1335,10 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;ExportInsightsDataResponse, ExportInsightsDataMetadata&gt;
       exportInsightsDataAsync(LocationName parent) {
     ExportInsightsDataRequest request =
-<span class="fc" id="L1308">        ExportInsightsDataRequest.newBuilder()</span>
-<span class="pc bpc" id="L1309" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1310">            .build();</span>
-<span class="fc" id="L1311">    return exportInsightsDataAsync(request);</span>
+<span class="fc" id="L1338">        ExportInsightsDataRequest.newBuilder()</span>
+<span class="pc bpc" id="L1339" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1340">            .build();</span>
+<span class="fc" id="L1341">    return exportInsightsDataAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1334,8 +1364,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;ExportInsightsDataResponse, ExportInsightsDataMetadata&gt;
       exportInsightsDataAsync(String parent) {
     ExportInsightsDataRequest request =
-<span class="fc" id="L1337">        ExportInsightsDataRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1338">    return exportInsightsDataAsync(request);</span>
+<span class="fc" id="L1367">        ExportInsightsDataRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1368">    return exportInsightsDataAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1365,7 +1395,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ExportInsightsDataResponse, ExportInsightsDataMetadata&gt;
       exportInsightsDataAsync(ExportInsightsDataRequest request) {
-<span class="fc" id="L1368">    return exportInsightsDataOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1398">    return exportInsightsDataOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1395,7 +1425,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationCallable&lt;
           ExportInsightsDataRequest, ExportInsightsDataResponse, ExportInsightsDataMetadata&gt;
       exportInsightsDataOperationCallable() {
-<span class="fc" id="L1398">    return stub.exportInsightsDataOperationCallable();</span>
+<span class="fc" id="L1428">    return stub.exportInsightsDataOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1423,7 +1453,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ExportInsightsDataRequest, Operation&gt; exportInsightsDataCallable() {
-<span class="nc" id="L1426">    return stub.exportInsightsDataCallable();</span>
+<span class="nc" id="L1456">    return stub.exportInsightsDataCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1451,11 +1481,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;IssueModel, CreateIssueModelMetadata&gt; createIssueModelAsync(
       LocationName parent, IssueModel issueModel) {
     CreateIssueModelRequest request =
-<span class="fc" id="L1454">        CreateIssueModelRequest.newBuilder()</span>
-<span class="pc bpc" id="L1455" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1456">            .setIssueModel(issueModel)</span>
-<span class="fc" id="L1457">            .build();</span>
-<span class="fc" id="L1458">    return createIssueModelAsync(request);</span>
+<span class="fc" id="L1484">        CreateIssueModelRequest.newBuilder()</span>
+<span class="pc bpc" id="L1485" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1486">            .setIssueModel(issueModel)</span>
+<span class="fc" id="L1487">            .build();</span>
+<span class="fc" id="L1488">    return createIssueModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1483,8 +1513,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;IssueModel, CreateIssueModelMetadata&gt; createIssueModelAsync(
       String parent, IssueModel issueModel) {
     CreateIssueModelRequest request =
-<span class="fc" id="L1486">        CreateIssueModelRequest.newBuilder().setParent(parent).setIssueModel(issueModel).build();</span>
-<span class="fc" id="L1487">    return createIssueModelAsync(request);</span>
+<span class="fc" id="L1516">        CreateIssueModelRequest.newBuilder().setParent(parent).setIssueModel(issueModel).build();</span>
+<span class="fc" id="L1517">    return createIssueModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1512,7 +1542,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;IssueModel, CreateIssueModelMetadata&gt; createIssueModelAsync(
       CreateIssueModelRequest request) {
-<span class="fc" id="L1515">    return createIssueModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1545">    return createIssueModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1540,7 +1570,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateIssueModelRequest, IssueModel, CreateIssueModelMetadata&gt;
       createIssueModelOperationCallable() {
-<span class="fc" id="L1543">    return stub.createIssueModelOperationCallable();</span>
+<span class="fc" id="L1573">    return stub.createIssueModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1567,7 +1597,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateIssueModelRequest, Operation&gt; createIssueModelCallable() {
-<span class="nc" id="L1570">    return stub.createIssueModelCallable();</span>
+<span class="nc" id="L1600">    return stub.createIssueModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1593,11 +1623,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final IssueModel updateIssueModel(IssueModel issueModel, FieldMask updateMask) {
     UpdateIssueModelRequest request =
-<span class="fc" id="L1596">        UpdateIssueModelRequest.newBuilder()</span>
-<span class="fc" id="L1597">            .setIssueModel(issueModel)</span>
-<span class="fc" id="L1598">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1599">            .build();</span>
-<span class="fc" id="L1600">    return updateIssueModel(request);</span>
+<span class="fc" id="L1626">        UpdateIssueModelRequest.newBuilder()</span>
+<span class="fc" id="L1627">            .setIssueModel(issueModel)</span>
+<span class="fc" id="L1628">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1629">            .build();</span>
+<span class="fc" id="L1630">    return updateIssueModel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1624,7 +1654,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final IssueModel updateIssueModel(UpdateIssueModelRequest request) {
-<span class="fc" id="L1627">    return updateIssueModelCallable().call(request);</span>
+<span class="fc" id="L1657">    return updateIssueModelCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1651,7 +1681,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateIssueModelRequest, IssueModel&gt; updateIssueModelCallable() {
-<span class="fc" id="L1654">    return stub.updateIssueModelCallable();</span>
+<span class="fc" id="L1684">    return stub.updateIssueModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1675,8 +1705,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final IssueModel getIssueModel(IssueModelName name) {
     GetIssueModelRequest request =
-<span class="pc bpc" id="L1678" title="1 of 2 branches missed.">        GetIssueModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1679">    return getIssueModel(request);</span>
+<span class="pc bpc" id="L1708" title="1 of 2 branches missed.">        GetIssueModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1709">    return getIssueModel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1699,8 +1729,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final IssueModel getIssueModel(String name) {
-<span class="fc" id="L1702">    GetIssueModelRequest request = GetIssueModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1703">    return getIssueModel(request);</span>
+<span class="fc" id="L1732">    GetIssueModelRequest request = GetIssueModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1733">    return getIssueModel(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1726,7 +1756,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final IssueModel getIssueModel(GetIssueModelRequest request) {
-<span class="fc" id="L1729">    return getIssueModelCallable().call(request);</span>
+<span class="fc" id="L1759">    return getIssueModelCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1752,7 +1782,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetIssueModelRequest, IssueModel&gt; getIssueModelCallable() {
-<span class="fc" id="L1755">    return stub.getIssueModelCallable();</span>
+<span class="fc" id="L1785">    return stub.getIssueModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1776,10 +1806,10 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListIssueModelsResponse listIssueModels(LocationName parent) {
     ListIssueModelsRequest request =
-<span class="fc" id="L1779">        ListIssueModelsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1780" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1781">            .build();</span>
-<span class="fc" id="L1782">    return listIssueModels(request);</span>
+<span class="fc" id="L1809">        ListIssueModelsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1810" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1811">            .build();</span>
+<span class="fc" id="L1812">    return listIssueModels(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1802,8 +1832,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListIssueModelsResponse listIssueModels(String parent) {
-<span class="fc" id="L1805">    ListIssueModelsRequest request = ListIssueModelsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1806">    return listIssueModels(request);</span>
+<span class="fc" id="L1835">    ListIssueModelsRequest request = ListIssueModelsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1836">    return listIssueModels(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1829,7 +1859,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListIssueModelsResponse listIssueModels(ListIssueModelsRequest request) {
-<span class="fc" id="L1832">    return listIssueModelsCallable().call(request);</span>
+<span class="fc" id="L1862">    return listIssueModelsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1856,7 +1886,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListIssueModelsRequest, ListIssueModelsResponse&gt;
       listIssueModelsCallable() {
-<span class="fc" id="L1859">    return stub.listIssueModelsCallable();</span>
+<span class="fc" id="L1889">    return stub.listIssueModelsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1881,8 +1911,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, DeleteIssueModelMetadata&gt; deleteIssueModelAsync(
       IssueModelName name) {
     DeleteIssueModelRequest request =
-<span class="pc bpc" id="L1884" title="1 of 2 branches missed.">        DeleteIssueModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1885">    return deleteIssueModelAsync(request);</span>
+<span class="pc bpc" id="L1914" title="1 of 2 branches missed.">        DeleteIssueModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1915">    return deleteIssueModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1905,8 +1935,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, DeleteIssueModelMetadata&gt; deleteIssueModelAsync(String name) {
-<span class="fc" id="L1908">    DeleteIssueModelRequest request = DeleteIssueModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1909">    return deleteIssueModelAsync(request);</span>
+<span class="fc" id="L1938">    DeleteIssueModelRequest request = DeleteIssueModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1939">    return deleteIssueModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1933,7 +1963,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, DeleteIssueModelMetadata&gt; deleteIssueModelAsync(
       DeleteIssueModelRequest request) {
-<span class="fc" id="L1936">    return deleteIssueModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1966">    return deleteIssueModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1960,7 +1990,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteIssueModelRequest, Empty, DeleteIssueModelMetadata&gt;
       deleteIssueModelOperationCallable() {
-<span class="fc" id="L1963">    return stub.deleteIssueModelOperationCallable();</span>
+<span class="fc" id="L1993">    return stub.deleteIssueModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1986,7 +2016,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteIssueModelRequest, Operation&gt; deleteIssueModelCallable() {
-<span class="nc" id="L1989">    return stub.deleteIssueModelCallable();</span>
+<span class="nc" id="L2019">    return stub.deleteIssueModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2013,8 +2043,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;DeployIssueModelResponse, DeployIssueModelMetadata&gt;
       deployIssueModelAsync(IssueModelName name) {
     DeployIssueModelRequest request =
-<span class="pc bpc" id="L2016" title="1 of 2 branches missed.">        DeployIssueModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2017">    return deployIssueModelAsync(request);</span>
+<span class="pc bpc" id="L2046" title="1 of 2 branches missed.">        DeployIssueModelRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2047">    return deployIssueModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2040,8 +2070,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DeployIssueModelResponse, DeployIssueModelMetadata&gt;
       deployIssueModelAsync(String name) {
-<span class="fc" id="L2043">    DeployIssueModelRequest request = DeployIssueModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2044">    return deployIssueModelAsync(request);</span>
+<span class="fc" id="L2073">    DeployIssueModelRequest request = DeployIssueModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2074">    return deployIssueModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2070,7 +2100,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DeployIssueModelResponse, DeployIssueModelMetadata&gt;
       deployIssueModelAsync(DeployIssueModelRequest request) {
-<span class="fc" id="L2073">    return deployIssueModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2103">    return deployIssueModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2099,7 +2129,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationCallable&lt;
           DeployIssueModelRequest, DeployIssueModelResponse, DeployIssueModelMetadata&gt;
       deployIssueModelOperationCallable() {
-<span class="fc" id="L2102">    return stub.deployIssueModelOperationCallable();</span>
+<span class="fc" id="L2132">    return stub.deployIssueModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2126,7 +2156,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeployIssueModelRequest, Operation&gt; deployIssueModelCallable() {
-<span class="nc" id="L2129">    return stub.deployIssueModelCallable();</span>
+<span class="nc" id="L2159">    return stub.deployIssueModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2153,10 +2183,10 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;UndeployIssueModelResponse, UndeployIssueModelMetadata&gt;
       undeployIssueModelAsync(IssueModelName name) {
     UndeployIssueModelRequest request =
-<span class="fc" id="L2156">        UndeployIssueModelRequest.newBuilder()</span>
-<span class="pc bpc" id="L2157" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2158">            .build();</span>
-<span class="fc" id="L2159">    return undeployIssueModelAsync(request);</span>
+<span class="fc" id="L2186">        UndeployIssueModelRequest.newBuilder()</span>
+<span class="pc bpc" id="L2187" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2188">            .build();</span>
+<span class="fc" id="L2189">    return undeployIssueModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2183,8 +2213,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationFuture&lt;UndeployIssueModelResponse, UndeployIssueModelMetadata&gt;
       undeployIssueModelAsync(String name) {
     UndeployIssueModelRequest request =
-<span class="fc" id="L2186">        UndeployIssueModelRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2187">    return undeployIssueModelAsync(request);</span>
+<span class="fc" id="L2216">        UndeployIssueModelRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2217">    return undeployIssueModelAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2213,7 +2243,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final OperationFuture&lt;UndeployIssueModelResponse, UndeployIssueModelMetadata&gt;
       undeployIssueModelAsync(UndeployIssueModelRequest request) {
-<span class="fc" id="L2216">    return undeployIssueModelOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2246">    return undeployIssueModelOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2242,7 +2272,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final OperationCallable&lt;
           UndeployIssueModelRequest, UndeployIssueModelResponse, UndeployIssueModelMetadata&gt;
       undeployIssueModelOperationCallable() {
-<span class="fc" id="L2245">    return stub.undeployIssueModelOperationCallable();</span>
+<span class="fc" id="L2275">    return stub.undeployIssueModelOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2269,7 +2299,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UndeployIssueModelRequest, Operation&gt; undeployIssueModelCallable() {
-<span class="nc" id="L2272">    return stub.undeployIssueModelCallable();</span>
+<span class="nc" id="L2302">    return stub.undeployIssueModelCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2293,8 +2323,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final Issue getIssue(IssueName name) {
     GetIssueRequest request =
-<span class="pc bpc" id="L2296" title="1 of 2 branches missed.">        GetIssueRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2297">    return getIssue(request);</span>
+<span class="pc bpc" id="L2326" title="1 of 2 branches missed.">        GetIssueRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2327">    return getIssue(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2317,8 +2347,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Issue getIssue(String name) {
-<span class="fc" id="L2320">    GetIssueRequest request = GetIssueRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2321">    return getIssue(request);</span>
+<span class="fc" id="L2350">    GetIssueRequest request = GetIssueRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2351">    return getIssue(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2345,7 +2375,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Issue getIssue(GetIssueRequest request) {
-<span class="fc" id="L2348">    return getIssueCallable().call(request);</span>
+<span class="fc" id="L2378">    return getIssueCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2371,7 +2401,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetIssueRequest, Issue&gt; getIssueCallable() {
-<span class="fc" id="L2374">    return stub.getIssueCallable();</span>
+<span class="fc" id="L2404">    return stub.getIssueCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2395,8 +2425,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListIssuesResponse listIssues(IssueModelName parent) {
     ListIssuesRequest request =
-<span class="pc bpc" id="L2398" title="1 of 2 branches missed.">        ListIssuesRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L2399">    return listIssues(request);</span>
+<span class="pc bpc" id="L2428" title="1 of 2 branches missed.">        ListIssuesRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L2429">    return listIssues(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2419,8 +2449,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListIssuesResponse listIssues(String parent) {
-<span class="fc" id="L2422">    ListIssuesRequest request = ListIssuesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2423">    return listIssues(request);</span>
+<span class="fc" id="L2452">    ListIssuesRequest request = ListIssuesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2453">    return listIssues(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2446,7 +2476,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListIssuesResponse listIssues(ListIssuesRequest request) {
-<span class="fc" id="L2449">    return listIssuesCallable().call(request);</span>
+<span class="fc" id="L2479">    return listIssuesCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2472,7 +2502,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListIssuesRequest, ListIssuesResponse&gt; listIssuesCallable() {
-<span class="fc" id="L2475">    return stub.listIssuesCallable();</span>
+<span class="fc" id="L2505">    return stub.listIssuesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2498,8 +2528,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final Issue updateIssue(Issue issue, FieldMask updateMask) {
     UpdateIssueRequest request =
-<span class="fc" id="L2501">        UpdateIssueRequest.newBuilder().setIssue(issue).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L2502">    return updateIssue(request);</span>
+<span class="fc" id="L2531">        UpdateIssueRequest.newBuilder().setIssue(issue).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L2532">    return updateIssue(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2526,7 +2556,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Issue updateIssue(UpdateIssueRequest request) {
-<span class="fc" id="L2529">    return updateIssueCallable().call(request);</span>
+<span class="fc" id="L2559">    return updateIssueCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2553,7 +2583,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateIssueRequest, Issue&gt; updateIssueCallable() {
-<span class="fc" id="L2556">    return stub.updateIssueCallable();</span>
+<span class="fc" id="L2586">    return stub.updateIssueCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2579,10 +2609,10 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final CalculateIssueModelStatsResponse calculateIssueModelStats(
       IssueModelName issueModel) {
     CalculateIssueModelStatsRequest request =
-<span class="fc" id="L2582">        CalculateIssueModelStatsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2583" title="1 of 2 branches missed.">            .setIssueModel(issueModel == null ? null : issueModel.toString())</span>
-<span class="fc" id="L2584">            .build();</span>
-<span class="fc" id="L2585">    return calculateIssueModelStats(request);</span>
+<span class="fc" id="L2612">        CalculateIssueModelStatsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2613" title="1 of 2 branches missed.">            .setIssueModel(issueModel == null ? null : issueModel.toString())</span>
+<span class="fc" id="L2614">            .build();</span>
+<span class="fc" id="L2615">    return calculateIssueModelStats(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2607,8 +2637,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final CalculateIssueModelStatsResponse calculateIssueModelStats(String issueModel) {
     CalculateIssueModelStatsRequest request =
-<span class="fc" id="L2610">        CalculateIssueModelStatsRequest.newBuilder().setIssueModel(issueModel).build();</span>
-<span class="fc" id="L2611">    return calculateIssueModelStats(request);</span>
+<span class="fc" id="L2640">        CalculateIssueModelStatsRequest.newBuilder().setIssueModel(issueModel).build();</span>
+<span class="fc" id="L2641">    return calculateIssueModelStats(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2637,7 +2667,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final CalculateIssueModelStatsResponse calculateIssueModelStats(
       CalculateIssueModelStatsRequest request) {
-<span class="fc" id="L2640">    return calculateIssueModelStatsCallable().call(request);</span>
+<span class="fc" id="L2670">    return calculateIssueModelStatsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2665,7 +2695,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CalculateIssueModelStatsRequest, CalculateIssueModelStatsResponse&gt;
       calculateIssueModelStatsCallable() {
-<span class="fc" id="L2668">    return stub.calculateIssueModelStatsCallable();</span>
+<span class="fc" id="L2698">    return stub.calculateIssueModelStatsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2694,11 +2724,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final PhraseMatcher createPhraseMatcher(LocationName parent, PhraseMatcher phraseMatcher) {
     CreatePhraseMatcherRequest request =
-<span class="fc" id="L2697">        CreatePhraseMatcherRequest.newBuilder()</span>
-<span class="pc bpc" id="L2698" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2699">            .setPhraseMatcher(phraseMatcher)</span>
-<span class="fc" id="L2700">            .build();</span>
-<span class="fc" id="L2701">    return createPhraseMatcher(request);</span>
+<span class="fc" id="L2727">        CreatePhraseMatcherRequest.newBuilder()</span>
+<span class="pc bpc" id="L2728" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2729">            .setPhraseMatcher(phraseMatcher)</span>
+<span class="fc" id="L2730">            .build();</span>
+<span class="fc" id="L2731">    return createPhraseMatcher(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2727,11 +2757,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final PhraseMatcher createPhraseMatcher(String parent, PhraseMatcher phraseMatcher) {
     CreatePhraseMatcherRequest request =
-<span class="fc" id="L2730">        CreatePhraseMatcherRequest.newBuilder()</span>
-<span class="fc" id="L2731">            .setParent(parent)</span>
-<span class="fc" id="L2732">            .setPhraseMatcher(phraseMatcher)</span>
-<span class="fc" id="L2733">            .build();</span>
-<span class="fc" id="L2734">    return createPhraseMatcher(request);</span>
+<span class="fc" id="L2760">        CreatePhraseMatcherRequest.newBuilder()</span>
+<span class="fc" id="L2761">            .setParent(parent)</span>
+<span class="fc" id="L2762">            .setPhraseMatcher(phraseMatcher)</span>
+<span class="fc" id="L2763">            .build();</span>
+<span class="fc" id="L2764">    return createPhraseMatcher(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2758,7 +2788,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final PhraseMatcher createPhraseMatcher(CreatePhraseMatcherRequest request) {
-<span class="fc" id="L2761">    return createPhraseMatcherCallable().call(request);</span>
+<span class="fc" id="L2791">    return createPhraseMatcherCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2786,7 +2816,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreatePhraseMatcherRequest, PhraseMatcher&gt;
       createPhraseMatcherCallable() {
-<span class="fc" id="L2789">    return stub.createPhraseMatcherCallable();</span>
+<span class="fc" id="L2819">    return stub.createPhraseMatcherCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2810,8 +2840,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final PhraseMatcher getPhraseMatcher(PhraseMatcherName name) {
     GetPhraseMatcherRequest request =
-<span class="pc bpc" id="L2813" title="1 of 2 branches missed.">        GetPhraseMatcherRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2814">    return getPhraseMatcher(request);</span>
+<span class="pc bpc" id="L2843" title="1 of 2 branches missed.">        GetPhraseMatcherRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2844">    return getPhraseMatcher(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2834,8 +2864,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final PhraseMatcher getPhraseMatcher(String name) {
-<span class="fc" id="L2837">    GetPhraseMatcherRequest request = GetPhraseMatcherRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2838">    return getPhraseMatcher(request);</span>
+<span class="fc" id="L2867">    GetPhraseMatcherRequest request = GetPhraseMatcherRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2868">    return getPhraseMatcher(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2862,7 +2892,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final PhraseMatcher getPhraseMatcher(GetPhraseMatcherRequest request) {
-<span class="fc" id="L2865">    return getPhraseMatcherCallable().call(request);</span>
+<span class="fc" id="L2895">    return getPhraseMatcherCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2889,7 +2919,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetPhraseMatcherRequest, PhraseMatcher&gt; getPhraseMatcherCallable() {
-<span class="fc" id="L2892">    return stub.getPhraseMatcherCallable();</span>
+<span class="fc" id="L2922">    return stub.getPhraseMatcherCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2916,10 +2946,10 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListPhraseMatchersPagedResponse listPhraseMatchers(LocationName parent) {
     ListPhraseMatchersRequest request =
-<span class="fc" id="L2919">        ListPhraseMatchersRequest.newBuilder()</span>
-<span class="pc bpc" id="L2920" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2921">            .build();</span>
-<span class="fc" id="L2922">    return listPhraseMatchers(request);</span>
+<span class="fc" id="L2949">        ListPhraseMatchersRequest.newBuilder()</span>
+<span class="pc bpc" id="L2950" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2951">            .build();</span>
+<span class="fc" id="L2952">    return listPhraseMatchers(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2946,8 +2976,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListPhraseMatchersPagedResponse listPhraseMatchers(String parent) {
     ListPhraseMatchersRequest request =
-<span class="fc" id="L2949">        ListPhraseMatchersRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2950">    return listPhraseMatchers(request);</span>
+<span class="fc" id="L2979">        ListPhraseMatchersRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2980">    return listPhraseMatchers(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2980,7 +3010,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListPhraseMatchersPagedResponse listPhraseMatchers(
       ListPhraseMatchersRequest request) {
-<span class="fc" id="L2983">    return listPhraseMatchersPagedCallable().call(request);</span>
+<span class="fc" id="L3013">    return listPhraseMatchersPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3012,7 +3042,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListPhraseMatchersRequest, ListPhraseMatchersPagedResponse&gt;
       listPhraseMatchersPagedCallable() {
-<span class="fc" id="L3015">    return stub.listPhraseMatchersPagedCallable();</span>
+<span class="fc" id="L3045">    return stub.listPhraseMatchersPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3051,7 +3081,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListPhraseMatchersRequest, ListPhraseMatchersResponse&gt;
       listPhraseMatchersCallable() {
-<span class="nc" id="L3054">    return stub.listPhraseMatchersCallable();</span>
+<span class="nc" id="L3084">    return stub.listPhraseMatchersCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3075,11 +3105,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final void deletePhraseMatcher(PhraseMatcherName name) {
     DeletePhraseMatcherRequest request =
-<span class="fc" id="L3078">        DeletePhraseMatcherRequest.newBuilder()</span>
-<span class="pc bpc" id="L3079" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L3080">            .build();</span>
-<span class="fc" id="L3081">    deletePhraseMatcher(request);</span>
-<span class="fc" id="L3082">  }</span>
+<span class="fc" id="L3108">        DeletePhraseMatcherRequest.newBuilder()</span>
+<span class="pc bpc" id="L3109" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L3110">            .build();</span>
+<span class="fc" id="L3111">    deletePhraseMatcher(request);</span>
+<span class="fc" id="L3112">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -3102,9 +3132,9 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final void deletePhraseMatcher(String name) {
     DeletePhraseMatcherRequest request =
-<span class="fc" id="L3105">        DeletePhraseMatcherRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3106">    deletePhraseMatcher(request);</span>
-<span class="fc" id="L3107">  }</span>
+<span class="fc" id="L3135">        DeletePhraseMatcherRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3136">    deletePhraseMatcher(request);</span>
+<span class="fc" id="L3137">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -3130,8 +3160,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deletePhraseMatcher(DeletePhraseMatcherRequest request) {
-<span class="fc" id="L3133">    deletePhraseMatcherCallable().call(request);</span>
-<span class="fc" id="L3134">  }</span>
+<span class="fc" id="L3163">    deletePhraseMatcherCallable().call(request);</span>
+<span class="fc" id="L3164">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -3157,7 +3187,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeletePhraseMatcherRequest, Empty&gt; deletePhraseMatcherCallable() {
-<span class="fc" id="L3160">    return stub.deletePhraseMatcherCallable();</span>
+<span class="fc" id="L3190">    return stub.deletePhraseMatcherCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3185,11 +3215,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
   public final PhraseMatcher updatePhraseMatcher(
       PhraseMatcher phraseMatcher, FieldMask updateMask) {
     UpdatePhraseMatcherRequest request =
-<span class="fc" id="L3188">        UpdatePhraseMatcherRequest.newBuilder()</span>
-<span class="fc" id="L3189">            .setPhraseMatcher(phraseMatcher)</span>
-<span class="fc" id="L3190">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L3191">            .build();</span>
-<span class="fc" id="L3192">    return updatePhraseMatcher(request);</span>
+<span class="fc" id="L3218">        UpdatePhraseMatcherRequest.newBuilder()</span>
+<span class="fc" id="L3219">            .setPhraseMatcher(phraseMatcher)</span>
+<span class="fc" id="L3220">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L3221">            .build();</span>
+<span class="fc" id="L3222">    return updatePhraseMatcher(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3216,7 +3246,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final PhraseMatcher updatePhraseMatcher(UpdatePhraseMatcherRequest request) {
-<span class="fc" id="L3219">    return updatePhraseMatcherCallable().call(request);</span>
+<span class="fc" id="L3249">    return updatePhraseMatcherCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3244,7 +3274,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdatePhraseMatcherRequest, PhraseMatcher&gt;
       updatePhraseMatcherCallable() {
-<span class="fc" id="L3247">    return stub.updatePhraseMatcherCallable();</span>
+<span class="fc" id="L3277">    return stub.updatePhraseMatcherCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3268,10 +3298,10 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final CalculateStatsResponse calculateStats(LocationName location) {
     CalculateStatsRequest request =
-<span class="fc" id="L3271">        CalculateStatsRequest.newBuilder()</span>
-<span class="pc bpc" id="L3272" title="1 of 2 branches missed.">            .setLocation(location == null ? null : location.toString())</span>
-<span class="fc" id="L3273">            .build();</span>
-<span class="fc" id="L3274">    return calculateStats(request);</span>
+<span class="fc" id="L3301">        CalculateStatsRequest.newBuilder()</span>
+<span class="pc bpc" id="L3302" title="1 of 2 branches missed.">            .setLocation(location == null ? null : location.toString())</span>
+<span class="fc" id="L3303">            .build();</span>
+<span class="fc" id="L3304">    return calculateStats(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3295,8 +3325,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final CalculateStatsResponse calculateStats(String location) {
     CalculateStatsRequest request =
-<span class="fc" id="L3298">        CalculateStatsRequest.newBuilder().setLocation(location).build();</span>
-<span class="fc" id="L3299">    return calculateStats(request);</span>
+<span class="fc" id="L3328">        CalculateStatsRequest.newBuilder().setLocation(location).build();</span>
+<span class="fc" id="L3329">    return calculateStats(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3323,7 +3353,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final CalculateStatsResponse calculateStats(CalculateStatsRequest request) {
-<span class="fc" id="L3326">    return calculateStatsCallable().call(request);</span>
+<span class="fc" id="L3356">    return calculateStatsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3351,7 +3381,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CalculateStatsRequest, CalculateStatsResponse&gt;
       calculateStatsCallable() {
-<span class="fc" id="L3354">    return stub.calculateStatsCallable();</span>
+<span class="fc" id="L3384">    return stub.calculateStatsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3375,8 +3405,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final Settings getSettings(SettingsName name) {
     GetSettingsRequest request =
-<span class="pc bpc" id="L3378" title="1 of 2 branches missed.">        GetSettingsRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L3379">    return getSettings(request);</span>
+<span class="pc bpc" id="L3408" title="1 of 2 branches missed.">        GetSettingsRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3409">    return getSettings(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3399,8 +3429,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Settings getSettings(String name) {
-<span class="fc" id="L3402">    GetSettingsRequest request = GetSettingsRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3403">    return getSettings(request);</span>
+<span class="fc" id="L3432">    GetSettingsRequest request = GetSettingsRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3433">    return getSettings(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3426,7 +3456,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Settings getSettings(GetSettingsRequest request) {
-<span class="fc" id="L3429">    return getSettingsCallable().call(request);</span>
+<span class="fc" id="L3459">    return getSettingsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3452,7 +3482,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetSettingsRequest, Settings&gt; getSettingsCallable() {
-<span class="fc" id="L3455">    return stub.getSettingsCallable();</span>
+<span class="fc" id="L3485">    return stub.getSettingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3478,8 +3508,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final Settings updateSettings(Settings settings, FieldMask updateMask) {
     UpdateSettingsRequest request =
-<span class="fc" id="L3481">        UpdateSettingsRequest.newBuilder().setSettings(settings).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L3482">    return updateSettings(request);</span>
+<span class="fc" id="L3511">        UpdateSettingsRequest.newBuilder().setSettings(settings).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L3512">    return updateSettings(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3506,7 +3536,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Settings updateSettings(UpdateSettingsRequest request) {
-<span class="fc" id="L3509">    return updateSettingsCallable().call(request);</span>
+<span class="fc" id="L3539">    return updateSettingsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3533,7 +3563,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateSettingsRequest, Settings&gt; updateSettingsCallable() {
-<span class="fc" id="L3536">    return stub.updateSettingsCallable();</span>
+<span class="fc" id="L3566">    return stub.updateSettingsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3561,11 +3591,11 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final View createView(LocationName parent, View view) {
     CreateViewRequest request =
-<span class="fc" id="L3564">        CreateViewRequest.newBuilder()</span>
-<span class="pc bpc" id="L3565" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L3566">            .setView(view)</span>
-<span class="fc" id="L3567">            .build();</span>
-<span class="fc" id="L3568">    return createView(request);</span>
+<span class="fc" id="L3594">        CreateViewRequest.newBuilder()</span>
+<span class="pc bpc" id="L3595" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L3596">            .setView(view)</span>
+<span class="fc" id="L3597">            .build();</span>
+<span class="fc" id="L3598">    return createView(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3593,8 +3623,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final View createView(String parent, View view) {
     CreateViewRequest request =
-<span class="fc" id="L3596">        CreateViewRequest.newBuilder().setParent(parent).setView(view).build();</span>
-<span class="fc" id="L3597">    return createView(request);</span>
+<span class="fc" id="L3626">        CreateViewRequest.newBuilder().setParent(parent).setView(view).build();</span>
+<span class="fc" id="L3627">    return createView(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3621,7 +3651,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final View createView(CreateViewRequest request) {
-<span class="fc" id="L3624">    return createViewCallable().call(request);</span>
+<span class="fc" id="L3654">    return createViewCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3647,7 +3677,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateViewRequest, View&gt; createViewCallable() {
-<span class="fc" id="L3650">    return stub.createViewCallable();</span>
+<span class="fc" id="L3680">    return stub.createViewCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3671,8 +3701,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final View getView(ViewName name) {
     GetViewRequest request =
-<span class="pc bpc" id="L3674" title="1 of 2 branches missed.">        GetViewRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L3675">    return getView(request);</span>
+<span class="pc bpc" id="L3704" title="1 of 2 branches missed.">        GetViewRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3705">    return getView(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3695,8 +3725,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final View getView(String name) {
-<span class="fc" id="L3698">    GetViewRequest request = GetViewRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3699">    return getView(request);</span>
+<span class="fc" id="L3728">    GetViewRequest request = GetViewRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3729">    return getView(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3722,7 +3752,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final View getView(GetViewRequest request) {
-<span class="fc" id="L3725">    return getViewCallable().call(request);</span>
+<span class="fc" id="L3755">    return getViewCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3747,7 +3777,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetViewRequest, View&gt; getViewCallable() {
-<span class="fc" id="L3750">    return stub.getViewCallable();</span>
+<span class="fc" id="L3780">    return stub.getViewCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3773,8 +3803,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final ListViewsPagedResponse listViews(LocationName parent) {
     ListViewsRequest request =
-<span class="pc bpc" id="L3776" title="1 of 2 branches missed.">        ListViewsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L3777">    return listViews(request);</span>
+<span class="pc bpc" id="L3806" title="1 of 2 branches missed.">        ListViewsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L3807">    return listViews(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3799,8 +3829,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListViewsPagedResponse listViews(String parent) {
-<span class="fc" id="L3802">    ListViewsRequest request = ListViewsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L3803">    return listViews(request);</span>
+<span class="fc" id="L3832">    ListViewsRequest request = ListViewsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L3833">    return listViews(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3830,7 +3860,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListViewsPagedResponse listViews(ListViewsRequest request) {
-<span class="fc" id="L3833">    return listViewsPagedCallable().call(request);</span>
+<span class="fc" id="L3863">    return listViewsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3860,7 +3890,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListViewsRequest, ListViewsPagedResponse&gt; listViewsPagedCallable() {
-<span class="fc" id="L3863">    return stub.listViewsPagedCallable();</span>
+<span class="fc" id="L3893">    return stub.listViewsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3896,7 +3926,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListViewsRequest, ListViewsResponse&gt; listViewsCallable() {
-<span class="nc" id="L3899">    return stub.listViewsCallable();</span>
+<span class="nc" id="L3929">    return stub.listViewsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3922,8 +3952,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final View updateView(View view, FieldMask updateMask) {
     UpdateViewRequest request =
-<span class="fc" id="L3925">        UpdateViewRequest.newBuilder().setView(view).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L3926">    return updateView(request);</span>
+<span class="fc" id="L3955">        UpdateViewRequest.newBuilder().setView(view).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L3956">    return updateView(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3950,7 +3980,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final View updateView(UpdateViewRequest request) {
-<span class="fc" id="L3953">    return updateViewCallable().call(request);</span>
+<span class="fc" id="L3983">    return updateViewCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3976,7 +4006,7 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateViewRequest, View&gt; updateViewCallable() {
-<span class="fc" id="L3979">    return stub.updateViewCallable();</span>
+<span class="fc" id="L4009">    return stub.updateViewCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4000,9 +4030,9 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    */
   public final void deleteView(ViewName name) {
     DeleteViewRequest request =
-<span class="pc bpc" id="L4003" title="1 of 2 branches missed.">        DeleteViewRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L4004">    deleteView(request);</span>
-<span class="fc" id="L4005">  }</span>
+<span class="pc bpc" id="L4033" title="1 of 2 branches missed.">        DeleteViewRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L4034">    deleteView(request);</span>
+<span class="fc" id="L4035">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -4024,9 +4054,9 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteView(String name) {
-<span class="fc" id="L4027">    DeleteViewRequest request = DeleteViewRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L4028">    deleteView(request);</span>
-<span class="fc" id="L4029">  }</span>
+<span class="fc" id="L4057">    DeleteViewRequest request = DeleteViewRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L4058">    deleteView(request);</span>
+<span class="fc" id="L4059">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -4051,8 +4081,8 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteView(DeleteViewRequest request) {
-<span class="fc" id="L4054">    deleteViewCallable().call(request);</span>
-<span class="fc" id="L4055">  }</span>
+<span class="fc" id="L4084">    deleteViewCallable().call(request);</span>
+<span class="fc" id="L4085">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -4077,37 +4107,37 @@ public class ContactCenterInsightsClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteViewRequest, Empty&gt; deleteViewCallable() {
-<span class="fc" id="L4080">    return stub.deleteViewCallable();</span>
+<span class="fc" id="L4110">    return stub.deleteViewCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L4085">    stub.close();</span>
-<span class="fc" id="L4086">  }</span>
+<span class="fc" id="L4115">    stub.close();</span>
+<span class="fc" id="L4116">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L4090">    stub.shutdown();</span>
-<span class="nc" id="L4091">  }</span>
+<span class="nc" id="L4120">    stub.shutdown();</span>
+<span class="nc" id="L4121">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L4095">    return stub.isShutdown();</span>
+<span class="nc" id="L4125">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L4100">    return stub.isTerminated();</span>
+<span class="nc" id="L4130">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L4105">    stub.shutdownNow();</span>
-<span class="nc" id="L4106">  }</span>
+<span class="nc" id="L4135">    stub.shutdownNow();</span>
+<span class="nc" id="L4136">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L4110">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L4140">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListConversationsPagedResponse
@@ -4122,16 +4152,16 @@ public class ContactCenterInsightsClient implements BackgroundResource {
         PageContext&lt;ListConversationsRequest, ListConversationsResponse, Conversation&gt; context,
         ApiFuture&lt;ListConversationsResponse&gt; futureResponse) {
       ApiFuture&lt;ListConversationsPage&gt; futurePage =
-<span class="fc" id="L4125">          ListConversationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4126">      return ApiFutures.transform(</span>
+<span class="fc" id="L4155">          ListConversationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4156">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L4128">          input -&gt; new ListConversationsPagedResponse(input),</span>
-<span class="fc" id="L4129">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4158">          input -&gt; new ListConversationsPagedResponse(input),</span>
+<span class="fc" id="L4159">          MoreExecutors.directExecutor());</span>
     }
 
     private ListConversationsPagedResponse(ListConversationsPage page) {
-<span class="fc" id="L4133">      super(page, ListConversationsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4134">    }</span>
+<span class="fc" id="L4163">      super(page, ListConversationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4164">    }</span>
   }
 
   public static class ListConversationsPage
@@ -4144,25 +4174,25 @@ public class ContactCenterInsightsClient implements BackgroundResource {
     private ListConversationsPage(
         PageContext&lt;ListConversationsRequest, ListConversationsResponse, Conversation&gt; context,
         ListConversationsResponse response) {
-<span class="fc" id="L4147">      super(context, response);</span>
-<span class="fc" id="L4148">    }</span>
+<span class="fc" id="L4177">      super(context, response);</span>
+<span class="fc" id="L4178">    }</span>
 
     private static ListConversationsPage createEmptyPage() {
-<span class="fc" id="L4151">      return new ListConversationsPage(null, null);</span>
+<span class="fc" id="L4181">      return new ListConversationsPage(null, null);</span>
     }
 
     @Override
     protected ListConversationsPage createPage(
         PageContext&lt;ListConversationsRequest, ListConversationsResponse, Conversation&gt; context,
         ListConversationsResponse response) {
-<span class="fc" id="L4158">      return new ListConversationsPage(context, response);</span>
+<span class="fc" id="L4188">      return new ListConversationsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListConversationsPage&gt; createPageAsync(
         PageContext&lt;ListConversationsRequest, ListConversationsResponse, Conversation&gt; context,
         ApiFuture&lt;ListConversationsResponse&gt; futureResponse) {
-<span class="fc" id="L4165">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4195">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4176,17 +4206,17 @@ public class ContactCenterInsightsClient implements BackgroundResource {
 
     private ListConversationsFixedSizeCollection(
         List&lt;ListConversationsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4179">      super(pages, collectionSize);</span>
-<span class="fc" id="L4180">    }</span>
+<span class="fc" id="L4209">      super(pages, collectionSize);</span>
+<span class="fc" id="L4210">    }</span>
 
     private static ListConversationsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4183">      return new ListConversationsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4213">      return new ListConversationsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListConversationsFixedSizeCollection createCollection(
         List&lt;ListConversationsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4189">      return new ListConversationsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4219">      return new ListConversationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4202,16 +4232,16 @@ public class ContactCenterInsightsClient implements BackgroundResource {
         PageContext&lt;ListAnalysesRequest, ListAnalysesResponse, Analysis&gt; context,
         ApiFuture&lt;ListAnalysesResponse&gt; futureResponse) {
       ApiFuture&lt;ListAnalysesPage&gt; futurePage =
-<span class="fc" id="L4205">          ListAnalysesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4206">      return ApiFutures.transform(</span>
+<span class="fc" id="L4235">          ListAnalysesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4236">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L4208">          input -&gt; new ListAnalysesPagedResponse(input),</span>
-<span class="fc" id="L4209">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4238">          input -&gt; new ListAnalysesPagedResponse(input),</span>
+<span class="fc" id="L4239">          MoreExecutors.directExecutor());</span>
     }
 
     private ListAnalysesPagedResponse(ListAnalysesPage page) {
-<span class="fc" id="L4213">      super(page, ListAnalysesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4214">    }</span>
+<span class="fc" id="L4243">      super(page, ListAnalysesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4244">    }</span>
   }
 
   public static class ListAnalysesPage
@@ -4220,25 +4250,25 @@ public class ContactCenterInsightsClient implements BackgroundResource {
     private ListAnalysesPage(
         PageContext&lt;ListAnalysesRequest, ListAnalysesResponse, Analysis&gt; context,
         ListAnalysesResponse response) {
-<span class="fc" id="L4223">      super(context, response);</span>
-<span class="fc" id="L4224">    }</span>
+<span class="fc" id="L4253">      super(context, response);</span>
+<span class="fc" id="L4254">    }</span>
 
     private static ListAnalysesPage createEmptyPage() {
-<span class="fc" id="L4227">      return new ListAnalysesPage(null, null);</span>
+<span class="fc" id="L4257">      return new ListAnalysesPage(null, null);</span>
     }
 
     @Override
     protected ListAnalysesPage createPage(
         PageContext&lt;ListAnalysesRequest, ListAnalysesResponse, Analysis&gt; context,
         ListAnalysesResponse response) {
-<span class="fc" id="L4234">      return new ListAnalysesPage(context, response);</span>
+<span class="fc" id="L4264">      return new ListAnalysesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListAnalysesPage&gt; createPageAsync(
         PageContext&lt;ListAnalysesRequest, ListAnalysesResponse, Analysis&gt; context,
         ApiFuture&lt;ListAnalysesResponse&gt; futureResponse) {
-<span class="fc" id="L4241">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4271">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4251,17 +4281,17 @@ public class ContactCenterInsightsClient implements BackgroundResource {
           ListAnalysesFixedSizeCollection&gt; {
 
     private ListAnalysesFixedSizeCollection(List&lt;ListAnalysesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4254">      super(pages, collectionSize);</span>
-<span class="fc" id="L4255">    }</span>
+<span class="fc" id="L4284">      super(pages, collectionSize);</span>
+<span class="fc" id="L4285">    }</span>
 
     private static ListAnalysesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4258">      return new ListAnalysesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4288">      return new ListAnalysesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListAnalysesFixedSizeCollection createCollection(
         List&lt;ListAnalysesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4264">      return new ListAnalysesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4294">      return new ListAnalysesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4277,16 +4307,16 @@ public class ContactCenterInsightsClient implements BackgroundResource {
         PageContext&lt;ListPhraseMatchersRequest, ListPhraseMatchersResponse, PhraseMatcher&gt; context,
         ApiFuture&lt;ListPhraseMatchersResponse&gt; futureResponse) {
       ApiFuture&lt;ListPhraseMatchersPage&gt; futurePage =
-<span class="fc" id="L4280">          ListPhraseMatchersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4281">      return ApiFutures.transform(</span>
+<span class="fc" id="L4310">          ListPhraseMatchersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4311">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L4283">          input -&gt; new ListPhraseMatchersPagedResponse(input),</span>
-<span class="fc" id="L4284">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4313">          input -&gt; new ListPhraseMatchersPagedResponse(input),</span>
+<span class="fc" id="L4314">          MoreExecutors.directExecutor());</span>
     }
 
     private ListPhraseMatchersPagedResponse(ListPhraseMatchersPage page) {
-<span class="fc" id="L4288">      super(page, ListPhraseMatchersFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4289">    }</span>
+<span class="fc" id="L4318">      super(page, ListPhraseMatchersFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4319">    }</span>
   }
 
   public static class ListPhraseMatchersPage
@@ -4299,25 +4329,25 @@ public class ContactCenterInsightsClient implements BackgroundResource {
     private ListPhraseMatchersPage(
         PageContext&lt;ListPhraseMatchersRequest, ListPhraseMatchersResponse, PhraseMatcher&gt; context,
         ListPhraseMatchersResponse response) {
-<span class="fc" id="L4302">      super(context, response);</span>
-<span class="fc" id="L4303">    }</span>
+<span class="fc" id="L4332">      super(context, response);</span>
+<span class="fc" id="L4333">    }</span>
 
     private static ListPhraseMatchersPage createEmptyPage() {
-<span class="fc" id="L4306">      return new ListPhraseMatchersPage(null, null);</span>
+<span class="fc" id="L4336">      return new ListPhraseMatchersPage(null, null);</span>
     }
 
     @Override
     protected ListPhraseMatchersPage createPage(
         PageContext&lt;ListPhraseMatchersRequest, ListPhraseMatchersResponse, PhraseMatcher&gt; context,
         ListPhraseMatchersResponse response) {
-<span class="fc" id="L4313">      return new ListPhraseMatchersPage(context, response);</span>
+<span class="fc" id="L4343">      return new ListPhraseMatchersPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListPhraseMatchersPage&gt; createPageAsync(
         PageContext&lt;ListPhraseMatchersRequest, ListPhraseMatchersResponse, PhraseMatcher&gt; context,
         ApiFuture&lt;ListPhraseMatchersResponse&gt; futureResponse) {
-<span class="fc" id="L4320">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4350">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4331,17 +4361,17 @@ public class ContactCenterInsightsClient implements BackgroundResource {
 
     private ListPhraseMatchersFixedSizeCollection(
         List&lt;ListPhraseMatchersPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4334">      super(pages, collectionSize);</span>
-<span class="fc" id="L4335">    }</span>
+<span class="fc" id="L4364">      super(pages, collectionSize);</span>
+<span class="fc" id="L4365">    }</span>
 
     private static ListPhraseMatchersFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4338">      return new ListPhraseMatchersFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4368">      return new ListPhraseMatchersFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListPhraseMatchersFixedSizeCollection createCollection(
         List&lt;ListPhraseMatchersPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4344">      return new ListPhraseMatchersFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4374">      return new ListPhraseMatchersFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4353,14 +4383,14 @@ public class ContactCenterInsightsClient implements BackgroundResource {
         PageContext&lt;ListViewsRequest, ListViewsResponse, View&gt; context,
         ApiFuture&lt;ListViewsResponse&gt; futureResponse) {
       ApiFuture&lt;ListViewsPage&gt; futurePage =
-<span class="fc" id="L4356">          ListViewsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4357">      return ApiFutures.transform(</span>
-<span class="fc" id="L4358">          futurePage, input -&gt; new ListViewsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4386">          ListViewsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4387">      return ApiFutures.transform(</span>
+<span class="fc" id="L4388">          futurePage, input -&gt; new ListViewsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListViewsPagedResponse(ListViewsPage page) {
-<span class="fc" id="L4362">      super(page, ListViewsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4363">    }</span>
+<span class="fc" id="L4392">      super(page, ListViewsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4393">    }</span>
   }
 
   public static class ListViewsPage
@@ -4369,25 +4399,25 @@ public class ContactCenterInsightsClient implements BackgroundResource {
     private ListViewsPage(
         PageContext&lt;ListViewsRequest, ListViewsResponse, View&gt; context,
         ListViewsResponse response) {
-<span class="fc" id="L4372">      super(context, response);</span>
-<span class="fc" id="L4373">    }</span>
+<span class="fc" id="L4402">      super(context, response);</span>
+<span class="fc" id="L4403">    }</span>
 
     private static ListViewsPage createEmptyPage() {
-<span class="fc" id="L4376">      return new ListViewsPage(null, null);</span>
+<span class="fc" id="L4406">      return new ListViewsPage(null, null);</span>
     }
 
     @Override
     protected ListViewsPage createPage(
         PageContext&lt;ListViewsRequest, ListViewsResponse, View&gt; context,
         ListViewsResponse response) {
-<span class="fc" id="L4383">      return new ListViewsPage(context, response);</span>
+<span class="fc" id="L4413">      return new ListViewsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListViewsPage&gt; createPageAsync(
         PageContext&lt;ListViewsRequest, ListViewsResponse, View&gt; context,
         ApiFuture&lt;ListViewsResponse&gt; futureResponse) {
-<span class="fc" id="L4390">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4420">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4396,17 +4426,17 @@ public class ContactCenterInsightsClient implements BackgroundResource {
           ListViewsRequest, ListViewsResponse, View, ListViewsPage, ListViewsFixedSizeCollection&gt; {
 
     private ListViewsFixedSizeCollection(List&lt;ListViewsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4399">      super(pages, collectionSize);</span>
-<span class="fc" id="L4400">    }</span>
+<span class="fc" id="L4429">      super(pages, collectionSize);</span>
+<span class="fc" id="L4430">    }</span>
 
     private static ListViewsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4403">      return new ListViewsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4433">      return new ListViewsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListViewsFixedSizeCollection createCollection(
         List&lt;ListViewsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4409">      return new ListViewsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4439">      return new ListViewsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
