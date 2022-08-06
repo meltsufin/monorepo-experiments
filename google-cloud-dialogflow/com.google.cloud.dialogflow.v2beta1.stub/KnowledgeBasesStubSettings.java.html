@@ -17,6 +17,7 @@
 package com.google.cloud.dialogflow.v2beta1.stub;
 
 import static com.google.cloud.dialogflow.v2beta1.KnowledgeBasesClient.ListKnowledgeBasesPagedResponse;
+import static com.google.cloud.dialogflow.v2beta1.KnowledgeBasesClient.ListLocationsPagedResponse;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.core.ApiFuture;
@@ -50,6 +51,10 @@ import com.google.cloud.dialogflow.v2beta1.KnowledgeBase;
 import com.google.cloud.dialogflow.v2beta1.ListKnowledgeBasesRequest;
 import com.google.cloud.dialogflow.v2beta1.ListKnowledgeBasesResponse;
 import com.google.cloud.dialogflow.v2beta1.UpdateKnowledgeBaseRequest;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -99,10 +104,10 @@ import org.threeten.bp.Duration;
 public class KnowledgeBasesStubSettings extends StubSettings&lt;KnowledgeBasesStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L102">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L103">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L104">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
-<span class="fc" id="L105">          .build();</span>
+<span class="fc" id="L107">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L108">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L109">          .add(&quot;https://www.googleapis.com/auth/dialogflow&quot;)</span>
+<span class="fc" id="L110">          .build();</span>
 
   private final PagedCallSettings&lt;
           ListKnowledgeBasesRequest, ListKnowledgeBasesResponse, ListKnowledgeBasesPagedResponse&gt;
@@ -113,54 +118,94 @@ public class KnowledgeBasesStubSettings extends StubSettings&lt;KnowledgeBasesSt
   private final UnaryCallSettings&lt;DeleteKnowledgeBaseRequest, Empty&gt; deleteKnowledgeBaseSettings;
   private final UnaryCallSettings&lt;UpdateKnowledgeBaseRequest, KnowledgeBase&gt;
       updateKnowledgeBaseSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
 
   private static final PagedListDescriptor&lt;
           ListKnowledgeBasesRequest, ListKnowledgeBasesResponse, KnowledgeBase&gt;
-<span class="fc" id="L119">      LIST_KNOWLEDGE_BASES_PAGE_STR_DESC =</span>
+<span class="fc" id="L128">      LIST_KNOWLEDGE_BASES_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L121">              ListKnowledgeBasesRequest, ListKnowledgeBasesResponse, KnowledgeBase&gt;() {</span>
+<span class="fc" id="L130">              ListKnowledgeBasesRequest, ListKnowledgeBasesResponse, KnowledgeBase&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L124">              return &quot;&quot;;</span>
+<span class="fc" id="L133">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListKnowledgeBasesRequest injectToken(
                 ListKnowledgeBasesRequest payload, String token) {
-<span class="nc" id="L130">              return ListKnowledgeBasesRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L139">              return ListKnowledgeBasesRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListKnowledgeBasesRequest injectPageSize(
                 ListKnowledgeBasesRequest payload, int pageSize) {
-<span class="nc" id="L136">              return ListKnowledgeBasesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L145">              return ListKnowledgeBasesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListKnowledgeBasesRequest payload) {
-<span class="nc" id="L141">              return payload.getPageSize();</span>
+<span class="nc" id="L150">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListKnowledgeBasesResponse payload) {
-<span class="fc" id="L146">              return payload.getNextPageToken();</span>
+<span class="fc" id="L155">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;KnowledgeBase&gt; extractResources(ListKnowledgeBasesResponse payload) {
-<span class="pc bpc" id="L151" title="1 of 2 branches missed.">              return payload.getKnowledgeBasesList() == null</span>
-<span class="nc" id="L152">                  ? ImmutableList.&lt;KnowledgeBase&gt;of()</span>
-<span class="fc" id="L153">                  : payload.getKnowledgeBasesList();</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">              return payload.getKnowledgeBasesList() == null</span>
+<span class="nc" id="L161">                  ? ImmutableList.&lt;KnowledgeBase&gt;of()</span>
+<span class="fc" id="L162">                  : payload.getKnowledgeBasesList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L167">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L168">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L171">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L176">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L181">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L186">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L191">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L197">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L198">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListKnowledgeBasesRequest, ListKnowledgeBasesResponse, ListKnowledgeBasesPagedResponse&gt;
-<span class="fc" id="L159">      LIST_KNOWLEDGE_BASES_PAGE_STR_FACT =</span>
+<span class="fc" id="L204">      LIST_KNOWLEDGE_BASES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListKnowledgeBasesRequest,
               ListKnowledgeBasesResponse,
-<span class="fc" id="L163">              ListKnowledgeBasesPagedResponse&gt;() {</span>
+<span class="fc" id="L208">              ListKnowledgeBasesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListKnowledgeBasesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListKnowledgeBasesRequest, ListKnowledgeBasesResponse&gt; callable,
@@ -168,10 +213,27 @@ public class KnowledgeBasesStubSettings extends StubSettings&lt;KnowledgeBasesSt
                 ApiCallContext context,
                 ApiFuture&lt;ListKnowledgeBasesResponse&gt; futureResponse) {
               PageContext&lt;ListKnowledgeBasesRequest, ListKnowledgeBasesResponse, KnowledgeBase&gt;
-<span class="fc" id="L171">                  pageContext =</span>
-<span class="fc" id="L172">                      PageContext.create(</span>
-<span class="fc" id="L173">                          callable, LIST_KNOWLEDGE_BASES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L174">              return ListKnowledgeBasesPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L216">                  pageContext =</span>
+<span class="fc" id="L217">                      PageContext.create(</span>
+<span class="fc" id="L218">                          callable, LIST_KNOWLEDGE_BASES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L219">              return ListKnowledgeBasesPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L225">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L227">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L234">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L235">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L236">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -179,143 +241,156 @@ public class KnowledgeBasesStubSettings extends StubSettings&lt;KnowledgeBasesSt
   public PagedCallSettings&lt;
           ListKnowledgeBasesRequest, ListKnowledgeBasesResponse, ListKnowledgeBasesPagedResponse&gt;
       listKnowledgeBasesSettings() {
-<span class="fc" id="L182">    return listKnowledgeBasesSettings;</span>
+<span class="fc" id="L244">    return listKnowledgeBasesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getKnowledgeBase. */
   public UnaryCallSettings&lt;GetKnowledgeBaseRequest, KnowledgeBase&gt; getKnowledgeBaseSettings() {
-<span class="fc" id="L187">    return getKnowledgeBaseSettings;</span>
+<span class="fc" id="L249">    return getKnowledgeBaseSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createKnowledgeBase. */
   public UnaryCallSettings&lt;CreateKnowledgeBaseRequest, KnowledgeBase&gt;
       createKnowledgeBaseSettings() {
-<span class="fc" id="L193">    return createKnowledgeBaseSettings;</span>
+<span class="fc" id="L255">    return createKnowledgeBaseSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteKnowledgeBase. */
   public UnaryCallSettings&lt;DeleteKnowledgeBaseRequest, Empty&gt; deleteKnowledgeBaseSettings() {
-<span class="fc" id="L198">    return deleteKnowledgeBaseSettings;</span>
+<span class="fc" id="L260">    return deleteKnowledgeBaseSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateKnowledgeBase. */
   public UnaryCallSettings&lt;UpdateKnowledgeBaseRequest, KnowledgeBase&gt;
       updateKnowledgeBaseSettings() {
-<span class="fc" id="L204">    return updateKnowledgeBaseSettings;</span>
+<span class="fc" id="L266">    return updateKnowledgeBaseSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L272">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L277">    return getLocationSettings;</span>
   }
 
   public KnowledgeBasesStub createStub() throws IOException {
-<span class="fc" id="L208">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L209">        .getTransportName()</span>
-<span class="fc bfc" id="L210" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L211">      return GrpcKnowledgeBasesStub.create(this);</span>
+<span class="fc" id="L281">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L282">        .getTransportName()</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L284">      return GrpcKnowledgeBasesStub.create(this);</span>
     }
-<span class="fc" id="L213">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L214">        .getTransportName()</span>
-<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
-<span class="fc" id="L216">      return HttpJsonKnowledgeBasesStub.create(this);</span>
+<span class="fc" id="L286">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L287">        .getTransportName()</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L289">      return HttpJsonKnowledgeBasesStub.create(this);</span>
     }
-<span class="nc" id="L218">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L219">        String.format(</span>
-<span class="nc" id="L220">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="nc" id="L291">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L292">        String.format(</span>
+<span class="nc" id="L293">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L225">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L298">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L230">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
+<span class="fc" id="L303">    return &quot;dialogflow.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L235">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L308">    return &quot;dialogflow.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L240">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L313">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L245">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L246">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L247">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L318">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L319">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L320">        .setUseJwtAccessWithScope(true);</span>
   }
 
   /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L252">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L253">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L325">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L326">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
   }
 
   /** Returns a builder for the default REST ChannelProvider for this service. */
   @BetaApi
   public static InstantiatingHttpJsonChannelProvider.Builder
       defaultHttpJsonTransportProviderBuilder() {
-<span class="fc" id="L260">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
+<span class="fc" id="L333">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L264">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L337">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
   public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
-<span class="fc" id="L269">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L270">        .setGeneratedLibToken(</span>
-<span class="fc" id="L271">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(KnowledgeBasesStubSettings.class))</span>
-<span class="fc" id="L272">        .setTransportToken(</span>
-<span class="fc" id="L273">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+<span class="fc" id="L342">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L343">        .setGeneratedLibToken(</span>
+<span class="fc" id="L344">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(KnowledgeBasesStubSettings.class))</span>
+<span class="fc" id="L345">        .setTransportToken(</span>
+<span class="fc" id="L346">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
   public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
-<span class="fc" id="L278">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L279">        .setGeneratedLibToken(</span>
-<span class="fc" id="L280">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(KnowledgeBasesStubSettings.class))</span>
-<span class="fc" id="L281">        .setTransportToken(</span>
-<span class="fc" id="L282">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
-<span class="fc" id="L283">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+<span class="fc" id="L351">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L352">        .setGeneratedLibToken(</span>
+<span class="fc" id="L353">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(KnowledgeBasesStubSettings.class))</span>
+<span class="fc" id="L354">        .setTransportToken(</span>
+<span class="fc" id="L355">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L356">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
   }
 
   public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L287">    return KnowledgeBasesStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+<span class="fc" id="L360">    return KnowledgeBasesStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
   }
 
   /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L292">    return Builder.createDefault();</span>
+<span class="fc" id="L365">    return Builder.createDefault();</span>
   }
 
   /** Returns a new REST builder for this class. */
   public static Builder newHttpJsonBuilder() {
-<span class="fc" id="L297">    return Builder.createHttpJsonDefault();</span>
+<span class="fc" id="L370">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L302">    return new Builder(clientContext);</span>
+<span class="nc" id="L375">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L307">    return new Builder(this);</span>
+<span class="nc" id="L380">    return new Builder(this);</span>
   }
 
   protected KnowledgeBasesStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L311">    super(settingsBuilder);</span>
+<span class="fc" id="L384">    super(settingsBuilder);</span>
 
-<span class="fc" id="L313">    listKnowledgeBasesSettings = settingsBuilder.listKnowledgeBasesSettings().build();</span>
-<span class="fc" id="L314">    getKnowledgeBaseSettings = settingsBuilder.getKnowledgeBaseSettings().build();</span>
-<span class="fc" id="L315">    createKnowledgeBaseSettings = settingsBuilder.createKnowledgeBaseSettings().build();</span>
-<span class="fc" id="L316">    deleteKnowledgeBaseSettings = settingsBuilder.deleteKnowledgeBaseSettings().build();</span>
-<span class="fc" id="L317">    updateKnowledgeBaseSettings = settingsBuilder.updateKnowledgeBaseSettings().build();</span>
-<span class="fc" id="L318">  }</span>
+<span class="fc" id="L386">    listKnowledgeBasesSettings = settingsBuilder.listKnowledgeBasesSettings().build();</span>
+<span class="fc" id="L387">    getKnowledgeBaseSettings = settingsBuilder.getKnowledgeBaseSettings().build();</span>
+<span class="fc" id="L388">    createKnowledgeBaseSettings = settingsBuilder.createKnowledgeBaseSettings().build();</span>
+<span class="fc" id="L389">    deleteKnowledgeBaseSettings = settingsBuilder.deleteKnowledgeBaseSettings().build();</span>
+<span class="fc" id="L390">    updateKnowledgeBaseSettings = settingsBuilder.updateKnowledgeBaseSettings().build();</span>
+<span class="fc" id="L391">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L392">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L393">  }</span>
 
   /** Builder for KnowledgeBasesStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;KnowledgeBasesStubSettings, Builder&gt; {
@@ -331,131 +406,153 @@ public class KnowledgeBasesStubSettings extends StubSettings&lt;KnowledgeBasesSt
         deleteKnowledgeBaseSettings;
     private final UnaryCallSettings.Builder&lt;UpdateKnowledgeBaseRequest, KnowledgeBase&gt;
         updateKnowledgeBaseSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L339">          ImmutableMap.builder();</span>
-<span class="fc" id="L340">      definitions.put(</span>
+<span class="fc" id="L418">          ImmutableMap.builder();</span>
+<span class="fc" id="L419">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L342">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
-<span class="fc" id="L343">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L421">          ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList(StatusCode.Code.UNAVAILABLE)));</span>
+<span class="fc" id="L422">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L349">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L350">      RetrySettings settings = null;</span>
+<span class="fc" id="L428">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L429">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L352">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L353">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L354">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L355">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L356">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L357">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L358">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L359">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L360">              .build();</span>
-<span class="fc" id="L361">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L362">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L363">    }</span>
+<span class="fc" id="L431">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L432">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L433">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L434">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L435">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L436">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L437">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L438">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L439">              .build();</span>
+<span class="fc" id="L440">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L441">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L442">    }</span>
 
     protected Builder() {
-<span class="nc" id="L366">      this(((ClientContext) null));</span>
-<span class="nc" id="L367">    }</span>
+<span class="nc" id="L445">      this(((ClientContext) null));</span>
+<span class="nc" id="L446">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L370">      super(clientContext);</span>
+<span class="fc" id="L449">      super(clientContext);</span>
 
-<span class="fc" id="L372">      listKnowledgeBasesSettings = PagedCallSettings.newBuilder(LIST_KNOWLEDGE_BASES_PAGE_STR_FACT);</span>
-<span class="fc" id="L373">      getKnowledgeBaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L374">      createKnowledgeBaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L375">      deleteKnowledgeBaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L376">      updateKnowledgeBaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L451">      listKnowledgeBasesSettings = PagedCallSettings.newBuilder(LIST_KNOWLEDGE_BASES_PAGE_STR_FACT);</span>
+<span class="fc" id="L452">      getKnowledgeBaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L453">      createKnowledgeBaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L454">      deleteKnowledgeBaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L455">      updateKnowledgeBaseSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L456">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L457">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L378">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L379">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L459">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L460">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listKnowledgeBasesSettings,
               getKnowledgeBaseSettings,
               createKnowledgeBaseSettings,
               deleteKnowledgeBaseSettings,
-              updateKnowledgeBaseSettings);
-<span class="fc" id="L385">      initDefaults(this);</span>
-<span class="fc" id="L386">    }</span>
+              updateKnowledgeBaseSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="fc" id="L468">      initDefaults(this);</span>
+<span class="fc" id="L469">    }</span>
 
     protected Builder(KnowledgeBasesStubSettings settings) {
-<span class="nc" id="L389">      super(settings);</span>
+<span class="nc" id="L472">      super(settings);</span>
 
-<span class="nc" id="L391">      listKnowledgeBasesSettings = settings.listKnowledgeBasesSettings.toBuilder();</span>
-<span class="nc" id="L392">      getKnowledgeBaseSettings = settings.getKnowledgeBaseSettings.toBuilder();</span>
-<span class="nc" id="L393">      createKnowledgeBaseSettings = settings.createKnowledgeBaseSettings.toBuilder();</span>
-<span class="nc" id="L394">      deleteKnowledgeBaseSettings = settings.deleteKnowledgeBaseSettings.toBuilder();</span>
-<span class="nc" id="L395">      updateKnowledgeBaseSettings = settings.updateKnowledgeBaseSettings.toBuilder();</span>
+<span class="nc" id="L474">      listKnowledgeBasesSettings = settings.listKnowledgeBasesSettings.toBuilder();</span>
+<span class="nc" id="L475">      getKnowledgeBaseSettings = settings.getKnowledgeBaseSettings.toBuilder();</span>
+<span class="nc" id="L476">      createKnowledgeBaseSettings = settings.createKnowledgeBaseSettings.toBuilder();</span>
+<span class="nc" id="L477">      deleteKnowledgeBaseSettings = settings.deleteKnowledgeBaseSettings.toBuilder();</span>
+<span class="nc" id="L478">      updateKnowledgeBaseSettings = settings.updateKnowledgeBaseSettings.toBuilder();</span>
+<span class="nc" id="L479">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L480">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
 
-<span class="nc" id="L397">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L398">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L482">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L483">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listKnowledgeBasesSettings,
               getKnowledgeBaseSettings,
               createKnowledgeBaseSettings,
               deleteKnowledgeBaseSettings,
-              updateKnowledgeBaseSettings);
-<span class="nc" id="L404">    }</span>
+              updateKnowledgeBaseSettings,
+              listLocationsSettings,
+              getLocationSettings);
+<span class="nc" id="L491">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L407">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L494">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L409">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L410">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L411">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L412">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L413">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L414">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L496">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L497">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L498">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L499">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L500">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L501">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L416">      return initDefaults(builder);</span>
+<span class="fc" id="L503">      return initDefaults(builder);</span>
     }
 
     private static Builder createHttpJsonDefault() {
-<span class="fc" id="L420">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L507">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L422">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
-<span class="fc" id="L423">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L424">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L425">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L426">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L427">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L509">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L510">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L511">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L512">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L513">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L514">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L429">      return initDefaults(builder);</span>
+<span class="fc" id="L516">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L433">      builder</span>
-<span class="fc" id="L434">          .listKnowledgeBasesSettings()</span>
-<span class="fc" id="L435">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L436">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L520">      builder</span>
+<span class="fc" id="L521">          .listKnowledgeBasesSettings()</span>
+<span class="fc" id="L522">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L523">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L438">      builder</span>
-<span class="fc" id="L439">          .getKnowledgeBaseSettings()</span>
-<span class="fc" id="L440">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L441">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L525">      builder</span>
+<span class="fc" id="L526">          .getKnowledgeBaseSettings()</span>
+<span class="fc" id="L527">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L528">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L443">      builder</span>
-<span class="fc" id="L444">          .createKnowledgeBaseSettings()</span>
-<span class="fc" id="L445">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L446">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L530">      builder</span>
+<span class="fc" id="L531">          .createKnowledgeBaseSettings()</span>
+<span class="fc" id="L532">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L533">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L448">      builder</span>
-<span class="fc" id="L449">          .deleteKnowledgeBaseSettings()</span>
-<span class="fc" id="L450">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L451">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L535">      builder</span>
+<span class="fc" id="L536">          .deleteKnowledgeBaseSettings()</span>
+<span class="fc" id="L537">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L538">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L453">      builder</span>
-<span class="fc" id="L454">          .updateKnowledgeBaseSettings()</span>
-<span class="fc" id="L455">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L456">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L540">      builder</span>
+<span class="fc" id="L541">          .updateKnowledgeBaseSettings()</span>
+<span class="fc" id="L542">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L543">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L458">      return builder;</span>
+<span class="fc" id="L545">      builder</span>
+<span class="fc" id="L546">          .listLocationsSettings()</span>
+<span class="fc" id="L547">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L548">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L550">      builder</span>
+<span class="fc" id="L551">          .getLocationSettings()</span>
+<span class="fc" id="L552">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L553">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+
+<span class="fc" id="L555">      return builder;</span>
     }
 
     /**
@@ -465,48 +562,60 @@ public class KnowledgeBasesStubSettings extends StubSettings&lt;KnowledgeBasesSt
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L468">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L469">      return this;</span>
+<span class="nc" id="L565">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L566">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L473">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L570">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listKnowledgeBases. */
     public PagedCallSettings.Builder&lt;
             ListKnowledgeBasesRequest, ListKnowledgeBasesResponse, ListKnowledgeBasesPagedResponse&gt;
         listKnowledgeBasesSettings() {
-<span class="fc" id="L480">      return listKnowledgeBasesSettings;</span>
+<span class="fc" id="L577">      return listKnowledgeBasesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getKnowledgeBase. */
     public UnaryCallSettings.Builder&lt;GetKnowledgeBaseRequest, KnowledgeBase&gt;
         getKnowledgeBaseSettings() {
-<span class="fc" id="L486">      return getKnowledgeBaseSettings;</span>
+<span class="fc" id="L583">      return getKnowledgeBaseSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createKnowledgeBase. */
     public UnaryCallSettings.Builder&lt;CreateKnowledgeBaseRequest, KnowledgeBase&gt;
         createKnowledgeBaseSettings() {
-<span class="fc" id="L492">      return createKnowledgeBaseSettings;</span>
+<span class="fc" id="L589">      return createKnowledgeBaseSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteKnowledgeBase. */
     public UnaryCallSettings.Builder&lt;DeleteKnowledgeBaseRequest, Empty&gt;
         deleteKnowledgeBaseSettings() {
-<span class="fc" id="L498">      return deleteKnowledgeBaseSettings;</span>
+<span class="fc" id="L595">      return deleteKnowledgeBaseSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateKnowledgeBase. */
     public UnaryCallSettings.Builder&lt;UpdateKnowledgeBaseRequest, KnowledgeBase&gt;
         updateKnowledgeBaseSettings() {
-<span class="fc" id="L504">      return updateKnowledgeBaseSettings;</span>
+<span class="fc" id="L601">      return updateKnowledgeBaseSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L608">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L613">      return getLocationSettings;</span>
     }
 
     @Override
     public KnowledgeBasesStubSettings build() throws IOException {
-<span class="fc" id="L509">      return new KnowledgeBasesStubSettings(this);</span>
+<span class="fc" id="L618">      return new KnowledgeBasesStubSettings(this);</span>
     }
   }
 }

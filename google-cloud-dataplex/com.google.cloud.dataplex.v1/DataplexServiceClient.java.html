@@ -18,7 +18,9 @@ package com.google.cloud.dataplex.v1;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -28,9 +30,12 @@ import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.dataplex.v1.stub.DataplexServiceStub;
 import com.google.cloud.dataplex.v1.stub.DataplexServiceStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -41,7 +46,7 @@ import javax.annotation.Generated;
 // AUTO-GENERATED DOCUMENTATION AND CLASS.
 /**
  * Service Description: Dataplex service provides data lakes as a service. The primary resources
- * offered by this service are Lakes, Zones and Assets which collectively allow a data adminstrator
+ * offered by this service are Lakes, Zones and Assets which collectively allow a data administrator
  * to organize, manage, secure and catalog data across their organization located across cloud
  * projects in a variety of storage systems including Cloud Storage and BigQuery.
  *
@@ -108,17 +113,33 @@ import javax.annotation.Generated;
  *     DataplexServiceClient.create(dataplexServiceSettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * DataplexServiceSettings dataplexServiceSettings =
+ *     DataplexServiceSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             DataplexServiceSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * DataplexServiceClient dataplexServiceClient =
+ *     DataplexServiceClient.create(dataplexServiceSettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated(&quot;by gapic-generator-java&quot;)
 public class DataplexServiceClient implements BackgroundResource {
   private final DataplexServiceSettings settings;
   private final DataplexServiceStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of DataplexServiceClient with default settings. */
   public static final DataplexServiceClient create() throws IOException {
-<span class="nc" id="L121">    return create(DataplexServiceSettings.newBuilder().build());</span>
+<span class="nc" id="L142">    return create(DataplexServiceSettings.newBuilder().build());</span>
   }
 
   /**
@@ -127,7 +148,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public static final DataplexServiceClient create(DataplexServiceSettings settings)
       throws IOException {
-<span class="fc" id="L130">    return new DataplexServiceClient(settings);</span>
+<span class="fc" id="L151">    return new DataplexServiceClient(settings);</span>
   }
 
   /**
@@ -135,7 +156,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * for advanced usage - prefer using create(DataplexServiceSettings).
    */
   public static final DataplexServiceClient create(DataplexServiceStub stub) {
-<span class="nc" id="L138">    return new DataplexServiceClient(stub);</span>
+<span class="nc" id="L159">    return new DataplexServiceClient(stub);</span>
   }
 
   /**
@@ -143,32 +164,45 @@ public class DataplexServiceClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L146">  protected DataplexServiceClient(DataplexServiceSettings settings) throws IOException {</span>
-<span class="fc" id="L147">    this.settings = settings;</span>
-<span class="fc" id="L148">    this.stub = ((DataplexServiceStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L149">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L150">  }</span>
+<span class="fc" id="L167">  protected DataplexServiceClient(DataplexServiceSettings settings) throws IOException {</span>
+<span class="fc" id="L168">    this.settings = settings;</span>
+<span class="fc" id="L169">    this.stub = ((DataplexServiceStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L170">    this.operationsClient =</span>
+<span class="fc" id="L171">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L172">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L173">  }</span>
 
-<span class="nc" id="L152">  protected DataplexServiceClient(DataplexServiceStub stub) {</span>
-<span class="nc" id="L153">    this.settings = null;</span>
-<span class="nc" id="L154">    this.stub = stub;</span>
-<span class="nc" id="L155">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L156">  }</span>
+<span class="nc" id="L175">  protected DataplexServiceClient(DataplexServiceStub stub) {</span>
+<span class="nc" id="L176">    this.settings = null;</span>
+<span class="nc" id="L177">    this.stub = stub;</span>
+<span class="nc" id="L178">    this.operationsClient =</span>
+<span class="nc" id="L179">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L180">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L181">  }</span>
 
   public final DataplexServiceSettings getSettings() {
-<span class="nc" id="L159">    return settings;</span>
+<span class="nc" id="L184">    return settings;</span>
   }
 
   public DataplexServiceStub getStub() {
-<span class="nc" id="L163">    return stub;</span>
+<span class="nc" id="L188">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L171">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L196">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L205">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -207,12 +241,12 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Lake, OperationMetadata&gt; createLakeAsync(
       LocationName parent, Lake lake, String lakeId) {
     CreateLakeRequest request =
-<span class="fc" id="L210">        CreateLakeRequest.newBuilder()</span>
-<span class="pc bpc" id="L211" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L212">            .setLake(lake)</span>
-<span class="fc" id="L213">            .setLakeId(lakeId)</span>
-<span class="fc" id="L214">            .build();</span>
-<span class="fc" id="L215">    return createLakeAsync(request);</span>
+<span class="fc" id="L244">        CreateLakeRequest.newBuilder()</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L246">            .setLake(lake)</span>
+<span class="fc" id="L247">            .setLakeId(lakeId)</span>
+<span class="fc" id="L248">            .build();</span>
+<span class="fc" id="L249">    return createLakeAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -251,8 +285,8 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Lake, OperationMetadata&gt; createLakeAsync(
       String parent, Lake lake, String lakeId) {
     CreateLakeRequest request =
-<span class="fc" id="L254">        CreateLakeRequest.newBuilder().setParent(parent).setLake(lake).setLakeId(lakeId).build();</span>
-<span class="fc" id="L255">    return createLakeAsync(request);</span>
+<span class="fc" id="L288">        CreateLakeRequest.newBuilder().setParent(parent).setLake(lake).setLakeId(lakeId).build();</span>
+<span class="fc" id="L289">    return createLakeAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -280,7 +314,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Lake, OperationMetadata&gt; createLakeAsync(CreateLakeRequest request) {
-<span class="fc" id="L283">    return createLakeOperationCallable().futureCall(request);</span>
+<span class="fc" id="L317">    return createLakeOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -309,7 +343,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateLakeRequest, Lake, OperationMetadata&gt;
       createLakeOperationCallable() {
-<span class="fc" id="L312">    return stub.createLakeOperationCallable();</span>
+<span class="fc" id="L346">    return stub.createLakeOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -336,7 +370,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateLakeRequest, Operation&gt; createLakeCallable() {
-<span class="nc" id="L339">    return stub.createLakeCallable();</span>
+<span class="nc" id="L373">    return stub.createLakeCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -362,8 +396,8 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Lake, OperationMetadata&gt; updateLakeAsync(
       Lake lake, FieldMask updateMask) {
     UpdateLakeRequest request =
-<span class="fc" id="L365">        UpdateLakeRequest.newBuilder().setLake(lake).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L366">    return updateLakeAsync(request);</span>
+<span class="fc" id="L399">        UpdateLakeRequest.newBuilder().setLake(lake).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L400">    return updateLakeAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -390,7 +424,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Lake, OperationMetadata&gt; updateLakeAsync(UpdateLakeRequest request) {
-<span class="fc" id="L393">    return updateLakeOperationCallable().futureCall(request);</span>
+<span class="fc" id="L427">    return updateLakeOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -418,7 +452,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateLakeRequest, Lake, OperationMetadata&gt;
       updateLakeOperationCallable() {
-<span class="fc" id="L421">    return stub.updateLakeOperationCallable();</span>
+<span class="fc" id="L455">    return stub.updateLakeOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -444,7 +478,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateLakeRequest, Operation&gt; updateLakeCallable() {
-<span class="nc" id="L447">    return stub.updateLakeCallable();</span>
+<span class="nc" id="L481">    return stub.updateLakeCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -464,13 +498,13 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param name Required. The resource name of the lake:
-   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}`
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteLakeAsync(LakeName name) {
     DeleteLakeRequest request =
-<span class="pc bpc" id="L472" title="1 of 2 branches missed.">        DeleteLakeRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L473">    return deleteLakeAsync(request);</span>
+<span class="pc bpc" id="L506" title="1 of 2 branches missed.">        DeleteLakeRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L507">    return deleteLakeAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -490,12 +524,12 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param name Required. The resource name of the lake:
-   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}`
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteLakeAsync(String name) {
-<span class="fc" id="L497">    DeleteLakeRequest request = DeleteLakeRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L498">    return deleteLakeAsync(request);</span>
+<span class="fc" id="L531">    DeleteLakeRequest request = DeleteLakeRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L532">    return deleteLakeAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -522,7 +556,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteLakeAsync(
       DeleteLakeRequest request) {
-<span class="fc" id="L525">    return deleteLakeOperationCallable().futureCall(request);</span>
+<span class="fc" id="L559">    return deleteLakeOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -549,7 +583,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteLakeRequest, Empty, OperationMetadata&gt;
       deleteLakeOperationCallable() {
-<span class="fc" id="L552">    return stub.deleteLakeOperationCallable();</span>
+<span class="fc" id="L586">    return stub.deleteLakeOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -574,7 +608,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteLakeRequest, Operation&gt; deleteLakeCallable() {
-<span class="nc" id="L577">    return stub.deleteLakeCallable();</span>
+<span class="nc" id="L611">    return stub.deleteLakeCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -601,8 +635,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final ListLakesPagedResponse listLakes(LocationName parent) {
     ListLakesRequest request =
-<span class="pc bpc" id="L604" title="1 of 2 branches missed.">        ListLakesRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L605">    return listLakes(request);</span>
+<span class="pc bpc" id="L638" title="1 of 2 branches missed.">        ListLakesRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L639">    return listLakes(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -628,8 +662,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListLakesPagedResponse listLakes(String parent) {
-<span class="fc" id="L631">    ListLakesRequest request = ListLakesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L632">    return listLakes(request);</span>
+<span class="fc" id="L665">    ListLakesRequest request = ListLakesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L666">    return listLakes(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -660,7 +694,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListLakesPagedResponse listLakes(ListLakesRequest request) {
-<span class="fc" id="L663">    return listLakesPagedCallable().call(request);</span>
+<span class="fc" id="L697">    return listLakesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -690,7 +724,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListLakesRequest, ListLakesPagedResponse&gt; listLakesPagedCallable() {
-<span class="fc" id="L693">    return stub.listLakesPagedCallable();</span>
+<span class="fc" id="L727">    return stub.listLakesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -727,7 +761,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListLakesRequest, ListLakesResponse&gt; listLakesCallable() {
-<span class="nc" id="L730">    return stub.listLakesCallable();</span>
+<span class="nc" id="L764">    return stub.listLakesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -751,8 +785,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final Lake getLake(LakeName name) {
     GetLakeRequest request =
-<span class="pc bpc" id="L754" title="1 of 2 branches missed.">        GetLakeRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L755">    return getLake(request);</span>
+<span class="pc bpc" id="L788" title="1 of 2 branches missed.">        GetLakeRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L789">    return getLake(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -775,8 +809,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Lake getLake(String name) {
-<span class="fc" id="L778">    GetLakeRequest request = GetLakeRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L779">    return getLake(request);</span>
+<span class="fc" id="L812">    GetLakeRequest request = GetLakeRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L813">    return getLake(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -801,7 +835,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Lake getLake(GetLakeRequest request) {
-<span class="fc" id="L804">    return getLakeCallable().call(request);</span>
+<span class="fc" id="L838">    return getLakeCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -825,7 +859,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetLakeRequest, Lake&gt; getLakeCallable() {
-<span class="fc" id="L828">    return stub.getLakeCallable();</span>
+<span class="fc" id="L862">    return stub.getLakeCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -846,15 +880,15 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent lake:
-   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}`
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListLakeActionsPagedResponse listLakeActions(LakeName parent) {
     ListLakeActionsRequest request =
-<span class="fc" id="L854">        ListLakeActionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L855" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L856">            .build();</span>
-<span class="fc" id="L857">    return listLakeActions(request);</span>
+<span class="fc" id="L888">        ListLakeActionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L889" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L890">            .build();</span>
+<span class="fc" id="L891">    return listLakeActions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -875,12 +909,12 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent lake:
-   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}`
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListLakeActionsPagedResponse listLakeActions(String parent) {
-<span class="fc" id="L882">    ListLakeActionsRequest request = ListLakeActionsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L883">    return listLakeActions(request);</span>
+<span class="fc" id="L916">    ListLakeActionsRequest request = ListLakeActionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L917">    return listLakeActions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -909,7 +943,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListLakeActionsPagedResponse listLakeActions(ListLakeActionsRequest request) {
-<span class="fc" id="L912">    return listLakeActionsPagedCallable().call(request);</span>
+<span class="fc" id="L946">    return listLakeActionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -939,7 +973,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListLakeActionsRequest, ListLakeActionsPagedResponse&gt;
       listLakeActionsPagedCallable() {
-<span class="fc" id="L942">    return stub.listLakeActionsPagedCallable();</span>
+<span class="fc" id="L976">    return stub.listLakeActionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -976,7 +1010,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListLakeActionsRequest, ListActionsResponse&gt;
       listLakeActionsCallable() {
-<span class="nc" id="L979">    return stub.listLakeActionsCallable();</span>
+<span class="nc" id="L1013">    return stub.listLakeActionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1015,12 +1049,12 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Zone, OperationMetadata&gt; createZoneAsync(
       LakeName parent, Zone zone, String zoneId) {
     CreateZoneRequest request =
-<span class="fc" id="L1018">        CreateZoneRequest.newBuilder()</span>
-<span class="pc bpc" id="L1019" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1020">            .setZone(zone)</span>
-<span class="fc" id="L1021">            .setZoneId(zoneId)</span>
-<span class="fc" id="L1022">            .build();</span>
-<span class="fc" id="L1023">    return createZoneAsync(request);</span>
+<span class="fc" id="L1052">        CreateZoneRequest.newBuilder()</span>
+<span class="pc bpc" id="L1053" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1054">            .setZone(zone)</span>
+<span class="fc" id="L1055">            .setZoneId(zoneId)</span>
+<span class="fc" id="L1056">            .build();</span>
+<span class="fc" id="L1057">    return createZoneAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1059,8 +1093,8 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Zone, OperationMetadata&gt; createZoneAsync(
       String parent, Zone zone, String zoneId) {
     CreateZoneRequest request =
-<span class="fc" id="L1062">        CreateZoneRequest.newBuilder().setParent(parent).setZone(zone).setZoneId(zoneId).build();</span>
-<span class="fc" id="L1063">    return createZoneAsync(request);</span>
+<span class="fc" id="L1096">        CreateZoneRequest.newBuilder().setParent(parent).setZone(zone).setZoneId(zoneId).build();</span>
+<span class="fc" id="L1097">    return createZoneAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1088,7 +1122,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Zone, OperationMetadata&gt; createZoneAsync(CreateZoneRequest request) {
-<span class="fc" id="L1091">    return createZoneOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1125">    return createZoneOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1117,7 +1151,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateZoneRequest, Zone, OperationMetadata&gt;
       createZoneOperationCallable() {
-<span class="fc" id="L1120">    return stub.createZoneOperationCallable();</span>
+<span class="fc" id="L1154">    return stub.createZoneOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1144,7 +1178,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateZoneRequest, Operation&gt; createZoneCallable() {
-<span class="nc" id="L1147">    return stub.createZoneCallable();</span>
+<span class="nc" id="L1181">    return stub.createZoneCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1170,8 +1204,8 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Zone, OperationMetadata&gt; updateZoneAsync(
       Zone zone, FieldMask updateMask) {
     UpdateZoneRequest request =
-<span class="fc" id="L1173">        UpdateZoneRequest.newBuilder().setZone(zone).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L1174">    return updateZoneAsync(request);</span>
+<span class="fc" id="L1207">        UpdateZoneRequest.newBuilder().setZone(zone).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L1208">    return updateZoneAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1198,7 +1232,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Zone, OperationMetadata&gt; updateZoneAsync(UpdateZoneRequest request) {
-<span class="fc" id="L1201">    return updateZoneOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1235">    return updateZoneOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1226,7 +1260,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateZoneRequest, Zone, OperationMetadata&gt;
       updateZoneOperationCallable() {
-<span class="fc" id="L1229">    return stub.updateZoneOperationCallable();</span>
+<span class="fc" id="L1263">    return stub.updateZoneOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1252,7 +1286,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateZoneRequest, Operation&gt; updateZoneCallable() {
-<span class="nc" id="L1255">    return stub.updateZoneCallable();</span>
+<span class="nc" id="L1289">    return stub.updateZoneCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1277,8 +1311,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteZoneAsync(ZoneName name) {
     DeleteZoneRequest request =
-<span class="pc bpc" id="L1280" title="1 of 2 branches missed.">        DeleteZoneRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1281">    return deleteZoneAsync(request);</span>
+<span class="pc bpc" id="L1314" title="1 of 2 branches missed.">        DeleteZoneRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1315">    return deleteZoneAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1302,8 +1336,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteZoneAsync(String name) {
-<span class="fc" id="L1305">    DeleteZoneRequest request = DeleteZoneRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1306">    return deleteZoneAsync(request);</span>
+<span class="fc" id="L1339">    DeleteZoneRequest request = DeleteZoneRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1340">    return deleteZoneAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1330,7 +1364,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteZoneAsync(
       DeleteZoneRequest request) {
-<span class="fc" id="L1333">    return deleteZoneOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1367">    return deleteZoneOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1357,7 +1391,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteZoneRequest, Empty, OperationMetadata&gt;
       deleteZoneOperationCallable() {
-<span class="fc" id="L1360">    return stub.deleteZoneOperationCallable();</span>
+<span class="fc" id="L1394">    return stub.deleteZoneOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1382,7 +1416,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteZoneRequest, Operation&gt; deleteZoneCallable() {
-<span class="nc" id="L1385">    return stub.deleteZoneCallable();</span>
+<span class="nc" id="L1419">    return stub.deleteZoneCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1408,8 +1442,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final ListZonesPagedResponse listZones(LakeName parent) {
     ListZonesRequest request =
-<span class="pc bpc" id="L1411" title="1 of 2 branches missed.">        ListZonesRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L1412">    return listZones(request);</span>
+<span class="pc bpc" id="L1445" title="1 of 2 branches missed.">        ListZonesRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L1446">    return listZones(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1434,8 +1468,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListZonesPagedResponse listZones(String parent) {
-<span class="fc" id="L1437">    ListZonesRequest request = ListZonesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1438">    return listZones(request);</span>
+<span class="fc" id="L1471">    ListZonesRequest request = ListZonesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1472">    return listZones(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1466,7 +1500,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListZonesPagedResponse listZones(ListZonesRequest request) {
-<span class="fc" id="L1469">    return listZonesPagedCallable().call(request);</span>
+<span class="fc" id="L1503">    return listZonesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1496,7 +1530,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListZonesRequest, ListZonesPagedResponse&gt; listZonesPagedCallable() {
-<span class="fc" id="L1499">    return stub.listZonesPagedCallable();</span>
+<span class="fc" id="L1533">    return stub.listZonesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1533,7 +1567,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListZonesRequest, ListZonesResponse&gt; listZonesCallable() {
-<span class="nc" id="L1536">    return stub.listZonesCallable();</span>
+<span class="nc" id="L1570">    return stub.listZonesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1557,8 +1591,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final Zone getZone(ZoneName name) {
     GetZoneRequest request =
-<span class="pc bpc" id="L1560" title="1 of 2 branches missed.">        GetZoneRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1561">    return getZone(request);</span>
+<span class="pc bpc" id="L1594" title="1 of 2 branches missed.">        GetZoneRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1595">    return getZone(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1581,8 +1615,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Zone getZone(String name) {
-<span class="fc" id="L1584">    GetZoneRequest request = GetZoneRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1585">    return getZone(request);</span>
+<span class="fc" id="L1618">    GetZoneRequest request = GetZoneRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1619">    return getZone(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1607,7 +1641,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Zone getZone(GetZoneRequest request) {
-<span class="fc" id="L1610">    return getZoneCallable().call(request);</span>
+<span class="fc" id="L1644">    return getZoneCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1631,7 +1665,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetZoneRequest, Zone&gt; getZoneCallable() {
-<span class="fc" id="L1634">    return stub.getZoneCallable();</span>
+<span class="fc" id="L1668">    return stub.getZoneCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1657,10 +1691,10 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final ListZoneActionsPagedResponse listZoneActions(ZoneName parent) {
     ListZoneActionsRequest request =
-<span class="fc" id="L1660">        ListZoneActionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1661" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1662">            .build();</span>
-<span class="fc" id="L1663">    return listZoneActions(request);</span>
+<span class="fc" id="L1694">        ListZoneActionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1695" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1696">            .build();</span>
+<span class="fc" id="L1697">    return listZoneActions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1685,8 +1719,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListZoneActionsPagedResponse listZoneActions(String parent) {
-<span class="fc" id="L1688">    ListZoneActionsRequest request = ListZoneActionsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1689">    return listZoneActions(request);</span>
+<span class="fc" id="L1722">    ListZoneActionsRequest request = ListZoneActionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1723">    return listZoneActions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1715,7 +1749,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListZoneActionsPagedResponse listZoneActions(ListZoneActionsRequest request) {
-<span class="fc" id="L1718">    return listZoneActionsPagedCallable().call(request);</span>
+<span class="fc" id="L1752">    return listZoneActionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1745,7 +1779,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListZoneActionsRequest, ListZoneActionsPagedResponse&gt;
       listZoneActionsPagedCallable() {
-<span class="fc" id="L1748">    return stub.listZoneActionsPagedCallable();</span>
+<span class="fc" id="L1782">    return stub.listZoneActionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1782,7 +1816,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListZoneActionsRequest, ListActionsResponse&gt;
       listZoneActionsCallable() {
-<span class="nc" id="L1785">    return stub.listZoneActionsCallable();</span>
+<span class="nc" id="L1819">    return stub.listZoneActionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1803,7 +1837,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent zone:
-   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/zones/{zone_id}`
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/zones/{zone_id}`.
    * @param asset Required. Asset resource.
    * @param assetId Required. Asset identifier. This ID will be used to generate names such as table
    *     names when publishing metadata to Hive Metastore and BigQuery.
@@ -1820,12 +1854,12 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Asset, OperationMetadata&gt; createAssetAsync(
       ZoneName parent, Asset asset, String assetId) {
     CreateAssetRequest request =
-<span class="fc" id="L1823">        CreateAssetRequest.newBuilder()</span>
-<span class="pc bpc" id="L1824" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1825">            .setAsset(asset)</span>
-<span class="fc" id="L1826">            .setAssetId(assetId)</span>
-<span class="fc" id="L1827">            .build();</span>
-<span class="fc" id="L1828">    return createAssetAsync(request);</span>
+<span class="fc" id="L1857">        CreateAssetRequest.newBuilder()</span>
+<span class="pc bpc" id="L1858" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1859">            .setAsset(asset)</span>
+<span class="fc" id="L1860">            .setAssetId(assetId)</span>
+<span class="fc" id="L1861">            .build();</span>
+<span class="fc" id="L1862">    return createAssetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1846,7 +1880,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent zone:
-   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/zones/{zone_id}`
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/zones/{zone_id}`.
    * @param asset Required. Asset resource.
    * @param assetId Required. Asset identifier. This ID will be used to generate names such as table
    *     names when publishing metadata to Hive Metastore and BigQuery.
@@ -1863,12 +1897,12 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Asset, OperationMetadata&gt; createAssetAsync(
       String parent, Asset asset, String assetId) {
     CreateAssetRequest request =
-<span class="fc" id="L1866">        CreateAssetRequest.newBuilder()</span>
-<span class="fc" id="L1867">            .setParent(parent)</span>
-<span class="fc" id="L1868">            .setAsset(asset)</span>
-<span class="fc" id="L1869">            .setAssetId(assetId)</span>
-<span class="fc" id="L1870">            .build();</span>
-<span class="fc" id="L1871">    return createAssetAsync(request);</span>
+<span class="fc" id="L1900">        CreateAssetRequest.newBuilder()</span>
+<span class="fc" id="L1901">            .setParent(parent)</span>
+<span class="fc" id="L1902">            .setAsset(asset)</span>
+<span class="fc" id="L1903">            .setAssetId(assetId)</span>
+<span class="fc" id="L1904">            .build();</span>
+<span class="fc" id="L1905">    return createAssetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1897,7 +1931,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Asset, OperationMetadata&gt; createAssetAsync(
       CreateAssetRequest request) {
-<span class="fc" id="L1900">    return createAssetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1934">    return createAssetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1926,7 +1960,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateAssetRequest, Asset, OperationMetadata&gt;
       createAssetOperationCallable() {
-<span class="fc" id="L1929">    return stub.createAssetOperationCallable();</span>
+<span class="fc" id="L1963">    return stub.createAssetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1953,7 +1987,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateAssetRequest, Operation&gt; createAssetCallable() {
-<span class="nc" id="L1956">    return stub.createAssetCallable();</span>
+<span class="nc" id="L1990">    return stub.createAssetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1979,8 +2013,8 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Asset, OperationMetadata&gt; updateAssetAsync(
       Asset asset, FieldMask updateMask) {
     UpdateAssetRequest request =
-<span class="fc" id="L1982">        UpdateAssetRequest.newBuilder().setAsset(asset).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L1983">    return updateAssetAsync(request);</span>
+<span class="fc" id="L2016">        UpdateAssetRequest.newBuilder().setAsset(asset).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L2017">    return updateAssetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2008,7 +2042,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Asset, OperationMetadata&gt; updateAssetAsync(
       UpdateAssetRequest request) {
-<span class="fc" id="L2011">    return updateAssetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2045">    return updateAssetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2036,7 +2070,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateAssetRequest, Asset, OperationMetadata&gt;
       updateAssetOperationCallable() {
-<span class="fc" id="L2039">    return stub.updateAssetOperationCallable();</span>
+<span class="fc" id="L2073">    return stub.updateAssetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2062,7 +2096,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateAssetRequest, Operation&gt; updateAssetCallable() {
-<span class="nc" id="L2065">    return stub.updateAssetCallable();</span>
+<span class="nc" id="L2099">    return stub.updateAssetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2087,8 +2121,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteAssetAsync(AssetName name) {
     DeleteAssetRequest request =
-<span class="pc bpc" id="L2090" title="1 of 2 branches missed.">        DeleteAssetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2091">    return deleteAssetAsync(request);</span>
+<span class="pc bpc" id="L2124" title="1 of 2 branches missed.">        DeleteAssetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2125">    return deleteAssetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2113,8 +2147,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteAssetAsync(String name) {
-<span class="fc" id="L2116">    DeleteAssetRequest request = DeleteAssetRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2117">    return deleteAssetAsync(request);</span>
+<span class="fc" id="L2150">    DeleteAssetRequest request = DeleteAssetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2151">    return deleteAssetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2142,7 +2176,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteAssetAsync(
       DeleteAssetRequest request) {
-<span class="fc" id="L2145">    return deleteAssetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2179">    return deleteAssetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2170,7 +2204,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteAssetRequest, Empty, OperationMetadata&gt;
       deleteAssetOperationCallable() {
-<span class="fc" id="L2173">    return stub.deleteAssetOperationCallable();</span>
+<span class="fc" id="L2207">    return stub.deleteAssetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2196,7 +2230,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteAssetRequest, Operation&gt; deleteAssetCallable() {
-<span class="nc" id="L2199">    return stub.deleteAssetCallable();</span>
+<span class="nc" id="L2233">    return stub.deleteAssetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2222,8 +2256,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final ListAssetsPagedResponse listAssets(ZoneName parent) {
     ListAssetsRequest request =
-<span class="pc bpc" id="L2225" title="1 of 2 branches missed.">        ListAssetsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L2226">    return listAssets(request);</span>
+<span class="pc bpc" id="L2259" title="1 of 2 branches missed.">        ListAssetsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L2260">    return listAssets(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2248,8 +2282,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListAssetsPagedResponse listAssets(String parent) {
-<span class="fc" id="L2251">    ListAssetsRequest request = ListAssetsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2252">    return listAssets(request);</span>
+<span class="fc" id="L2285">    ListAssetsRequest request = ListAssetsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2286">    return listAssets(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2280,7 +2314,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListAssetsPagedResponse listAssets(ListAssetsRequest request) {
-<span class="fc" id="L2283">    return listAssetsPagedCallable().call(request);</span>
+<span class="fc" id="L2317">    return listAssetsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2310,7 +2344,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListAssetsRequest, ListAssetsPagedResponse&gt; listAssetsPagedCallable() {
-<span class="fc" id="L2313">    return stub.listAssetsPagedCallable();</span>
+<span class="fc" id="L2347">    return stub.listAssetsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2347,7 +2381,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListAssetsRequest, ListAssetsResponse&gt; listAssetsCallable() {
-<span class="nc" id="L2350">    return stub.listAssetsCallable();</span>
+<span class="nc" id="L2384">    return stub.listAssetsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2371,8 +2405,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final Asset getAsset(AssetName name) {
     GetAssetRequest request =
-<span class="pc bpc" id="L2374" title="1 of 2 branches missed.">        GetAssetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2375">    return getAsset(request);</span>
+<span class="pc bpc" id="L2408" title="1 of 2 branches missed.">        GetAssetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2409">    return getAsset(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2396,8 +2430,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Asset getAsset(String name) {
-<span class="fc" id="L2399">    GetAssetRequest request = GetAssetRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2400">    return getAsset(request);</span>
+<span class="fc" id="L2433">    GetAssetRequest request = GetAssetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2434">    return getAsset(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2423,7 +2457,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Asset getAsset(GetAssetRequest request) {
-<span class="fc" id="L2426">    return getAssetCallable().call(request);</span>
+<span class="fc" id="L2460">    return getAssetCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2448,7 +2482,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetAssetRequest, Asset&gt; getAssetCallable() {
-<span class="fc" id="L2451">    return stub.getAssetCallable();</span>
+<span class="fc" id="L2485">    return stub.getAssetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2474,10 +2508,10 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final ListAssetActionsPagedResponse listAssetActions(AssetName parent) {
     ListAssetActionsRequest request =
-<span class="fc" id="L2477">        ListAssetActionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2478" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2479">            .build();</span>
-<span class="fc" id="L2480">    return listAssetActions(request);</span>
+<span class="fc" id="L2511">        ListAssetActionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2512" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2513">            .build();</span>
+<span class="fc" id="L2514">    return listAssetActions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2504,8 +2538,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final ListAssetActionsPagedResponse listAssetActions(String parent) {
     ListAssetActionsRequest request =
-<span class="fc" id="L2507">        ListAssetActionsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2508">    return listAssetActions(request);</span>
+<span class="fc" id="L2541">        ListAssetActionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2542">    return listAssetActions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2535,7 +2569,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListAssetActionsPagedResponse listAssetActions(ListAssetActionsRequest request) {
-<span class="fc" id="L2538">    return listAssetActionsPagedCallable().call(request);</span>
+<span class="fc" id="L2572">    return listAssetActionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2566,7 +2600,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListAssetActionsRequest, ListAssetActionsPagedResponse&gt;
       listAssetActionsPagedCallable() {
-<span class="fc" id="L2569">    return stub.listAssetActionsPagedCallable();</span>
+<span class="fc" id="L2603">    return stub.listAssetActionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2604,7 +2638,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListAssetActionsRequest, ListActionsResponse&gt;
       listAssetActionsCallable() {
-<span class="nc" id="L2607">    return stub.listAssetActionsCallable();</span>
+<span class="nc" id="L2641">    return stub.listAssetActionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2633,12 +2667,12 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Task, OperationMetadata&gt; createTaskAsync(
       LakeName parent, Task task, String taskId) {
     CreateTaskRequest request =
-<span class="fc" id="L2636">        CreateTaskRequest.newBuilder()</span>
-<span class="pc bpc" id="L2637" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2638">            .setTask(task)</span>
-<span class="fc" id="L2639">            .setTaskId(taskId)</span>
-<span class="fc" id="L2640">            .build();</span>
-<span class="fc" id="L2641">    return createTaskAsync(request);</span>
+<span class="fc" id="L2670">        CreateTaskRequest.newBuilder()</span>
+<span class="pc bpc" id="L2671" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2672">            .setTask(task)</span>
+<span class="fc" id="L2673">            .setTaskId(taskId)</span>
+<span class="fc" id="L2674">            .build();</span>
+<span class="fc" id="L2675">    return createTaskAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2667,8 +2701,8 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Task, OperationMetadata&gt; createTaskAsync(
       String parent, Task task, String taskId) {
     CreateTaskRequest request =
-<span class="fc" id="L2670">        CreateTaskRequest.newBuilder().setParent(parent).setTask(task).setTaskId(taskId).build();</span>
-<span class="fc" id="L2671">    return createTaskAsync(request);</span>
+<span class="fc" id="L2704">        CreateTaskRequest.newBuilder().setParent(parent).setTask(task).setTaskId(taskId).build();</span>
+<span class="fc" id="L2705">    return createTaskAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2696,7 +2730,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Task, OperationMetadata&gt; createTaskAsync(CreateTaskRequest request) {
-<span class="fc" id="L2699">    return createTaskOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2733">    return createTaskOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2725,7 +2759,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateTaskRequest, Task, OperationMetadata&gt;
       createTaskOperationCallable() {
-<span class="fc" id="L2728">    return stub.createTaskOperationCallable();</span>
+<span class="fc" id="L2762">    return stub.createTaskOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2752,7 +2786,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateTaskRequest, Operation&gt; createTaskCallable() {
-<span class="nc" id="L2755">    return stub.createTaskCallable();</span>
+<span class="nc" id="L2789">    return stub.createTaskCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2778,8 +2812,8 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Task, OperationMetadata&gt; updateTaskAsync(
       Task task, FieldMask updateMask) {
     UpdateTaskRequest request =
-<span class="fc" id="L2781">        UpdateTaskRequest.newBuilder().setTask(task).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L2782">    return updateTaskAsync(request);</span>
+<span class="fc" id="L2815">        UpdateTaskRequest.newBuilder().setTask(task).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L2816">    return updateTaskAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2806,7 +2840,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Task, OperationMetadata&gt; updateTaskAsync(UpdateTaskRequest request) {
-<span class="fc" id="L2809">    return updateTaskOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2843">    return updateTaskOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2834,7 +2868,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateTaskRequest, Task, OperationMetadata&gt;
       updateTaskOperationCallable() {
-<span class="fc" id="L2837">    return stub.updateTaskOperationCallable();</span>
+<span class="fc" id="L2871">    return stub.updateTaskOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2860,7 +2894,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateTaskRequest, Operation&gt; updateTaskCallable() {
-<span class="nc" id="L2863">    return stub.updateTaskCallable();</span>
+<span class="nc" id="L2897">    return stub.updateTaskCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2884,8 +2918,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTaskAsync(TaskName name) {
     DeleteTaskRequest request =
-<span class="pc bpc" id="L2887" title="1 of 2 branches missed.">        DeleteTaskRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2888">    return deleteTaskAsync(request);</span>
+<span class="pc bpc" id="L2921" title="1 of 2 branches missed.">        DeleteTaskRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2922">    return deleteTaskAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2908,8 +2942,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTaskAsync(String name) {
-<span class="fc" id="L2911">    DeleteTaskRequest request = DeleteTaskRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2912">    return deleteTaskAsync(request);</span>
+<span class="fc" id="L2945">    DeleteTaskRequest request = DeleteTaskRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2946">    return deleteTaskAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2935,7 +2969,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTaskAsync(
       DeleteTaskRequest request) {
-<span class="fc" id="L2938">    return deleteTaskOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2972">    return deleteTaskOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2961,7 +2995,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTaskRequest, Empty, OperationMetadata&gt;
       deleteTaskOperationCallable() {
-<span class="fc" id="L2964">    return stub.deleteTaskOperationCallable();</span>
+<span class="fc" id="L2998">    return stub.deleteTaskOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2985,7 +3019,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteTaskRequest, Operation&gt; deleteTaskCallable() {
-<span class="nc" id="L2988">    return stub.deleteTaskCallable();</span>
+<span class="nc" id="L3022">    return stub.deleteTaskCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3011,8 +3045,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final ListTasksPagedResponse listTasks(LakeName parent) {
     ListTasksRequest request =
-<span class="pc bpc" id="L3014" title="1 of 2 branches missed.">        ListTasksRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L3015">    return listTasks(request);</span>
+<span class="pc bpc" id="L3048" title="1 of 2 branches missed.">        ListTasksRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L3049">    return listTasks(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3037,8 +3071,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTasksPagedResponse listTasks(String parent) {
-<span class="fc" id="L3040">    ListTasksRequest request = ListTasksRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L3041">    return listTasks(request);</span>
+<span class="fc" id="L3074">    ListTasksRequest request = ListTasksRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L3075">    return listTasks(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3069,7 +3103,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTasksPagedResponse listTasks(ListTasksRequest request) {
-<span class="fc" id="L3072">    return listTasksPagedCallable().call(request);</span>
+<span class="fc" id="L3106">    return listTasksPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3099,7 +3133,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListTasksRequest, ListTasksPagedResponse&gt; listTasksPagedCallable() {
-<span class="fc" id="L3102">    return stub.listTasksPagedCallable();</span>
+<span class="fc" id="L3136">    return stub.listTasksPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3136,7 +3170,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListTasksRequest, ListTasksResponse&gt; listTasksCallable() {
-<span class="nc" id="L3139">    return stub.listTasksCallable();</span>
+<span class="nc" id="L3173">    return stub.listTasksCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3155,13 +3189,13 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param name Required. The resource name of the task:
-   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{tasks_id}`
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{tasks_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Task getTask(TaskName name) {
     GetTaskRequest request =
-<span class="pc bpc" id="L3163" title="1 of 2 branches missed.">        GetTaskRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L3164">    return getTask(request);</span>
+<span class="pc bpc" id="L3197" title="1 of 2 branches missed.">        GetTaskRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3198">    return getTask(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3180,12 +3214,12 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param name Required. The resource name of the task:
-   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{tasks_id}`
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{tasks_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Task getTask(String name) {
-<span class="fc" id="L3187">    GetTaskRequest request = GetTaskRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3188">    return getTask(request);</span>
+<span class="fc" id="L3221">    GetTaskRequest request = GetTaskRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3222">    return getTask(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3210,7 +3244,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Task getTask(GetTaskRequest request) {
-<span class="fc" id="L3213">    return getTaskCallable().call(request);</span>
+<span class="fc" id="L3247">    return getTaskCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3234,7 +3268,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTaskRequest, Task&gt; getTaskCallable() {
-<span class="fc" id="L3237">    return stub.getTaskCallable();</span>
+<span class="fc" id="L3271">    return stub.getTaskCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3260,8 +3294,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final ListJobsPagedResponse listJobs(TaskName parent) {
     ListJobsRequest request =
-<span class="pc bpc" id="L3263" title="1 of 2 branches missed.">        ListJobsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
-<span class="fc" id="L3264">    return listJobs(request);</span>
+<span class="pc bpc" id="L3297" title="1 of 2 branches missed.">        ListJobsRequest.newBuilder().setParent(parent == null ? null : parent.toString()).build();</span>
+<span class="fc" id="L3298">    return listJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3286,8 +3320,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListJobsPagedResponse listJobs(String parent) {
-<span class="fc" id="L3289">    ListJobsRequest request = ListJobsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L3290">    return listJobs(request);</span>
+<span class="fc" id="L3323">    ListJobsRequest request = ListJobsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L3324">    return listJobs(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3316,7 +3350,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListJobsPagedResponse listJobs(ListJobsRequest request) {
-<span class="fc" id="L3319">    return listJobsPagedCallable().call(request);</span>
+<span class="fc" id="L3353">    return listJobsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3344,7 +3378,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListJobsRequest, ListJobsPagedResponse&gt; listJobsPagedCallable() {
-<span class="fc" id="L3347">    return stub.listJobsPagedCallable();</span>
+<span class="fc" id="L3381">    return stub.listJobsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3379,7 +3413,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListJobsRequest, ListJobsResponse&gt; listJobsCallable() {
-<span class="nc" id="L3382">    return stub.listJobsCallable();</span>
+<span class="nc" id="L3416">    return stub.listJobsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3403,8 +3437,8 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final Job getJob(JobName name) {
     GetJobRequest request =
-<span class="pc bpc" id="L3406" title="1 of 2 branches missed.">        GetJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L3407">    return getJob(request);</span>
+<span class="pc bpc" id="L3440" title="1 of 2 branches missed.">        GetJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3441">    return getJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3427,8 +3461,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job getJob(String name) {
-<span class="fc" id="L3430">    GetJobRequest request = GetJobRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3431">    return getJob(request);</span>
+<span class="fc" id="L3464">    GetJobRequest request = GetJobRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3465">    return getJob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3454,7 +3488,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Job getJob(GetJobRequest request) {
-<span class="fc" id="L3457">    return getJobCallable().call(request);</span>
+<span class="fc" id="L3491">    return getJobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3479,7 +3513,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetJobRequest, Job&gt; getJobCallable() {
-<span class="fc" id="L3482">    return stub.getJobCallable();</span>
+<span class="fc" id="L3516">    return stub.getJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3503,9 +3537,9 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final void cancelJob(JobName name) {
     CancelJobRequest request =
-<span class="pc bpc" id="L3506" title="1 of 2 branches missed.">        CancelJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L3507">    cancelJob(request);</span>
-<span class="fc" id="L3508">  }</span>
+<span class="pc bpc" id="L3540" title="1 of 2 branches missed.">        CancelJobRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3541">    cancelJob(request);</span>
+<span class="fc" id="L3542">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -3527,9 +3561,9 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void cancelJob(String name) {
-<span class="fc" id="L3530">    CancelJobRequest request = CancelJobRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3531">    cancelJob(request);</span>
-<span class="fc" id="L3532">  }</span>
+<span class="fc" id="L3564">    CancelJobRequest request = CancelJobRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3565">    cancelJob(request);</span>
+<span class="fc" id="L3566">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -3554,8 +3588,8 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void cancelJob(CancelJobRequest request) {
-<span class="fc" id="L3557">    cancelJobCallable().call(request);</span>
-<span class="fc" id="L3558">  }</span>
+<span class="fc" id="L3591">    cancelJobCallable().call(request);</span>
+<span class="fc" id="L3592">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -3579,7 +3613,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CancelJobRequest, Empty&gt; cancelJobCallable() {
-<span class="fc" id="L3582">    return stub.cancelJobCallable();</span>
+<span class="fc" id="L3616">    return stub.cancelJobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3601,7 +3635,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent lake:
-   *     projects/{project_id}/locations/{location_id}/lakes/{lake_id}
+   *     `projects/{project_id}/locations/{location_id}/lakes/{lake_id}`.
    * @param environment Required. Environment resource.
    * @param environmentId Required. Environment identifier.
    *     &lt;ul&gt;
@@ -3617,12 +3651,12 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Environment, OperationMetadata&gt; createEnvironmentAsync(
       LakeName parent, Environment environment, String environmentId) {
     CreateEnvironmentRequest request =
-<span class="fc" id="L3620">        CreateEnvironmentRequest.newBuilder()</span>
-<span class="pc bpc" id="L3621" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L3622">            .setEnvironment(environment)</span>
-<span class="fc" id="L3623">            .setEnvironmentId(environmentId)</span>
-<span class="fc" id="L3624">            .build();</span>
-<span class="fc" id="L3625">    return createEnvironmentAsync(request);</span>
+<span class="fc" id="L3654">        CreateEnvironmentRequest.newBuilder()</span>
+<span class="pc bpc" id="L3655" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L3656">            .setEnvironment(environment)</span>
+<span class="fc" id="L3657">            .setEnvironmentId(environmentId)</span>
+<span class="fc" id="L3658">            .build();</span>
+<span class="fc" id="L3659">    return createEnvironmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3644,7 +3678,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent lake:
-   *     projects/{project_id}/locations/{location_id}/lakes/{lake_id}
+   *     `projects/{project_id}/locations/{location_id}/lakes/{lake_id}`.
    * @param environment Required. Environment resource.
    * @param environmentId Required. Environment identifier.
    *     &lt;ul&gt;
@@ -3660,12 +3694,12 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Environment, OperationMetadata&gt; createEnvironmentAsync(
       String parent, Environment environment, String environmentId) {
     CreateEnvironmentRequest request =
-<span class="fc" id="L3663">        CreateEnvironmentRequest.newBuilder()</span>
-<span class="fc" id="L3664">            .setParent(parent)</span>
-<span class="fc" id="L3665">            .setEnvironment(environment)</span>
-<span class="fc" id="L3666">            .setEnvironmentId(environmentId)</span>
-<span class="fc" id="L3667">            .build();</span>
-<span class="fc" id="L3668">    return createEnvironmentAsync(request);</span>
+<span class="fc" id="L3697">        CreateEnvironmentRequest.newBuilder()</span>
+<span class="fc" id="L3698">            .setParent(parent)</span>
+<span class="fc" id="L3699">            .setEnvironment(environment)</span>
+<span class="fc" id="L3700">            .setEnvironmentId(environmentId)</span>
+<span class="fc" id="L3701">            .build();</span>
+<span class="fc" id="L3702">    return createEnvironmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3694,7 +3728,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Environment, OperationMetadata&gt; createEnvironmentAsync(
       CreateEnvironmentRequest request) {
-<span class="fc" id="L3697">    return createEnvironmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3731">    return createEnvironmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3723,7 +3757,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateEnvironmentRequest, Environment, OperationMetadata&gt;
       createEnvironmentOperationCallable() {
-<span class="fc" id="L3726">    return stub.createEnvironmentOperationCallable();</span>
+<span class="fc" id="L3760">    return stub.createEnvironmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3751,7 +3785,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateEnvironmentRequest, Operation&gt; createEnvironmentCallable() {
-<span class="nc" id="L3754">    return stub.createEnvironmentCallable();</span>
+<span class="nc" id="L3788">    return stub.createEnvironmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3779,11 +3813,11 @@ public class DataplexServiceClient implements BackgroundResource {
   public final OperationFuture&lt;Environment, OperationMetadata&gt; updateEnvironmentAsync(
       Environment environment, FieldMask updateMask) {
     UpdateEnvironmentRequest request =
-<span class="fc" id="L3782">        UpdateEnvironmentRequest.newBuilder()</span>
-<span class="fc" id="L3783">            .setEnvironment(environment)</span>
-<span class="fc" id="L3784">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L3785">            .build();</span>
-<span class="fc" id="L3786">    return updateEnvironmentAsync(request);</span>
+<span class="fc" id="L3816">        UpdateEnvironmentRequest.newBuilder()</span>
+<span class="fc" id="L3817">            .setEnvironment(environment)</span>
+<span class="fc" id="L3818">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L3819">            .build();</span>
+<span class="fc" id="L3820">    return updateEnvironmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3811,7 +3845,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Environment, OperationMetadata&gt; updateEnvironmentAsync(
       UpdateEnvironmentRequest request) {
-<span class="fc" id="L3814">    return updateEnvironmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3848">    return updateEnvironmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3839,7 +3873,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateEnvironmentRequest, Environment, OperationMetadata&gt;
       updateEnvironmentOperationCallable() {
-<span class="fc" id="L3842">    return stub.updateEnvironmentOperationCallable();</span>
+<span class="fc" id="L3876">    return stub.updateEnvironmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3866,7 +3900,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateEnvironmentRequest, Operation&gt; updateEnvironmentCallable() {
-<span class="nc" id="L3869">    return stub.updateEnvironmentCallable();</span>
+<span class="nc" id="L3903">    return stub.updateEnvironmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3887,16 +3921,16 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param name Required. The resource name of the environment:
-   *     projects/{project_id}/locations/{location_id}/lakes/{lake_id}/environments/{environment_id}`
+   *     `projects/{project_id}/locations/{location_id}/lakes/{lake_id}/environments/{environment_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteEnvironmentAsync(
       EnvironmentName name) {
     DeleteEnvironmentRequest request =
-<span class="fc" id="L3896">        DeleteEnvironmentRequest.newBuilder()</span>
-<span class="pc bpc" id="L3897" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L3898">            .build();</span>
-<span class="fc" id="L3899">    return deleteEnvironmentAsync(request);</span>
+<span class="fc" id="L3930">        DeleteEnvironmentRequest.newBuilder()</span>
+<span class="pc bpc" id="L3931" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L3932">            .build();</span>
+<span class="fc" id="L3933">    return deleteEnvironmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3917,12 +3951,12 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param name Required. The resource name of the environment:
-   *     projects/{project_id}/locations/{location_id}/lakes/{lake_id}/environments/{environment_id}`
+   *     `projects/{project_id}/locations/{location_id}/lakes/{lake_id}/environments/{environment_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteEnvironmentAsync(String name) {
-<span class="fc" id="L3924">    DeleteEnvironmentRequest request = DeleteEnvironmentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L3925">    return deleteEnvironmentAsync(request);</span>
+<span class="fc" id="L3958">    DeleteEnvironmentRequest request = DeleteEnvironmentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3959">    return deleteEnvironmentAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3951,7 +3985,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteEnvironmentAsync(
       DeleteEnvironmentRequest request) {
-<span class="fc" id="L3954">    return deleteEnvironmentOperationCallable().futureCall(request);</span>
+<span class="fc" id="L3988">    return deleteEnvironmentOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3980,7 +4014,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteEnvironmentRequest, Empty, OperationMetadata&gt;
       deleteEnvironmentOperationCallable() {
-<span class="fc" id="L3983">    return stub.deleteEnvironmentOperationCallable();</span>
+<span class="fc" id="L4017">    return stub.deleteEnvironmentOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4008,7 +4042,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteEnvironmentRequest, Operation&gt; deleteEnvironmentCallable() {
-<span class="nc" id="L4011">    return stub.deleteEnvironmentCallable();</span>
+<span class="nc" id="L4045">    return stub.deleteEnvironmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4029,15 +4063,15 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent lake:
-   *     projects/{project_id}/locations/{location_id}/lakes/{lake_id}
+   *     `projects/{project_id}/locations/{location_id}/lakes/{lake_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListEnvironmentsPagedResponse listEnvironments(LakeName parent) {
     ListEnvironmentsRequest request =
-<span class="fc" id="L4037">        ListEnvironmentsRequest.newBuilder()</span>
-<span class="pc bpc" id="L4038" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4039">            .build();</span>
-<span class="fc" id="L4040">    return listEnvironments(request);</span>
+<span class="fc" id="L4071">        ListEnvironmentsRequest.newBuilder()</span>
+<span class="pc bpc" id="L4072" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4073">            .build();</span>
+<span class="fc" id="L4074">    return listEnvironments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4058,13 +4092,13 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent lake:
-   *     projects/{project_id}/locations/{location_id}/lakes/{lake_id}
+   *     `projects/{project_id}/locations/{location_id}/lakes/{lake_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListEnvironmentsPagedResponse listEnvironments(String parent) {
     ListEnvironmentsRequest request =
-<span class="fc" id="L4066">        ListEnvironmentsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L4067">    return listEnvironments(request);</span>
+<span class="fc" id="L4100">        ListEnvironmentsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L4101">    return listEnvironments(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4095,7 +4129,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListEnvironmentsPagedResponse listEnvironments(ListEnvironmentsRequest request) {
-<span class="fc" id="L4098">    return listEnvironmentsPagedCallable().call(request);</span>
+<span class="fc" id="L4132">    return listEnvironmentsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4127,7 +4161,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListEnvironmentsRequest, ListEnvironmentsPagedResponse&gt;
       listEnvironmentsPagedCallable() {
-<span class="fc" id="L4130">    return stub.listEnvironmentsPagedCallable();</span>
+<span class="fc" id="L4164">    return stub.listEnvironmentsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4166,7 +4200,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListEnvironmentsRequest, ListEnvironmentsResponse&gt;
       listEnvironmentsCallable() {
-<span class="nc" id="L4169">    return stub.listEnvironmentsCallable();</span>
+<span class="nc" id="L4203">    return stub.listEnvironmentsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4186,13 +4220,13 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param name Required. The resource name of the environment:
-   *     projects/{project_id}/locations/{location_id}/lakes/{lake_id}/environments/{environment_id}
+   *     `projects/{project_id}/locations/{location_id}/lakes/{lake_id}/environments/{environment_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Environment getEnvironment(EnvironmentName name) {
     GetEnvironmentRequest request =
-<span class="pc bpc" id="L4194" title="1 of 2 branches missed.">        GetEnvironmentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L4195">    return getEnvironment(request);</span>
+<span class="pc bpc" id="L4228" title="1 of 2 branches missed.">        GetEnvironmentRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L4229">    return getEnvironment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4212,12 +4246,12 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param name Required. The resource name of the environment:
-   *     projects/{project_id}/locations/{location_id}/lakes/{lake_id}/environments/{environment_id}
+   *     `projects/{project_id}/locations/{location_id}/lakes/{lake_id}/environments/{environment_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Environment getEnvironment(String name) {
-<span class="fc" id="L4219">    GetEnvironmentRequest request = GetEnvironmentRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L4220">    return getEnvironment(request);</span>
+<span class="fc" id="L4253">    GetEnvironmentRequest request = GetEnvironmentRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L4254">    return getEnvironment(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4244,7 +4278,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Environment getEnvironment(GetEnvironmentRequest request) {
-<span class="fc" id="L4247">    return getEnvironmentCallable().call(request);</span>
+<span class="fc" id="L4281">    return getEnvironmentCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4271,7 +4305,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetEnvironmentRequest, Environment&gt; getEnvironmentCallable() {
-<span class="fc" id="L4274">    return stub.getEnvironmentCallable();</span>
+<span class="fc" id="L4308">    return stub.getEnvironmentCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4293,15 +4327,15 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent environment:
-   *     projects/{project_number}/locations/{location_id}/lakes/{lake_id}/environment/{environment_id}
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/environment/{environment_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListSessionsPagedResponse listSessions(EnvironmentName parent) {
     ListSessionsRequest request =
-<span class="fc" id="L4301">        ListSessionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L4302" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L4303">            .build();</span>
-<span class="fc" id="L4304">    return listSessions(request);</span>
+<span class="fc" id="L4335">        ListSessionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L4336" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L4337">            .build();</span>
+<span class="fc" id="L4338">    return listSessions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4323,12 +4357,12 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    *
    * @param parent Required. The resource name of the parent environment:
-   *     projects/{project_number}/locations/{location_id}/lakes/{lake_id}/environment/{environment_id}
+   *     `projects/{project_number}/locations/{location_id}/lakes/{lake_id}/environment/{environment_id}`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListSessionsPagedResponse listSessions(String parent) {
-<span class="fc" id="L4330">    ListSessionsRequest request = ListSessionsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L4331">    return listSessions(request);</span>
+<span class="fc" id="L4364">    ListSessionsRequest request = ListSessionsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L4365">    return listSessions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4348,6 +4382,7 @@ public class DataplexServiceClient implements BackgroundResource {
    *                   .toString())
    *           .setPageSize(883849137)
    *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
    *           .build();
    *   for (Session element : dataplexServiceClient.listSessions(request).iterateAll()) {
    *     // doThingsWith(element);
@@ -4359,7 +4394,7 @@ public class DataplexServiceClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListSessionsPagedResponse listSessions(ListSessionsRequest request) {
-<span class="fc" id="L4362">    return listSessionsPagedCallable().call(request);</span>
+<span class="fc" id="L4397">    return listSessionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4379,6 +4414,7 @@ public class DataplexServiceClient implements BackgroundResource {
    *                   .toString())
    *           .setPageSize(883849137)
    *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
    *           .build();
    *   ApiFuture&lt;Session&gt; future =
    *       dataplexServiceClient.listSessionsPagedCallable().futureCall(request);
@@ -4391,7 +4427,7 @@ public class DataplexServiceClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListSessionsRequest, ListSessionsPagedResponse&gt;
       listSessionsPagedCallable() {
-<span class="fc" id="L4394">    return stub.listSessionsPagedCallable();</span>
+<span class="fc" id="L4430">    return stub.listSessionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -4411,6 +4447,7 @@ public class DataplexServiceClient implements BackgroundResource {
    *                   .toString())
    *           .setPageSize(883849137)
    *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
    *           .build();
    *   while (true) {
    *     ListSessionsResponse response = dataplexServiceClient.listSessionsCallable().call(request);
@@ -4428,37 +4465,178 @@ public class DataplexServiceClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListSessionsRequest, ListSessionsResponse&gt; listSessionsCallable() {
-<span class="nc" id="L4431">    return stub.listSessionsCallable();</span>
+<span class="nc" id="L4468">    return stub.listSessionsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (DataplexServiceClient dataplexServiceClient = DataplexServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : dataplexServiceClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L4498">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (DataplexServiceClient dataplexServiceClient = DataplexServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       dataplexServiceClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L4529">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (DataplexServiceClient dataplexServiceClient = DataplexServiceClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response =
+   *         dataplexServiceClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L4566">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (DataplexServiceClient dataplexServiceClient = DataplexServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = dataplexServiceClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L4588">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (DataplexServiceClient dataplexServiceClient = DataplexServiceClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = dataplexServiceClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L4609">    return stub.getLocationCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L4436">    stub.close();</span>
-<span class="fc" id="L4437">  }</span>
+<span class="fc" id="L4614">    stub.close();</span>
+<span class="fc" id="L4615">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L4441">    stub.shutdown();</span>
-<span class="nc" id="L4442">  }</span>
+<span class="nc" id="L4619">    stub.shutdown();</span>
+<span class="nc" id="L4620">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L4446">    return stub.isShutdown();</span>
+<span class="nc" id="L4624">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L4451">    return stub.isTerminated();</span>
+<span class="nc" id="L4629">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L4456">    stub.shutdownNow();</span>
-<span class="nc" id="L4457">  }</span>
+<span class="nc" id="L4634">    stub.shutdownNow();</span>
+<span class="nc" id="L4635">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L4461">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L4639">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListLakesPagedResponse
@@ -4469,14 +4647,14 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListLakesRequest, ListLakesResponse, Lake&gt; context,
         ApiFuture&lt;ListLakesResponse&gt; futureResponse) {
       ApiFuture&lt;ListLakesPage&gt; futurePage =
-<span class="fc" id="L4472">          ListLakesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4473">      return ApiFutures.transform(</span>
-<span class="fc" id="L4474">          futurePage, input -&gt; new ListLakesPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4650">          ListLakesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4651">      return ApiFutures.transform(</span>
+<span class="fc" id="L4652">          futurePage, input -&gt; new ListLakesPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListLakesPagedResponse(ListLakesPage page) {
-<span class="fc" id="L4478">      super(page, ListLakesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4479">    }</span>
+<span class="fc" id="L4656">      super(page, ListLakesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4657">    }</span>
   }
 
   public static class ListLakesPage
@@ -4485,25 +4663,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListLakesPage(
         PageContext&lt;ListLakesRequest, ListLakesResponse, Lake&gt; context,
         ListLakesResponse response) {
-<span class="fc" id="L4488">      super(context, response);</span>
-<span class="fc" id="L4489">    }</span>
+<span class="fc" id="L4666">      super(context, response);</span>
+<span class="fc" id="L4667">    }</span>
 
     private static ListLakesPage createEmptyPage() {
-<span class="fc" id="L4492">      return new ListLakesPage(null, null);</span>
+<span class="fc" id="L4670">      return new ListLakesPage(null, null);</span>
     }
 
     @Override
     protected ListLakesPage createPage(
         PageContext&lt;ListLakesRequest, ListLakesResponse, Lake&gt; context,
         ListLakesResponse response) {
-<span class="fc" id="L4499">      return new ListLakesPage(context, response);</span>
+<span class="fc" id="L4677">      return new ListLakesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListLakesPage&gt; createPageAsync(
         PageContext&lt;ListLakesRequest, ListLakesResponse, Lake&gt; context,
         ApiFuture&lt;ListLakesResponse&gt; futureResponse) {
-<span class="fc" id="L4506">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4684">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4512,17 +4690,17 @@ public class DataplexServiceClient implements BackgroundResource {
           ListLakesRequest, ListLakesResponse, Lake, ListLakesPage, ListLakesFixedSizeCollection&gt; {
 
     private ListLakesFixedSizeCollection(List&lt;ListLakesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4515">      super(pages, collectionSize);</span>
-<span class="fc" id="L4516">    }</span>
+<span class="fc" id="L4693">      super(pages, collectionSize);</span>
+<span class="fc" id="L4694">    }</span>
 
     private static ListLakesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4519">      return new ListLakesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4697">      return new ListLakesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListLakesFixedSizeCollection createCollection(
         List&lt;ListLakesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4525">      return new ListLakesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4703">      return new ListLakesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4538,16 +4716,16 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListLakeActionsRequest, ListActionsResponse, Action&gt; context,
         ApiFuture&lt;ListActionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListLakeActionsPage&gt; futurePage =
-<span class="fc" id="L4541">          ListLakeActionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4542">      return ApiFutures.transform(</span>
+<span class="fc" id="L4719">          ListLakeActionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4720">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L4544">          input -&gt; new ListLakeActionsPagedResponse(input),</span>
-<span class="fc" id="L4545">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4722">          input -&gt; new ListLakeActionsPagedResponse(input),</span>
+<span class="fc" id="L4723">          MoreExecutors.directExecutor());</span>
     }
 
     private ListLakeActionsPagedResponse(ListLakeActionsPage page) {
-<span class="fc" id="L4549">      super(page, ListLakeActionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4550">    }</span>
+<span class="fc" id="L4727">      super(page, ListLakeActionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4728">    }</span>
   }
 
   public static class ListLakeActionsPage
@@ -4557,25 +4735,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListLakeActionsPage(
         PageContext&lt;ListLakeActionsRequest, ListActionsResponse, Action&gt; context,
         ListActionsResponse response) {
-<span class="fc" id="L4560">      super(context, response);</span>
-<span class="fc" id="L4561">    }</span>
+<span class="fc" id="L4738">      super(context, response);</span>
+<span class="fc" id="L4739">    }</span>
 
     private static ListLakeActionsPage createEmptyPage() {
-<span class="fc" id="L4564">      return new ListLakeActionsPage(null, null);</span>
+<span class="fc" id="L4742">      return new ListLakeActionsPage(null, null);</span>
     }
 
     @Override
     protected ListLakeActionsPage createPage(
         PageContext&lt;ListLakeActionsRequest, ListActionsResponse, Action&gt; context,
         ListActionsResponse response) {
-<span class="fc" id="L4571">      return new ListLakeActionsPage(context, response);</span>
+<span class="fc" id="L4749">      return new ListLakeActionsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListLakeActionsPage&gt; createPageAsync(
         PageContext&lt;ListLakeActionsRequest, ListActionsResponse, Action&gt; context,
         ApiFuture&lt;ListActionsResponse&gt; futureResponse) {
-<span class="fc" id="L4578">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4756">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4589,17 +4767,17 @@ public class DataplexServiceClient implements BackgroundResource {
 
     private ListLakeActionsFixedSizeCollection(
         List&lt;ListLakeActionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4592">      super(pages, collectionSize);</span>
-<span class="fc" id="L4593">    }</span>
+<span class="fc" id="L4770">      super(pages, collectionSize);</span>
+<span class="fc" id="L4771">    }</span>
 
     private static ListLakeActionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4596">      return new ListLakeActionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4774">      return new ListLakeActionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListLakeActionsFixedSizeCollection createCollection(
         List&lt;ListLakeActionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4602">      return new ListLakeActionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4780">      return new ListLakeActionsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4611,14 +4789,14 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListZonesRequest, ListZonesResponse, Zone&gt; context,
         ApiFuture&lt;ListZonesResponse&gt; futureResponse) {
       ApiFuture&lt;ListZonesPage&gt; futurePage =
-<span class="fc" id="L4614">          ListZonesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4615">      return ApiFutures.transform(</span>
-<span class="fc" id="L4616">          futurePage, input -&gt; new ListZonesPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4792">          ListZonesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4793">      return ApiFutures.transform(</span>
+<span class="fc" id="L4794">          futurePage, input -&gt; new ListZonesPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListZonesPagedResponse(ListZonesPage page) {
-<span class="fc" id="L4620">      super(page, ListZonesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4621">    }</span>
+<span class="fc" id="L4798">      super(page, ListZonesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4799">    }</span>
   }
 
   public static class ListZonesPage
@@ -4627,25 +4805,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListZonesPage(
         PageContext&lt;ListZonesRequest, ListZonesResponse, Zone&gt; context,
         ListZonesResponse response) {
-<span class="fc" id="L4630">      super(context, response);</span>
-<span class="fc" id="L4631">    }</span>
+<span class="fc" id="L4808">      super(context, response);</span>
+<span class="fc" id="L4809">    }</span>
 
     private static ListZonesPage createEmptyPage() {
-<span class="fc" id="L4634">      return new ListZonesPage(null, null);</span>
+<span class="fc" id="L4812">      return new ListZonesPage(null, null);</span>
     }
 
     @Override
     protected ListZonesPage createPage(
         PageContext&lt;ListZonesRequest, ListZonesResponse, Zone&gt; context,
         ListZonesResponse response) {
-<span class="fc" id="L4641">      return new ListZonesPage(context, response);</span>
+<span class="fc" id="L4819">      return new ListZonesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListZonesPage&gt; createPageAsync(
         PageContext&lt;ListZonesRequest, ListZonesResponse, Zone&gt; context,
         ApiFuture&lt;ListZonesResponse&gt; futureResponse) {
-<span class="fc" id="L4648">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4826">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4654,17 +4832,17 @@ public class DataplexServiceClient implements BackgroundResource {
           ListZonesRequest, ListZonesResponse, Zone, ListZonesPage, ListZonesFixedSizeCollection&gt; {
 
     private ListZonesFixedSizeCollection(List&lt;ListZonesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4657">      super(pages, collectionSize);</span>
-<span class="fc" id="L4658">    }</span>
+<span class="fc" id="L4835">      super(pages, collectionSize);</span>
+<span class="fc" id="L4836">    }</span>
 
     private static ListZonesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4661">      return new ListZonesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4839">      return new ListZonesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListZonesFixedSizeCollection createCollection(
         List&lt;ListZonesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4667">      return new ListZonesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4845">      return new ListZonesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4680,16 +4858,16 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListZoneActionsRequest, ListActionsResponse, Action&gt; context,
         ApiFuture&lt;ListActionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListZoneActionsPage&gt; futurePage =
-<span class="fc" id="L4683">          ListZoneActionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4684">      return ApiFutures.transform(</span>
+<span class="fc" id="L4861">          ListZoneActionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4862">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L4686">          input -&gt; new ListZoneActionsPagedResponse(input),</span>
-<span class="fc" id="L4687">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4864">          input -&gt; new ListZoneActionsPagedResponse(input),</span>
+<span class="fc" id="L4865">          MoreExecutors.directExecutor());</span>
     }
 
     private ListZoneActionsPagedResponse(ListZoneActionsPage page) {
-<span class="fc" id="L4691">      super(page, ListZoneActionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4692">    }</span>
+<span class="fc" id="L4869">      super(page, ListZoneActionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4870">    }</span>
   }
 
   public static class ListZoneActionsPage
@@ -4699,25 +4877,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListZoneActionsPage(
         PageContext&lt;ListZoneActionsRequest, ListActionsResponse, Action&gt; context,
         ListActionsResponse response) {
-<span class="fc" id="L4702">      super(context, response);</span>
-<span class="fc" id="L4703">    }</span>
+<span class="fc" id="L4880">      super(context, response);</span>
+<span class="fc" id="L4881">    }</span>
 
     private static ListZoneActionsPage createEmptyPage() {
-<span class="fc" id="L4706">      return new ListZoneActionsPage(null, null);</span>
+<span class="fc" id="L4884">      return new ListZoneActionsPage(null, null);</span>
     }
 
     @Override
     protected ListZoneActionsPage createPage(
         PageContext&lt;ListZoneActionsRequest, ListActionsResponse, Action&gt; context,
         ListActionsResponse response) {
-<span class="fc" id="L4713">      return new ListZoneActionsPage(context, response);</span>
+<span class="fc" id="L4891">      return new ListZoneActionsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListZoneActionsPage&gt; createPageAsync(
         PageContext&lt;ListZoneActionsRequest, ListActionsResponse, Action&gt; context,
         ApiFuture&lt;ListActionsResponse&gt; futureResponse) {
-<span class="fc" id="L4720">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4898">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4731,17 +4909,17 @@ public class DataplexServiceClient implements BackgroundResource {
 
     private ListZoneActionsFixedSizeCollection(
         List&lt;ListZoneActionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4734">      super(pages, collectionSize);</span>
-<span class="fc" id="L4735">    }</span>
+<span class="fc" id="L4912">      super(pages, collectionSize);</span>
+<span class="fc" id="L4913">    }</span>
 
     private static ListZoneActionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4738">      return new ListZoneActionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4916">      return new ListZoneActionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListZoneActionsFixedSizeCollection createCollection(
         List&lt;ListZoneActionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4744">      return new ListZoneActionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4922">      return new ListZoneActionsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4757,14 +4935,14 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListAssetsRequest, ListAssetsResponse, Asset&gt; context,
         ApiFuture&lt;ListAssetsResponse&gt; futureResponse) {
       ApiFuture&lt;ListAssetsPage&gt; futurePage =
-<span class="fc" id="L4760">          ListAssetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4761">      return ApiFutures.transform(</span>
-<span class="fc" id="L4762">          futurePage, input -&gt; new ListAssetsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4938">          ListAssetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4939">      return ApiFutures.transform(</span>
+<span class="fc" id="L4940">          futurePage, input -&gt; new ListAssetsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListAssetsPagedResponse(ListAssetsPage page) {
-<span class="fc" id="L4766">      super(page, ListAssetsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4767">    }</span>
+<span class="fc" id="L4944">      super(page, ListAssetsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4945">    }</span>
   }
 
   public static class ListAssetsPage
@@ -4773,25 +4951,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListAssetsPage(
         PageContext&lt;ListAssetsRequest, ListAssetsResponse, Asset&gt; context,
         ListAssetsResponse response) {
-<span class="fc" id="L4776">      super(context, response);</span>
-<span class="fc" id="L4777">    }</span>
+<span class="fc" id="L4954">      super(context, response);</span>
+<span class="fc" id="L4955">    }</span>
 
     private static ListAssetsPage createEmptyPage() {
-<span class="fc" id="L4780">      return new ListAssetsPage(null, null);</span>
+<span class="fc" id="L4958">      return new ListAssetsPage(null, null);</span>
     }
 
     @Override
     protected ListAssetsPage createPage(
         PageContext&lt;ListAssetsRequest, ListAssetsResponse, Asset&gt; context,
         ListAssetsResponse response) {
-<span class="fc" id="L4787">      return new ListAssetsPage(context, response);</span>
+<span class="fc" id="L4965">      return new ListAssetsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListAssetsPage&gt; createPageAsync(
         PageContext&lt;ListAssetsRequest, ListAssetsResponse, Asset&gt; context,
         ApiFuture&lt;ListAssetsResponse&gt; futureResponse) {
-<span class="fc" id="L4794">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4972">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4804,17 +4982,17 @@ public class DataplexServiceClient implements BackgroundResource {
           ListAssetsFixedSizeCollection&gt; {
 
     private ListAssetsFixedSizeCollection(List&lt;ListAssetsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4807">      super(pages, collectionSize);</span>
-<span class="fc" id="L4808">    }</span>
+<span class="fc" id="L4985">      super(pages, collectionSize);</span>
+<span class="fc" id="L4986">    }</span>
 
     private static ListAssetsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4811">      return new ListAssetsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4989">      return new ListAssetsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListAssetsFixedSizeCollection createCollection(
         List&lt;ListAssetsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4817">      return new ListAssetsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4995">      return new ListAssetsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4830,16 +5008,16 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListAssetActionsRequest, ListActionsResponse, Action&gt; context,
         ApiFuture&lt;ListActionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListAssetActionsPage&gt; futurePage =
-<span class="fc" id="L4833">          ListAssetActionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4834">      return ApiFutures.transform(</span>
+<span class="fc" id="L5011">          ListAssetActionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5012">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L4836">          input -&gt; new ListAssetActionsPagedResponse(input),</span>
-<span class="fc" id="L4837">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5014">          input -&gt; new ListAssetActionsPagedResponse(input),</span>
+<span class="fc" id="L5015">          MoreExecutors.directExecutor());</span>
     }
 
     private ListAssetActionsPagedResponse(ListAssetActionsPage page) {
-<span class="fc" id="L4841">      super(page, ListAssetActionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4842">    }</span>
+<span class="fc" id="L5019">      super(page, ListAssetActionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5020">    }</span>
   }
 
   public static class ListAssetActionsPage
@@ -4849,25 +5027,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListAssetActionsPage(
         PageContext&lt;ListAssetActionsRequest, ListActionsResponse, Action&gt; context,
         ListActionsResponse response) {
-<span class="fc" id="L4852">      super(context, response);</span>
-<span class="fc" id="L4853">    }</span>
+<span class="fc" id="L5030">      super(context, response);</span>
+<span class="fc" id="L5031">    }</span>
 
     private static ListAssetActionsPage createEmptyPage() {
-<span class="fc" id="L4856">      return new ListAssetActionsPage(null, null);</span>
+<span class="fc" id="L5034">      return new ListAssetActionsPage(null, null);</span>
     }
 
     @Override
     protected ListAssetActionsPage createPage(
         PageContext&lt;ListAssetActionsRequest, ListActionsResponse, Action&gt; context,
         ListActionsResponse response) {
-<span class="fc" id="L4863">      return new ListAssetActionsPage(context, response);</span>
+<span class="fc" id="L5041">      return new ListAssetActionsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListAssetActionsPage&gt; createPageAsync(
         PageContext&lt;ListAssetActionsRequest, ListActionsResponse, Action&gt; context,
         ApiFuture&lt;ListActionsResponse&gt; futureResponse) {
-<span class="fc" id="L4870">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5048">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4881,17 +5059,17 @@ public class DataplexServiceClient implements BackgroundResource {
 
     private ListAssetActionsFixedSizeCollection(
         List&lt;ListAssetActionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4884">      super(pages, collectionSize);</span>
-<span class="fc" id="L4885">    }</span>
+<span class="fc" id="L5062">      super(pages, collectionSize);</span>
+<span class="fc" id="L5063">    }</span>
 
     private static ListAssetActionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4888">      return new ListAssetActionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5066">      return new ListAssetActionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListAssetActionsFixedSizeCollection createCollection(
         List&lt;ListAssetActionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4894">      return new ListAssetActionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5072">      return new ListAssetActionsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4903,14 +5081,14 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListTasksRequest, ListTasksResponse, Task&gt; context,
         ApiFuture&lt;ListTasksResponse&gt; futureResponse) {
       ApiFuture&lt;ListTasksPage&gt; futurePage =
-<span class="fc" id="L4906">          ListTasksPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4907">      return ApiFutures.transform(</span>
-<span class="fc" id="L4908">          futurePage, input -&gt; new ListTasksPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5084">          ListTasksPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5085">      return ApiFutures.transform(</span>
+<span class="fc" id="L5086">          futurePage, input -&gt; new ListTasksPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListTasksPagedResponse(ListTasksPage page) {
-<span class="fc" id="L4912">      super(page, ListTasksFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4913">    }</span>
+<span class="fc" id="L5090">      super(page, ListTasksFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5091">    }</span>
   }
 
   public static class ListTasksPage
@@ -4919,25 +5097,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListTasksPage(
         PageContext&lt;ListTasksRequest, ListTasksResponse, Task&gt; context,
         ListTasksResponse response) {
-<span class="fc" id="L4922">      super(context, response);</span>
-<span class="fc" id="L4923">    }</span>
+<span class="fc" id="L5100">      super(context, response);</span>
+<span class="fc" id="L5101">    }</span>
 
     private static ListTasksPage createEmptyPage() {
-<span class="fc" id="L4926">      return new ListTasksPage(null, null);</span>
+<span class="fc" id="L5104">      return new ListTasksPage(null, null);</span>
     }
 
     @Override
     protected ListTasksPage createPage(
         PageContext&lt;ListTasksRequest, ListTasksResponse, Task&gt; context,
         ListTasksResponse response) {
-<span class="fc" id="L4933">      return new ListTasksPage(context, response);</span>
+<span class="fc" id="L5111">      return new ListTasksPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListTasksPage&gt; createPageAsync(
         PageContext&lt;ListTasksRequest, ListTasksResponse, Task&gt; context,
         ApiFuture&lt;ListTasksResponse&gt; futureResponse) {
-<span class="fc" id="L4940">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5118">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -4946,17 +5124,17 @@ public class DataplexServiceClient implements BackgroundResource {
           ListTasksRequest, ListTasksResponse, Task, ListTasksPage, ListTasksFixedSizeCollection&gt; {
 
     private ListTasksFixedSizeCollection(List&lt;ListTasksPage&gt; pages, int collectionSize) {
-<span class="fc" id="L4949">      super(pages, collectionSize);</span>
-<span class="fc" id="L4950">    }</span>
+<span class="fc" id="L5127">      super(pages, collectionSize);</span>
+<span class="fc" id="L5128">    }</span>
 
     private static ListTasksFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L4953">      return new ListTasksFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5131">      return new ListTasksFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTasksFixedSizeCollection createCollection(
         List&lt;ListTasksPage&gt; pages, int collectionSize) {
-<span class="nc" id="L4959">      return new ListTasksFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5137">      return new ListTasksFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -4968,14 +5146,14 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context,
         ApiFuture&lt;ListJobsResponse&gt; futureResponse) {
       ApiFuture&lt;ListJobsPage&gt; futurePage =
-<span class="fc" id="L4971">          ListJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L4972">      return ApiFutures.transform(</span>
-<span class="fc" id="L4973">          futurePage, input -&gt; new ListJobsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5149">          ListJobsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5150">      return ApiFutures.transform(</span>
+<span class="fc" id="L5151">          futurePage, input -&gt; new ListJobsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListJobsPagedResponse(ListJobsPage page) {
-<span class="fc" id="L4977">      super(page, ListJobsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L4978">    }</span>
+<span class="fc" id="L5155">      super(page, ListJobsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5156">    }</span>
   }
 
   public static class ListJobsPage
@@ -4983,24 +5161,24 @@ public class DataplexServiceClient implements BackgroundResource {
 
     private ListJobsPage(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context, ListJobsResponse response) {
-<span class="fc" id="L4986">      super(context, response);</span>
-<span class="fc" id="L4987">    }</span>
+<span class="fc" id="L5164">      super(context, response);</span>
+<span class="fc" id="L5165">    }</span>
 
     private static ListJobsPage createEmptyPage() {
-<span class="fc" id="L4990">      return new ListJobsPage(null, null);</span>
+<span class="fc" id="L5168">      return new ListJobsPage(null, null);</span>
     }
 
     @Override
     protected ListJobsPage createPage(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context, ListJobsResponse response) {
-<span class="fc" id="L4996">      return new ListJobsPage(context, response);</span>
+<span class="fc" id="L5174">      return new ListJobsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListJobsPage&gt; createPageAsync(
         PageContext&lt;ListJobsRequest, ListJobsResponse, Job&gt; context,
         ApiFuture&lt;ListJobsResponse&gt; futureResponse) {
-<span class="fc" id="L5003">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5181">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5009,17 +5187,17 @@ public class DataplexServiceClient implements BackgroundResource {
           ListJobsRequest, ListJobsResponse, Job, ListJobsPage, ListJobsFixedSizeCollection&gt; {
 
     private ListJobsFixedSizeCollection(List&lt;ListJobsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5012">      super(pages, collectionSize);</span>
-<span class="fc" id="L5013">    }</span>
+<span class="fc" id="L5190">      super(pages, collectionSize);</span>
+<span class="fc" id="L5191">    }</span>
 
     private static ListJobsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5016">      return new ListJobsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5194">      return new ListJobsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListJobsFixedSizeCollection createCollection(
         List&lt;ListJobsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5022">      return new ListJobsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5200">      return new ListJobsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5035,16 +5213,16 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt; context,
         ApiFuture&lt;ListEnvironmentsResponse&gt; futureResponse) {
       ApiFuture&lt;ListEnvironmentsPage&gt; futurePage =
-<span class="fc" id="L5038">          ListEnvironmentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5039">      return ApiFutures.transform(</span>
+<span class="fc" id="L5216">          ListEnvironmentsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5217">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L5041">          input -&gt; new ListEnvironmentsPagedResponse(input),</span>
-<span class="fc" id="L5042">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5219">          input -&gt; new ListEnvironmentsPagedResponse(input),</span>
+<span class="fc" id="L5220">          MoreExecutors.directExecutor());</span>
     }
 
     private ListEnvironmentsPagedResponse(ListEnvironmentsPage page) {
-<span class="fc" id="L5046">      super(page, ListEnvironmentsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5047">    }</span>
+<span class="fc" id="L5224">      super(page, ListEnvironmentsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5225">    }</span>
   }
 
   public static class ListEnvironmentsPage
@@ -5054,25 +5232,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListEnvironmentsPage(
         PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt; context,
         ListEnvironmentsResponse response) {
-<span class="fc" id="L5057">      super(context, response);</span>
-<span class="fc" id="L5058">    }</span>
+<span class="fc" id="L5235">      super(context, response);</span>
+<span class="fc" id="L5236">    }</span>
 
     private static ListEnvironmentsPage createEmptyPage() {
-<span class="fc" id="L5061">      return new ListEnvironmentsPage(null, null);</span>
+<span class="fc" id="L5239">      return new ListEnvironmentsPage(null, null);</span>
     }
 
     @Override
     protected ListEnvironmentsPage createPage(
         PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt; context,
         ListEnvironmentsResponse response) {
-<span class="fc" id="L5068">      return new ListEnvironmentsPage(context, response);</span>
+<span class="fc" id="L5246">      return new ListEnvironmentsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListEnvironmentsPage&gt; createPageAsync(
         PageContext&lt;ListEnvironmentsRequest, ListEnvironmentsResponse, Environment&gt; context,
         ApiFuture&lt;ListEnvironmentsResponse&gt; futureResponse) {
-<span class="fc" id="L5075">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5253">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5086,17 +5264,17 @@ public class DataplexServiceClient implements BackgroundResource {
 
     private ListEnvironmentsFixedSizeCollection(
         List&lt;ListEnvironmentsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5089">      super(pages, collectionSize);</span>
-<span class="fc" id="L5090">    }</span>
+<span class="fc" id="L5267">      super(pages, collectionSize);</span>
+<span class="fc" id="L5268">    }</span>
 
     private static ListEnvironmentsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5093">      return new ListEnvironmentsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5271">      return new ListEnvironmentsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListEnvironmentsFixedSizeCollection createCollection(
         List&lt;ListEnvironmentsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5099">      return new ListEnvironmentsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5277">      return new ListEnvironmentsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -5112,16 +5290,16 @@ public class DataplexServiceClient implements BackgroundResource {
         PageContext&lt;ListSessionsRequest, ListSessionsResponse, Session&gt; context,
         ApiFuture&lt;ListSessionsResponse&gt; futureResponse) {
       ApiFuture&lt;ListSessionsPage&gt; futurePage =
-<span class="fc" id="L5115">          ListSessionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L5116">      return ApiFutures.transform(</span>
+<span class="fc" id="L5293">          ListSessionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5294">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L5118">          input -&gt; new ListSessionsPagedResponse(input),</span>
-<span class="fc" id="L5119">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L5296">          input -&gt; new ListSessionsPagedResponse(input),</span>
+<span class="fc" id="L5297">          MoreExecutors.directExecutor());</span>
     }
 
     private ListSessionsPagedResponse(ListSessionsPage page) {
-<span class="fc" id="L5123">      super(page, ListSessionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L5124">    }</span>
+<span class="fc" id="L5301">      super(page, ListSessionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5302">    }</span>
   }
 
   public static class ListSessionsPage
@@ -5130,25 +5308,25 @@ public class DataplexServiceClient implements BackgroundResource {
     private ListSessionsPage(
         PageContext&lt;ListSessionsRequest, ListSessionsResponse, Session&gt; context,
         ListSessionsResponse response) {
-<span class="fc" id="L5133">      super(context, response);</span>
-<span class="fc" id="L5134">    }</span>
+<span class="fc" id="L5311">      super(context, response);</span>
+<span class="fc" id="L5312">    }</span>
 
     private static ListSessionsPage createEmptyPage() {
-<span class="fc" id="L5137">      return new ListSessionsPage(null, null);</span>
+<span class="fc" id="L5315">      return new ListSessionsPage(null, null);</span>
     }
 
     @Override
     protected ListSessionsPage createPage(
         PageContext&lt;ListSessionsRequest, ListSessionsResponse, Session&gt; context,
         ListSessionsResponse response) {
-<span class="fc" id="L5144">      return new ListSessionsPage(context, response);</span>
+<span class="fc" id="L5322">      return new ListSessionsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListSessionsPage&gt; createPageAsync(
         PageContext&lt;ListSessionsRequest, ListSessionsResponse, Session&gt; context,
         ApiFuture&lt;ListSessionsResponse&gt; futureResponse) {
-<span class="fc" id="L5151">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5329">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -5161,17 +5339,93 @@ public class DataplexServiceClient implements BackgroundResource {
           ListSessionsFixedSizeCollection&gt; {
 
     private ListSessionsFixedSizeCollection(List&lt;ListSessionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L5164">      super(pages, collectionSize);</span>
-<span class="fc" id="L5165">    }</span>
+<span class="fc" id="L5342">      super(pages, collectionSize);</span>
+<span class="fc" id="L5343">    }</span>
 
     private static ListSessionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L5168">      return new ListSessionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L5346">      return new ListSessionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListSessionsFixedSizeCollection createCollection(
         List&lt;ListSessionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L5174">      return new ListSessionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L5352">      return new ListSessionsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L5368">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L5369">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L5371">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L5372">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L5376">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L5377">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L5387">      super(context, response);</span>
+<span class="fc" id="L5388">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L5391">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L5398">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L5405">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L5418">      super(pages, collectionSize);</span>
+<span class="fc" id="L5419">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L5422">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L5428">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
