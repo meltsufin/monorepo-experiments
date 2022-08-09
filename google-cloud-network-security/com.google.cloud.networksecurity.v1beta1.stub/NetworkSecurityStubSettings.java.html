@@ -18,6 +18,7 @@ package com.google.cloud.networksecurity.v1beta1.stub;
 
 import static com.google.cloud.networksecurity.v1beta1.NetworkSecurityClient.ListAuthorizationPoliciesPagedResponse;
 import static com.google.cloud.networksecurity.v1beta1.NetworkSecurityClient.ListClientTlsPoliciesPagedResponse;
+import static com.google.cloud.networksecurity.v1beta1.NetworkSecurityClient.ListLocationsPagedResponse;
 import static com.google.cloud.networksecurity.v1beta1.NetworkSecurityClient.ListServerTlsPoliciesPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -30,6 +31,9 @@ import com.google.api.gax.grpc.GaxGrpcProperties;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.grpc.ProtoOperationTransformers;
+import com.google.api.gax.httpjson.GaxHttpJsonProperties;
+import com.google.api.gax.httpjson.HttpJsonTransportChannel;
+import com.google.api.gax.httpjson.InstantiatingHttpJsonChannelProvider;
 import com.google.api.gax.longrunning.OperationSnapshot;
 import com.google.api.gax.longrunning.OperationTimedPollAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
@@ -46,6 +50,10 @@ import com.google.api.gax.rpc.StubSettings;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.api.gax.rpc.UnaryCallSettings;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.cloud.networksecurity.v1beta1.AuthorizationPolicy;
 import com.google.cloud.networksecurity.v1beta1.ClientTlsPolicy;
 import com.google.cloud.networksecurity.v1beta1.CreateAuthorizationPolicyRequest;
@@ -72,6 +80,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
 import com.google.protobuf.Empty;
 import java.io.IOException;
@@ -119,7 +132,7 @@ import org.threeten.bp.Duration;
 public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurityStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L122">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
+<span class="fc" id="L135">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
 
   private final PagedCallSettings&lt;
           ListAuthorizationPoliciesRequest,
@@ -184,133 +197,177 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
       deleteClientTlsPolicySettings;
   private final OperationCallSettings&lt;DeleteClientTlsPolicyRequest, Empty, OperationMetadata&gt;
       deleteClientTlsPolicyOperationSettings;
+  private final PagedCallSettings&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings;
+  private final UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings;
+  private final UnaryCallSettings&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings;
+  private final UnaryCallSettings&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings;
+  private final UnaryCallSettings&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsSettings;
 
   private static final PagedListDescriptor&lt;
           ListAuthorizationPoliciesRequest, ListAuthorizationPoliciesResponse, AuthorizationPolicy&gt;
-<span class="fc" id="L190">      LIST_AUTHORIZATION_POLICIES_PAGE_STR_DESC =</span>
+<span class="fc" id="L211">      LIST_AUTHORIZATION_POLICIES_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
               ListAuthorizationPoliciesRequest,
               ListAuthorizationPoliciesResponse,
-<span class="fc" id="L194">              AuthorizationPolicy&gt;() {</span>
+<span class="fc" id="L215">              AuthorizationPolicy&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L197">              return &quot;&quot;;</span>
+<span class="fc" id="L218">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListAuthorizationPoliciesRequest injectToken(
                 ListAuthorizationPoliciesRequest payload, String token) {
-<span class="nc" id="L203">              return ListAuthorizationPoliciesRequest.newBuilder(payload)</span>
-<span class="nc" id="L204">                  .setPageToken(token)</span>
-<span class="nc" id="L205">                  .build();</span>
+<span class="nc" id="L224">              return ListAuthorizationPoliciesRequest.newBuilder(payload)</span>
+<span class="nc" id="L225">                  .setPageToken(token)</span>
+<span class="nc" id="L226">                  .build();</span>
             }
 
             @Override
             public ListAuthorizationPoliciesRequest injectPageSize(
                 ListAuthorizationPoliciesRequest payload, int pageSize) {
-<span class="nc" id="L211">              return ListAuthorizationPoliciesRequest.newBuilder(payload)</span>
-<span class="nc" id="L212">                  .setPageSize(pageSize)</span>
-<span class="nc" id="L213">                  .build();</span>
+<span class="nc" id="L232">              return ListAuthorizationPoliciesRequest.newBuilder(payload)</span>
+<span class="nc" id="L233">                  .setPageSize(pageSize)</span>
+<span class="nc" id="L234">                  .build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListAuthorizationPoliciesRequest payload) {
-<span class="nc" id="L218">              return payload.getPageSize();</span>
+<span class="nc" id="L239">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListAuthorizationPoliciesResponse payload) {
-<span class="fc" id="L223">              return payload.getNextPageToken();</span>
+<span class="fc" id="L244">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;AuthorizationPolicy&gt; extractResources(
                 ListAuthorizationPoliciesResponse payload) {
-<span class="pc bpc" id="L229" title="1 of 2 branches missed.">              return payload.getAuthorizationPoliciesList() == null</span>
-<span class="nc" id="L230">                  ? ImmutableList.&lt;AuthorizationPolicy&gt;of()</span>
-<span class="fc" id="L231">                  : payload.getAuthorizationPoliciesList();</span>
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">              return payload.getAuthorizationPoliciesList() == null</span>
+<span class="nc" id="L251">                  ? ImmutableList.&lt;AuthorizationPolicy&gt;of()</span>
+<span class="fc" id="L252">                  : payload.getAuthorizationPoliciesList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;
           ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse, ServerTlsPolicy&gt;
-<span class="fc" id="L237">      LIST_SERVER_TLS_POLICIES_PAGE_STR_DESC =</span>
+<span class="fc" id="L258">      LIST_SERVER_TLS_POLICIES_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L239">              ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse, ServerTlsPolicy&gt;() {</span>
+<span class="fc" id="L260">              ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse, ServerTlsPolicy&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L242">              return &quot;&quot;;</span>
+<span class="fc" id="L263">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListServerTlsPoliciesRequest injectToken(
                 ListServerTlsPoliciesRequest payload, String token) {
-<span class="nc" id="L248">              return ListServerTlsPoliciesRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L269">              return ListServerTlsPoliciesRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListServerTlsPoliciesRequest injectPageSize(
                 ListServerTlsPoliciesRequest payload, int pageSize) {
-<span class="nc" id="L254">              return ListServerTlsPoliciesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L275">              return ListServerTlsPoliciesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListServerTlsPoliciesRequest payload) {
-<span class="nc" id="L259">              return payload.getPageSize();</span>
+<span class="nc" id="L280">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListServerTlsPoliciesResponse payload) {
-<span class="fc" id="L264">              return payload.getNextPageToken();</span>
+<span class="fc" id="L285">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;ServerTlsPolicy&gt; extractResources(
                 ListServerTlsPoliciesResponse payload) {
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">              return payload.getServerTlsPoliciesList() == null</span>
-<span class="nc" id="L271">                  ? ImmutableList.&lt;ServerTlsPolicy&gt;of()</span>
-<span class="fc" id="L272">                  : payload.getServerTlsPoliciesList();</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">              return payload.getServerTlsPoliciesList() == null</span>
+<span class="nc" id="L292">                  ? ImmutableList.&lt;ServerTlsPolicy&gt;of()</span>
+<span class="fc" id="L293">                  : payload.getServerTlsPoliciesList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;
           ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse, ClientTlsPolicy&gt;
-<span class="fc" id="L278">      LIST_CLIENT_TLS_POLICIES_PAGE_STR_DESC =</span>
+<span class="fc" id="L299">      LIST_CLIENT_TLS_POLICIES_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L280">              ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse, ClientTlsPolicy&gt;() {</span>
+<span class="fc" id="L301">              ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse, ClientTlsPolicy&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L283">              return &quot;&quot;;</span>
+<span class="fc" id="L304">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListClientTlsPoliciesRequest injectToken(
                 ListClientTlsPoliciesRequest payload, String token) {
-<span class="nc" id="L289">              return ListClientTlsPoliciesRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L310">              return ListClientTlsPoliciesRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListClientTlsPoliciesRequest injectPageSize(
                 ListClientTlsPoliciesRequest payload, int pageSize) {
-<span class="nc" id="L295">              return ListClientTlsPoliciesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L316">              return ListClientTlsPoliciesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListClientTlsPoliciesRequest payload) {
-<span class="nc" id="L300">              return payload.getPageSize();</span>
+<span class="nc" id="L321">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListClientTlsPoliciesResponse payload) {
-<span class="fc" id="L305">              return payload.getNextPageToken();</span>
+<span class="fc" id="L326">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;ClientTlsPolicy&gt; extractResources(
                 ListClientTlsPoliciesResponse payload) {
-<span class="pc bpc" id="L311" title="1 of 2 branches missed.">              return payload.getClientTlsPoliciesList() == null</span>
-<span class="nc" id="L312">                  ? ImmutableList.&lt;ClientTlsPolicy&gt;of()</span>
-<span class="fc" id="L313">                  : payload.getClientTlsPoliciesList();</span>
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">              return payload.getClientTlsPoliciesList() == null</span>
+<span class="nc" id="L333">                  ? ImmutableList.&lt;ClientTlsPolicy&gt;of()</span>
+<span class="fc" id="L334">                  : payload.getClientTlsPoliciesList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
+<span class="fc" id="L339">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L340">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L343">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
+<span class="nc" id="L348">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
+<span class="nc" id="L353">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListLocationsRequest payload) {
+<span class="nc" id="L358">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListLocationsResponse payload) {
+<span class="fc" id="L363">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L369">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L370">                  : payload.getLocationsList();</span>
             }
           };
 
@@ -318,11 +375,11 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
           ListAuthorizationPoliciesRequest,
           ListAuthorizationPoliciesResponse,
           ListAuthorizationPoliciesPagedResponse&gt;
-<span class="fc" id="L321">      LIST_AUTHORIZATION_POLICIES_PAGE_STR_FACT =</span>
+<span class="fc" id="L378">      LIST_AUTHORIZATION_POLICIES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListAuthorizationPoliciesRequest,
               ListAuthorizationPoliciesResponse,
-<span class="fc" id="L325">              ListAuthorizationPoliciesPagedResponse&gt;() {</span>
+<span class="fc" id="L382">              ListAuthorizationPoliciesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListAuthorizationPoliciesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListAuthorizationPoliciesRequest, ListAuthorizationPoliciesResponse&gt;
@@ -334,10 +391,10 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
                       ListAuthorizationPoliciesRequest,
                       ListAuthorizationPoliciesResponse,
                       AuthorizationPolicy&gt;
-<span class="fc" id="L337">                  pageContext =</span>
-<span class="fc" id="L338">                      PageContext.create(</span>
-<span class="fc" id="L339">                          callable, LIST_AUTHORIZATION_POLICIES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L340">              return ListAuthorizationPoliciesPagedResponse.createAsync(</span>
+<span class="fc" id="L394">                  pageContext =</span>
+<span class="fc" id="L395">                      PageContext.create(</span>
+<span class="fc" id="L396">                          callable, LIST_AUTHORIZATION_POLICIES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L397">              return ListAuthorizationPoliciesPagedResponse.createAsync(</span>
                   pageContext, futureResponse);
             }
           };
@@ -346,11 +403,11 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
           ListServerTlsPoliciesRequest,
           ListServerTlsPoliciesResponse,
           ListServerTlsPoliciesPagedResponse&gt;
-<span class="fc" id="L349">      LIST_SERVER_TLS_POLICIES_PAGE_STR_FACT =</span>
+<span class="fc" id="L406">      LIST_SERVER_TLS_POLICIES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListServerTlsPoliciesRequest,
               ListServerTlsPoliciesResponse,
-<span class="fc" id="L353">              ListServerTlsPoliciesPagedResponse&gt;() {</span>
+<span class="fc" id="L410">              ListServerTlsPoliciesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListServerTlsPoliciesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse&gt; callable,
@@ -359,10 +416,10 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
                 ApiFuture&lt;ListServerTlsPoliciesResponse&gt; futureResponse) {
               PageContext&lt;
                       ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse, ServerTlsPolicy&gt;
-<span class="fc" id="L362">                  pageContext =</span>
-<span class="fc" id="L363">                      PageContext.create(</span>
-<span class="fc" id="L364">                          callable, LIST_SERVER_TLS_POLICIES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L365">              return ListServerTlsPoliciesPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L419">                  pageContext =</span>
+<span class="fc" id="L420">                      PageContext.create(</span>
+<span class="fc" id="L421">                          callable, LIST_SERVER_TLS_POLICIES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L422">              return ListServerTlsPoliciesPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -370,11 +427,11 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
           ListClientTlsPoliciesRequest,
           ListClientTlsPoliciesResponse,
           ListClientTlsPoliciesPagedResponse&gt;
-<span class="fc" id="L373">      LIST_CLIENT_TLS_POLICIES_PAGE_STR_FACT =</span>
+<span class="fc" id="L430">      LIST_CLIENT_TLS_POLICIES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
               ListClientTlsPoliciesRequest,
               ListClientTlsPoliciesResponse,
-<span class="fc" id="L377">              ListClientTlsPoliciesPagedResponse&gt;() {</span>
+<span class="fc" id="L434">              ListClientTlsPoliciesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListClientTlsPoliciesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse&gt; callable,
@@ -383,10 +440,27 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
                 ApiFuture&lt;ListClientTlsPoliciesResponse&gt; futureResponse) {
               PageContext&lt;
                       ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse, ClientTlsPolicy&gt;
-<span class="fc" id="L386">                  pageContext =</span>
-<span class="fc" id="L387">                      PageContext.create(</span>
-<span class="fc" id="L388">                          callable, LIST_CLIENT_TLS_POLICIES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L389">              return ListClientTlsPoliciesPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L443">                  pageContext =</span>
+<span class="fc" id="L444">                      PageContext.create(</span>
+<span class="fc" id="L445">                          callable, LIST_CLIENT_TLS_POLICIES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L446">              return ListClientTlsPoliciesPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+<span class="fc" id="L452">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L454">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
+                ListLocationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L461">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L462">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L463">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
@@ -396,51 +470,51 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
           ListAuthorizationPoliciesResponse,
           ListAuthorizationPoliciesPagedResponse&gt;
       listAuthorizationPoliciesSettings() {
-<span class="fc" id="L399">    return listAuthorizationPoliciesSettings;</span>
+<span class="fc" id="L473">    return listAuthorizationPoliciesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getAuthorizationPolicy. */
   public UnaryCallSettings&lt;GetAuthorizationPolicyRequest, AuthorizationPolicy&gt;
       getAuthorizationPolicySettings() {
-<span class="fc" id="L405">    return getAuthorizationPolicySettings;</span>
+<span class="fc" id="L479">    return getAuthorizationPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createAuthorizationPolicy. */
   public UnaryCallSettings&lt;CreateAuthorizationPolicyRequest, Operation&gt;
       createAuthorizationPolicySettings() {
-<span class="fc" id="L411">    return createAuthorizationPolicySettings;</span>
+<span class="fc" id="L485">    return createAuthorizationPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createAuthorizationPolicy. */
   public OperationCallSettings&lt;
           CreateAuthorizationPolicyRequest, AuthorizationPolicy, OperationMetadata&gt;
       createAuthorizationPolicyOperationSettings() {
-<span class="fc" id="L418">    return createAuthorizationPolicyOperationSettings;</span>
+<span class="fc" id="L492">    return createAuthorizationPolicyOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateAuthorizationPolicy. */
   public UnaryCallSettings&lt;UpdateAuthorizationPolicyRequest, Operation&gt;
       updateAuthorizationPolicySettings() {
-<span class="fc" id="L424">    return updateAuthorizationPolicySettings;</span>
+<span class="fc" id="L498">    return updateAuthorizationPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateAuthorizationPolicy. */
   public OperationCallSettings&lt;
           UpdateAuthorizationPolicyRequest, AuthorizationPolicy, OperationMetadata&gt;
       updateAuthorizationPolicyOperationSettings() {
-<span class="fc" id="L431">    return updateAuthorizationPolicyOperationSettings;</span>
+<span class="fc" id="L505">    return updateAuthorizationPolicyOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteAuthorizationPolicy. */
   public UnaryCallSettings&lt;DeleteAuthorizationPolicyRequest, Operation&gt;
       deleteAuthorizationPolicySettings() {
-<span class="fc" id="L437">    return deleteAuthorizationPolicySettings;</span>
+<span class="fc" id="L511">    return deleteAuthorizationPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteAuthorizationPolicy. */
   public OperationCallSettings&lt;DeleteAuthorizationPolicyRequest, Empty, OperationMetadata&gt;
       deleteAuthorizationPolicyOperationSettings() {
-<span class="fc" id="L443">    return deleteAuthorizationPolicyOperationSettings;</span>
+<span class="fc" id="L517">    return deleteAuthorizationPolicyOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listServerTlsPolicies. */
@@ -449,49 +523,49 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
           ListServerTlsPoliciesResponse,
           ListServerTlsPoliciesPagedResponse&gt;
       listServerTlsPoliciesSettings() {
-<span class="fc" id="L452">    return listServerTlsPoliciesSettings;</span>
+<span class="fc" id="L526">    return listServerTlsPoliciesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getServerTlsPolicy. */
   public UnaryCallSettings&lt;GetServerTlsPolicyRequest, ServerTlsPolicy&gt;
       getServerTlsPolicySettings() {
-<span class="fc" id="L458">    return getServerTlsPolicySettings;</span>
+<span class="fc" id="L532">    return getServerTlsPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createServerTlsPolicy. */
   public UnaryCallSettings&lt;CreateServerTlsPolicyRequest, Operation&gt;
       createServerTlsPolicySettings() {
-<span class="fc" id="L464">    return createServerTlsPolicySettings;</span>
+<span class="fc" id="L538">    return createServerTlsPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createServerTlsPolicy. */
   public OperationCallSettings&lt;CreateServerTlsPolicyRequest, ServerTlsPolicy, OperationMetadata&gt;
       createServerTlsPolicyOperationSettings() {
-<span class="fc" id="L470">    return createServerTlsPolicyOperationSettings;</span>
+<span class="fc" id="L544">    return createServerTlsPolicyOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateServerTlsPolicy. */
   public UnaryCallSettings&lt;UpdateServerTlsPolicyRequest, Operation&gt;
       updateServerTlsPolicySettings() {
-<span class="fc" id="L476">    return updateServerTlsPolicySettings;</span>
+<span class="fc" id="L550">    return updateServerTlsPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateServerTlsPolicy. */
   public OperationCallSettings&lt;UpdateServerTlsPolicyRequest, ServerTlsPolicy, OperationMetadata&gt;
       updateServerTlsPolicyOperationSettings() {
-<span class="fc" id="L482">    return updateServerTlsPolicyOperationSettings;</span>
+<span class="fc" id="L556">    return updateServerTlsPolicyOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteServerTlsPolicy. */
   public UnaryCallSettings&lt;DeleteServerTlsPolicyRequest, Operation&gt;
       deleteServerTlsPolicySettings() {
-<span class="fc" id="L488">    return deleteServerTlsPolicySettings;</span>
+<span class="fc" id="L562">    return deleteServerTlsPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteServerTlsPolicy. */
   public OperationCallSettings&lt;DeleteServerTlsPolicyRequest, Empty, OperationMetadata&gt;
       deleteServerTlsPolicyOperationSettings() {
-<span class="fc" id="L494">    return deleteServerTlsPolicyOperationSettings;</span>
+<span class="fc" id="L568">    return deleteServerTlsPolicyOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listClientTlsPolicies. */
@@ -500,160 +574,223 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
           ListClientTlsPoliciesResponse,
           ListClientTlsPoliciesPagedResponse&gt;
       listClientTlsPoliciesSettings() {
-<span class="fc" id="L503">    return listClientTlsPoliciesSettings;</span>
+<span class="fc" id="L577">    return listClientTlsPoliciesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getClientTlsPolicy. */
   public UnaryCallSettings&lt;GetClientTlsPolicyRequest, ClientTlsPolicy&gt;
       getClientTlsPolicySettings() {
-<span class="fc" id="L509">    return getClientTlsPolicySettings;</span>
+<span class="fc" id="L583">    return getClientTlsPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createClientTlsPolicy. */
   public UnaryCallSettings&lt;CreateClientTlsPolicyRequest, Operation&gt;
       createClientTlsPolicySettings() {
-<span class="fc" id="L515">    return createClientTlsPolicySettings;</span>
+<span class="fc" id="L589">    return createClientTlsPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createClientTlsPolicy. */
   public OperationCallSettings&lt;CreateClientTlsPolicyRequest, ClientTlsPolicy, OperationMetadata&gt;
       createClientTlsPolicyOperationSettings() {
-<span class="fc" id="L521">    return createClientTlsPolicyOperationSettings;</span>
+<span class="fc" id="L595">    return createClientTlsPolicyOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateClientTlsPolicy. */
   public UnaryCallSettings&lt;UpdateClientTlsPolicyRequest, Operation&gt;
       updateClientTlsPolicySettings() {
-<span class="fc" id="L527">    return updateClientTlsPolicySettings;</span>
+<span class="fc" id="L601">    return updateClientTlsPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateClientTlsPolicy. */
   public OperationCallSettings&lt;UpdateClientTlsPolicyRequest, ClientTlsPolicy, OperationMetadata&gt;
       updateClientTlsPolicyOperationSettings() {
-<span class="fc" id="L533">    return updateClientTlsPolicyOperationSettings;</span>
+<span class="fc" id="L607">    return updateClientTlsPolicyOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteClientTlsPolicy. */
   public UnaryCallSettings&lt;DeleteClientTlsPolicyRequest, Operation&gt;
       deleteClientTlsPolicySettings() {
-<span class="fc" id="L539">    return deleteClientTlsPolicySettings;</span>
+<span class="fc" id="L613">    return deleteClientTlsPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteClientTlsPolicy. */
   public OperationCallSettings&lt;DeleteClientTlsPolicyRequest, Empty, OperationMetadata&gt;
       deleteClientTlsPolicyOperationSettings() {
-<span class="fc" id="L545">    return deleteClientTlsPolicyOperationSettings;</span>
+<span class="fc" id="L619">    return deleteClientTlsPolicyOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listLocations. */
+  public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+      listLocationsSettings() {
+<span class="fc" id="L625">    return listLocationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getLocation. */
+  public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L630">    return getLocationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to setIamPolicy. */
+  public UnaryCallSettings&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings() {
+<span class="fc" id="L635">    return setIamPolicySettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getIamPolicy. */
+  public UnaryCallSettings&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings() {
+<span class="fc" id="L640">    return getIamPolicySettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to testIamPermissions. */
+  public UnaryCallSettings&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsSettings() {
+<span class="fc" id="L646">    return testIamPermissionsSettings;</span>
   }
 
   public NetworkSecurityStub createStub() throws IOException {
-<span class="fc" id="L549">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L550">        .getTransportName()</span>
-<span class="pc bpc" id="L551" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L552">      return GrpcNetworkSecurityStub.create(this);</span>
+<span class="fc" id="L650">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L651">        .getTransportName()</span>
+<span class="fc bfc" id="L652" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L653">      return GrpcNetworkSecurityStub.create(this);</span>
     }
-<span class="nc" id="L554">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L555">        String.format(</span>
-<span class="nc" id="L556">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="fc" id="L655">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L656">        .getTransportName()</span>
+<span class="pc bpc" id="L657" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L658">      return HttpJsonNetworkSecurityStub.create(this);</span>
+    }
+<span class="nc" id="L660">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L661">        String.format(</span>
+<span class="nc" id="L662">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L561">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L667">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L566">    return &quot;networksecurity.googleapis.com:443&quot;;</span>
+<span class="fc" id="L672">    return &quot;networksecurity.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L571">    return &quot;networksecurity.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L677">    return &quot;networksecurity.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L576">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L682">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L581">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L582">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L583">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L687">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L688">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L689">        .setUseJwtAccessWithScope(true);</span>
   }
 
-  /** Returns a builder for the default ChannelProvider for this service. */
+  /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L588">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L589">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L694">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L695">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+  }
+
+  /** Returns a builder for the default REST ChannelProvider for this service. */
+  @BetaApi
+  public static InstantiatingHttpJsonChannelProvider.Builder
+      defaultHttpJsonTransportProviderBuilder() {
+<span class="fc" id="L702">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L593">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L706">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
-  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L598">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L599">        .setGeneratedLibToken(</span>
-<span class="fc" id="L600">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(NetworkSecurityStubSettings.class))</span>
-<span class="fc" id="L601">        .setTransportToken(</span>
-<span class="fc" id="L602">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+  public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
+<span class="fc" id="L711">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L712">        .setGeneratedLibToken(</span>
+<span class="fc" id="L713">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(NetworkSecurityStubSettings.class))</span>
+<span class="fc" id="L714">        .setTransportToken(</span>
+<span class="fc" id="L715">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
-  /** Returns a new builder for this class. */
+  @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
+  public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
+<span class="fc" id="L720">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L721">        .setGeneratedLibToken(</span>
+<span class="fc" id="L722">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(NetworkSecurityStubSettings.class))</span>
+<span class="fc" id="L723">        .setTransportToken(</span>
+<span class="fc" id="L724">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L725">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+  }
+
+  public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
+<span class="fc" id="L729">    return NetworkSecurityStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+  }
+
+  /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L607">    return Builder.createDefault();</span>
+<span class="fc" id="L734">    return Builder.createDefault();</span>
+  }
+
+  /** Returns a new REST builder for this class. */
+  public static Builder newHttpJsonBuilder() {
+<span class="fc" id="L739">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L612">    return new Builder(clientContext);</span>
+<span class="nc" id="L744">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L617">    return new Builder(this);</span>
+<span class="nc" id="L749">    return new Builder(this);</span>
   }
 
   protected NetworkSecurityStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L621">    super(settingsBuilder);</span>
+<span class="fc" id="L753">    super(settingsBuilder);</span>
 
-<span class="fc" id="L623">    listAuthorizationPoliciesSettings = settingsBuilder.listAuthorizationPoliciesSettings().build();</span>
-<span class="fc" id="L624">    getAuthorizationPolicySettings = settingsBuilder.getAuthorizationPolicySettings().build();</span>
-<span class="fc" id="L625">    createAuthorizationPolicySettings = settingsBuilder.createAuthorizationPolicySettings().build();</span>
-<span class="fc" id="L626">    createAuthorizationPolicyOperationSettings =</span>
-<span class="fc" id="L627">        settingsBuilder.createAuthorizationPolicyOperationSettings().build();</span>
-<span class="fc" id="L628">    updateAuthorizationPolicySettings = settingsBuilder.updateAuthorizationPolicySettings().build();</span>
-<span class="fc" id="L629">    updateAuthorizationPolicyOperationSettings =</span>
-<span class="fc" id="L630">        settingsBuilder.updateAuthorizationPolicyOperationSettings().build();</span>
-<span class="fc" id="L631">    deleteAuthorizationPolicySettings = settingsBuilder.deleteAuthorizationPolicySettings().build();</span>
-<span class="fc" id="L632">    deleteAuthorizationPolicyOperationSettings =</span>
-<span class="fc" id="L633">        settingsBuilder.deleteAuthorizationPolicyOperationSettings().build();</span>
-<span class="fc" id="L634">    listServerTlsPoliciesSettings = settingsBuilder.listServerTlsPoliciesSettings().build();</span>
-<span class="fc" id="L635">    getServerTlsPolicySettings = settingsBuilder.getServerTlsPolicySettings().build();</span>
-<span class="fc" id="L636">    createServerTlsPolicySettings = settingsBuilder.createServerTlsPolicySettings().build();</span>
-<span class="fc" id="L637">    createServerTlsPolicyOperationSettings =</span>
-<span class="fc" id="L638">        settingsBuilder.createServerTlsPolicyOperationSettings().build();</span>
-<span class="fc" id="L639">    updateServerTlsPolicySettings = settingsBuilder.updateServerTlsPolicySettings().build();</span>
-<span class="fc" id="L640">    updateServerTlsPolicyOperationSettings =</span>
-<span class="fc" id="L641">        settingsBuilder.updateServerTlsPolicyOperationSettings().build();</span>
-<span class="fc" id="L642">    deleteServerTlsPolicySettings = settingsBuilder.deleteServerTlsPolicySettings().build();</span>
-<span class="fc" id="L643">    deleteServerTlsPolicyOperationSettings =</span>
-<span class="fc" id="L644">        settingsBuilder.deleteServerTlsPolicyOperationSettings().build();</span>
-<span class="fc" id="L645">    listClientTlsPoliciesSettings = settingsBuilder.listClientTlsPoliciesSettings().build();</span>
-<span class="fc" id="L646">    getClientTlsPolicySettings = settingsBuilder.getClientTlsPolicySettings().build();</span>
-<span class="fc" id="L647">    createClientTlsPolicySettings = settingsBuilder.createClientTlsPolicySettings().build();</span>
-<span class="fc" id="L648">    createClientTlsPolicyOperationSettings =</span>
-<span class="fc" id="L649">        settingsBuilder.createClientTlsPolicyOperationSettings().build();</span>
-<span class="fc" id="L650">    updateClientTlsPolicySettings = settingsBuilder.updateClientTlsPolicySettings().build();</span>
-<span class="fc" id="L651">    updateClientTlsPolicyOperationSettings =</span>
-<span class="fc" id="L652">        settingsBuilder.updateClientTlsPolicyOperationSettings().build();</span>
-<span class="fc" id="L653">    deleteClientTlsPolicySettings = settingsBuilder.deleteClientTlsPolicySettings().build();</span>
-<span class="fc" id="L654">    deleteClientTlsPolicyOperationSettings =</span>
-<span class="fc" id="L655">        settingsBuilder.deleteClientTlsPolicyOperationSettings().build();</span>
-<span class="fc" id="L656">  }</span>
+<span class="fc" id="L755">    listAuthorizationPoliciesSettings = settingsBuilder.listAuthorizationPoliciesSettings().build();</span>
+<span class="fc" id="L756">    getAuthorizationPolicySettings = settingsBuilder.getAuthorizationPolicySettings().build();</span>
+<span class="fc" id="L757">    createAuthorizationPolicySettings = settingsBuilder.createAuthorizationPolicySettings().build();</span>
+<span class="fc" id="L758">    createAuthorizationPolicyOperationSettings =</span>
+<span class="fc" id="L759">        settingsBuilder.createAuthorizationPolicyOperationSettings().build();</span>
+<span class="fc" id="L760">    updateAuthorizationPolicySettings = settingsBuilder.updateAuthorizationPolicySettings().build();</span>
+<span class="fc" id="L761">    updateAuthorizationPolicyOperationSettings =</span>
+<span class="fc" id="L762">        settingsBuilder.updateAuthorizationPolicyOperationSettings().build();</span>
+<span class="fc" id="L763">    deleteAuthorizationPolicySettings = settingsBuilder.deleteAuthorizationPolicySettings().build();</span>
+<span class="fc" id="L764">    deleteAuthorizationPolicyOperationSettings =</span>
+<span class="fc" id="L765">        settingsBuilder.deleteAuthorizationPolicyOperationSettings().build();</span>
+<span class="fc" id="L766">    listServerTlsPoliciesSettings = settingsBuilder.listServerTlsPoliciesSettings().build();</span>
+<span class="fc" id="L767">    getServerTlsPolicySettings = settingsBuilder.getServerTlsPolicySettings().build();</span>
+<span class="fc" id="L768">    createServerTlsPolicySettings = settingsBuilder.createServerTlsPolicySettings().build();</span>
+<span class="fc" id="L769">    createServerTlsPolicyOperationSettings =</span>
+<span class="fc" id="L770">        settingsBuilder.createServerTlsPolicyOperationSettings().build();</span>
+<span class="fc" id="L771">    updateServerTlsPolicySettings = settingsBuilder.updateServerTlsPolicySettings().build();</span>
+<span class="fc" id="L772">    updateServerTlsPolicyOperationSettings =</span>
+<span class="fc" id="L773">        settingsBuilder.updateServerTlsPolicyOperationSettings().build();</span>
+<span class="fc" id="L774">    deleteServerTlsPolicySettings = settingsBuilder.deleteServerTlsPolicySettings().build();</span>
+<span class="fc" id="L775">    deleteServerTlsPolicyOperationSettings =</span>
+<span class="fc" id="L776">        settingsBuilder.deleteServerTlsPolicyOperationSettings().build();</span>
+<span class="fc" id="L777">    listClientTlsPoliciesSettings = settingsBuilder.listClientTlsPoliciesSettings().build();</span>
+<span class="fc" id="L778">    getClientTlsPolicySettings = settingsBuilder.getClientTlsPolicySettings().build();</span>
+<span class="fc" id="L779">    createClientTlsPolicySettings = settingsBuilder.createClientTlsPolicySettings().build();</span>
+<span class="fc" id="L780">    createClientTlsPolicyOperationSettings =</span>
+<span class="fc" id="L781">        settingsBuilder.createClientTlsPolicyOperationSettings().build();</span>
+<span class="fc" id="L782">    updateClientTlsPolicySettings = settingsBuilder.updateClientTlsPolicySettings().build();</span>
+<span class="fc" id="L783">    updateClientTlsPolicyOperationSettings =</span>
+<span class="fc" id="L784">        settingsBuilder.updateClientTlsPolicyOperationSettings().build();</span>
+<span class="fc" id="L785">    deleteClientTlsPolicySettings = settingsBuilder.deleteClientTlsPolicySettings().build();</span>
+<span class="fc" id="L786">    deleteClientTlsPolicyOperationSettings =</span>
+<span class="fc" id="L787">        settingsBuilder.deleteClientTlsPolicyOperationSettings().build();</span>
+<span class="fc" id="L788">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L789">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L790">    setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();</span>
+<span class="fc" id="L791">    getIamPolicySettings = settingsBuilder.getIamPolicySettings().build();</span>
+<span class="fc" id="L792">    testIamPermissionsSettings = settingsBuilder.testIamPermissionsSettings().build();</span>
+<span class="fc" id="L793">  }</span>
 
   /** Builder for NetworkSecurityStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;NetworkSecurityStubSettings, Builder&gt; {
@@ -724,70 +861,83 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
     private final OperationCallSettings.Builder&lt;
             DeleteClientTlsPolicyRequest, Empty, OperationMetadata&gt;
         deleteClientTlsPolicyOperationSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings;
+    private final UnaryCallSettings.Builder&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings;
+    private final UnaryCallSettings.Builder&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings;
+    private final UnaryCallSettings.Builder&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+        testIamPermissionsSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L732">          ImmutableMap.builder();</span>
-<span class="fc" id="L733">      definitions.put(</span>
-<span class="fc" id="L734">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L735">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L877">          ImmutableMap.builder();</span>
+<span class="fc" id="L878">      definitions.put(</span>
+<span class="fc" id="L879">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L880">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L741">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L742">      RetrySettings settings = null;</span>
+<span class="fc" id="L886">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L887">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L744">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L745">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L746">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L747">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L748">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L749">              .build();</span>
-<span class="fc" id="L750">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
-<span class="fc" id="L751">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L752">    }</span>
+<span class="fc" id="L889">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L890">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L891">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L892">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L893">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L894">              .build();</span>
+<span class="fc" id="L895">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
+<span class="fc" id="L896">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L897">    }</span>
 
     protected Builder() {
-<span class="nc" id="L755">      this(((ClientContext) null));</span>
-<span class="nc" id="L756">    }</span>
+<span class="nc" id="L900">      this(((ClientContext) null));</span>
+<span class="nc" id="L901">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L759">      super(clientContext);</span>
+<span class="fc" id="L904">      super(clientContext);</span>
 
-<span class="fc" id="L761">      listAuthorizationPoliciesSettings =</span>
-<span class="fc" id="L762">          PagedCallSettings.newBuilder(LIST_AUTHORIZATION_POLICIES_PAGE_STR_FACT);</span>
-<span class="fc" id="L763">      getAuthorizationPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L764">      createAuthorizationPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L765">      createAuthorizationPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L766">      updateAuthorizationPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L767">      updateAuthorizationPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L768">      deleteAuthorizationPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L769">      deleteAuthorizationPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L770">      listServerTlsPoliciesSettings =</span>
-<span class="fc" id="L771">          PagedCallSettings.newBuilder(LIST_SERVER_TLS_POLICIES_PAGE_STR_FACT);</span>
-<span class="fc" id="L772">      getServerTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L773">      createServerTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L774">      createServerTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L775">      updateServerTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L776">      updateServerTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L777">      deleteServerTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L778">      deleteServerTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L779">      listClientTlsPoliciesSettings =</span>
-<span class="fc" id="L780">          PagedCallSettings.newBuilder(LIST_CLIENT_TLS_POLICIES_PAGE_STR_FACT);</span>
-<span class="fc" id="L781">      getClientTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L782">      createClientTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L783">      createClientTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L784">      updateClientTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L785">      updateClientTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L786">      deleteClientTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L787">      deleteClientTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L906">      listAuthorizationPoliciesSettings =</span>
+<span class="fc" id="L907">          PagedCallSettings.newBuilder(LIST_AUTHORIZATION_POLICIES_PAGE_STR_FACT);</span>
+<span class="fc" id="L908">      getAuthorizationPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L909">      createAuthorizationPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L910">      createAuthorizationPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L911">      updateAuthorizationPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L912">      updateAuthorizationPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L913">      deleteAuthorizationPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L914">      deleteAuthorizationPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L915">      listServerTlsPoliciesSettings =</span>
+<span class="fc" id="L916">          PagedCallSettings.newBuilder(LIST_SERVER_TLS_POLICIES_PAGE_STR_FACT);</span>
+<span class="fc" id="L917">      getServerTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L918">      createServerTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L919">      createServerTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L920">      updateServerTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L921">      updateServerTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L922">      deleteServerTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L923">      deleteServerTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L924">      listClientTlsPoliciesSettings =</span>
+<span class="fc" id="L925">          PagedCallSettings.newBuilder(LIST_CLIENT_TLS_POLICIES_PAGE_STR_FACT);</span>
+<span class="fc" id="L926">      getClientTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L927">      createClientTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L928">      createClientTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L929">      updateClientTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L930">      updateClientTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L931">      deleteClientTlsPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L932">      deleteClientTlsPolicyOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L933">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L934">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L935">      setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L936">      getIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L937">      testIamPermissionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L789">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L790">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L939">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L940">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listAuthorizationPoliciesSettings,
               getAuthorizationPolicySettings,
               createAuthorizationPolicySettings,
@@ -802,49 +952,59 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
               getClientTlsPolicySettings,
               createClientTlsPolicySettings,
               updateClientTlsPolicySettings,
-              deleteClientTlsPolicySettings);
-<span class="fc" id="L806">      initDefaults(this);</span>
-<span class="fc" id="L807">    }</span>
+              deleteClientTlsPolicySettings,
+              listLocationsSettings,
+              getLocationSettings,
+              setIamPolicySettings,
+              getIamPolicySettings,
+              testIamPermissionsSettings);
+<span class="fc" id="L961">      initDefaults(this);</span>
+<span class="fc" id="L962">    }</span>
 
     protected Builder(NetworkSecurityStubSettings settings) {
-<span class="nc" id="L810">      super(settings);</span>
+<span class="nc" id="L965">      super(settings);</span>
 
-<span class="nc" id="L812">      listAuthorizationPoliciesSettings = settings.listAuthorizationPoliciesSettings.toBuilder();</span>
-<span class="nc" id="L813">      getAuthorizationPolicySettings = settings.getAuthorizationPolicySettings.toBuilder();</span>
-<span class="nc" id="L814">      createAuthorizationPolicySettings = settings.createAuthorizationPolicySettings.toBuilder();</span>
-<span class="nc" id="L815">      createAuthorizationPolicyOperationSettings =</span>
-<span class="nc" id="L816">          settings.createAuthorizationPolicyOperationSettings.toBuilder();</span>
-<span class="nc" id="L817">      updateAuthorizationPolicySettings = settings.updateAuthorizationPolicySettings.toBuilder();</span>
-<span class="nc" id="L818">      updateAuthorizationPolicyOperationSettings =</span>
-<span class="nc" id="L819">          settings.updateAuthorizationPolicyOperationSettings.toBuilder();</span>
-<span class="nc" id="L820">      deleteAuthorizationPolicySettings = settings.deleteAuthorizationPolicySettings.toBuilder();</span>
-<span class="nc" id="L821">      deleteAuthorizationPolicyOperationSettings =</span>
-<span class="nc" id="L822">          settings.deleteAuthorizationPolicyOperationSettings.toBuilder();</span>
-<span class="nc" id="L823">      listServerTlsPoliciesSettings = settings.listServerTlsPoliciesSettings.toBuilder();</span>
-<span class="nc" id="L824">      getServerTlsPolicySettings = settings.getServerTlsPolicySettings.toBuilder();</span>
-<span class="nc" id="L825">      createServerTlsPolicySettings = settings.createServerTlsPolicySettings.toBuilder();</span>
-<span class="nc" id="L826">      createServerTlsPolicyOperationSettings =</span>
-<span class="nc" id="L827">          settings.createServerTlsPolicyOperationSettings.toBuilder();</span>
-<span class="nc" id="L828">      updateServerTlsPolicySettings = settings.updateServerTlsPolicySettings.toBuilder();</span>
-<span class="nc" id="L829">      updateServerTlsPolicyOperationSettings =</span>
-<span class="nc" id="L830">          settings.updateServerTlsPolicyOperationSettings.toBuilder();</span>
-<span class="nc" id="L831">      deleteServerTlsPolicySettings = settings.deleteServerTlsPolicySettings.toBuilder();</span>
-<span class="nc" id="L832">      deleteServerTlsPolicyOperationSettings =</span>
-<span class="nc" id="L833">          settings.deleteServerTlsPolicyOperationSettings.toBuilder();</span>
-<span class="nc" id="L834">      listClientTlsPoliciesSettings = settings.listClientTlsPoliciesSettings.toBuilder();</span>
-<span class="nc" id="L835">      getClientTlsPolicySettings = settings.getClientTlsPolicySettings.toBuilder();</span>
-<span class="nc" id="L836">      createClientTlsPolicySettings = settings.createClientTlsPolicySettings.toBuilder();</span>
-<span class="nc" id="L837">      createClientTlsPolicyOperationSettings =</span>
-<span class="nc" id="L838">          settings.createClientTlsPolicyOperationSettings.toBuilder();</span>
-<span class="nc" id="L839">      updateClientTlsPolicySettings = settings.updateClientTlsPolicySettings.toBuilder();</span>
-<span class="nc" id="L840">      updateClientTlsPolicyOperationSettings =</span>
-<span class="nc" id="L841">          settings.updateClientTlsPolicyOperationSettings.toBuilder();</span>
-<span class="nc" id="L842">      deleteClientTlsPolicySettings = settings.deleteClientTlsPolicySettings.toBuilder();</span>
-<span class="nc" id="L843">      deleteClientTlsPolicyOperationSettings =</span>
-<span class="nc" id="L844">          settings.deleteClientTlsPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L967">      listAuthorizationPoliciesSettings = settings.listAuthorizationPoliciesSettings.toBuilder();</span>
+<span class="nc" id="L968">      getAuthorizationPolicySettings = settings.getAuthorizationPolicySettings.toBuilder();</span>
+<span class="nc" id="L969">      createAuthorizationPolicySettings = settings.createAuthorizationPolicySettings.toBuilder();</span>
+<span class="nc" id="L970">      createAuthorizationPolicyOperationSettings =</span>
+<span class="nc" id="L971">          settings.createAuthorizationPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L972">      updateAuthorizationPolicySettings = settings.updateAuthorizationPolicySettings.toBuilder();</span>
+<span class="nc" id="L973">      updateAuthorizationPolicyOperationSettings =</span>
+<span class="nc" id="L974">          settings.updateAuthorizationPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L975">      deleteAuthorizationPolicySettings = settings.deleteAuthorizationPolicySettings.toBuilder();</span>
+<span class="nc" id="L976">      deleteAuthorizationPolicyOperationSettings =</span>
+<span class="nc" id="L977">          settings.deleteAuthorizationPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L978">      listServerTlsPoliciesSettings = settings.listServerTlsPoliciesSettings.toBuilder();</span>
+<span class="nc" id="L979">      getServerTlsPolicySettings = settings.getServerTlsPolicySettings.toBuilder();</span>
+<span class="nc" id="L980">      createServerTlsPolicySettings = settings.createServerTlsPolicySettings.toBuilder();</span>
+<span class="nc" id="L981">      createServerTlsPolicyOperationSettings =</span>
+<span class="nc" id="L982">          settings.createServerTlsPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L983">      updateServerTlsPolicySettings = settings.updateServerTlsPolicySettings.toBuilder();</span>
+<span class="nc" id="L984">      updateServerTlsPolicyOperationSettings =</span>
+<span class="nc" id="L985">          settings.updateServerTlsPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L986">      deleteServerTlsPolicySettings = settings.deleteServerTlsPolicySettings.toBuilder();</span>
+<span class="nc" id="L987">      deleteServerTlsPolicyOperationSettings =</span>
+<span class="nc" id="L988">          settings.deleteServerTlsPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L989">      listClientTlsPoliciesSettings = settings.listClientTlsPoliciesSettings.toBuilder();</span>
+<span class="nc" id="L990">      getClientTlsPolicySettings = settings.getClientTlsPolicySettings.toBuilder();</span>
+<span class="nc" id="L991">      createClientTlsPolicySettings = settings.createClientTlsPolicySettings.toBuilder();</span>
+<span class="nc" id="L992">      createClientTlsPolicyOperationSettings =</span>
+<span class="nc" id="L993">          settings.createClientTlsPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L994">      updateClientTlsPolicySettings = settings.updateClientTlsPolicySettings.toBuilder();</span>
+<span class="nc" id="L995">      updateClientTlsPolicyOperationSettings =</span>
+<span class="nc" id="L996">          settings.updateClientTlsPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L997">      deleteClientTlsPolicySettings = settings.deleteClientTlsPolicySettings.toBuilder();</span>
+<span class="nc" id="L998">      deleteClientTlsPolicyOperationSettings =</span>
+<span class="nc" id="L999">          settings.deleteClientTlsPolicyOperationSettings.toBuilder();</span>
+<span class="nc" id="L1000">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L1001">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
+<span class="nc" id="L1002">      setIamPolicySettings = settings.setIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L1003">      getIamPolicySettings = settings.getIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L1004">      testIamPermissionsSettings = settings.testIamPermissionsSettings.toBuilder();</span>
 
-<span class="nc" id="L846">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L847">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L1006">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L1007">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               listAuthorizationPoliciesSettings,
               getAuthorizationPolicySettings,
               createAuthorizationPolicySettings,
@@ -859,318 +1019,361 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
               getClientTlsPolicySettings,
               createClientTlsPolicySettings,
               updateClientTlsPolicySettings,
-              deleteClientTlsPolicySettings);
-<span class="nc" id="L863">    }</span>
+              deleteClientTlsPolicySettings,
+              listLocationsSettings,
+              getLocationSettings,
+              setIamPolicySettings,
+              getIamPolicySettings,
+              testIamPermissionsSettings);
+<span class="nc" id="L1028">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L866">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L1031">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L868">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L869">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L870">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L871">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L872">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L873">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L1033">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L1034">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L1035">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L1036">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L1037">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L1038">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L875">      return initDefaults(builder);</span>
+<span class="fc" id="L1040">      return initDefaults(builder);</span>
+    }
+
+    private static Builder createHttpJsonDefault() {
+<span class="fc" id="L1044">      Builder builder = new Builder(((ClientContext) null));</span>
+
+<span class="fc" id="L1046">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L1047">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L1048">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L1049">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L1050">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L1051">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+
+<span class="fc" id="L1053">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L879">      builder</span>
-<span class="fc" id="L880">          .listAuthorizationPoliciesSettings()</span>
-<span class="fc" id="L881">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L882">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L1057">      builder</span>
+<span class="fc" id="L1058">          .listAuthorizationPoliciesSettings()</span>
+<span class="fc" id="L1059">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1060">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L884">      builder</span>
-<span class="fc" id="L885">          .getAuthorizationPolicySettings()</span>
-<span class="fc" id="L886">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L887">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L1062">      builder</span>
+<span class="fc" id="L1063">          .getAuthorizationPolicySettings()</span>
+<span class="fc" id="L1064">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1065">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L889">      builder</span>
-<span class="fc" id="L890">          .createAuthorizationPolicySettings()</span>
-<span class="fc" id="L891">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L892">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L1067">      builder</span>
+<span class="fc" id="L1068">          .createAuthorizationPolicySettings()</span>
+<span class="fc" id="L1069">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1070">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L894">      builder</span>
-<span class="fc" id="L895">          .updateAuthorizationPolicySettings()</span>
-<span class="fc" id="L896">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L897">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L899">      builder</span>
-<span class="fc" id="L900">          .deleteAuthorizationPolicySettings()</span>
-<span class="fc" id="L901">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L902">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L904">      builder</span>
-<span class="fc" id="L905">          .listServerTlsPoliciesSettings()</span>
-<span class="fc" id="L906">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L907">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L909">      builder</span>
-<span class="fc" id="L910">          .getServerTlsPolicySettings()</span>
-<span class="fc" id="L911">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L912">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L914">      builder</span>
-<span class="fc" id="L915">          .createServerTlsPolicySettings()</span>
-<span class="fc" id="L916">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L917">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L919">      builder</span>
-<span class="fc" id="L920">          .updateServerTlsPolicySettings()</span>
-<span class="fc" id="L921">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L922">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L924">      builder</span>
-<span class="fc" id="L925">          .deleteServerTlsPolicySettings()</span>
-<span class="fc" id="L926">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L927">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L929">      builder</span>
-<span class="fc" id="L930">          .listClientTlsPoliciesSettings()</span>
-<span class="fc" id="L931">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L932">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L934">      builder</span>
-<span class="fc" id="L935">          .getClientTlsPolicySettings()</span>
-<span class="fc" id="L936">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L937">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L939">      builder</span>
-<span class="fc" id="L940">          .createClientTlsPolicySettings()</span>
-<span class="fc" id="L941">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L942">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L944">      builder</span>
-<span class="fc" id="L945">          .updateClientTlsPolicySettings()</span>
-<span class="fc" id="L946">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L947">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L949">      builder</span>
-<span class="fc" id="L950">          .deleteClientTlsPolicySettings()</span>
-<span class="fc" id="L951">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L952">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
-
-<span class="fc" id="L954">      builder</span>
-<span class="fc" id="L955">          .createAuthorizationPolicyOperationSettings()</span>
-<span class="fc" id="L956">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-                  .&lt;CreateAuthorizationPolicyRequest, OperationSnapshot&gt;
-<span class="fc" id="L959">                      newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L960">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L961">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L962">                  .build())</span>
-<span class="fc" id="L963">          .setResponseTransformer(</span>
-<span class="fc" id="L964">              ProtoOperationTransformers.ResponseTransformer.create(AuthorizationPolicy.class))</span>
-<span class="fc" id="L965">          .setMetadataTransformer(</span>
-<span class="fc" id="L966">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L967">          .setPollingAlgorithm(</span>
-<span class="fc" id="L968">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L969">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L970">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L971">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L972">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L973">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L974">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L975">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L976">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L977">                      .build()));</span>
-
-<span class="fc" id="L979">      builder</span>
-<span class="fc" id="L980">          .updateAuthorizationPolicyOperationSettings()</span>
-<span class="fc" id="L981">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-                  .&lt;UpdateAuthorizationPolicyRequest, OperationSnapshot&gt;
-<span class="fc" id="L984">                      newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L985">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L986">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L987">                  .build())</span>
-<span class="fc" id="L988">          .setResponseTransformer(</span>
-<span class="fc" id="L989">              ProtoOperationTransformers.ResponseTransformer.create(AuthorizationPolicy.class))</span>
-<span class="fc" id="L990">          .setMetadataTransformer(</span>
-<span class="fc" id="L991">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L992">          .setPollingAlgorithm(</span>
-<span class="fc" id="L993">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L994">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L995">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L996">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L997">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L998">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L999">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1000">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1001">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1002">                      .build()));</span>
-
-<span class="fc" id="L1004">      builder</span>
-<span class="fc" id="L1005">          .deleteAuthorizationPolicyOperationSettings()</span>
-<span class="fc" id="L1006">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-                  .&lt;DeleteAuthorizationPolicyRequest, OperationSnapshot&gt;
-<span class="fc" id="L1009">                      newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1010">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1011">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1012">                  .build())</span>
-<span class="fc" id="L1013">          .setResponseTransformer(</span>
-<span class="fc" id="L1014">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
-<span class="fc" id="L1015">          .setMetadataTransformer(</span>
-<span class="fc" id="L1016">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1017">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1018">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1019">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1020">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1021">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1022">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1023">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1024">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1025">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1026">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1027">                      .build()));</span>
-
-<span class="fc" id="L1029">      builder</span>
-<span class="fc" id="L1030">          .createServerTlsPolicyOperationSettings()</span>
-<span class="fc" id="L1031">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L1033">                  .&lt;CreateServerTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1034">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1035">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1036">                  .build())</span>
-<span class="fc" id="L1037">          .setResponseTransformer(</span>
-<span class="fc" id="L1038">              ProtoOperationTransformers.ResponseTransformer.create(ServerTlsPolicy.class))</span>
-<span class="fc" id="L1039">          .setMetadataTransformer(</span>
-<span class="fc" id="L1040">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1041">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1042">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1043">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1044">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1045">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1046">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1047">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1048">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1049">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1050">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1051">                      .build()));</span>
-
-<span class="fc" id="L1053">      builder</span>
-<span class="fc" id="L1054">          .updateServerTlsPolicyOperationSettings()</span>
-<span class="fc" id="L1055">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L1057">                  .&lt;UpdateServerTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1058">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1059">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1060">                  .build())</span>
-<span class="fc" id="L1061">          .setResponseTransformer(</span>
-<span class="fc" id="L1062">              ProtoOperationTransformers.ResponseTransformer.create(ServerTlsPolicy.class))</span>
-<span class="fc" id="L1063">          .setMetadataTransformer(</span>
-<span class="fc" id="L1064">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1065">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1066">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1067">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1068">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1069">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1070">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1071">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1072">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1073">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1074">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1075">                      .build()));</span>
+<span class="fc" id="L1072">      builder</span>
+<span class="fc" id="L1073">          .updateAuthorizationPolicySettings()</span>
+<span class="fc" id="L1074">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1075">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
 <span class="fc" id="L1077">      builder</span>
-<span class="fc" id="L1078">          .deleteServerTlsPolicyOperationSettings()</span>
-<span class="fc" id="L1079">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L1081">                  .&lt;DeleteServerTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1082">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1083">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1084">                  .build())</span>
-<span class="fc" id="L1085">          .setResponseTransformer(</span>
-<span class="fc" id="L1086">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
-<span class="fc" id="L1087">          .setMetadataTransformer(</span>
-<span class="fc" id="L1088">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1089">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1090">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1091">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1092">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1093">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1094">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1095">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1096">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1097">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1098">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1099">                      .build()));</span>
+<span class="fc" id="L1078">          .deleteAuthorizationPolicySettings()</span>
+<span class="fc" id="L1079">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1080">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L1101">      builder</span>
-<span class="fc" id="L1102">          .createClientTlsPolicyOperationSettings()</span>
-<span class="fc" id="L1103">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L1105">                  .&lt;CreateClientTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1106">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1107">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1108">                  .build())</span>
-<span class="fc" id="L1109">          .setResponseTransformer(</span>
-<span class="fc" id="L1110">              ProtoOperationTransformers.ResponseTransformer.create(ClientTlsPolicy.class))</span>
-<span class="fc" id="L1111">          .setMetadataTransformer(</span>
-<span class="fc" id="L1112">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1113">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1114">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1115">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1116">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1117">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1118">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1119">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1120">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1121">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1122">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1123">                      .build()));</span>
+<span class="fc" id="L1082">      builder</span>
+<span class="fc" id="L1083">          .listServerTlsPoliciesSettings()</span>
+<span class="fc" id="L1084">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1085">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L1125">      builder</span>
-<span class="fc" id="L1126">          .updateClientTlsPolicyOperationSettings()</span>
-<span class="fc" id="L1127">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L1129">                  .&lt;UpdateClientTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1130">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1131">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1132">                  .build())</span>
-<span class="fc" id="L1133">          .setResponseTransformer(</span>
-<span class="fc" id="L1134">              ProtoOperationTransformers.ResponseTransformer.create(ClientTlsPolicy.class))</span>
-<span class="fc" id="L1135">          .setMetadataTransformer(</span>
-<span class="fc" id="L1136">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1137">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1138">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1139">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1140">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1141">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1142">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1143">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1144">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1145">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1146">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1147">                      .build()));</span>
+<span class="fc" id="L1087">      builder</span>
+<span class="fc" id="L1088">          .getServerTlsPolicySettings()</span>
+<span class="fc" id="L1089">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1090">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L1149">      builder</span>
-<span class="fc" id="L1150">          .deleteClientTlsPolicyOperationSettings()</span>
-<span class="fc" id="L1151">          .setInitialCallSettings(</span>
-              UnaryCallSettings
-<span class="fc" id="L1153">                  .&lt;DeleteClientTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L1154">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L1155">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L1156">                  .build())</span>
-<span class="fc" id="L1157">          .setResponseTransformer(</span>
-<span class="fc" id="L1158">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
-<span class="fc" id="L1159">          .setMetadataTransformer(</span>
-<span class="fc" id="L1160">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
-<span class="fc" id="L1161">          .setPollingAlgorithm(</span>
-<span class="fc" id="L1162">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L1163">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L1164">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L1165">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L1166">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L1167">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1168">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L1169">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L1170">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L1171">                      .build()));</span>
+<span class="fc" id="L1092">      builder</span>
+<span class="fc" id="L1093">          .createServerTlsPolicySettings()</span>
+<span class="fc" id="L1094">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1095">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L1173">      return builder;</span>
+<span class="fc" id="L1097">      builder</span>
+<span class="fc" id="L1098">          .updateServerTlsPolicySettings()</span>
+<span class="fc" id="L1099">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1100">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1102">      builder</span>
+<span class="fc" id="L1103">          .deleteServerTlsPolicySettings()</span>
+<span class="fc" id="L1104">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1105">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1107">      builder</span>
+<span class="fc" id="L1108">          .listClientTlsPoliciesSettings()</span>
+<span class="fc" id="L1109">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1110">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1112">      builder</span>
+<span class="fc" id="L1113">          .getClientTlsPolicySettings()</span>
+<span class="fc" id="L1114">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1115">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1117">      builder</span>
+<span class="fc" id="L1118">          .createClientTlsPolicySettings()</span>
+<span class="fc" id="L1119">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1120">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1122">      builder</span>
+<span class="fc" id="L1123">          .updateClientTlsPolicySettings()</span>
+<span class="fc" id="L1124">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1125">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1127">      builder</span>
+<span class="fc" id="L1128">          .deleteClientTlsPolicySettings()</span>
+<span class="fc" id="L1129">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1130">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1132">      builder</span>
+<span class="fc" id="L1133">          .listLocationsSettings()</span>
+<span class="fc" id="L1134">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1135">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1137">      builder</span>
+<span class="fc" id="L1138">          .getLocationSettings()</span>
+<span class="fc" id="L1139">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1140">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1142">      builder</span>
+<span class="fc" id="L1143">          .setIamPolicySettings()</span>
+<span class="fc" id="L1144">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1145">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1147">      builder</span>
+<span class="fc" id="L1148">          .getIamPolicySettings()</span>
+<span class="fc" id="L1149">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1150">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1152">      builder</span>
+<span class="fc" id="L1153">          .testIamPermissionsSettings()</span>
+<span class="fc" id="L1154">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1155">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L1157">      builder</span>
+<span class="fc" id="L1158">          .createAuthorizationPolicyOperationSettings()</span>
+<span class="fc" id="L1159">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+                  .&lt;CreateAuthorizationPolicyRequest, OperationSnapshot&gt;
+<span class="fc" id="L1162">                      newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1163">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1164">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1165">                  .build())</span>
+<span class="fc" id="L1166">          .setResponseTransformer(</span>
+<span class="fc" id="L1167">              ProtoOperationTransformers.ResponseTransformer.create(AuthorizationPolicy.class))</span>
+<span class="fc" id="L1168">          .setMetadataTransformer(</span>
+<span class="fc" id="L1169">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1170">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1171">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1172">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1173">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1174">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1175">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1176">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1177">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1178">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1179">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1180">                      .build()));</span>
+
+<span class="fc" id="L1182">      builder</span>
+<span class="fc" id="L1183">          .updateAuthorizationPolicyOperationSettings()</span>
+<span class="fc" id="L1184">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+                  .&lt;UpdateAuthorizationPolicyRequest, OperationSnapshot&gt;
+<span class="fc" id="L1187">                      newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1188">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1189">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1190">                  .build())</span>
+<span class="fc" id="L1191">          .setResponseTransformer(</span>
+<span class="fc" id="L1192">              ProtoOperationTransformers.ResponseTransformer.create(AuthorizationPolicy.class))</span>
+<span class="fc" id="L1193">          .setMetadataTransformer(</span>
+<span class="fc" id="L1194">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1195">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1196">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1197">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1198">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1199">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1200">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1201">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1202">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1203">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1204">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1205">                      .build()));</span>
+
+<span class="fc" id="L1207">      builder</span>
+<span class="fc" id="L1208">          .deleteAuthorizationPolicyOperationSettings()</span>
+<span class="fc" id="L1209">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+                  .&lt;DeleteAuthorizationPolicyRequest, OperationSnapshot&gt;
+<span class="fc" id="L1212">                      newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1213">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1214">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1215">                  .build())</span>
+<span class="fc" id="L1216">          .setResponseTransformer(</span>
+<span class="fc" id="L1217">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
+<span class="fc" id="L1218">          .setMetadataTransformer(</span>
+<span class="fc" id="L1219">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1220">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1221">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1222">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1223">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1224">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1225">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1226">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1227">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1228">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1229">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1230">                      .build()));</span>
+
+<span class="fc" id="L1232">      builder</span>
+<span class="fc" id="L1233">          .createServerTlsPolicyOperationSettings()</span>
+<span class="fc" id="L1234">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1236">                  .&lt;CreateServerTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1237">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1238">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1239">                  .build())</span>
+<span class="fc" id="L1240">          .setResponseTransformer(</span>
+<span class="fc" id="L1241">              ProtoOperationTransformers.ResponseTransformer.create(ServerTlsPolicy.class))</span>
+<span class="fc" id="L1242">          .setMetadataTransformer(</span>
+<span class="fc" id="L1243">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1244">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1245">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1246">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1247">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1248">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1249">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1250">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1251">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1252">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1253">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1254">                      .build()));</span>
+
+<span class="fc" id="L1256">      builder</span>
+<span class="fc" id="L1257">          .updateServerTlsPolicyOperationSettings()</span>
+<span class="fc" id="L1258">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1260">                  .&lt;UpdateServerTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1261">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1262">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1263">                  .build())</span>
+<span class="fc" id="L1264">          .setResponseTransformer(</span>
+<span class="fc" id="L1265">              ProtoOperationTransformers.ResponseTransformer.create(ServerTlsPolicy.class))</span>
+<span class="fc" id="L1266">          .setMetadataTransformer(</span>
+<span class="fc" id="L1267">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1268">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1269">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1270">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1271">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1272">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1273">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1274">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1275">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1276">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1277">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1278">                      .build()));</span>
+
+<span class="fc" id="L1280">      builder</span>
+<span class="fc" id="L1281">          .deleteServerTlsPolicyOperationSettings()</span>
+<span class="fc" id="L1282">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1284">                  .&lt;DeleteServerTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1285">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1286">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1287">                  .build())</span>
+<span class="fc" id="L1288">          .setResponseTransformer(</span>
+<span class="fc" id="L1289">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
+<span class="fc" id="L1290">          .setMetadataTransformer(</span>
+<span class="fc" id="L1291">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1292">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1293">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1294">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1295">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1296">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1297">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1298">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1299">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1300">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1301">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1302">                      .build()));</span>
+
+<span class="fc" id="L1304">      builder</span>
+<span class="fc" id="L1305">          .createClientTlsPolicyOperationSettings()</span>
+<span class="fc" id="L1306">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1308">                  .&lt;CreateClientTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1309">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1310">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1311">                  .build())</span>
+<span class="fc" id="L1312">          .setResponseTransformer(</span>
+<span class="fc" id="L1313">              ProtoOperationTransformers.ResponseTransformer.create(ClientTlsPolicy.class))</span>
+<span class="fc" id="L1314">          .setMetadataTransformer(</span>
+<span class="fc" id="L1315">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1316">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1317">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1318">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1319">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1320">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1321">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1322">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1323">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1324">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1325">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1326">                      .build()));</span>
+
+<span class="fc" id="L1328">      builder</span>
+<span class="fc" id="L1329">          .updateClientTlsPolicyOperationSettings()</span>
+<span class="fc" id="L1330">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1332">                  .&lt;UpdateClientTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1333">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1334">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1335">                  .build())</span>
+<span class="fc" id="L1336">          .setResponseTransformer(</span>
+<span class="fc" id="L1337">              ProtoOperationTransformers.ResponseTransformer.create(ClientTlsPolicy.class))</span>
+<span class="fc" id="L1338">          .setMetadataTransformer(</span>
+<span class="fc" id="L1339">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1340">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1341">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1342">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1343">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1344">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1345">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1346">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1347">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1348">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1349">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1350">                      .build()));</span>
+
+<span class="fc" id="L1352">      builder</span>
+<span class="fc" id="L1353">          .deleteClientTlsPolicyOperationSettings()</span>
+<span class="fc" id="L1354">          .setInitialCallSettings(</span>
+              UnaryCallSettings
+<span class="fc" id="L1356">                  .&lt;DeleteClientTlsPolicyRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L1357">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L1358">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L1359">                  .build())</span>
+<span class="fc" id="L1360">          .setResponseTransformer(</span>
+<span class="fc" id="L1361">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
+<span class="fc" id="L1362">          .setMetadataTransformer(</span>
+<span class="fc" id="L1363">              ProtoOperationTransformers.MetadataTransformer.create(OperationMetadata.class))</span>
+<span class="fc" id="L1364">          .setPollingAlgorithm(</span>
+<span class="fc" id="L1365">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L1366">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L1367">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L1368">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L1369">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L1370">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1371">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L1372">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L1373">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L1374">                      .build()));</span>
+
+<span class="fc" id="L1376">      return builder;</span>
     }
 
     /**
@@ -1180,12 +1383,12 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L1183">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L1184">      return this;</span>
+<span class="nc" id="L1386">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L1387">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L1188">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L1391">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to listAuthorizationPolicies. */
@@ -1194,19 +1397,19 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
             ListAuthorizationPoliciesResponse,
             ListAuthorizationPoliciesPagedResponse&gt;
         listAuthorizationPoliciesSettings() {
-<span class="fc" id="L1197">      return listAuthorizationPoliciesSettings;</span>
+<span class="fc" id="L1400">      return listAuthorizationPoliciesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getAuthorizationPolicy. */
     public UnaryCallSettings.Builder&lt;GetAuthorizationPolicyRequest, AuthorizationPolicy&gt;
         getAuthorizationPolicySettings() {
-<span class="fc" id="L1203">      return getAuthorizationPolicySettings;</span>
+<span class="fc" id="L1406">      return getAuthorizationPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createAuthorizationPolicy. */
     public UnaryCallSettings.Builder&lt;CreateAuthorizationPolicyRequest, Operation&gt;
         createAuthorizationPolicySettings() {
-<span class="fc" id="L1209">      return createAuthorizationPolicySettings;</span>
+<span class="fc" id="L1412">      return createAuthorizationPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createAuthorizationPolicy. */
@@ -1215,13 +1418,13 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
     public OperationCallSettings.Builder&lt;
             CreateAuthorizationPolicyRequest, AuthorizationPolicy, OperationMetadata&gt;
         createAuthorizationPolicyOperationSettings() {
-<span class="fc" id="L1218">      return createAuthorizationPolicyOperationSettings;</span>
+<span class="fc" id="L1421">      return createAuthorizationPolicyOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateAuthorizationPolicy. */
     public UnaryCallSettings.Builder&lt;UpdateAuthorizationPolicyRequest, Operation&gt;
         updateAuthorizationPolicySettings() {
-<span class="fc" id="L1224">      return updateAuthorizationPolicySettings;</span>
+<span class="fc" id="L1427">      return updateAuthorizationPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateAuthorizationPolicy. */
@@ -1230,13 +1433,13 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
     public OperationCallSettings.Builder&lt;
             UpdateAuthorizationPolicyRequest, AuthorizationPolicy, OperationMetadata&gt;
         updateAuthorizationPolicyOperationSettings() {
-<span class="fc" id="L1233">      return updateAuthorizationPolicyOperationSettings;</span>
+<span class="fc" id="L1436">      return updateAuthorizationPolicyOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteAuthorizationPolicy. */
     public UnaryCallSettings.Builder&lt;DeleteAuthorizationPolicyRequest, Operation&gt;
         deleteAuthorizationPolicySettings() {
-<span class="fc" id="L1239">      return deleteAuthorizationPolicySettings;</span>
+<span class="fc" id="L1442">      return deleteAuthorizationPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteAuthorizationPolicy. */
@@ -1244,7 +1447,7 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeleteAuthorizationPolicyRequest, Empty, OperationMetadata&gt;
         deleteAuthorizationPolicyOperationSettings() {
-<span class="fc" id="L1247">      return deleteAuthorizationPolicyOperationSettings;</span>
+<span class="fc" id="L1450">      return deleteAuthorizationPolicyOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listServerTlsPolicies. */
@@ -1253,19 +1456,19 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
             ListServerTlsPoliciesResponse,
             ListServerTlsPoliciesPagedResponse&gt;
         listServerTlsPoliciesSettings() {
-<span class="fc" id="L1256">      return listServerTlsPoliciesSettings;</span>
+<span class="fc" id="L1459">      return listServerTlsPoliciesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getServerTlsPolicy. */
     public UnaryCallSettings.Builder&lt;GetServerTlsPolicyRequest, ServerTlsPolicy&gt;
         getServerTlsPolicySettings() {
-<span class="fc" id="L1262">      return getServerTlsPolicySettings;</span>
+<span class="fc" id="L1465">      return getServerTlsPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createServerTlsPolicy. */
     public UnaryCallSettings.Builder&lt;CreateServerTlsPolicyRequest, Operation&gt;
         createServerTlsPolicySettings() {
-<span class="fc" id="L1268">      return createServerTlsPolicySettings;</span>
+<span class="fc" id="L1471">      return createServerTlsPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createServerTlsPolicy. */
@@ -1274,13 +1477,13 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
     public OperationCallSettings.Builder&lt;
             CreateServerTlsPolicyRequest, ServerTlsPolicy, OperationMetadata&gt;
         createServerTlsPolicyOperationSettings() {
-<span class="fc" id="L1277">      return createServerTlsPolicyOperationSettings;</span>
+<span class="fc" id="L1480">      return createServerTlsPolicyOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateServerTlsPolicy. */
     public UnaryCallSettings.Builder&lt;UpdateServerTlsPolicyRequest, Operation&gt;
         updateServerTlsPolicySettings() {
-<span class="fc" id="L1283">      return updateServerTlsPolicySettings;</span>
+<span class="fc" id="L1486">      return updateServerTlsPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateServerTlsPolicy. */
@@ -1289,13 +1492,13 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
     public OperationCallSettings.Builder&lt;
             UpdateServerTlsPolicyRequest, ServerTlsPolicy, OperationMetadata&gt;
         updateServerTlsPolicyOperationSettings() {
-<span class="fc" id="L1292">      return updateServerTlsPolicyOperationSettings;</span>
+<span class="fc" id="L1495">      return updateServerTlsPolicyOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteServerTlsPolicy. */
     public UnaryCallSettings.Builder&lt;DeleteServerTlsPolicyRequest, Operation&gt;
         deleteServerTlsPolicySettings() {
-<span class="fc" id="L1298">      return deleteServerTlsPolicySettings;</span>
+<span class="fc" id="L1501">      return deleteServerTlsPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteServerTlsPolicy. */
@@ -1303,7 +1506,7 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeleteServerTlsPolicyRequest, Empty, OperationMetadata&gt;
         deleteServerTlsPolicyOperationSettings() {
-<span class="fc" id="L1306">      return deleteServerTlsPolicyOperationSettings;</span>
+<span class="fc" id="L1509">      return deleteServerTlsPolicyOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listClientTlsPolicies. */
@@ -1312,19 +1515,19 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
             ListClientTlsPoliciesResponse,
             ListClientTlsPoliciesPagedResponse&gt;
         listClientTlsPoliciesSettings() {
-<span class="fc" id="L1315">      return listClientTlsPoliciesSettings;</span>
+<span class="fc" id="L1518">      return listClientTlsPoliciesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getClientTlsPolicy. */
     public UnaryCallSettings.Builder&lt;GetClientTlsPolicyRequest, ClientTlsPolicy&gt;
         getClientTlsPolicySettings() {
-<span class="fc" id="L1321">      return getClientTlsPolicySettings;</span>
+<span class="fc" id="L1524">      return getClientTlsPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createClientTlsPolicy. */
     public UnaryCallSettings.Builder&lt;CreateClientTlsPolicyRequest, Operation&gt;
         createClientTlsPolicySettings() {
-<span class="fc" id="L1327">      return createClientTlsPolicySettings;</span>
+<span class="fc" id="L1530">      return createClientTlsPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createClientTlsPolicy. */
@@ -1333,13 +1536,13 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
     public OperationCallSettings.Builder&lt;
             CreateClientTlsPolicyRequest, ClientTlsPolicy, OperationMetadata&gt;
         createClientTlsPolicyOperationSettings() {
-<span class="fc" id="L1336">      return createClientTlsPolicyOperationSettings;</span>
+<span class="fc" id="L1539">      return createClientTlsPolicyOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateClientTlsPolicy. */
     public UnaryCallSettings.Builder&lt;UpdateClientTlsPolicyRequest, Operation&gt;
         updateClientTlsPolicySettings() {
-<span class="fc" id="L1342">      return updateClientTlsPolicySettings;</span>
+<span class="fc" id="L1545">      return updateClientTlsPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateClientTlsPolicy. */
@@ -1348,13 +1551,13 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
     public OperationCallSettings.Builder&lt;
             UpdateClientTlsPolicyRequest, ClientTlsPolicy, OperationMetadata&gt;
         updateClientTlsPolicyOperationSettings() {
-<span class="fc" id="L1351">      return updateClientTlsPolicyOperationSettings;</span>
+<span class="fc" id="L1554">      return updateClientTlsPolicyOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteClientTlsPolicy. */
     public UnaryCallSettings.Builder&lt;DeleteClientTlsPolicyRequest, Operation&gt;
         deleteClientTlsPolicySettings() {
-<span class="fc" id="L1357">      return deleteClientTlsPolicySettings;</span>
+<span class="fc" id="L1560">      return deleteClientTlsPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteClientTlsPolicy. */
@@ -1362,12 +1565,40 @@ public class NetworkSecurityStubSettings extends StubSettings&lt;NetworkSecurity
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeleteClientTlsPolicyRequest, Empty, OperationMetadata&gt;
         deleteClientTlsPolicyOperationSettings() {
-<span class="fc" id="L1365">      return deleteClientTlsPolicyOperationSettings;</span>
+<span class="fc" id="L1568">      return deleteClientTlsPolicyOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listLocations. */
+    public PagedCallSettings.Builder&lt;
+            ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
+        listLocationsSettings() {
+<span class="fc" id="L1575">      return listLocationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getLocation. */
+    public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
+<span class="fc" id="L1580">      return getLocationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to setIamPolicy. */
+    public UnaryCallSettings.Builder&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings() {
+<span class="fc" id="L1585">      return setIamPolicySettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getIamPolicy. */
+    public UnaryCallSettings.Builder&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings() {
+<span class="fc" id="L1590">      return getIamPolicySettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to testIamPermissions. */
+    public UnaryCallSettings.Builder&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+        testIamPermissionsSettings() {
+<span class="fc" id="L1596">      return testIamPermissionsSettings;</span>
     }
 
     @Override
     public NetworkSecurityStubSettings build() throws IOException {
-<span class="fc" id="L1370">      return new NetworkSecurityStubSettings(this);</span>
+<span class="fc" id="L1601">      return new NetworkSecurityStubSettings(this);</span>
     }
   }
 }

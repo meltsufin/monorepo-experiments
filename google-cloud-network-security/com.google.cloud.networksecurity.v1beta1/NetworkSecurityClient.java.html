@@ -20,6 +20,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
 import com.google.api.gax.longrunning.OperationFuture;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -27,11 +28,19 @@ import com.google.api.gax.paging.AbstractPagedListResponse;
 import com.google.api.gax.rpc.OperationCallable;
 import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.cloud.networksecurity.v1beta1.stub.NetworkSecurityStub;
 import com.google.cloud.networksecurity.v1beta1.stub.NetworkSecurityStubSettings;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
-import com.google.longrunning.OperationsClient;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -108,6 +117,21 @@ import javax.annotation.Generated;
  *     NetworkSecurityClient.create(networkSecuritySettings);
  * }&lt;/pre&gt;
  *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * NetworkSecuritySettings networkSecuritySettings =
+ *     NetworkSecuritySettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             NetworkSecuritySettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * NetworkSecurityClient networkSecurityClient =
+ *     NetworkSecurityClient.create(networkSecuritySettings);
+ * }&lt;/pre&gt;
+ *
  * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @BetaApi
@@ -115,11 +139,12 @@ import javax.annotation.Generated;
 public class NetworkSecurityClient implements BackgroundResource {
   private final NetworkSecuritySettings settings;
   private final NetworkSecurityStub stub;
-  private final OperationsClient operationsClient;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
 
   /** Constructs an instance of NetworkSecurityClient with default settings. */
   public static final NetworkSecurityClient create() throws IOException {
-<span class="nc" id="L122">    return create(NetworkSecuritySettings.newBuilder().build());</span>
+<span class="nc" id="L147">    return create(NetworkSecuritySettings.newBuilder().build());</span>
   }
 
   /**
@@ -128,7 +153,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public static final NetworkSecurityClient create(NetworkSecuritySettings settings)
       throws IOException {
-<span class="fc" id="L131">    return new NetworkSecurityClient(settings);</span>
+<span class="fc" id="L156">    return new NetworkSecurityClient(settings);</span>
   }
 
   /**
@@ -136,7 +161,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * for advanced usage - prefer using create(NetworkSecuritySettings).
    */
   public static final NetworkSecurityClient create(NetworkSecurityStub stub) {
-<span class="nc" id="L139">    return new NetworkSecurityClient(stub);</span>
+<span class="nc" id="L164">    return new NetworkSecurityClient(stub);</span>
   }
 
   /**
@@ -144,32 +169,45 @@ public class NetworkSecurityClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L147">  protected NetworkSecurityClient(NetworkSecuritySettings settings) throws IOException {</span>
-<span class="fc" id="L148">    this.settings = settings;</span>
-<span class="fc" id="L149">    this.stub = ((NetworkSecurityStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L150">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L151">  }</span>
+<span class="fc" id="L172">  protected NetworkSecurityClient(NetworkSecuritySettings settings) throws IOException {</span>
+<span class="fc" id="L173">    this.settings = settings;</span>
+<span class="fc" id="L174">    this.stub = ((NetworkSecurityStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L175">    this.operationsClient =</span>
+<span class="fc" id="L176">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L177">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L178">  }</span>
 
-<span class="nc" id="L153">  protected NetworkSecurityClient(NetworkSecurityStub stub) {</span>
-<span class="nc" id="L154">    this.settings = null;</span>
-<span class="nc" id="L155">    this.stub = stub;</span>
-<span class="nc" id="L156">    this.operationsClient = OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L157">  }</span>
+<span class="nc" id="L180">  protected NetworkSecurityClient(NetworkSecurityStub stub) {</span>
+<span class="nc" id="L181">    this.settings = null;</span>
+<span class="nc" id="L182">    this.stub = stub;</span>
+<span class="nc" id="L183">    this.operationsClient =</span>
+<span class="nc" id="L184">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L185">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L186">  }</span>
 
   public final NetworkSecuritySettings getSettings() {
-<span class="nc" id="L160">    return settings;</span>
+<span class="nc" id="L189">    return settings;</span>
   }
 
   public NetworkSecurityStub getStub() {
-<span class="nc" id="L164">    return stub;</span>
+<span class="nc" id="L193">    return stub;</span>
   }
 
   /**
    * Returns the OperationsClient that can be used to query the status of a long-running operation
    * returned by another API method call.
    */
-  public final OperationsClient getOperationsClient() {
-<span class="nc" id="L172">    return operationsClient;</span>
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L201">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L210">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -197,10 +235,10 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final ListAuthorizationPoliciesPagedResponse listAuthorizationPolicies(
       LocationName parent) {
     ListAuthorizationPoliciesRequest request =
-<span class="fc" id="L200">        ListAuthorizationPoliciesRequest.newBuilder()</span>
-<span class="pc bpc" id="L201" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L202">            .build();</span>
-<span class="fc" id="L203">    return listAuthorizationPolicies(request);</span>
+<span class="fc" id="L238">        ListAuthorizationPoliciesRequest.newBuilder()</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L240">            .build();</span>
+<span class="fc" id="L241">    return listAuthorizationPolicies(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -227,8 +265,8 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ListAuthorizationPoliciesPagedResponse listAuthorizationPolicies(String parent) {
     ListAuthorizationPoliciesRequest request =
-<span class="fc" id="L230">        ListAuthorizationPoliciesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L231">    return listAuthorizationPolicies(request);</span>
+<span class="fc" id="L268">        ListAuthorizationPoliciesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L269">    return listAuthorizationPolicies(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -259,7 +297,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ListAuthorizationPoliciesPagedResponse listAuthorizationPolicies(
       ListAuthorizationPoliciesRequest request) {
-<span class="fc" id="L262">    return listAuthorizationPoliciesPagedCallable().call(request);</span>
+<span class="fc" id="L300">    return listAuthorizationPoliciesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -290,7 +328,7 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final UnaryCallable&lt;
           ListAuthorizationPoliciesRequest, ListAuthorizationPoliciesPagedResponse&gt;
       listAuthorizationPoliciesPagedCallable() {
-<span class="fc" id="L293">    return stub.listAuthorizationPoliciesPagedCallable();</span>
+<span class="fc" id="L331">    return stub.listAuthorizationPoliciesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -327,7 +365,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListAuthorizationPoliciesRequest, ListAuthorizationPoliciesResponse&gt;
       listAuthorizationPoliciesCallable() {
-<span class="nc" id="L330">    return stub.listAuthorizationPoliciesCallable();</span>
+<span class="nc" id="L368">    return stub.listAuthorizationPoliciesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -352,10 +390,10 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final AuthorizationPolicy getAuthorizationPolicy(AuthorizationPolicyName name) {
     GetAuthorizationPolicyRequest request =
-<span class="fc" id="L355">        GetAuthorizationPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L356" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L357">            .build();</span>
-<span class="fc" id="L358">    return getAuthorizationPolicy(request);</span>
+<span class="fc" id="L393">        GetAuthorizationPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L394" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L395">            .build();</span>
+<span class="fc" id="L396">    return getAuthorizationPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -381,8 +419,8 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final AuthorizationPolicy getAuthorizationPolicy(String name) {
     GetAuthorizationPolicyRequest request =
-<span class="fc" id="L384">        GetAuthorizationPolicyRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L385">    return getAuthorizationPolicy(request);</span>
+<span class="fc" id="L422">        GetAuthorizationPolicyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L423">    return getAuthorizationPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -409,7 +447,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final AuthorizationPolicy getAuthorizationPolicy(GetAuthorizationPolicyRequest request) {
-<span class="fc" id="L412">    return getAuthorizationPolicyCallable().call(request);</span>
+<span class="fc" id="L450">    return getAuthorizationPolicyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -437,7 +475,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetAuthorizationPolicyRequest, AuthorizationPolicy&gt;
       getAuthorizationPolicyCallable() {
-<span class="fc" id="L440">    return stub.getAuthorizationPolicyCallable();</span>
+<span class="fc" id="L478">    return stub.getAuthorizationPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -450,8 +488,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * // This snippet has been automatically generated for illustrative purposes only.
    * // It may require modifications to work in your environment.
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
-   *   AuthorizationPolicyName parent =
-   *       AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;);
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   AuthorizationPolicy authorizationPolicy = AuthorizationPolicy.newBuilder().build();
    *   String authorizationPolicyId = &quot;authorizationPolicyId1314252166&quot;;
    *   AuthorizationPolicy response =
@@ -471,16 +508,16 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;AuthorizationPolicy, OperationMetadata&gt;
       createAuthorizationPolicyAsync(
-          AuthorizationPolicyName parent,
+          LocationName parent,
           AuthorizationPolicy authorizationPolicy,
           String authorizationPolicyId) {
     CreateAuthorizationPolicyRequest request =
-<span class="fc" id="L478">        CreateAuthorizationPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L479" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L480">            .setAuthorizationPolicy(authorizationPolicy)</span>
-<span class="fc" id="L481">            .setAuthorizationPolicyId(authorizationPolicyId)</span>
-<span class="fc" id="L482">            .build();</span>
-<span class="fc" id="L483">    return createAuthorizationPolicyAsync(request);</span>
+<span class="fc" id="L515">        CreateAuthorizationPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L516" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L517">            .setAuthorizationPolicy(authorizationPolicy)</span>
+<span class="fc" id="L518">            .setAuthorizationPolicyId(authorizationPolicyId)</span>
+<span class="fc" id="L519">            .build();</span>
+<span class="fc" id="L520">    return createAuthorizationPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -493,9 +530,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * // This snippet has been automatically generated for illustrative purposes only.
    * // It may require modifications to work in your environment.
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
-   *   String parent =
-   *       AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
-   *           .toString();
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   AuthorizationPolicy authorizationPolicy = AuthorizationPolicy.newBuilder().build();
    *   String authorizationPolicyId = &quot;authorizationPolicyId1314252166&quot;;
    *   AuthorizationPolicy response =
@@ -517,12 +552,12 @@ public class NetworkSecurityClient implements BackgroundResource {
       createAuthorizationPolicyAsync(
           String parent, AuthorizationPolicy authorizationPolicy, String authorizationPolicyId) {
     CreateAuthorizationPolicyRequest request =
-<span class="fc" id="L520">        CreateAuthorizationPolicyRequest.newBuilder()</span>
-<span class="fc" id="L521">            .setParent(parent)</span>
-<span class="fc" id="L522">            .setAuthorizationPolicy(authorizationPolicy)</span>
-<span class="fc" id="L523">            .setAuthorizationPolicyId(authorizationPolicyId)</span>
-<span class="fc" id="L524">            .build();</span>
-<span class="fc" id="L525">    return createAuthorizationPolicyAsync(request);</span>
+<span class="fc" id="L555">        CreateAuthorizationPolicyRequest.newBuilder()</span>
+<span class="fc" id="L556">            .setParent(parent)</span>
+<span class="fc" id="L557">            .setAuthorizationPolicy(authorizationPolicy)</span>
+<span class="fc" id="L558">            .setAuthorizationPolicyId(authorizationPolicyId)</span>
+<span class="fc" id="L559">            .build();</span>
+<span class="fc" id="L560">    return createAuthorizationPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -537,9 +572,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateAuthorizationPolicyRequest request =
    *       CreateAuthorizationPolicyRequest.newBuilder()
-   *           .setParent(
-   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setAuthorizationPolicyId(&quot;authorizationPolicyId1314252166&quot;)
    *           .setAuthorizationPolicy(AuthorizationPolicy.newBuilder().build())
    *           .build();
@@ -553,7 +586,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;AuthorizationPolicy, OperationMetadata&gt;
       createAuthorizationPolicyAsync(CreateAuthorizationPolicyRequest request) {
-<span class="fc" id="L556">    return createAuthorizationPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L589">    return createAuthorizationPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -568,9 +601,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateAuthorizationPolicyRequest request =
    *       CreateAuthorizationPolicyRequest.newBuilder()
-   *           .setParent(
-   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setAuthorizationPolicyId(&quot;authorizationPolicyId1314252166&quot;)
    *           .setAuthorizationPolicy(AuthorizationPolicy.newBuilder().build())
    *           .build();
@@ -584,7 +615,7 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationCallable&lt;
           CreateAuthorizationPolicyRequest, AuthorizationPolicy, OperationMetadata&gt;
       createAuthorizationPolicyOperationCallable() {
-<span class="fc" id="L587">    return stub.createAuthorizationPolicyOperationCallable();</span>
+<span class="fc" id="L618">    return stub.createAuthorizationPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -599,9 +630,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateAuthorizationPolicyRequest request =
    *       CreateAuthorizationPolicyRequest.newBuilder()
-   *           .setParent(
-   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setAuthorizationPolicyId(&quot;authorizationPolicyId1314252166&quot;)
    *           .setAuthorizationPolicy(AuthorizationPolicy.newBuilder().build())
    *           .build();
@@ -614,7 +643,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateAuthorizationPolicyRequest, Operation&gt;
       createAuthorizationPolicyCallable() {
-<span class="nc" id="L617">    return stub.createAuthorizationPolicyCallable();</span>
+<span class="nc" id="L646">    return stub.createAuthorizationPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -647,11 +676,11 @@ public class NetworkSecurityClient implements BackgroundResource {
       updateAuthorizationPolicyAsync(
           AuthorizationPolicy authorizationPolicy, FieldMask updateMask) {
     UpdateAuthorizationPolicyRequest request =
-<span class="fc" id="L650">        UpdateAuthorizationPolicyRequest.newBuilder()</span>
-<span class="fc" id="L651">            .setAuthorizationPolicy(authorizationPolicy)</span>
-<span class="fc" id="L652">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L653">            .build();</span>
-<span class="fc" id="L654">    return updateAuthorizationPolicyAsync(request);</span>
+<span class="fc" id="L679">        UpdateAuthorizationPolicyRequest.newBuilder()</span>
+<span class="fc" id="L680">            .setAuthorizationPolicy(authorizationPolicy)</span>
+<span class="fc" id="L681">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L682">            .build();</span>
+<span class="fc" id="L683">    return updateAuthorizationPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -679,7 +708,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;AuthorizationPolicy, OperationMetadata&gt;
       updateAuthorizationPolicyAsync(UpdateAuthorizationPolicyRequest request) {
-<span class="fc" id="L682">    return updateAuthorizationPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L711">    return updateAuthorizationPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -707,7 +736,7 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationCallable&lt;
           UpdateAuthorizationPolicyRequest, AuthorizationPolicy, OperationMetadata&gt;
       updateAuthorizationPolicyOperationCallable() {
-<span class="fc" id="L710">    return stub.updateAuthorizationPolicyOperationCallable();</span>
+<span class="fc" id="L739">    return stub.updateAuthorizationPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -734,7 +763,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateAuthorizationPolicyRequest, Operation&gt;
       updateAuthorizationPolicyCallable() {
-<span class="nc" id="L737">    return stub.updateAuthorizationPolicyCallable();</span>
+<span class="nc" id="L766">    return stub.updateAuthorizationPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -760,10 +789,10 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteAuthorizationPolicyAsync(
       AuthorizationPolicyName name) {
     DeleteAuthorizationPolicyRequest request =
-<span class="fc" id="L763">        DeleteAuthorizationPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L764" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L765">            .build();</span>
-<span class="fc" id="L766">    return deleteAuthorizationPolicyAsync(request);</span>
+<span class="fc" id="L792">        DeleteAuthorizationPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L793" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L794">            .build();</span>
+<span class="fc" id="L795">    return deleteAuthorizationPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -790,8 +819,8 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteAuthorizationPolicyAsync(
       String name) {
     DeleteAuthorizationPolicyRequest request =
-<span class="fc" id="L793">        DeleteAuthorizationPolicyRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L794">    return deleteAuthorizationPolicyAsync(request);</span>
+<span class="fc" id="L822">        DeleteAuthorizationPolicyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L823">    return deleteAuthorizationPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -819,7 +848,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteAuthorizationPolicyAsync(
       DeleteAuthorizationPolicyRequest request) {
-<span class="fc" id="L822">    return deleteAuthorizationPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L851">    return deleteAuthorizationPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -847,7 +876,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteAuthorizationPolicyRequest, Empty, OperationMetadata&gt;
       deleteAuthorizationPolicyOperationCallable() {
-<span class="fc" id="L850">    return stub.deleteAuthorizationPolicyOperationCallable();</span>
+<span class="fc" id="L879">    return stub.deleteAuthorizationPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -875,7 +904,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteAuthorizationPolicyRequest, Operation&gt;
       deleteAuthorizationPolicyCallable() {
-<span class="nc" id="L878">    return stub.deleteAuthorizationPolicyCallable();</span>
+<span class="nc" id="L907">    return stub.deleteAuthorizationPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -902,10 +931,10 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ListServerTlsPoliciesPagedResponse listServerTlsPolicies(LocationName parent) {
     ListServerTlsPoliciesRequest request =
-<span class="fc" id="L905">        ListServerTlsPoliciesRequest.newBuilder()</span>
-<span class="pc bpc" id="L906" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L907">            .build();</span>
-<span class="fc" id="L908">    return listServerTlsPolicies(request);</span>
+<span class="fc" id="L934">        ListServerTlsPoliciesRequest.newBuilder()</span>
+<span class="pc bpc" id="L935" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L936">            .build();</span>
+<span class="fc" id="L937">    return listServerTlsPolicies(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -932,8 +961,8 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ListServerTlsPoliciesPagedResponse listServerTlsPolicies(String parent) {
     ListServerTlsPoliciesRequest request =
-<span class="fc" id="L935">        ListServerTlsPoliciesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L936">    return listServerTlsPolicies(request);</span>
+<span class="fc" id="L964">        ListServerTlsPoliciesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L965">    return listServerTlsPolicies(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -964,7 +993,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ListServerTlsPoliciesPagedResponse listServerTlsPolicies(
       ListServerTlsPoliciesRequest request) {
-<span class="fc" id="L967">    return listServerTlsPoliciesPagedCallable().call(request);</span>
+<span class="fc" id="L996">    return listServerTlsPoliciesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -994,7 +1023,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListServerTlsPoliciesRequest, ListServerTlsPoliciesPagedResponse&gt;
       listServerTlsPoliciesPagedCallable() {
-<span class="fc" id="L997">    return stub.listServerTlsPoliciesPagedCallable();</span>
+<span class="fc" id="L1026">    return stub.listServerTlsPoliciesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1031,7 +1060,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse&gt;
       listServerTlsPoliciesCallable() {
-<span class="nc" id="L1034">    return stub.listServerTlsPoliciesCallable();</span>
+<span class="nc" id="L1063">    return stub.listServerTlsPoliciesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1056,10 +1085,10 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ServerTlsPolicy getServerTlsPolicy(ServerTlsPolicyName name) {
     GetServerTlsPolicyRequest request =
-<span class="fc" id="L1059">        GetServerTlsPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1060" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1061">            .build();</span>
-<span class="fc" id="L1062">    return getServerTlsPolicy(request);</span>
+<span class="fc" id="L1088">        GetServerTlsPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1089" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1090">            .build();</span>
+<span class="fc" id="L1091">    return getServerTlsPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1084,8 +1113,8 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ServerTlsPolicy getServerTlsPolicy(String name) {
     GetServerTlsPolicyRequest request =
-<span class="fc" id="L1087">        GetServerTlsPolicyRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1088">    return getServerTlsPolicy(request);</span>
+<span class="fc" id="L1116">        GetServerTlsPolicyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1117">    return getServerTlsPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1112,7 +1141,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServerTlsPolicy getServerTlsPolicy(GetServerTlsPolicyRequest request) {
-<span class="fc" id="L1115">    return getServerTlsPolicyCallable().call(request);</span>
+<span class="fc" id="L1144">    return getServerTlsPolicyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1140,7 +1169,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetServerTlsPolicyRequest, ServerTlsPolicy&gt;
       getServerTlsPolicyCallable() {
-<span class="fc" id="L1143">    return stub.getServerTlsPolicyCallable();</span>
+<span class="fc" id="L1172">    return stub.getServerTlsPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1153,8 +1182,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * // This snippet has been automatically generated for illustrative purposes only.
    * // It may require modifications to work in your environment.
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
-   *   ServerTlsPolicyName parent =
-   *       ServerTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[SERVER_TLS_POLICY]&quot;);
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   ServerTlsPolicy serverTlsPolicy = ServerTlsPolicy.newBuilder().build();
    *   String serverTlsPolicyId = &quot;serverTlsPolicyId-1966046011&quot;;
    *   ServerTlsPolicy response =
@@ -1173,14 +1201,14 @@ public class NetworkSecurityClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;ServerTlsPolicy, OperationMetadata&gt; createServerTlsPolicyAsync(
-      ServerTlsPolicyName parent, ServerTlsPolicy serverTlsPolicy, String serverTlsPolicyId) {
+      LocationName parent, ServerTlsPolicy serverTlsPolicy, String serverTlsPolicyId) {
     CreateServerTlsPolicyRequest request =
-<span class="fc" id="L1178">        CreateServerTlsPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1179" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1180">            .setServerTlsPolicy(serverTlsPolicy)</span>
-<span class="fc" id="L1181">            .setServerTlsPolicyId(serverTlsPolicyId)</span>
-<span class="fc" id="L1182">            .build();</span>
-<span class="fc" id="L1183">    return createServerTlsPolicyAsync(request);</span>
+<span class="fc" id="L1206">        CreateServerTlsPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1207" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1208">            .setServerTlsPolicy(serverTlsPolicy)</span>
+<span class="fc" id="L1209">            .setServerTlsPolicyId(serverTlsPolicyId)</span>
+<span class="fc" id="L1210">            .build();</span>
+<span class="fc" id="L1211">    return createServerTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1193,8 +1221,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * // This snippet has been automatically generated for illustrative purposes only.
    * // It may require modifications to work in your environment.
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
-   *   String parent =
-   *       ServerTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[SERVER_TLS_POLICY]&quot;).toString();
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   ServerTlsPolicy serverTlsPolicy = ServerTlsPolicy.newBuilder().build();
    *   String serverTlsPolicyId = &quot;serverTlsPolicyId-1966046011&quot;;
    *   ServerTlsPolicy response =
@@ -1215,12 +1242,12 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationFuture&lt;ServerTlsPolicy, OperationMetadata&gt; createServerTlsPolicyAsync(
       String parent, ServerTlsPolicy serverTlsPolicy, String serverTlsPolicyId) {
     CreateServerTlsPolicyRequest request =
-<span class="fc" id="L1218">        CreateServerTlsPolicyRequest.newBuilder()</span>
-<span class="fc" id="L1219">            .setParent(parent)</span>
-<span class="fc" id="L1220">            .setServerTlsPolicy(serverTlsPolicy)</span>
-<span class="fc" id="L1221">            .setServerTlsPolicyId(serverTlsPolicyId)</span>
-<span class="fc" id="L1222">            .build();</span>
-<span class="fc" id="L1223">    return createServerTlsPolicyAsync(request);</span>
+<span class="fc" id="L1245">        CreateServerTlsPolicyRequest.newBuilder()</span>
+<span class="fc" id="L1246">            .setParent(parent)</span>
+<span class="fc" id="L1247">            .setServerTlsPolicy(serverTlsPolicy)</span>
+<span class="fc" id="L1248">            .setServerTlsPolicyId(serverTlsPolicyId)</span>
+<span class="fc" id="L1249">            .build();</span>
+<span class="fc" id="L1250">    return createServerTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1235,9 +1262,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateServerTlsPolicyRequest request =
    *       CreateServerTlsPolicyRequest.newBuilder()
-   *           .setParent(
-   *               ServerTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[SERVER_TLS_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setServerTlsPolicyId(&quot;serverTlsPolicyId-1966046011&quot;)
    *           .setServerTlsPolicy(ServerTlsPolicy.newBuilder().build())
    *           .build();
@@ -1250,7 +1275,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ServerTlsPolicy, OperationMetadata&gt; createServerTlsPolicyAsync(
       CreateServerTlsPolicyRequest request) {
-<span class="fc" id="L1253">    return createServerTlsPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1278">    return createServerTlsPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1265,9 +1290,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateServerTlsPolicyRequest request =
    *       CreateServerTlsPolicyRequest.newBuilder()
-   *           .setParent(
-   *               ServerTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[SERVER_TLS_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setServerTlsPolicyId(&quot;serverTlsPolicyId-1966046011&quot;)
    *           .setServerTlsPolicy(ServerTlsPolicy.newBuilder().build())
    *           .build();
@@ -1280,7 +1303,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateServerTlsPolicyRequest, ServerTlsPolicy, OperationMetadata&gt;
       createServerTlsPolicyOperationCallable() {
-<span class="fc" id="L1283">    return stub.createServerTlsPolicyOperationCallable();</span>
+<span class="fc" id="L1306">    return stub.createServerTlsPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1295,9 +1318,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateServerTlsPolicyRequest request =
    *       CreateServerTlsPolicyRequest.newBuilder()
-   *           .setParent(
-   *               ServerTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[SERVER_TLS_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setServerTlsPolicyId(&quot;serverTlsPolicyId-1966046011&quot;)
    *           .setServerTlsPolicy(ServerTlsPolicy.newBuilder().build())
    *           .build();
@@ -1310,7 +1331,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateServerTlsPolicyRequest, Operation&gt;
       createServerTlsPolicyCallable() {
-<span class="nc" id="L1313">    return stub.createServerTlsPolicyCallable();</span>
+<span class="nc" id="L1334">    return stub.createServerTlsPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1340,11 +1361,11 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationFuture&lt;ServerTlsPolicy, OperationMetadata&gt; updateServerTlsPolicyAsync(
       ServerTlsPolicy serverTlsPolicy, FieldMask updateMask) {
     UpdateServerTlsPolicyRequest request =
-<span class="fc" id="L1343">        UpdateServerTlsPolicyRequest.newBuilder()</span>
-<span class="fc" id="L1344">            .setServerTlsPolicy(serverTlsPolicy)</span>
-<span class="fc" id="L1345">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L1346">            .build();</span>
-<span class="fc" id="L1347">    return updateServerTlsPolicyAsync(request);</span>
+<span class="fc" id="L1364">        UpdateServerTlsPolicyRequest.newBuilder()</span>
+<span class="fc" id="L1365">            .setServerTlsPolicy(serverTlsPolicy)</span>
+<span class="fc" id="L1366">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L1367">            .build();</span>
+<span class="fc" id="L1368">    return updateServerTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1371,7 +1392,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ServerTlsPolicy, OperationMetadata&gt; updateServerTlsPolicyAsync(
       UpdateServerTlsPolicyRequest request) {
-<span class="fc" id="L1374">    return updateServerTlsPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1395">    return updateServerTlsPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1398,7 +1419,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateServerTlsPolicyRequest, ServerTlsPolicy, OperationMetadata&gt;
       updateServerTlsPolicyOperationCallable() {
-<span class="fc" id="L1401">    return stub.updateServerTlsPolicyOperationCallable();</span>
+<span class="fc" id="L1422">    return stub.updateServerTlsPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1425,7 +1446,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateServerTlsPolicyRequest, Operation&gt;
       updateServerTlsPolicyCallable() {
-<span class="nc" id="L1428">    return stub.updateServerTlsPolicyCallable();</span>
+<span class="nc" id="L1449">    return stub.updateServerTlsPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1451,10 +1472,10 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteServerTlsPolicyAsync(
       ServerTlsPolicyName name) {
     DeleteServerTlsPolicyRequest request =
-<span class="fc" id="L1454">        DeleteServerTlsPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1455" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1456">            .build();</span>
-<span class="fc" id="L1457">    return deleteServerTlsPolicyAsync(request);</span>
+<span class="fc" id="L1475">        DeleteServerTlsPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1476" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1477">            .build();</span>
+<span class="fc" id="L1478">    return deleteServerTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1479,8 +1500,8 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteServerTlsPolicyAsync(String name) {
     DeleteServerTlsPolicyRequest request =
-<span class="fc" id="L1482">        DeleteServerTlsPolicyRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1483">    return deleteServerTlsPolicyAsync(request);</span>
+<span class="fc" id="L1503">        DeleteServerTlsPolicyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1504">    return deleteServerTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1508,7 +1529,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteServerTlsPolicyAsync(
       DeleteServerTlsPolicyRequest request) {
-<span class="fc" id="L1511">    return deleteServerTlsPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1532">    return deleteServerTlsPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1536,7 +1557,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteServerTlsPolicyRequest, Empty, OperationMetadata&gt;
       deleteServerTlsPolicyOperationCallable() {
-<span class="fc" id="L1539">    return stub.deleteServerTlsPolicyOperationCallable();</span>
+<span class="fc" id="L1560">    return stub.deleteServerTlsPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1564,7 +1585,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteServerTlsPolicyRequest, Operation&gt;
       deleteServerTlsPolicyCallable() {
-<span class="nc" id="L1567">    return stub.deleteServerTlsPolicyCallable();</span>
+<span class="nc" id="L1588">    return stub.deleteServerTlsPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1591,10 +1612,10 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ListClientTlsPoliciesPagedResponse listClientTlsPolicies(LocationName parent) {
     ListClientTlsPoliciesRequest request =
-<span class="fc" id="L1594">        ListClientTlsPoliciesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1595" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1596">            .build();</span>
-<span class="fc" id="L1597">    return listClientTlsPolicies(request);</span>
+<span class="fc" id="L1615">        ListClientTlsPoliciesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1616" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1617">            .build();</span>
+<span class="fc" id="L1618">    return listClientTlsPolicies(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1621,8 +1642,8 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ListClientTlsPoliciesPagedResponse listClientTlsPolicies(String parent) {
     ListClientTlsPoliciesRequest request =
-<span class="fc" id="L1624">        ListClientTlsPoliciesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1625">    return listClientTlsPolicies(request);</span>
+<span class="fc" id="L1645">        ListClientTlsPoliciesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1646">    return listClientTlsPolicies(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1653,7 +1674,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ListClientTlsPoliciesPagedResponse listClientTlsPolicies(
       ListClientTlsPoliciesRequest request) {
-<span class="fc" id="L1656">    return listClientTlsPoliciesPagedCallable().call(request);</span>
+<span class="fc" id="L1677">    return listClientTlsPoliciesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1683,7 +1704,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListClientTlsPoliciesRequest, ListClientTlsPoliciesPagedResponse&gt;
       listClientTlsPoliciesPagedCallable() {
-<span class="fc" id="L1686">    return stub.listClientTlsPoliciesPagedCallable();</span>
+<span class="fc" id="L1707">    return stub.listClientTlsPoliciesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1720,7 +1741,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse&gt;
       listClientTlsPoliciesCallable() {
-<span class="nc" id="L1723">    return stub.listClientTlsPoliciesCallable();</span>
+<span class="nc" id="L1744">    return stub.listClientTlsPoliciesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1745,10 +1766,10 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ClientTlsPolicy getClientTlsPolicy(ClientTlsPolicyName name) {
     GetClientTlsPolicyRequest request =
-<span class="fc" id="L1748">        GetClientTlsPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1749" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1750">            .build();</span>
-<span class="fc" id="L1751">    return getClientTlsPolicy(request);</span>
+<span class="fc" id="L1769">        GetClientTlsPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1770" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1771">            .build();</span>
+<span class="fc" id="L1772">    return getClientTlsPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1773,8 +1794,8 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final ClientTlsPolicy getClientTlsPolicy(String name) {
     GetClientTlsPolicyRequest request =
-<span class="fc" id="L1776">        GetClientTlsPolicyRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1777">    return getClientTlsPolicy(request);</span>
+<span class="fc" id="L1797">        GetClientTlsPolicyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1798">    return getClientTlsPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1801,7 +1822,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ClientTlsPolicy getClientTlsPolicy(GetClientTlsPolicyRequest request) {
-<span class="fc" id="L1804">    return getClientTlsPolicyCallable().call(request);</span>
+<span class="fc" id="L1825">    return getClientTlsPolicyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1829,7 +1850,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetClientTlsPolicyRequest, ClientTlsPolicy&gt;
       getClientTlsPolicyCallable() {
-<span class="fc" id="L1832">    return stub.getClientTlsPolicyCallable();</span>
+<span class="fc" id="L1853">    return stub.getClientTlsPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1842,8 +1863,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * // This snippet has been automatically generated for illustrative purposes only.
    * // It may require modifications to work in your environment.
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
-   *   ClientTlsPolicyName parent =
-   *       ClientTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CLIENT_TLS_POLICY]&quot;);
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
    *   ClientTlsPolicy clientTlsPolicy = ClientTlsPolicy.newBuilder().build();
    *   String clientTlsPolicyId = &quot;clientTlsPolicyId-188933315&quot;;
    *   ClientTlsPolicy response =
@@ -1862,14 +1882,14 @@ public class NetworkSecurityClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;ClientTlsPolicy, OperationMetadata&gt; createClientTlsPolicyAsync(
-      ClientTlsPolicyName parent, ClientTlsPolicy clientTlsPolicy, String clientTlsPolicyId) {
+      LocationName parent, ClientTlsPolicy clientTlsPolicy, String clientTlsPolicyId) {
     CreateClientTlsPolicyRequest request =
-<span class="fc" id="L1867">        CreateClientTlsPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1868" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1869">            .setClientTlsPolicy(clientTlsPolicy)</span>
-<span class="fc" id="L1870">            .setClientTlsPolicyId(clientTlsPolicyId)</span>
-<span class="fc" id="L1871">            .build();</span>
-<span class="fc" id="L1872">    return createClientTlsPolicyAsync(request);</span>
+<span class="fc" id="L1887">        CreateClientTlsPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1888" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1889">            .setClientTlsPolicy(clientTlsPolicy)</span>
+<span class="fc" id="L1890">            .setClientTlsPolicyId(clientTlsPolicyId)</span>
+<span class="fc" id="L1891">            .build();</span>
+<span class="fc" id="L1892">    return createClientTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1882,8 +1902,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * // This snippet has been automatically generated for illustrative purposes only.
    * // It may require modifications to work in your environment.
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
-   *   String parent =
-   *       ClientTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CLIENT_TLS_POLICY]&quot;).toString();
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
    *   ClientTlsPolicy clientTlsPolicy = ClientTlsPolicy.newBuilder().build();
    *   String clientTlsPolicyId = &quot;clientTlsPolicyId-188933315&quot;;
    *   ClientTlsPolicy response =
@@ -1904,12 +1923,12 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationFuture&lt;ClientTlsPolicy, OperationMetadata&gt; createClientTlsPolicyAsync(
       String parent, ClientTlsPolicy clientTlsPolicy, String clientTlsPolicyId) {
     CreateClientTlsPolicyRequest request =
-<span class="fc" id="L1907">        CreateClientTlsPolicyRequest.newBuilder()</span>
-<span class="fc" id="L1908">            .setParent(parent)</span>
-<span class="fc" id="L1909">            .setClientTlsPolicy(clientTlsPolicy)</span>
-<span class="fc" id="L1910">            .setClientTlsPolicyId(clientTlsPolicyId)</span>
-<span class="fc" id="L1911">            .build();</span>
-<span class="fc" id="L1912">    return createClientTlsPolicyAsync(request);</span>
+<span class="fc" id="L1926">        CreateClientTlsPolicyRequest.newBuilder()</span>
+<span class="fc" id="L1927">            .setParent(parent)</span>
+<span class="fc" id="L1928">            .setClientTlsPolicy(clientTlsPolicy)</span>
+<span class="fc" id="L1929">            .setClientTlsPolicyId(clientTlsPolicyId)</span>
+<span class="fc" id="L1930">            .build();</span>
+<span class="fc" id="L1931">    return createClientTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1924,9 +1943,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateClientTlsPolicyRequest request =
    *       CreateClientTlsPolicyRequest.newBuilder()
-   *           .setParent(
-   *               ClientTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CLIENT_TLS_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setClientTlsPolicyId(&quot;clientTlsPolicyId-188933315&quot;)
    *           .setClientTlsPolicy(ClientTlsPolicy.newBuilder().build())
    *           .build();
@@ -1939,7 +1956,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ClientTlsPolicy, OperationMetadata&gt; createClientTlsPolicyAsync(
       CreateClientTlsPolicyRequest request) {
-<span class="fc" id="L1942">    return createClientTlsPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1959">    return createClientTlsPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1954,9 +1971,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateClientTlsPolicyRequest request =
    *       CreateClientTlsPolicyRequest.newBuilder()
-   *           .setParent(
-   *               ClientTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CLIENT_TLS_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setClientTlsPolicyId(&quot;clientTlsPolicyId-188933315&quot;)
    *           .setClientTlsPolicy(ClientTlsPolicy.newBuilder().build())
    *           .build();
@@ -1969,7 +1984,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateClientTlsPolicyRequest, ClientTlsPolicy, OperationMetadata&gt;
       createClientTlsPolicyOperationCallable() {
-<span class="fc" id="L1972">    return stub.createClientTlsPolicyOperationCallable();</span>
+<span class="fc" id="L1987">    return stub.createClientTlsPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1984,9 +1999,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
    *   CreateClientTlsPolicyRequest request =
    *       CreateClientTlsPolicyRequest.newBuilder()
-   *           .setParent(
-   *               ClientTlsPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CLIENT_TLS_POLICY]&quot;)
-   *                   .toString())
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
    *           .setClientTlsPolicyId(&quot;clientTlsPolicyId-188933315&quot;)
    *           .setClientTlsPolicy(ClientTlsPolicy.newBuilder().build())
    *           .build();
@@ -1999,7 +2012,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateClientTlsPolicyRequest, Operation&gt;
       createClientTlsPolicyCallable() {
-<span class="nc" id="L2002">    return stub.createClientTlsPolicyCallable();</span>
+<span class="nc" id="L2015">    return stub.createClientTlsPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2029,11 +2042,11 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationFuture&lt;ClientTlsPolicy, OperationMetadata&gt; updateClientTlsPolicyAsync(
       ClientTlsPolicy clientTlsPolicy, FieldMask updateMask) {
     UpdateClientTlsPolicyRequest request =
-<span class="fc" id="L2032">        UpdateClientTlsPolicyRequest.newBuilder()</span>
-<span class="fc" id="L2033">            .setClientTlsPolicy(clientTlsPolicy)</span>
-<span class="fc" id="L2034">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L2035">            .build();</span>
-<span class="fc" id="L2036">    return updateClientTlsPolicyAsync(request);</span>
+<span class="fc" id="L2045">        UpdateClientTlsPolicyRequest.newBuilder()</span>
+<span class="fc" id="L2046">            .setClientTlsPolicy(clientTlsPolicy)</span>
+<span class="fc" id="L2047">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L2048">            .build();</span>
+<span class="fc" id="L2049">    return updateClientTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2060,7 +2073,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;ClientTlsPolicy, OperationMetadata&gt; updateClientTlsPolicyAsync(
       UpdateClientTlsPolicyRequest request) {
-<span class="fc" id="L2063">    return updateClientTlsPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2076">    return updateClientTlsPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2087,7 +2100,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateClientTlsPolicyRequest, ClientTlsPolicy, OperationMetadata&gt;
       updateClientTlsPolicyOperationCallable() {
-<span class="fc" id="L2090">    return stub.updateClientTlsPolicyOperationCallable();</span>
+<span class="fc" id="L2103">    return stub.updateClientTlsPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2114,7 +2127,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateClientTlsPolicyRequest, Operation&gt;
       updateClientTlsPolicyCallable() {
-<span class="nc" id="L2117">    return stub.updateClientTlsPolicyCallable();</span>
+<span class="nc" id="L2130">    return stub.updateClientTlsPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2140,10 +2153,10 @@ public class NetworkSecurityClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteClientTlsPolicyAsync(
       ClientTlsPolicyName name) {
     DeleteClientTlsPolicyRequest request =
-<span class="fc" id="L2143">        DeleteClientTlsPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L2144" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2145">            .build();</span>
-<span class="fc" id="L2146">    return deleteClientTlsPolicyAsync(request);</span>
+<span class="fc" id="L2156">        DeleteClientTlsPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L2157" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2158">            .build();</span>
+<span class="fc" id="L2159">    return deleteClientTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2168,8 +2181,8 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteClientTlsPolicyAsync(String name) {
     DeleteClientTlsPolicyRequest request =
-<span class="fc" id="L2171">        DeleteClientTlsPolicyRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2172">    return deleteClientTlsPolicyAsync(request);</span>
+<span class="fc" id="L2184">        DeleteClientTlsPolicyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2185">    return deleteClientTlsPolicyAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2197,7 +2210,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteClientTlsPolicyAsync(
       DeleteClientTlsPolicyRequest request) {
-<span class="fc" id="L2200">    return deleteClientTlsPolicyOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2213">    return deleteClientTlsPolicyOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2225,7 +2238,7 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteClientTlsPolicyRequest, Empty, OperationMetadata&gt;
       deleteClientTlsPolicyOperationCallable() {
-<span class="fc" id="L2228">    return stub.deleteClientTlsPolicyOperationCallable();</span>
+<span class="fc" id="L2241">    return stub.deleteClientTlsPolicyOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2253,37 +2266,363 @@ public class NetworkSecurityClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteClientTlsPolicyRequest, Operation&gt;
       deleteClientTlsPolicyCallable() {
-<span class="nc" id="L2256">    return stub.deleteClientTlsPolicyCallable();</span>
+<span class="nc" id="L2269">    return stub.deleteClientTlsPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : networkSecurityClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L2299">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       networkSecurityClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L2330">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response =
+   *         networkSecurityClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L2367">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = networkSecurityClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L2389">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = networkSecurityClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L2410">    return stub.getLocationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Policy response = networkSecurityClient.setIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(SetIamPolicyRequest request) {
+<span class="fc" id="L2441">    return setIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = networkSecurityClient.setIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
+<span class="fc" id="L2471">    return stub.setIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   Policy response = networkSecurityClient.getIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(GetIamPolicyRequest request) {
+<span class="fc" id="L2500">    return getIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = networkSecurityClient.getIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
+<span class="fc" id="L2528">    return stub.getIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   TestIamPermissionsResponse response = networkSecurityClient.testIamPermissions(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
+<span class="fc" id="L2561">    return testIamPermissionsCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (NetworkSecurityClient networkSecurityClient = NetworkSecurityClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               AuthorizationPolicyName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[AUTHORIZATION_POLICY]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   ApiFuture&lt;TestIamPermissionsResponse&gt; future =
+   *       networkSecurityClient.testIamPermissionsCallable().futureCall(request);
+   *   // Do something.
+   *   TestIamPermissionsResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable() {
+<span class="fc" id="L2595">    return stub.testIamPermissionsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2261">    stub.close();</span>
-<span class="fc" id="L2262">  }</span>
+<span class="fc" id="L2600">    stub.close();</span>
+<span class="fc" id="L2601">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2266">    stub.shutdown();</span>
-<span class="nc" id="L2267">  }</span>
+<span class="nc" id="L2605">    stub.shutdown();</span>
+<span class="nc" id="L2606">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2271">    return stub.isShutdown();</span>
+<span class="nc" id="L2610">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2276">    return stub.isTerminated();</span>
+<span class="nc" id="L2615">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2281">    stub.shutdownNow();</span>
-<span class="nc" id="L2282">  }</span>
+<span class="nc" id="L2620">    stub.shutdownNow();</span>
+<span class="nc" id="L2621">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2286">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L2625">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListAuthorizationPoliciesPagedResponse
@@ -2302,16 +2641,16 @@ public class NetworkSecurityClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListAuthorizationPoliciesResponse&gt; futureResponse) {
       ApiFuture&lt;ListAuthorizationPoliciesPage&gt; futurePage =
-<span class="fc" id="L2305">          ListAuthorizationPoliciesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2306">      return ApiFutures.transform(</span>
+<span class="fc" id="L2644">          ListAuthorizationPoliciesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2645">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2308">          input -&gt; new ListAuthorizationPoliciesPagedResponse(input),</span>
-<span class="fc" id="L2309">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2647">          input -&gt; new ListAuthorizationPoliciesPagedResponse(input),</span>
+<span class="fc" id="L2648">          MoreExecutors.directExecutor());</span>
     }
 
     private ListAuthorizationPoliciesPagedResponse(ListAuthorizationPoliciesPage page) {
-<span class="fc" id="L2313">      super(page, ListAuthorizationPoliciesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2314">    }</span>
+<span class="fc" id="L2652">      super(page, ListAuthorizationPoliciesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2653">    }</span>
   }
 
   public static class ListAuthorizationPoliciesPage
@@ -2328,11 +2667,11 @@ public class NetworkSecurityClient implements BackgroundResource {
                 AuthorizationPolicy&gt;
             context,
         ListAuthorizationPoliciesResponse response) {
-<span class="fc" id="L2331">      super(context, response);</span>
-<span class="fc" id="L2332">    }</span>
+<span class="fc" id="L2670">      super(context, response);</span>
+<span class="fc" id="L2671">    }</span>
 
     private static ListAuthorizationPoliciesPage createEmptyPage() {
-<span class="fc" id="L2335">      return new ListAuthorizationPoliciesPage(null, null);</span>
+<span class="fc" id="L2674">      return new ListAuthorizationPoliciesPage(null, null);</span>
     }
 
     @Override
@@ -2343,7 +2682,7 @@ public class NetworkSecurityClient implements BackgroundResource {
                 AuthorizationPolicy&gt;
             context,
         ListAuthorizationPoliciesResponse response) {
-<span class="fc" id="L2346">      return new ListAuthorizationPoliciesPage(context, response);</span>
+<span class="fc" id="L2685">      return new ListAuthorizationPoliciesPage(context, response);</span>
     }
 
     @Override
@@ -2354,7 +2693,7 @@ public class NetworkSecurityClient implements BackgroundResource {
                 AuthorizationPolicy&gt;
             context,
         ApiFuture&lt;ListAuthorizationPoliciesResponse&gt; futureResponse) {
-<span class="fc" id="L2357">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2696">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2368,17 +2707,17 @@ public class NetworkSecurityClient implements BackgroundResource {
 
     private ListAuthorizationPoliciesFixedSizeCollection(
         List&lt;ListAuthorizationPoliciesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2371">      super(pages, collectionSize);</span>
-<span class="fc" id="L2372">    }</span>
+<span class="fc" id="L2710">      super(pages, collectionSize);</span>
+<span class="fc" id="L2711">    }</span>
 
     private static ListAuthorizationPoliciesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2375">      return new ListAuthorizationPoliciesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2714">      return new ListAuthorizationPoliciesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListAuthorizationPoliciesFixedSizeCollection createCollection(
         List&lt;ListAuthorizationPoliciesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2381">      return new ListAuthorizationPoliciesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2720">      return new ListAuthorizationPoliciesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2395,16 +2734,16 @@ public class NetworkSecurityClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListServerTlsPoliciesResponse&gt; futureResponse) {
       ApiFuture&lt;ListServerTlsPoliciesPage&gt; futurePage =
-<span class="fc" id="L2398">          ListServerTlsPoliciesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2399">      return ApiFutures.transform(</span>
+<span class="fc" id="L2737">          ListServerTlsPoliciesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2738">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2401">          input -&gt; new ListServerTlsPoliciesPagedResponse(input),</span>
-<span class="fc" id="L2402">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2740">          input -&gt; new ListServerTlsPoliciesPagedResponse(input),</span>
+<span class="fc" id="L2741">          MoreExecutors.directExecutor());</span>
     }
 
     private ListServerTlsPoliciesPagedResponse(ListServerTlsPoliciesPage page) {
-<span class="fc" id="L2406">      super(page, ListServerTlsPoliciesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2407">    }</span>
+<span class="fc" id="L2745">      super(page, ListServerTlsPoliciesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2746">    }</span>
   }
 
   public static class ListServerTlsPoliciesPage
@@ -2418,11 +2757,11 @@ public class NetworkSecurityClient implements BackgroundResource {
         PageContext&lt;ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse, ServerTlsPolicy&gt;
             context,
         ListServerTlsPoliciesResponse response) {
-<span class="fc" id="L2421">      super(context, response);</span>
-<span class="fc" id="L2422">    }</span>
+<span class="fc" id="L2760">      super(context, response);</span>
+<span class="fc" id="L2761">    }</span>
 
     private static ListServerTlsPoliciesPage createEmptyPage() {
-<span class="fc" id="L2425">      return new ListServerTlsPoliciesPage(null, null);</span>
+<span class="fc" id="L2764">      return new ListServerTlsPoliciesPage(null, null);</span>
     }
 
     @Override
@@ -2430,7 +2769,7 @@ public class NetworkSecurityClient implements BackgroundResource {
         PageContext&lt;ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse, ServerTlsPolicy&gt;
             context,
         ListServerTlsPoliciesResponse response) {
-<span class="fc" id="L2433">      return new ListServerTlsPoliciesPage(context, response);</span>
+<span class="fc" id="L2772">      return new ListServerTlsPoliciesPage(context, response);</span>
     }
 
     @Override
@@ -2438,7 +2777,7 @@ public class NetworkSecurityClient implements BackgroundResource {
         PageContext&lt;ListServerTlsPoliciesRequest, ListServerTlsPoliciesResponse, ServerTlsPolicy&gt;
             context,
         ApiFuture&lt;ListServerTlsPoliciesResponse&gt; futureResponse) {
-<span class="fc" id="L2441">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2780">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2452,17 +2791,17 @@ public class NetworkSecurityClient implements BackgroundResource {
 
     private ListServerTlsPoliciesFixedSizeCollection(
         List&lt;ListServerTlsPoliciesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2455">      super(pages, collectionSize);</span>
-<span class="fc" id="L2456">    }</span>
+<span class="fc" id="L2794">      super(pages, collectionSize);</span>
+<span class="fc" id="L2795">    }</span>
 
     private static ListServerTlsPoliciesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2459">      return new ListServerTlsPoliciesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2798">      return new ListServerTlsPoliciesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListServerTlsPoliciesFixedSizeCollection createCollection(
         List&lt;ListServerTlsPoliciesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2465">      return new ListServerTlsPoliciesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2804">      return new ListServerTlsPoliciesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -2479,16 +2818,16 @@ public class NetworkSecurityClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListClientTlsPoliciesResponse&gt; futureResponse) {
       ApiFuture&lt;ListClientTlsPoliciesPage&gt; futurePage =
-<span class="fc" id="L2482">          ListClientTlsPoliciesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2483">      return ApiFutures.transform(</span>
+<span class="fc" id="L2821">          ListClientTlsPoliciesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2822">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2485">          input -&gt; new ListClientTlsPoliciesPagedResponse(input),</span>
-<span class="fc" id="L2486">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L2824">          input -&gt; new ListClientTlsPoliciesPagedResponse(input),</span>
+<span class="fc" id="L2825">          MoreExecutors.directExecutor());</span>
     }
 
     private ListClientTlsPoliciesPagedResponse(ListClientTlsPoliciesPage page) {
-<span class="fc" id="L2490">      super(page, ListClientTlsPoliciesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2491">    }</span>
+<span class="fc" id="L2829">      super(page, ListClientTlsPoliciesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2830">    }</span>
   }
 
   public static class ListClientTlsPoliciesPage
@@ -2502,11 +2841,11 @@ public class NetworkSecurityClient implements BackgroundResource {
         PageContext&lt;ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse, ClientTlsPolicy&gt;
             context,
         ListClientTlsPoliciesResponse response) {
-<span class="fc" id="L2505">      super(context, response);</span>
-<span class="fc" id="L2506">    }</span>
+<span class="fc" id="L2844">      super(context, response);</span>
+<span class="fc" id="L2845">    }</span>
 
     private static ListClientTlsPoliciesPage createEmptyPage() {
-<span class="fc" id="L2509">      return new ListClientTlsPoliciesPage(null, null);</span>
+<span class="fc" id="L2848">      return new ListClientTlsPoliciesPage(null, null);</span>
     }
 
     @Override
@@ -2514,7 +2853,7 @@ public class NetworkSecurityClient implements BackgroundResource {
         PageContext&lt;ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse, ClientTlsPolicy&gt;
             context,
         ListClientTlsPoliciesResponse response) {
-<span class="fc" id="L2517">      return new ListClientTlsPoliciesPage(context, response);</span>
+<span class="fc" id="L2856">      return new ListClientTlsPoliciesPage(context, response);</span>
     }
 
     @Override
@@ -2522,7 +2861,7 @@ public class NetworkSecurityClient implements BackgroundResource {
         PageContext&lt;ListClientTlsPoliciesRequest, ListClientTlsPoliciesResponse, ClientTlsPolicy&gt;
             context,
         ApiFuture&lt;ListClientTlsPoliciesResponse&gt; futureResponse) {
-<span class="fc" id="L2525">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2864">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -2536,17 +2875,93 @@ public class NetworkSecurityClient implements BackgroundResource {
 
     private ListClientTlsPoliciesFixedSizeCollection(
         List&lt;ListClientTlsPoliciesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L2539">      super(pages, collectionSize);</span>
-<span class="fc" id="L2540">    }</span>
+<span class="fc" id="L2878">      super(pages, collectionSize);</span>
+<span class="fc" id="L2879">    }</span>
 
     private static ListClientTlsPoliciesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L2543">      return new ListClientTlsPoliciesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L2882">      return new ListClientTlsPoliciesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListClientTlsPoliciesFixedSizeCollection createCollection(
         List&lt;ListClientTlsPoliciesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L2549">      return new ListClientTlsPoliciesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L2888">      return new ListClientTlsPoliciesFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L2904">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L2905">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L2907">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L2908">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L2912">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L2913">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L2923">      super(context, response);</span>
+<span class="fc" id="L2924">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L2927">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L2934">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L2941">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L2954">      super(pages, collectionSize);</span>
+<span class="fc" id="L2955">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L2958">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L2964">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
