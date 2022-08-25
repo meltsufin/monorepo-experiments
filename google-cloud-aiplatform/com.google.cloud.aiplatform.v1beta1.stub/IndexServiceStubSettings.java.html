@@ -53,8 +53,12 @@ import com.google.cloud.aiplatform.v1beta1.GetIndexRequest;
 import com.google.cloud.aiplatform.v1beta1.Index;
 import com.google.cloud.aiplatform.v1beta1.ListIndexesRequest;
 import com.google.cloud.aiplatform.v1beta1.ListIndexesResponse;
+import com.google.cloud.aiplatform.v1beta1.RemoveDatapointsRequest;
+import com.google.cloud.aiplatform.v1beta1.RemoveDatapointsResponse;
 import com.google.cloud.aiplatform.v1beta1.UpdateIndexOperationMetadata;
 import com.google.cloud.aiplatform.v1beta1.UpdateIndexRequest;
+import com.google.cloud.aiplatform.v1beta1.UpsertDatapointsRequest;
+import com.google.cloud.aiplatform.v1beta1.UpsertDatapointsResponse;
 import com.google.cloud.location.GetLocationRequest;
 import com.google.cloud.location.ListLocationsRequest;
 import com.google.cloud.location.ListLocationsResponse;
@@ -114,7 +118,7 @@ import org.threeten.bp.Duration;
 public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L117">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
+<span class="fc" id="L121">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
 
   private final UnaryCallSettings&lt;CreateIndexRequest, Operation&gt; createIndexSettings;
   private final OperationCallSettings&lt;CreateIndexRequest, Index, CreateIndexOperationMetadata&gt;
@@ -128,6 +132,10 @@ public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSe
   private final UnaryCallSettings&lt;DeleteIndexRequest, Operation&gt; deleteIndexSettings;
   private final OperationCallSettings&lt;DeleteIndexRequest, Empty, DeleteOperationMetadata&gt;
       deleteIndexOperationSettings;
+  private final UnaryCallSettings&lt;UpsertDatapointsRequest, UpsertDatapointsResponse&gt;
+      upsertDatapointsSettings;
+  private final UnaryCallSettings&lt;RemoveDatapointsRequest, RemoveDatapointsResponse&gt;
+      removeDatapointsSettings;
   private final PagedCallSettings&lt;
           ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
       listLocationsSettings;
@@ -138,271 +146,285 @@ public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSe
       testIamPermissionsSettings;
 
   private static final PagedListDescriptor&lt;ListIndexesRequest, ListIndexesResponse, Index&gt;
-<span class="fc" id="L141">      LIST_INDEXES_PAGE_STR_DESC =</span>
-<span class="fc" id="L142">          new PagedListDescriptor&lt;ListIndexesRequest, ListIndexesResponse, Index&gt;() {</span>
+<span class="fc" id="L149">      LIST_INDEXES_PAGE_STR_DESC =</span>
+<span class="fc" id="L150">          new PagedListDescriptor&lt;ListIndexesRequest, ListIndexesResponse, Index&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L145">              return &quot;&quot;;</span>
+<span class="fc" id="L153">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListIndexesRequest injectToken(ListIndexesRequest payload, String token) {
-<span class="nc" id="L150">              return ListIndexesRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L158">              return ListIndexesRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListIndexesRequest injectPageSize(ListIndexesRequest payload, int pageSize) {
-<span class="nc" id="L155">              return ListIndexesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L163">              return ListIndexesRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListIndexesRequest payload) {
-<span class="nc" id="L160">              return payload.getPageSize();</span>
+<span class="nc" id="L168">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListIndexesResponse payload) {
-<span class="fc" id="L165">              return payload.getNextPageToken();</span>
+<span class="fc" id="L173">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Index&gt; extractResources(ListIndexesResponse payload) {
-<span class="pc bpc" id="L170" title="1 of 2 branches missed.">              return payload.getIndexesList() == null</span>
-<span class="nc" id="L171">                  ? ImmutableList.&lt;Index&gt;of()</span>
-<span class="fc" id="L172">                  : payload.getIndexesList();</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">              return payload.getIndexesList() == null</span>
+<span class="nc" id="L179">                  ? ImmutableList.&lt;Index&gt;of()</span>
+<span class="fc" id="L180">                  : payload.getIndexesList();</span>
             }
           };
 
   private static final PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;
-<span class="fc" id="L177">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
-<span class="fc" id="L178">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
+<span class="fc" id="L185">      LIST_LOCATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L186">          new PagedListDescriptor&lt;ListLocationsRequest, ListLocationsResponse, Location&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L181">              return &quot;&quot;;</span>
+<span class="fc" id="L189">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListLocationsRequest injectToken(ListLocationsRequest payload, String token) {
-<span class="nc" id="L186">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L194">              return ListLocationsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListLocationsRequest injectPageSize(ListLocationsRequest payload, int pageSize) {
-<span class="nc" id="L191">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L199">              return ListLocationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListLocationsRequest payload) {
-<span class="nc" id="L196">              return payload.getPageSize();</span>
+<span class="nc" id="L204">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListLocationsResponse payload) {
-<span class="fc" id="L201">              return payload.getNextPageToken();</span>
+<span class="fc" id="L209">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Location&gt; extractResources(ListLocationsResponse payload) {
-<span class="pc bpc" id="L206" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
-<span class="nc" id="L207">                  ? ImmutableList.&lt;Location&gt;of()</span>
-<span class="fc" id="L208">                  : payload.getLocationsList();</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">              return payload.getLocationsList() == null</span>
+<span class="nc" id="L215">                  ? ImmutableList.&lt;Location&gt;of()</span>
+<span class="fc" id="L216">                  : payload.getLocationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListIndexesRequest, ListIndexesResponse, ListIndexesPagedResponse&gt;
-<span class="fc" id="L214">      LIST_INDEXES_PAGE_STR_FACT =</span>
+<span class="fc" id="L222">      LIST_INDEXES_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L216">              ListIndexesRequest, ListIndexesResponse, ListIndexesPagedResponse&gt;() {</span>
+<span class="fc" id="L224">              ListIndexesRequest, ListIndexesResponse, ListIndexesPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListIndexesPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListIndexesRequest, ListIndexesResponse&gt; callable,
                 ListIndexesRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListIndexesResponse&gt; futureResponse) {
-<span class="fc" id="L223">              PageContext&lt;ListIndexesRequest, ListIndexesResponse, Index&gt; pageContext =</span>
-<span class="fc" id="L224">                  PageContext.create(callable, LIST_INDEXES_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L225">              return ListIndexesPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L231">              PageContext&lt;ListIndexesRequest, ListIndexesResponse, Index&gt; pageContext =</span>
+<span class="fc" id="L232">                  PageContext.create(callable, LIST_INDEXES_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L233">              return ListIndexesPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
-<span class="fc" id="L231">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
+<span class="fc" id="L239">      LIST_LOCATIONS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L233">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
+<span class="fc" id="L241">              ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListLocationsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; callable,
                 ListLocationsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
-<span class="fc" id="L240">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
-<span class="fc" id="L241">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L242">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L248">              PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; pageContext =</span>
+<span class="fc" id="L249">                  PageContext.create(callable, LIST_LOCATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L250">              return ListLocationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to createIndex. */
   public UnaryCallSettings&lt;CreateIndexRequest, Operation&gt; createIndexSettings() {
-<span class="fc" id="L248">    return createIndexSettings;</span>
+<span class="fc" id="L256">    return createIndexSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createIndex. */
   public OperationCallSettings&lt;CreateIndexRequest, Index, CreateIndexOperationMetadata&gt;
       createIndexOperationSettings() {
-<span class="fc" id="L254">    return createIndexOperationSettings;</span>
+<span class="fc" id="L262">    return createIndexOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getIndex. */
   public UnaryCallSettings&lt;GetIndexRequest, Index&gt; getIndexSettings() {
-<span class="fc" id="L259">    return getIndexSettings;</span>
+<span class="fc" id="L267">    return getIndexSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listIndexes. */
   public PagedCallSettings&lt;ListIndexesRequest, ListIndexesResponse, ListIndexesPagedResponse&gt;
       listIndexesSettings() {
-<span class="fc" id="L265">    return listIndexesSettings;</span>
+<span class="fc" id="L273">    return listIndexesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateIndex. */
   public UnaryCallSettings&lt;UpdateIndexRequest, Operation&gt; updateIndexSettings() {
-<span class="fc" id="L270">    return updateIndexSettings;</span>
+<span class="fc" id="L278">    return updateIndexSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateIndex. */
   public OperationCallSettings&lt;UpdateIndexRequest, Index, UpdateIndexOperationMetadata&gt;
       updateIndexOperationSettings() {
-<span class="fc" id="L276">    return updateIndexOperationSettings;</span>
+<span class="fc" id="L284">    return updateIndexOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteIndex. */
   public UnaryCallSettings&lt;DeleteIndexRequest, Operation&gt; deleteIndexSettings() {
-<span class="fc" id="L281">    return deleteIndexSettings;</span>
+<span class="fc" id="L289">    return deleteIndexSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteIndex. */
   public OperationCallSettings&lt;DeleteIndexRequest, Empty, DeleteOperationMetadata&gt;
       deleteIndexOperationSettings() {
-<span class="fc" id="L287">    return deleteIndexOperationSettings;</span>
+<span class="fc" id="L295">    return deleteIndexOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to upsertDatapoints. */
+  public UnaryCallSettings&lt;UpsertDatapointsRequest, UpsertDatapointsResponse&gt;
+      upsertDatapointsSettings() {
+<span class="fc" id="L301">    return upsertDatapointsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to removeDatapoints. */
+  public UnaryCallSettings&lt;RemoveDatapointsRequest, RemoveDatapointsResponse&gt;
+      removeDatapointsSettings() {
+<span class="fc" id="L307">    return removeDatapointsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listLocations. */
   public PagedCallSettings&lt;ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
       listLocationsSettings() {
-<span class="fc" id="L293">    return listLocationsSettings;</span>
+<span class="fc" id="L313">    return listLocationsSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getLocation. */
   public UnaryCallSettings&lt;GetLocationRequest, Location&gt; getLocationSettings() {
-<span class="fc" id="L298">    return getLocationSettings;</span>
+<span class="fc" id="L318">    return getLocationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to setIamPolicy. */
   public UnaryCallSettings&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings() {
-<span class="fc" id="L303">    return setIamPolicySettings;</span>
+<span class="fc" id="L323">    return setIamPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getIamPolicy. */
   public UnaryCallSettings&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings() {
-<span class="fc" id="L308">    return getIamPolicySettings;</span>
+<span class="fc" id="L328">    return getIamPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to testIamPermissions. */
   public UnaryCallSettings&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
       testIamPermissionsSettings() {
-<span class="fc" id="L314">    return testIamPermissionsSettings;</span>
+<span class="fc" id="L334">    return testIamPermissionsSettings;</span>
   }
 
   public IndexServiceStub createStub() throws IOException {
-<span class="fc" id="L318">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L319">        .getTransportName()</span>
-<span class="pc bpc" id="L320" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L321">      return GrpcIndexServiceStub.create(this);</span>
+<span class="fc" id="L338">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L339">        .getTransportName()</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L341">      return GrpcIndexServiceStub.create(this);</span>
     }
-<span class="nc" id="L323">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L324">        String.format(</span>
-<span class="nc" id="L325">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="nc" id="L343">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L344">        String.format(</span>
+<span class="nc" id="L345">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L330">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L350">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L335">    return &quot;aiplatform.googleapis.com:443&quot;;</span>
+<span class="fc" id="L355">    return &quot;aiplatform.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L340">    return &quot;aiplatform.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L360">    return &quot;aiplatform.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L345">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L365">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L350">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L351">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L352">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L370">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L371">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L372">        .setUseJwtAccessWithScope(true);</span>
   }
 
   /** Returns a builder for the default ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L357">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L358">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L377">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L378">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L362">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L382">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
   public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L367">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L368">        .setGeneratedLibToken(</span>
-<span class="fc" id="L369">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(IndexServiceStubSettings.class))</span>
-<span class="fc" id="L370">        .setTransportToken(</span>
-<span class="fc" id="L371">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+<span class="fc" id="L387">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L388">        .setGeneratedLibToken(</span>
+<span class="fc" id="L389">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(IndexServiceStubSettings.class))</span>
+<span class="fc" id="L390">        .setTransportToken(</span>
+<span class="fc" id="L391">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L376">    return Builder.createDefault();</span>
+<span class="fc" id="L396">    return Builder.createDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L381">    return new Builder(clientContext);</span>
+<span class="nc" id="L401">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L386">    return new Builder(this);</span>
+<span class="nc" id="L406">    return new Builder(this);</span>
   }
 
   protected IndexServiceStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L390">    super(settingsBuilder);</span>
+<span class="fc" id="L410">    super(settingsBuilder);</span>
 
-<span class="fc" id="L392">    createIndexSettings = settingsBuilder.createIndexSettings().build();</span>
-<span class="fc" id="L393">    createIndexOperationSettings = settingsBuilder.createIndexOperationSettings().build();</span>
-<span class="fc" id="L394">    getIndexSettings = settingsBuilder.getIndexSettings().build();</span>
-<span class="fc" id="L395">    listIndexesSettings = settingsBuilder.listIndexesSettings().build();</span>
-<span class="fc" id="L396">    updateIndexSettings = settingsBuilder.updateIndexSettings().build();</span>
-<span class="fc" id="L397">    updateIndexOperationSettings = settingsBuilder.updateIndexOperationSettings().build();</span>
-<span class="fc" id="L398">    deleteIndexSettings = settingsBuilder.deleteIndexSettings().build();</span>
-<span class="fc" id="L399">    deleteIndexOperationSettings = settingsBuilder.deleteIndexOperationSettings().build();</span>
-<span class="fc" id="L400">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
-<span class="fc" id="L401">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
-<span class="fc" id="L402">    setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();</span>
-<span class="fc" id="L403">    getIamPolicySettings = settingsBuilder.getIamPolicySettings().build();</span>
-<span class="fc" id="L404">    testIamPermissionsSettings = settingsBuilder.testIamPermissionsSettings().build();</span>
-<span class="fc" id="L405">  }</span>
+<span class="fc" id="L412">    createIndexSettings = settingsBuilder.createIndexSettings().build();</span>
+<span class="fc" id="L413">    createIndexOperationSettings = settingsBuilder.createIndexOperationSettings().build();</span>
+<span class="fc" id="L414">    getIndexSettings = settingsBuilder.getIndexSettings().build();</span>
+<span class="fc" id="L415">    listIndexesSettings = settingsBuilder.listIndexesSettings().build();</span>
+<span class="fc" id="L416">    updateIndexSettings = settingsBuilder.updateIndexSettings().build();</span>
+<span class="fc" id="L417">    updateIndexOperationSettings = settingsBuilder.updateIndexOperationSettings().build();</span>
+<span class="fc" id="L418">    deleteIndexSettings = settingsBuilder.deleteIndexSettings().build();</span>
+<span class="fc" id="L419">    deleteIndexOperationSettings = settingsBuilder.deleteIndexOperationSettings().build();</span>
+<span class="fc" id="L420">    upsertDatapointsSettings = settingsBuilder.upsertDatapointsSettings().build();</span>
+<span class="fc" id="L421">    removeDatapointsSettings = settingsBuilder.removeDatapointsSettings().build();</span>
+<span class="fc" id="L422">    listLocationsSettings = settingsBuilder.listLocationsSettings().build();</span>
+<span class="fc" id="L423">    getLocationSettings = settingsBuilder.getLocationSettings().build();</span>
+<span class="fc" id="L424">    setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();</span>
+<span class="fc" id="L425">    getIamPolicySettings = settingsBuilder.getIamPolicySettings().build();</span>
+<span class="fc" id="L426">    testIamPermissionsSettings = settingsBuilder.testIamPermissionsSettings().build();</span>
+<span class="fc" id="L427">  }</span>
 
   /** Builder for IndexServiceStubSettings. */
   public static class Builder extends StubSettings.Builder&lt;IndexServiceStubSettings, Builder&gt; {
@@ -422,6 +444,10 @@ public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSe
     private final UnaryCallSettings.Builder&lt;DeleteIndexRequest, Operation&gt; deleteIndexSettings;
     private final OperationCallSettings.Builder&lt;DeleteIndexRequest, Empty, DeleteOperationMetadata&gt;
         deleteIndexOperationSettings;
+    private final UnaryCallSettings.Builder&lt;UpsertDatapointsRequest, UpsertDatapointsResponse&gt;
+        upsertDatapointsSettings;
+    private final UnaryCallSettings.Builder&lt;RemoveDatapointsRequest, RemoveDatapointsResponse&gt;
+        removeDatapointsSettings;
     private final PagedCallSettings.Builder&lt;
             ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
         listLocationsSettings;
@@ -435,234 +461,252 @@ public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSe
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L438">          ImmutableMap.builder();</span>
-<span class="fc" id="L439">      definitions.put(</span>
-<span class="fc" id="L440">          &quot;no_retry_2_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L441">      definitions.put(&quot;no_retry_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L442">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L464">          ImmutableMap.builder();</span>
+<span class="fc" id="L465">      definitions.put(</span>
+<span class="fc" id="L466">          &quot;no_retry_2_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L467">      definitions.put(&quot;no_retry_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L468">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L448">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L449">      RetrySettings settings = null;</span>
+<span class="fc" id="L474">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L475">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L451">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L452">              .setInitialRpcTimeout(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L453">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L454">              .setMaxRpcTimeout(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L455">              .setTotalTimeout(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L456">              .build();</span>
-<span class="fc" id="L457">      definitions.put(&quot;no_retry_2_params&quot;, settings);</span>
-<span class="fc" id="L458">      settings = RetrySettings.newBuilder().setRpcTimeoutMultiplier(1.0).build();</span>
-<span class="fc" id="L459">      definitions.put(&quot;no_retry_params&quot;, settings);</span>
-<span class="fc" id="L460">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L461">    }</span>
+<span class="fc" id="L477">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L478">              .setInitialRpcTimeout(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L479">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L480">              .setMaxRpcTimeout(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L481">              .setTotalTimeout(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L482">              .build();</span>
+<span class="fc" id="L483">      definitions.put(&quot;no_retry_2_params&quot;, settings);</span>
+<span class="fc" id="L484">      settings = RetrySettings.newBuilder().setRpcTimeoutMultiplier(1.0).build();</span>
+<span class="fc" id="L485">      definitions.put(&quot;no_retry_params&quot;, settings);</span>
+<span class="fc" id="L486">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L487">    }</span>
 
     protected Builder() {
-<span class="nc" id="L464">      this(((ClientContext) null));</span>
-<span class="nc" id="L465">    }</span>
+<span class="nc" id="L490">      this(((ClientContext) null));</span>
+<span class="nc" id="L491">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L468">      super(clientContext);</span>
+<span class="fc" id="L494">      super(clientContext);</span>
 
-<span class="fc" id="L470">      createIndexSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L471">      createIndexOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L472">      getIndexSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L473">      listIndexesSettings = PagedCallSettings.newBuilder(LIST_INDEXES_PAGE_STR_FACT);</span>
-<span class="fc" id="L474">      updateIndexSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L475">      updateIndexOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L476">      deleteIndexSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L477">      deleteIndexOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L478">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
-<span class="fc" id="L479">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L480">      setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L481">      getIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L482">      testIamPermissionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L496">      createIndexSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L497">      createIndexOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L498">      getIndexSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L499">      listIndexesSettings = PagedCallSettings.newBuilder(LIST_INDEXES_PAGE_STR_FACT);</span>
+<span class="fc" id="L500">      updateIndexSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L501">      updateIndexOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L502">      deleteIndexSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L503">      deleteIndexOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L504">      upsertDatapointsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L505">      removeDatapointsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L506">      listLocationsSettings = PagedCallSettings.newBuilder(LIST_LOCATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L507">      getLocationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L508">      setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L509">      getIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L510">      testIamPermissionsSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L484">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L485">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L512">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L513">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createIndexSettings,
               getIndexSettings,
               listIndexesSettings,
               updateIndexSettings,
               deleteIndexSettings,
+              upsertDatapointsSettings,
+              removeDatapointsSettings,
               listLocationsSettings,
               getLocationSettings,
               setIamPolicySettings,
               getIamPolicySettings,
               testIamPermissionsSettings);
-<span class="fc" id="L496">      initDefaults(this);</span>
-<span class="fc" id="L497">    }</span>
+<span class="fc" id="L526">      initDefaults(this);</span>
+<span class="fc" id="L527">    }</span>
 
     protected Builder(IndexServiceStubSettings settings) {
-<span class="nc" id="L500">      super(settings);</span>
+<span class="nc" id="L530">      super(settings);</span>
 
-<span class="nc" id="L502">      createIndexSettings = settings.createIndexSettings.toBuilder();</span>
-<span class="nc" id="L503">      createIndexOperationSettings = settings.createIndexOperationSettings.toBuilder();</span>
-<span class="nc" id="L504">      getIndexSettings = settings.getIndexSettings.toBuilder();</span>
-<span class="nc" id="L505">      listIndexesSettings = settings.listIndexesSettings.toBuilder();</span>
-<span class="nc" id="L506">      updateIndexSettings = settings.updateIndexSettings.toBuilder();</span>
-<span class="nc" id="L507">      updateIndexOperationSettings = settings.updateIndexOperationSettings.toBuilder();</span>
-<span class="nc" id="L508">      deleteIndexSettings = settings.deleteIndexSettings.toBuilder();</span>
-<span class="nc" id="L509">      deleteIndexOperationSettings = settings.deleteIndexOperationSettings.toBuilder();</span>
-<span class="nc" id="L510">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
-<span class="nc" id="L511">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
-<span class="nc" id="L512">      setIamPolicySettings = settings.setIamPolicySettings.toBuilder();</span>
-<span class="nc" id="L513">      getIamPolicySettings = settings.getIamPolicySettings.toBuilder();</span>
-<span class="nc" id="L514">      testIamPermissionsSettings = settings.testIamPermissionsSettings.toBuilder();</span>
+<span class="nc" id="L532">      createIndexSettings = settings.createIndexSettings.toBuilder();</span>
+<span class="nc" id="L533">      createIndexOperationSettings = settings.createIndexOperationSettings.toBuilder();</span>
+<span class="nc" id="L534">      getIndexSettings = settings.getIndexSettings.toBuilder();</span>
+<span class="nc" id="L535">      listIndexesSettings = settings.listIndexesSettings.toBuilder();</span>
+<span class="nc" id="L536">      updateIndexSettings = settings.updateIndexSettings.toBuilder();</span>
+<span class="nc" id="L537">      updateIndexOperationSettings = settings.updateIndexOperationSettings.toBuilder();</span>
+<span class="nc" id="L538">      deleteIndexSettings = settings.deleteIndexSettings.toBuilder();</span>
+<span class="nc" id="L539">      deleteIndexOperationSettings = settings.deleteIndexOperationSettings.toBuilder();</span>
+<span class="nc" id="L540">      upsertDatapointsSettings = settings.upsertDatapointsSettings.toBuilder();</span>
+<span class="nc" id="L541">      removeDatapointsSettings = settings.removeDatapointsSettings.toBuilder();</span>
+<span class="nc" id="L542">      listLocationsSettings = settings.listLocationsSettings.toBuilder();</span>
+<span class="nc" id="L543">      getLocationSettings = settings.getLocationSettings.toBuilder();</span>
+<span class="nc" id="L544">      setIamPolicySettings = settings.setIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L545">      getIamPolicySettings = settings.getIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L546">      testIamPermissionsSettings = settings.testIamPermissionsSettings.toBuilder();</span>
 
-<span class="nc" id="L516">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L517">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L548">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L549">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createIndexSettings,
               getIndexSettings,
               listIndexesSettings,
               updateIndexSettings,
               deleteIndexSettings,
+              upsertDatapointsSettings,
+              removeDatapointsSettings,
               listLocationsSettings,
               getLocationSettings,
               setIamPolicySettings,
               getIamPolicySettings,
               testIamPermissionsSettings);
-<span class="nc" id="L528">    }</span>
+<span class="nc" id="L562">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L531">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L565">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L533">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L534">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L535">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L536">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L537">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L538">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L567">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L568">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L569">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L570">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L571">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L572">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L540">      return initDefaults(builder);</span>
+<span class="fc" id="L574">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L544">      builder</span>
-<span class="fc" id="L545">          .createIndexSettings()</span>
-<span class="fc" id="L546">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
-<span class="fc" id="L547">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
+<span class="fc" id="L578">      builder</span>
+<span class="fc" id="L579">          .createIndexSettings()</span>
+<span class="fc" id="L580">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
+<span class="fc" id="L581">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
 
-<span class="fc" id="L549">      builder</span>
-<span class="fc" id="L550">          .getIndexSettings()</span>
-<span class="fc" id="L551">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
-<span class="fc" id="L552">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
+<span class="fc" id="L583">      builder</span>
+<span class="fc" id="L584">          .getIndexSettings()</span>
+<span class="fc" id="L585">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
+<span class="fc" id="L586">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
 
-<span class="fc" id="L554">      builder</span>
-<span class="fc" id="L555">          .listIndexesSettings()</span>
-<span class="fc" id="L556">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
-<span class="fc" id="L557">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
+<span class="fc" id="L588">      builder</span>
+<span class="fc" id="L589">          .listIndexesSettings()</span>
+<span class="fc" id="L590">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
+<span class="fc" id="L591">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
 
-<span class="fc" id="L559">      builder</span>
-<span class="fc" id="L560">          .updateIndexSettings()</span>
-<span class="fc" id="L561">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
-<span class="fc" id="L562">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
+<span class="fc" id="L593">      builder</span>
+<span class="fc" id="L594">          .updateIndexSettings()</span>
+<span class="fc" id="L595">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
+<span class="fc" id="L596">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
 
-<span class="fc" id="L564">      builder</span>
-<span class="fc" id="L565">          .deleteIndexSettings()</span>
-<span class="fc" id="L566">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
-<span class="fc" id="L567">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
+<span class="fc" id="L598">      builder</span>
+<span class="fc" id="L599">          .deleteIndexSettings()</span>
+<span class="fc" id="L600">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
+<span class="fc" id="L601">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;));</span>
 
-<span class="fc" id="L569">      builder</span>
-<span class="fc" id="L570">          .listLocationsSettings()</span>
-<span class="fc" id="L571">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L572">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+<span class="fc" id="L603">      builder</span>
+<span class="fc" id="L604">          .upsertDatapointsSettings()</span>
+<span class="fc" id="L605">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L606">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L574">      builder</span>
-<span class="fc" id="L575">          .getLocationSettings()</span>
-<span class="fc" id="L576">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L577">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+<span class="fc" id="L608">      builder</span>
+<span class="fc" id="L609">          .removeDatapointsSettings()</span>
+<span class="fc" id="L610">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L611">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
-<span class="fc" id="L579">      builder</span>
-<span class="fc" id="L580">          .setIamPolicySettings()</span>
-<span class="fc" id="L581">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L582">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L584">      builder</span>
-<span class="fc" id="L585">          .getIamPolicySettings()</span>
-<span class="fc" id="L586">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L587">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L589">      builder</span>
-<span class="fc" id="L590">          .testIamPermissionsSettings()</span>
-<span class="fc" id="L591">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
-<span class="fc" id="L592">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
-
-<span class="fc" id="L594">      builder</span>
-<span class="fc" id="L595">          .createIndexOperationSettings()</span>
-<span class="fc" id="L596">          .setInitialCallSettings(</span>
-<span class="fc" id="L597">              UnaryCallSettings.&lt;CreateIndexRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L598">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
-<span class="fc" id="L599">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;))</span>
-<span class="fc" id="L600">                  .build())</span>
-<span class="fc" id="L601">          .setResponseTransformer(</span>
-<span class="fc" id="L602">              ProtoOperationTransformers.ResponseTransformer.create(Index.class))</span>
-<span class="fc" id="L603">          .setMetadataTransformer(</span>
-<span class="fc" id="L604">              ProtoOperationTransformers.MetadataTransformer.create(</span>
-                  CreateIndexOperationMetadata.class))
-<span class="fc" id="L606">          .setPollingAlgorithm(</span>
-<span class="fc" id="L607">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L608">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L609">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L610">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L611">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L612">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L613">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L614">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L615">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L616">                      .build()));</span>
+<span class="fc" id="L613">      builder</span>
+<span class="fc" id="L614">          .listLocationsSettings()</span>
+<span class="fc" id="L615">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L616">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
 
 <span class="fc" id="L618">      builder</span>
-<span class="fc" id="L619">          .updateIndexOperationSettings()</span>
-<span class="fc" id="L620">          .setInitialCallSettings(</span>
-<span class="fc" id="L621">              UnaryCallSettings.&lt;UpdateIndexRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L622">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
-<span class="fc" id="L623">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;))</span>
-<span class="fc" id="L624">                  .build())</span>
-<span class="fc" id="L625">          .setResponseTransformer(</span>
-<span class="fc" id="L626">              ProtoOperationTransformers.ResponseTransformer.create(Index.class))</span>
-<span class="fc" id="L627">          .setMetadataTransformer(</span>
-<span class="fc" id="L628">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+<span class="fc" id="L619">          .getLocationSettings()</span>
+<span class="fc" id="L620">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L621">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L623">      builder</span>
+<span class="fc" id="L624">          .setIamPolicySettings()</span>
+<span class="fc" id="L625">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L626">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L628">      builder</span>
+<span class="fc" id="L629">          .getIamPolicySettings()</span>
+<span class="fc" id="L630">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L631">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L633">      builder</span>
+<span class="fc" id="L634">          .testIamPermissionsSettings()</span>
+<span class="fc" id="L635">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_codes&quot;))</span>
+<span class="fc" id="L636">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_params&quot;));</span>
+
+<span class="fc" id="L638">      builder</span>
+<span class="fc" id="L639">          .createIndexOperationSettings()</span>
+<span class="fc" id="L640">          .setInitialCallSettings(</span>
+<span class="fc" id="L641">              UnaryCallSettings.&lt;CreateIndexRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L642">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
+<span class="fc" id="L643">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;))</span>
+<span class="fc" id="L644">                  .build())</span>
+<span class="fc" id="L645">          .setResponseTransformer(</span>
+<span class="fc" id="L646">              ProtoOperationTransformers.ResponseTransformer.create(Index.class))</span>
+<span class="fc" id="L647">          .setMetadataTransformer(</span>
+<span class="fc" id="L648">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+                  CreateIndexOperationMetadata.class))
+<span class="fc" id="L650">          .setPollingAlgorithm(</span>
+<span class="fc" id="L651">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L652">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L653">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L654">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L655">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L656">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L657">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L658">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L659">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L660">                      .build()));</span>
+
+<span class="fc" id="L662">      builder</span>
+<span class="fc" id="L663">          .updateIndexOperationSettings()</span>
+<span class="fc" id="L664">          .setInitialCallSettings(</span>
+<span class="fc" id="L665">              UnaryCallSettings.&lt;UpdateIndexRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L666">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
+<span class="fc" id="L667">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;))</span>
+<span class="fc" id="L668">                  .build())</span>
+<span class="fc" id="L669">          .setResponseTransformer(</span>
+<span class="fc" id="L670">              ProtoOperationTransformers.ResponseTransformer.create(Index.class))</span>
+<span class="fc" id="L671">          .setMetadataTransformer(</span>
+<span class="fc" id="L672">              ProtoOperationTransformers.MetadataTransformer.create(</span>
                   UpdateIndexOperationMetadata.class))
-<span class="fc" id="L630">          .setPollingAlgorithm(</span>
-<span class="fc" id="L631">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L632">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L633">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L634">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L635">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L636">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L637">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L638">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L639">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L640">                      .build()));</span>
+<span class="fc" id="L674">          .setPollingAlgorithm(</span>
+<span class="fc" id="L675">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L676">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L677">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L678">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L679">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L680">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L681">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L682">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L683">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L684">                      .build()));</span>
 
-<span class="fc" id="L642">      builder</span>
-<span class="fc" id="L643">          .deleteIndexOperationSettings()</span>
-<span class="fc" id="L644">          .setInitialCallSettings(</span>
-<span class="fc" id="L645">              UnaryCallSettings.&lt;DeleteIndexRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L646">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
-<span class="fc" id="L647">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;))</span>
-<span class="fc" id="L648">                  .build())</span>
-<span class="fc" id="L649">          .setResponseTransformer(</span>
-<span class="fc" id="L650">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
-<span class="fc" id="L651">          .setMetadataTransformer(</span>
-<span class="fc" id="L652">              ProtoOperationTransformers.MetadataTransformer.create(DeleteOperationMetadata.class))</span>
-<span class="fc" id="L653">          .setPollingAlgorithm(</span>
-<span class="fc" id="L654">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L655">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L656">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L657">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L658">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L659">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L660">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L661">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L662">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L663">                      .build()));</span>
+<span class="fc" id="L686">      builder</span>
+<span class="fc" id="L687">          .deleteIndexOperationSettings()</span>
+<span class="fc" id="L688">          .setInitialCallSettings(</span>
+<span class="fc" id="L689">              UnaryCallSettings.&lt;DeleteIndexRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L690">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_2_codes&quot;))</span>
+<span class="fc" id="L691">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_2_params&quot;))</span>
+<span class="fc" id="L692">                  .build())</span>
+<span class="fc" id="L693">          .setResponseTransformer(</span>
+<span class="fc" id="L694">              ProtoOperationTransformers.ResponseTransformer.create(Empty.class))</span>
+<span class="fc" id="L695">          .setMetadataTransformer(</span>
+<span class="fc" id="L696">              ProtoOperationTransformers.MetadataTransformer.create(DeleteOperationMetadata.class))</span>
+<span class="fc" id="L697">          .setPollingAlgorithm(</span>
+<span class="fc" id="L698">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L699">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L700">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L701">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L702">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L703">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L704">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L705">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L706">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L707">                      .build()));</span>
 
-<span class="fc" id="L665">      return builder;</span>
+<span class="fc" id="L709">      return builder;</span>
     }
 
     /**
@@ -672,17 +716,17 @@ public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSe
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L675">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L676">      return this;</span>
+<span class="nc" id="L719">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L720">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L680">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L724">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to createIndex. */
     public UnaryCallSettings.Builder&lt;CreateIndexRequest, Operation&gt; createIndexSettings() {
-<span class="fc" id="L685">      return createIndexSettings;</span>
+<span class="fc" id="L729">      return createIndexSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createIndex. */
@@ -690,24 +734,24 @@ public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSe
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;CreateIndexRequest, Index, CreateIndexOperationMetadata&gt;
         createIndexOperationSettings() {
-<span class="fc" id="L693">      return createIndexOperationSettings;</span>
+<span class="fc" id="L737">      return createIndexOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getIndex. */
     public UnaryCallSettings.Builder&lt;GetIndexRequest, Index&gt; getIndexSettings() {
-<span class="fc" id="L698">      return getIndexSettings;</span>
+<span class="fc" id="L742">      return getIndexSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listIndexes. */
     public PagedCallSettings.Builder&lt;
             ListIndexesRequest, ListIndexesResponse, ListIndexesPagedResponse&gt;
         listIndexesSettings() {
-<span class="fc" id="L705">      return listIndexesSettings;</span>
+<span class="fc" id="L749">      return listIndexesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateIndex. */
     public UnaryCallSettings.Builder&lt;UpdateIndexRequest, Operation&gt; updateIndexSettings() {
-<span class="fc" id="L710">      return updateIndexSettings;</span>
+<span class="fc" id="L754">      return updateIndexSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateIndex. */
@@ -715,12 +759,12 @@ public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSe
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;UpdateIndexRequest, Index, UpdateIndexOperationMetadata&gt;
         updateIndexOperationSettings() {
-<span class="fc" id="L718">      return updateIndexOperationSettings;</span>
+<span class="fc" id="L762">      return updateIndexOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteIndex. */
     public UnaryCallSettings.Builder&lt;DeleteIndexRequest, Operation&gt; deleteIndexSettings() {
-<span class="fc" id="L723">      return deleteIndexSettings;</span>
+<span class="fc" id="L767">      return deleteIndexSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteIndex. */
@@ -728,40 +772,52 @@ public class IndexServiceStubSettings extends StubSettings&lt;IndexServiceStubSe
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeleteIndexRequest, Empty, DeleteOperationMetadata&gt;
         deleteIndexOperationSettings() {
-<span class="fc" id="L731">      return deleteIndexOperationSettings;</span>
+<span class="fc" id="L775">      return deleteIndexOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to upsertDatapoints. */
+    public UnaryCallSettings.Builder&lt;UpsertDatapointsRequest, UpsertDatapointsResponse&gt;
+        upsertDatapointsSettings() {
+<span class="fc" id="L781">      return upsertDatapointsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to removeDatapoints. */
+    public UnaryCallSettings.Builder&lt;RemoveDatapointsRequest, RemoveDatapointsResponse&gt;
+        removeDatapointsSettings() {
+<span class="fc" id="L787">      return removeDatapointsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listLocations. */
     public PagedCallSettings.Builder&lt;
             ListLocationsRequest, ListLocationsResponse, ListLocationsPagedResponse&gt;
         listLocationsSettings() {
-<span class="fc" id="L738">      return listLocationsSettings;</span>
+<span class="fc" id="L794">      return listLocationsSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getLocation. */
     public UnaryCallSettings.Builder&lt;GetLocationRequest, Location&gt; getLocationSettings() {
-<span class="fc" id="L743">      return getLocationSettings;</span>
+<span class="fc" id="L799">      return getLocationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to setIamPolicy. */
     public UnaryCallSettings.Builder&lt;SetIamPolicyRequest, Policy&gt; setIamPolicySettings() {
-<span class="fc" id="L748">      return setIamPolicySettings;</span>
+<span class="fc" id="L804">      return setIamPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getIamPolicy. */
     public UnaryCallSettings.Builder&lt;GetIamPolicyRequest, Policy&gt; getIamPolicySettings() {
-<span class="fc" id="L753">      return getIamPolicySettings;</span>
+<span class="fc" id="L809">      return getIamPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to testIamPermissions. */
     public UnaryCallSettings.Builder&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
         testIamPermissionsSettings() {
-<span class="fc" id="L759">      return testIamPermissionsSettings;</span>
+<span class="fc" id="L815">      return testIamPermissionsSettings;</span>
     }
 
     @Override
     public IndexServiceStubSettings build() throws IOException {
-<span class="fc" id="L764">      return new IndexServiceStubSettings(this);</span>
+<span class="fc" id="L820">      return new IndexServiceStubSettings(this);</span>
     }
   }
 }
