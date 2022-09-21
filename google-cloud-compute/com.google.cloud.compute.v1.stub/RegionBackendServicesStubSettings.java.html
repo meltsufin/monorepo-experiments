@@ -49,11 +49,14 @@ import com.google.cloud.compute.v1.BackendServiceGroupHealth;
 import com.google.cloud.compute.v1.BackendServiceList;
 import com.google.cloud.compute.v1.DeleteRegionBackendServiceRequest;
 import com.google.cloud.compute.v1.GetHealthRegionBackendServiceRequest;
+import com.google.cloud.compute.v1.GetIamPolicyRegionBackendServiceRequest;
 import com.google.cloud.compute.v1.GetRegionBackendServiceRequest;
 import com.google.cloud.compute.v1.InsertRegionBackendServiceRequest;
 import com.google.cloud.compute.v1.ListRegionBackendServicesRequest;
 import com.google.cloud.compute.v1.Operation;
 import com.google.cloud.compute.v1.PatchRegionBackendServiceRequest;
+import com.google.cloud.compute.v1.Policy;
+import com.google.cloud.compute.v1.SetIamPolicyRegionBackendServiceRequest;
 import com.google.cloud.compute.v1.UpdateRegionBackendServiceRequest;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -104,10 +107,10 @@ public class RegionBackendServicesStubSettings
     extends StubSettings&lt;RegionBackendServicesStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L107">      ImmutableList.&lt;String&gt;builder()</span>
-<span class="fc" id="L108">          .add(&quot;https://www.googleapis.com/auth/compute&quot;)</span>
-<span class="fc" id="L109">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
-<span class="fc" id="L110">          .build();</span>
+<span class="fc" id="L110">      ImmutableList.&lt;String&gt;builder()</span>
+<span class="fc" id="L111">          .add(&quot;https://www.googleapis.com/auth/compute&quot;)</span>
+<span class="fc" id="L112">          .add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;)</span>
+<span class="fc" id="L113">          .build();</span>
 
   private final UnaryCallSettings&lt;DeleteRegionBackendServiceRequest, Operation&gt; deleteSettings;
   private final OperationCallSettings&lt;DeleteRegionBackendServiceRequest, Operation, Operation&gt;
@@ -115,6 +118,8 @@ public class RegionBackendServicesStubSettings
   private final UnaryCallSettings&lt;GetRegionBackendServiceRequest, BackendService&gt; getSettings;
   private final UnaryCallSettings&lt;GetHealthRegionBackendServiceRequest, BackendServiceGroupHealth&gt;
       getHealthSettings;
+  private final UnaryCallSettings&lt;GetIamPolicyRegionBackendServiceRequest, Policy&gt;
+      getIamPolicySettings;
   private final UnaryCallSettings&lt;InsertRegionBackendServiceRequest, Operation&gt; insertSettings;
   private final OperationCallSettings&lt;InsertRegionBackendServiceRequest, Operation, Operation&gt;
       insertOperationSettings;
@@ -124,59 +129,61 @@ public class RegionBackendServicesStubSettings
   private final UnaryCallSettings&lt;PatchRegionBackendServiceRequest, Operation&gt; patchSettings;
   private final OperationCallSettings&lt;PatchRegionBackendServiceRequest, Operation, Operation&gt;
       patchOperationSettings;
+  private final UnaryCallSettings&lt;SetIamPolicyRegionBackendServiceRequest, Policy&gt;
+      setIamPolicySettings;
   private final UnaryCallSettings&lt;UpdateRegionBackendServiceRequest, Operation&gt; updateSettings;
   private final OperationCallSettings&lt;UpdateRegionBackendServiceRequest, Operation, Operation&gt;
       updateOperationSettings;
 
   private static final PagedListDescriptor&lt;
           ListRegionBackendServicesRequest, BackendServiceList, BackendService&gt;
-<span class="fc" id="L133">      LIST_PAGE_STR_DESC =</span>
+<span class="fc" id="L140">      LIST_PAGE_STR_DESC =</span>
           new PagedListDescriptor&lt;
-<span class="fc" id="L135">              ListRegionBackendServicesRequest, BackendServiceList, BackendService&gt;() {</span>
+<span class="fc" id="L142">              ListRegionBackendServicesRequest, BackendServiceList, BackendService&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L138">              return &quot;&quot;;</span>
+<span class="fc" id="L145">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListRegionBackendServicesRequest injectToken(
                 ListRegionBackendServicesRequest payload, String token) {
-<span class="nc" id="L144">              return ListRegionBackendServicesRequest.newBuilder(payload)</span>
-<span class="nc" id="L145">                  .setPageToken(token)</span>
-<span class="nc" id="L146">                  .build();</span>
+<span class="nc" id="L151">              return ListRegionBackendServicesRequest.newBuilder(payload)</span>
+<span class="nc" id="L152">                  .setPageToken(token)</span>
+<span class="nc" id="L153">                  .build();</span>
             }
 
             @Override
             public ListRegionBackendServicesRequest injectPageSize(
                 ListRegionBackendServicesRequest payload, int pageSize) {
-<span class="nc" id="L152">              return ListRegionBackendServicesRequest.newBuilder(payload)</span>
-<span class="nc" id="L153">                  .setMaxResults(pageSize)</span>
-<span class="nc" id="L154">                  .build();</span>
+<span class="nc" id="L159">              return ListRegionBackendServicesRequest.newBuilder(payload)</span>
+<span class="nc" id="L160">                  .setMaxResults(pageSize)</span>
+<span class="nc" id="L161">                  .build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListRegionBackendServicesRequest payload) {
-<span class="nc" id="L159">              return payload.getMaxResults();</span>
+<span class="nc" id="L166">              return payload.getMaxResults();</span>
             }
 
             @Override
             public String extractNextToken(BackendServiceList payload) {
-<span class="fc" id="L164">              return payload.getNextPageToken();</span>
+<span class="fc" id="L171">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;BackendService&gt; extractResources(BackendServiceList payload) {
-<span class="pc bpc" id="L169" title="1 of 2 branches missed.">              return payload.getItemsList() == null</span>
-<span class="nc" id="L170">                  ? ImmutableList.&lt;BackendService&gt;of()</span>
-<span class="fc" id="L171">                  : payload.getItemsList();</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">              return payload.getItemsList() == null</span>
+<span class="nc" id="L177">                  ? ImmutableList.&lt;BackendService&gt;of()</span>
+<span class="fc" id="L178">                  : payload.getItemsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListRegionBackendServicesRequest, BackendServiceList, ListPagedResponse&gt;
-<span class="fc" id="L177">      LIST_PAGE_STR_FACT =</span>
+<span class="fc" id="L184">      LIST_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L179">              ListRegionBackendServicesRequest, BackendServiceList, ListPagedResponse&gt;() {</span>
+<span class="fc" id="L186">              ListRegionBackendServicesRequest, BackendServiceList, ListPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListRegionBackendServicesRequest, BackendServiceList&gt; callable,
@@ -184,160 +191,172 @@ public class RegionBackendServicesStubSettings
                 ApiCallContext context,
                 ApiFuture&lt;BackendServiceList&gt; futureResponse) {
               PageContext&lt;ListRegionBackendServicesRequest, BackendServiceList, BackendService&gt;
-<span class="fc" id="L187">                  pageContext = PageContext.create(callable, LIST_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L188">              return ListPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L194">                  pageContext = PageContext.create(callable, LIST_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L195">              return ListPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to delete. */
   public UnaryCallSettings&lt;DeleteRegionBackendServiceRequest, Operation&gt; deleteSettings() {
-<span class="fc" id="L194">    return deleteSettings;</span>
+<span class="fc" id="L201">    return deleteSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to delete. */
   public OperationCallSettings&lt;DeleteRegionBackendServiceRequest, Operation, Operation&gt;
       deleteOperationSettings() {
-<span class="fc" id="L200">    return deleteOperationSettings;</span>
+<span class="fc" id="L207">    return deleteOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to get. */
   public UnaryCallSettings&lt;GetRegionBackendServiceRequest, BackendService&gt; getSettings() {
-<span class="fc" id="L205">    return getSettings;</span>
+<span class="fc" id="L212">    return getSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getHealth. */
   public UnaryCallSettings&lt;GetHealthRegionBackendServiceRequest, BackendServiceGroupHealth&gt;
       getHealthSettings() {
-<span class="fc" id="L211">    return getHealthSettings;</span>
+<span class="fc" id="L218">    return getHealthSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getIamPolicy. */
+  public UnaryCallSettings&lt;GetIamPolicyRegionBackendServiceRequest, Policy&gt; getIamPolicySettings() {
+<span class="fc" id="L223">    return getIamPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to insert. */
   public UnaryCallSettings&lt;InsertRegionBackendServiceRequest, Operation&gt; insertSettings() {
-<span class="fc" id="L216">    return insertSettings;</span>
+<span class="fc" id="L228">    return insertSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to insert. */
   public OperationCallSettings&lt;InsertRegionBackendServiceRequest, Operation, Operation&gt;
       insertOperationSettings() {
-<span class="fc" id="L222">    return insertOperationSettings;</span>
+<span class="fc" id="L234">    return insertOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to list. */
   public PagedCallSettings&lt;ListRegionBackendServicesRequest, BackendServiceList, ListPagedResponse&gt;
       listSettings() {
-<span class="fc" id="L228">    return listSettings;</span>
+<span class="fc" id="L240">    return listSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to patch. */
   public UnaryCallSettings&lt;PatchRegionBackendServiceRequest, Operation&gt; patchSettings() {
-<span class="fc" id="L233">    return patchSettings;</span>
+<span class="fc" id="L245">    return patchSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to patch. */
   public OperationCallSettings&lt;PatchRegionBackendServiceRequest, Operation, Operation&gt;
       patchOperationSettings() {
-<span class="fc" id="L239">    return patchOperationSettings;</span>
+<span class="fc" id="L251">    return patchOperationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to setIamPolicy. */
+  public UnaryCallSettings&lt;SetIamPolicyRegionBackendServiceRequest, Policy&gt; setIamPolicySettings() {
+<span class="fc" id="L256">    return setIamPolicySettings;</span>
   }
 
   /** Returns the object with the settings used for calls to update. */
   public UnaryCallSettings&lt;UpdateRegionBackendServiceRequest, Operation&gt; updateSettings() {
-<span class="fc" id="L244">    return updateSettings;</span>
+<span class="fc" id="L261">    return updateSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to update. */
   public OperationCallSettings&lt;UpdateRegionBackendServiceRequest, Operation, Operation&gt;
       updateOperationSettings() {
-<span class="fc" id="L250">    return updateOperationSettings;</span>
+<span class="fc" id="L267">    return updateOperationSettings;</span>
   }
 
   public RegionBackendServicesStub createStub() throws IOException {
-<span class="fc" id="L254">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L255">        .getTransportName()</span>
-<span class="pc bpc" id="L256" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
-<span class="fc" id="L257">      return HttpJsonRegionBackendServicesStub.create(this);</span>
+<span class="fc" id="L271">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L272">        .getTransportName()</span>
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L274">      return HttpJsonRegionBackendServicesStub.create(this);</span>
     }
-<span class="nc" id="L259">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L260">        String.format(</span>
-<span class="nc" id="L261">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="nc" id="L276">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L277">        String.format(</span>
+<span class="nc" id="L278">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L266">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L283">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L271">    return &quot;compute.googleapis.com:443&quot;;</span>
+<span class="fc" id="L288">    return &quot;compute.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L276">    return &quot;compute.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L293">    return &quot;compute.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L281">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L298">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L286">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L287">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L288">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L303">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L304">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L305">        .setUseJwtAccessWithScope(true);</span>
   }
 
   /** Returns a builder for the default ChannelProvider for this service. */
   public static InstantiatingHttpJsonChannelProvider.Builder
       defaultHttpJsonTransportProviderBuilder() {
-<span class="fc" id="L294">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
+<span class="fc" id="L311">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L298">    return defaultHttpJsonTransportProviderBuilder().build();</span>
+<span class="fc" id="L315">    return defaultHttpJsonTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
   public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L303">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L304">        .setGeneratedLibToken(</span>
-<span class="fc" id="L305">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(RegionBackendServicesStubSettings.class))</span>
-<span class="fc" id="L306">        .setTransportToken(</span>
-<span class="fc" id="L307">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
-<span class="fc" id="L308">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+<span class="fc" id="L320">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L321">        .setGeneratedLibToken(</span>
+<span class="fc" id="L322">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(RegionBackendServicesStubSettings.class))</span>
+<span class="fc" id="L323">        .setTransportToken(</span>
+<span class="fc" id="L324">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L325">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L313">    return Builder.createDefault();</span>
+<span class="fc" id="L330">    return Builder.createDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L318">    return new Builder(clientContext);</span>
+<span class="nc" id="L335">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L323">    return new Builder(this);</span>
+<span class="nc" id="L340">    return new Builder(this);</span>
   }
 
   protected RegionBackendServicesStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L327">    super(settingsBuilder);</span>
+<span class="fc" id="L344">    super(settingsBuilder);</span>
 
-<span class="fc" id="L329">    deleteSettings = settingsBuilder.deleteSettings().build();</span>
-<span class="fc" id="L330">    deleteOperationSettings = settingsBuilder.deleteOperationSettings().build();</span>
-<span class="fc" id="L331">    getSettings = settingsBuilder.getSettings().build();</span>
-<span class="fc" id="L332">    getHealthSettings = settingsBuilder.getHealthSettings().build();</span>
-<span class="fc" id="L333">    insertSettings = settingsBuilder.insertSettings().build();</span>
-<span class="fc" id="L334">    insertOperationSettings = settingsBuilder.insertOperationSettings().build();</span>
-<span class="fc" id="L335">    listSettings = settingsBuilder.listSettings().build();</span>
-<span class="fc" id="L336">    patchSettings = settingsBuilder.patchSettings().build();</span>
-<span class="fc" id="L337">    patchOperationSettings = settingsBuilder.patchOperationSettings().build();</span>
-<span class="fc" id="L338">    updateSettings = settingsBuilder.updateSettings().build();</span>
-<span class="fc" id="L339">    updateOperationSettings = settingsBuilder.updateOperationSettings().build();</span>
-<span class="fc" id="L340">  }</span>
+<span class="fc" id="L346">    deleteSettings = settingsBuilder.deleteSettings().build();</span>
+<span class="fc" id="L347">    deleteOperationSettings = settingsBuilder.deleteOperationSettings().build();</span>
+<span class="fc" id="L348">    getSettings = settingsBuilder.getSettings().build();</span>
+<span class="fc" id="L349">    getHealthSettings = settingsBuilder.getHealthSettings().build();</span>
+<span class="fc" id="L350">    getIamPolicySettings = settingsBuilder.getIamPolicySettings().build();</span>
+<span class="fc" id="L351">    insertSettings = settingsBuilder.insertSettings().build();</span>
+<span class="fc" id="L352">    insertOperationSettings = settingsBuilder.insertOperationSettings().build();</span>
+<span class="fc" id="L353">    listSettings = settingsBuilder.listSettings().build();</span>
+<span class="fc" id="L354">    patchSettings = settingsBuilder.patchSettings().build();</span>
+<span class="fc" id="L355">    patchOperationSettings = settingsBuilder.patchOperationSettings().build();</span>
+<span class="fc" id="L356">    setIamPolicySettings = settingsBuilder.setIamPolicySettings().build();</span>
+<span class="fc" id="L357">    updateSettings = settingsBuilder.updateSettings().build();</span>
+<span class="fc" id="L358">    updateOperationSettings = settingsBuilder.updateOperationSettings().build();</span>
+<span class="fc" id="L359">  }</span>
 
   /** Builder for RegionBackendServicesStubSettings. */
   public static class Builder
@@ -353,6 +372,8 @@ public class RegionBackendServicesStubSettings
     private final UnaryCallSettings.Builder&lt;
             GetHealthRegionBackendServiceRequest, BackendServiceGroupHealth&gt;
         getHealthSettings;
+    private final UnaryCallSettings.Builder&lt;GetIamPolicyRegionBackendServiceRequest, Policy&gt;
+        getIamPolicySettings;
     private final UnaryCallSettings.Builder&lt;InsertRegionBackendServiceRequest, Operation&gt;
         insertSettings;
     private final OperationCallSettings.Builder&lt;
@@ -366,6 +387,8 @@ public class RegionBackendServicesStubSettings
     private final OperationCallSettings.Builder&lt;
             PatchRegionBackendServiceRequest, Operation, Operation&gt;
         patchOperationSettings;
+    private final UnaryCallSettings.Builder&lt;SetIamPolicyRegionBackendServiceRequest, Policy&gt;
+        setIamPolicySettings;
     private final UnaryCallSettings.Builder&lt;UpdateRegionBackendServiceRequest, Operation&gt;
         updateSettings;
     private final OperationCallSettings.Builder&lt;
@@ -376,251 +399,269 @@ public class RegionBackendServicesStubSettings
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L379">          ImmutableMap.builder();</span>
-<span class="fc" id="L380">      definitions.put(</span>
-<span class="fc" id="L381">          &quot;no_retry_1_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L382">      definitions.put(</span>
+<span class="fc" id="L402">          ImmutableMap.builder();</span>
+<span class="fc" id="L403">      definitions.put(</span>
+<span class="fc" id="L404">          &quot;no_retry_1_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L405">      definitions.put(</span>
           &quot;retry_policy_0_codes&quot;,
-<span class="fc" id="L384">          ImmutableSet.copyOf(</span>
-<span class="fc" id="L385">              Lists.&lt;StatusCode.Code&gt;newArrayList(</span>
+<span class="fc" id="L407">          ImmutableSet.copyOf(</span>
+<span class="fc" id="L408">              Lists.&lt;StatusCode.Code&gt;newArrayList(</span>
                   StatusCode.Code.DEADLINE_EXCEEDED, StatusCode.Code.UNAVAILABLE)));
-<span class="fc" id="L387">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L410">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L393">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L394">      RetrySettings settings = null;</span>
+<span class="fc" id="L416">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L417">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L396">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L397">              .setInitialRpcTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L398">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L399">              .setMaxRpcTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L400">              .setTotalTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L401">              .build();</span>
-<span class="fc" id="L402">      definitions.put(&quot;no_retry_1_params&quot;, settings);</span>
+<span class="fc" id="L419">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L420">              .setInitialRpcTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L421">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L422">              .setMaxRpcTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L423">              .setTotalTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L424">              .build();</span>
+<span class="fc" id="L425">      definitions.put(&quot;no_retry_1_params&quot;, settings);</span>
       settings =
-<span class="fc" id="L404">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L405">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
-<span class="fc" id="L406">              .setRetryDelayMultiplier(1.3)</span>
-<span class="fc" id="L407">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L408">              .setInitialRpcTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L409">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L410">              .setMaxRpcTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L411">              .setTotalTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L412">              .build();</span>
-<span class="fc" id="L413">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
-<span class="fc" id="L414">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L415">    }</span>
+<span class="fc" id="L427">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L428">              .setInitialRetryDelay(Duration.ofMillis(100L))</span>
+<span class="fc" id="L429">              .setRetryDelayMultiplier(1.3)</span>
+<span class="fc" id="L430">              .setMaxRetryDelay(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L431">              .setInitialRpcTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L432">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L433">              .setMaxRpcTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L434">              .setTotalTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L435">              .build();</span>
+<span class="fc" id="L436">      definitions.put(&quot;retry_policy_0_params&quot;, settings);</span>
+<span class="fc" id="L437">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L438">    }</span>
 
     protected Builder() {
-<span class="nc" id="L418">      this(((ClientContext) null));</span>
-<span class="nc" id="L419">    }</span>
+<span class="nc" id="L441">      this(((ClientContext) null));</span>
+<span class="nc" id="L442">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L422">      super(clientContext);</span>
+<span class="fc" id="L445">      super(clientContext);</span>
 
-<span class="fc" id="L424">      deleteSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L425">      deleteOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L426">      getSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L427">      getHealthSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L428">      insertSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L429">      insertOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L430">      listSettings = PagedCallSettings.newBuilder(LIST_PAGE_STR_FACT);</span>
-<span class="fc" id="L431">      patchSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L432">      patchOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L433">      updateSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L434">      updateOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L447">      deleteSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L448">      deleteOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L449">      getSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L450">      getHealthSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L451">      getIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L452">      insertSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L453">      insertOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L454">      listSettings = PagedCallSettings.newBuilder(LIST_PAGE_STR_FACT);</span>
+<span class="fc" id="L455">      patchSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L456">      patchOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L457">      setIamPolicySettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L458">      updateSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L459">      updateOperationSettings = OperationCallSettings.newBuilder();</span>
 
-<span class="fc" id="L436">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L437">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L461">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L462">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               deleteSettings,
               getSettings,
               getHealthSettings,
+              getIamPolicySettings,
               insertSettings,
               listSettings,
               patchSettings,
+              setIamPolicySettings,
               updateSettings);
-<span class="fc" id="L445">      initDefaults(this);</span>
-<span class="fc" id="L446">    }</span>
+<span class="fc" id="L472">      initDefaults(this);</span>
+<span class="fc" id="L473">    }</span>
 
     protected Builder(RegionBackendServicesStubSettings settings) {
-<span class="nc" id="L449">      super(settings);</span>
+<span class="nc" id="L476">      super(settings);</span>
 
-<span class="nc" id="L451">      deleteSettings = settings.deleteSettings.toBuilder();</span>
-<span class="nc" id="L452">      deleteOperationSettings = settings.deleteOperationSettings.toBuilder();</span>
-<span class="nc" id="L453">      getSettings = settings.getSettings.toBuilder();</span>
-<span class="nc" id="L454">      getHealthSettings = settings.getHealthSettings.toBuilder();</span>
-<span class="nc" id="L455">      insertSettings = settings.insertSettings.toBuilder();</span>
-<span class="nc" id="L456">      insertOperationSettings = settings.insertOperationSettings.toBuilder();</span>
-<span class="nc" id="L457">      listSettings = settings.listSettings.toBuilder();</span>
-<span class="nc" id="L458">      patchSettings = settings.patchSettings.toBuilder();</span>
-<span class="nc" id="L459">      patchOperationSettings = settings.patchOperationSettings.toBuilder();</span>
-<span class="nc" id="L460">      updateSettings = settings.updateSettings.toBuilder();</span>
-<span class="nc" id="L461">      updateOperationSettings = settings.updateOperationSettings.toBuilder();</span>
+<span class="nc" id="L478">      deleteSettings = settings.deleteSettings.toBuilder();</span>
+<span class="nc" id="L479">      deleteOperationSettings = settings.deleteOperationSettings.toBuilder();</span>
+<span class="nc" id="L480">      getSettings = settings.getSettings.toBuilder();</span>
+<span class="nc" id="L481">      getHealthSettings = settings.getHealthSettings.toBuilder();</span>
+<span class="nc" id="L482">      getIamPolicySettings = settings.getIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L483">      insertSettings = settings.insertSettings.toBuilder();</span>
+<span class="nc" id="L484">      insertOperationSettings = settings.insertOperationSettings.toBuilder();</span>
+<span class="nc" id="L485">      listSettings = settings.listSettings.toBuilder();</span>
+<span class="nc" id="L486">      patchSettings = settings.patchSettings.toBuilder();</span>
+<span class="nc" id="L487">      patchOperationSettings = settings.patchOperationSettings.toBuilder();</span>
+<span class="nc" id="L488">      setIamPolicySettings = settings.setIamPolicySettings.toBuilder();</span>
+<span class="nc" id="L489">      updateSettings = settings.updateSettings.toBuilder();</span>
+<span class="nc" id="L490">      updateOperationSettings = settings.updateOperationSettings.toBuilder();</span>
 
-<span class="nc" id="L463">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L464">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L492">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L493">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               deleteSettings,
               getSettings,
               getHealthSettings,
+              getIamPolicySettings,
               insertSettings,
               listSettings,
               patchSettings,
+              setIamPolicySettings,
               updateSettings);
-<span class="nc" id="L472">    }</span>
+<span class="nc" id="L503">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L475">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L506">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L477">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L478">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L479">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L480">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L481">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L482">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L508">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L509">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L510">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L511">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L512">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L513">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L484">      return initDefaults(builder);</span>
+<span class="fc" id="L515">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L488">      builder</span>
-<span class="fc" id="L489">          .deleteSettings()</span>
-<span class="fc" id="L490">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L491">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L519">      builder</span>
+<span class="fc" id="L520">          .deleteSettings()</span>
+<span class="fc" id="L521">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L522">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
 
-<span class="fc" id="L493">      builder</span>
-<span class="fc" id="L494">          .getSettings()</span>
-<span class="fc" id="L495">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L496">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L524">      builder</span>
+<span class="fc" id="L525">          .getSettings()</span>
+<span class="fc" id="L526">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L527">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L498">      builder</span>
-<span class="fc" id="L499">          .getHealthSettings()</span>
-<span class="fc" id="L500">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L501">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L529">      builder</span>
+<span class="fc" id="L530">          .getHealthSettings()</span>
+<span class="fc" id="L531">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L532">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
 
-<span class="fc" id="L503">      builder</span>
-<span class="fc" id="L504">          .insertSettings()</span>
-<span class="fc" id="L505">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L506">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L534">      builder</span>
+<span class="fc" id="L535">          .getIamPolicySettings()</span>
+<span class="fc" id="L536">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L537">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L508">      builder</span>
-<span class="fc" id="L509">          .listSettings()</span>
-<span class="fc" id="L510">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
-<span class="fc" id="L511">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
+<span class="fc" id="L539">      builder</span>
+<span class="fc" id="L540">          .insertSettings()</span>
+<span class="fc" id="L541">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L542">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
 
-<span class="fc" id="L513">      builder</span>
-<span class="fc" id="L514">          .patchSettings()</span>
-<span class="fc" id="L515">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L516">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L544">      builder</span>
+<span class="fc" id="L545">          .listSettings()</span>
+<span class="fc" id="L546">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;retry_policy_0_codes&quot;))</span>
+<span class="fc" id="L547">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;retry_policy_0_params&quot;));</span>
 
-<span class="fc" id="L518">      builder</span>
-<span class="fc" id="L519">          .updateSettings()</span>
-<span class="fc" id="L520">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L521">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+<span class="fc" id="L549">      builder</span>
+<span class="fc" id="L550">          .patchSettings()</span>
+<span class="fc" id="L551">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L552">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
 
-<span class="fc" id="L523">      builder</span>
-<span class="fc" id="L524">          .deleteOperationSettings()</span>
-<span class="fc" id="L525">          .setInitialCallSettings(</span>
+<span class="fc" id="L554">      builder</span>
+<span class="fc" id="L555">          .setIamPolicySettings()</span>
+<span class="fc" id="L556">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L557">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+
+<span class="fc" id="L559">      builder</span>
+<span class="fc" id="L560">          .updateSettings()</span>
+<span class="fc" id="L561">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L562">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;));</span>
+
+<span class="fc" id="L564">      builder</span>
+<span class="fc" id="L565">          .deleteOperationSettings()</span>
+<span class="fc" id="L566">          .setInitialCallSettings(</span>
               UnaryCallSettings
                   .&lt;DeleteRegionBackendServiceRequest, OperationSnapshot&gt;
-<span class="fc" id="L528">                      newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L529">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L530">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;))</span>
-<span class="fc" id="L531">                  .build())</span>
-<span class="fc" id="L532">          .setResponseTransformer(</span>
-<span class="fc" id="L533">              ProtoOperationTransformers.ResponseTransformer.create(Operation.class))</span>
-<span class="fc" id="L534">          .setMetadataTransformer(</span>
-<span class="fc" id="L535">              ProtoOperationTransformers.MetadataTransformer.create(Operation.class))</span>
-<span class="fc" id="L536">          .setPollingAlgorithm(</span>
-<span class="fc" id="L537">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L538">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L539">                      .setInitialRetryDelay(Duration.ofMillis(500L))</span>
-<span class="fc" id="L540">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L541">                      .setMaxRetryDelay(Duration.ofMillis(20000L))</span>
-<span class="fc" id="L542">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L543">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L544">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L545">                      .setTotalTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L546">                      .build()));</span>
+<span class="fc" id="L569">                      newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L570">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L571">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;))</span>
+<span class="fc" id="L572">                  .build())</span>
+<span class="fc" id="L573">          .setResponseTransformer(</span>
+<span class="fc" id="L574">              ProtoOperationTransformers.ResponseTransformer.create(Operation.class))</span>
+<span class="fc" id="L575">          .setMetadataTransformer(</span>
+<span class="fc" id="L576">              ProtoOperationTransformers.MetadataTransformer.create(Operation.class))</span>
+<span class="fc" id="L577">          .setPollingAlgorithm(</span>
+<span class="fc" id="L578">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L579">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L580">                      .setInitialRetryDelay(Duration.ofMillis(500L))</span>
+<span class="fc" id="L581">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L582">                      .setMaxRetryDelay(Duration.ofMillis(20000L))</span>
+<span class="fc" id="L583">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L584">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L585">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L586">                      .setTotalTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L587">                      .build()));</span>
 
-<span class="fc" id="L548">      builder</span>
-<span class="fc" id="L549">          .insertOperationSettings()</span>
-<span class="fc" id="L550">          .setInitialCallSettings(</span>
+<span class="fc" id="L589">      builder</span>
+<span class="fc" id="L590">          .insertOperationSettings()</span>
+<span class="fc" id="L591">          .setInitialCallSettings(</span>
               UnaryCallSettings
                   .&lt;InsertRegionBackendServiceRequest, OperationSnapshot&gt;
-<span class="fc" id="L553">                      newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L554">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L555">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;))</span>
-<span class="fc" id="L556">                  .build())</span>
-<span class="fc" id="L557">          .setResponseTransformer(</span>
-<span class="fc" id="L558">              ProtoOperationTransformers.ResponseTransformer.create(Operation.class))</span>
-<span class="fc" id="L559">          .setMetadataTransformer(</span>
-<span class="fc" id="L560">              ProtoOperationTransformers.MetadataTransformer.create(Operation.class))</span>
-<span class="fc" id="L561">          .setPollingAlgorithm(</span>
-<span class="fc" id="L562">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L563">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L564">                      .setInitialRetryDelay(Duration.ofMillis(500L))</span>
-<span class="fc" id="L565">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L566">                      .setMaxRetryDelay(Duration.ofMillis(20000L))</span>
-<span class="fc" id="L567">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L568">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L569">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L570">                      .setTotalTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L571">                      .build()));</span>
+<span class="fc" id="L594">                      newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L595">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L596">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;))</span>
+<span class="fc" id="L597">                  .build())</span>
+<span class="fc" id="L598">          .setResponseTransformer(</span>
+<span class="fc" id="L599">              ProtoOperationTransformers.ResponseTransformer.create(Operation.class))</span>
+<span class="fc" id="L600">          .setMetadataTransformer(</span>
+<span class="fc" id="L601">              ProtoOperationTransformers.MetadataTransformer.create(Operation.class))</span>
+<span class="fc" id="L602">          .setPollingAlgorithm(</span>
+<span class="fc" id="L603">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L604">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L605">                      .setInitialRetryDelay(Duration.ofMillis(500L))</span>
+<span class="fc" id="L606">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L607">                      .setMaxRetryDelay(Duration.ofMillis(20000L))</span>
+<span class="fc" id="L608">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L609">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L610">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L611">                      .setTotalTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L612">                      .build()));</span>
 
-<span class="fc" id="L573">      builder</span>
-<span class="fc" id="L574">          .patchOperationSettings()</span>
-<span class="fc" id="L575">          .setInitialCallSettings(</span>
+<span class="fc" id="L614">      builder</span>
+<span class="fc" id="L615">          .patchOperationSettings()</span>
+<span class="fc" id="L616">          .setInitialCallSettings(</span>
               UnaryCallSettings
                   .&lt;PatchRegionBackendServiceRequest, OperationSnapshot&gt;
-<span class="fc" id="L578">                      newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L579">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L580">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;))</span>
-<span class="fc" id="L581">                  .build())</span>
-<span class="fc" id="L582">          .setResponseTransformer(</span>
-<span class="fc" id="L583">              ProtoOperationTransformers.ResponseTransformer.create(Operation.class))</span>
-<span class="fc" id="L584">          .setMetadataTransformer(</span>
-<span class="fc" id="L585">              ProtoOperationTransformers.MetadataTransformer.create(Operation.class))</span>
-<span class="fc" id="L586">          .setPollingAlgorithm(</span>
-<span class="fc" id="L587">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L588">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L589">                      .setInitialRetryDelay(Duration.ofMillis(500L))</span>
-<span class="fc" id="L590">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L591">                      .setMaxRetryDelay(Duration.ofMillis(20000L))</span>
-<span class="fc" id="L592">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L593">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L594">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L595">                      .setTotalTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L596">                      .build()));</span>
+<span class="fc" id="L619">                      newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L620">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L621">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;))</span>
+<span class="fc" id="L622">                  .build())</span>
+<span class="fc" id="L623">          .setResponseTransformer(</span>
+<span class="fc" id="L624">              ProtoOperationTransformers.ResponseTransformer.create(Operation.class))</span>
+<span class="fc" id="L625">          .setMetadataTransformer(</span>
+<span class="fc" id="L626">              ProtoOperationTransformers.MetadataTransformer.create(Operation.class))</span>
+<span class="fc" id="L627">          .setPollingAlgorithm(</span>
+<span class="fc" id="L628">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L629">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L630">                      .setInitialRetryDelay(Duration.ofMillis(500L))</span>
+<span class="fc" id="L631">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L632">                      .setMaxRetryDelay(Duration.ofMillis(20000L))</span>
+<span class="fc" id="L633">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L634">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L635">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L636">                      .setTotalTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L637">                      .build()));</span>
 
-<span class="fc" id="L598">      builder</span>
-<span class="fc" id="L599">          .updateOperationSettings()</span>
-<span class="fc" id="L600">          .setInitialCallSettings(</span>
+<span class="fc" id="L639">      builder</span>
+<span class="fc" id="L640">          .updateOperationSettings()</span>
+<span class="fc" id="L641">          .setInitialCallSettings(</span>
               UnaryCallSettings
                   .&lt;UpdateRegionBackendServiceRequest, OperationSnapshot&gt;
-<span class="fc" id="L603">                      newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L604">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
-<span class="fc" id="L605">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;))</span>
-<span class="fc" id="L606">                  .build())</span>
-<span class="fc" id="L607">          .setResponseTransformer(</span>
-<span class="fc" id="L608">              ProtoOperationTransformers.ResponseTransformer.create(Operation.class))</span>
-<span class="fc" id="L609">          .setMetadataTransformer(</span>
-<span class="fc" id="L610">              ProtoOperationTransformers.MetadataTransformer.create(Operation.class))</span>
-<span class="fc" id="L611">          .setPollingAlgorithm(</span>
-<span class="fc" id="L612">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L613">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L614">                      .setInitialRetryDelay(Duration.ofMillis(500L))</span>
-<span class="fc" id="L615">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L616">                      .setMaxRetryDelay(Duration.ofMillis(20000L))</span>
-<span class="fc" id="L617">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L618">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L619">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L620">                      .setTotalTimeout(Duration.ofMillis(600000L))</span>
-<span class="fc" id="L621">                      .build()));</span>
+<span class="fc" id="L644">                      newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L645">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_1_codes&quot;))</span>
+<span class="fc" id="L646">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_1_params&quot;))</span>
+<span class="fc" id="L647">                  .build())</span>
+<span class="fc" id="L648">          .setResponseTransformer(</span>
+<span class="fc" id="L649">              ProtoOperationTransformers.ResponseTransformer.create(Operation.class))</span>
+<span class="fc" id="L650">          .setMetadataTransformer(</span>
+<span class="fc" id="L651">              ProtoOperationTransformers.MetadataTransformer.create(Operation.class))</span>
+<span class="fc" id="L652">          .setPollingAlgorithm(</span>
+<span class="fc" id="L653">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L654">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L655">                      .setInitialRetryDelay(Duration.ofMillis(500L))</span>
+<span class="fc" id="L656">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L657">                      .setMaxRetryDelay(Duration.ofMillis(20000L))</span>
+<span class="fc" id="L658">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L659">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L660">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L661">                      .setTotalTimeout(Duration.ofMillis(600000L))</span>
+<span class="fc" id="L662">                      .build()));</span>
 
-<span class="fc" id="L623">      return builder;</span>
+<span class="fc" id="L664">      return builder;</span>
     }
 
     /**
@@ -630,18 +671,18 @@ public class RegionBackendServicesStubSettings
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L633">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L634">      return this;</span>
+<span class="nc" id="L674">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L675">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L638">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L679">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to delete. */
     public UnaryCallSettings.Builder&lt;DeleteRegionBackendServiceRequest, Operation&gt;
         deleteSettings() {
-<span class="fc" id="L644">      return deleteSettings;</span>
+<span class="fc" id="L685">      return deleteSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to delete. */
@@ -649,25 +690,31 @@ public class RegionBackendServicesStubSettings
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;DeleteRegionBackendServiceRequest, Operation, Operation&gt;
         deleteOperationSettings() {
-<span class="fc" id="L652">      return deleteOperationSettings;</span>
+<span class="fc" id="L693">      return deleteOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to get. */
     public UnaryCallSettings.Builder&lt;GetRegionBackendServiceRequest, BackendService&gt; getSettings() {
-<span class="fc" id="L657">      return getSettings;</span>
+<span class="fc" id="L698">      return getSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getHealth. */
     public UnaryCallSettings.Builder&lt;
             GetHealthRegionBackendServiceRequest, BackendServiceGroupHealth&gt;
         getHealthSettings() {
-<span class="fc" id="L664">      return getHealthSettings;</span>
+<span class="fc" id="L705">      return getHealthSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getIamPolicy. */
+    public UnaryCallSettings.Builder&lt;GetIamPolicyRegionBackendServiceRequest, Policy&gt;
+        getIamPolicySettings() {
+<span class="fc" id="L711">      return getIamPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to insert. */
     public UnaryCallSettings.Builder&lt;InsertRegionBackendServiceRequest, Operation&gt;
         insertSettings() {
-<span class="fc" id="L670">      return insertSettings;</span>
+<span class="fc" id="L717">      return insertSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to insert. */
@@ -675,19 +722,19 @@ public class RegionBackendServicesStubSettings
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;InsertRegionBackendServiceRequest, Operation, Operation&gt;
         insertOperationSettings() {
-<span class="fc" id="L678">      return insertOperationSettings;</span>
+<span class="fc" id="L725">      return insertOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to list. */
     public PagedCallSettings.Builder&lt;
             ListRegionBackendServicesRequest, BackendServiceList, ListPagedResponse&gt;
         listSettings() {
-<span class="fc" id="L685">      return listSettings;</span>
+<span class="fc" id="L732">      return listSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to patch. */
     public UnaryCallSettings.Builder&lt;PatchRegionBackendServiceRequest, Operation&gt; patchSettings() {
-<span class="fc" id="L690">      return patchSettings;</span>
+<span class="fc" id="L737">      return patchSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to patch. */
@@ -695,13 +742,19 @@ public class RegionBackendServicesStubSettings
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;PatchRegionBackendServiceRequest, Operation, Operation&gt;
         patchOperationSettings() {
-<span class="fc" id="L698">      return patchOperationSettings;</span>
+<span class="fc" id="L745">      return patchOperationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to setIamPolicy. */
+    public UnaryCallSettings.Builder&lt;SetIamPolicyRegionBackendServiceRequest, Policy&gt;
+        setIamPolicySettings() {
+<span class="fc" id="L751">      return setIamPolicySettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to update. */
     public UnaryCallSettings.Builder&lt;UpdateRegionBackendServiceRequest, Operation&gt;
         updateSettings() {
-<span class="fc" id="L704">      return updateSettings;</span>
+<span class="fc" id="L757">      return updateSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to update. */
@@ -709,12 +762,12 @@ public class RegionBackendServicesStubSettings
         &quot;The surface for use by generated code is not stable yet and may change in the future.&quot;)
     public OperationCallSettings.Builder&lt;UpdateRegionBackendServiceRequest, Operation, Operation&gt;
         updateOperationSettings() {
-<span class="fc" id="L712">      return updateOperationSettings;</span>
+<span class="fc" id="L765">      return updateOperationSettings;</span>
     }
 
     @Override
     public RegionBackendServicesStubSettings build() throws IOException {
-<span class="fc" id="L717">      return new RegionBackendServicesStubSettings(this);</span>
+<span class="fc" id="L770">      return new RegionBackendServicesStubSettings(this);</span>
     }
   }
 }
