@@ -34,7 +34,9 @@ import com.google.iam.admin.v1.CreateServiceAccountRequest;
 import com.google.iam.admin.v1.DeleteRoleRequest;
 import com.google.iam.admin.v1.DeleteServiceAccountKeyRequest;
 import com.google.iam.admin.v1.DeleteServiceAccountRequest;
+import com.google.iam.admin.v1.DisableServiceAccountKeyRequest;
 import com.google.iam.admin.v1.DisableServiceAccountRequest;
+import com.google.iam.admin.v1.EnableServiceAccountKeyRequest;
 import com.google.iam.admin.v1.EnableServiceAccountRequest;
 import com.google.iam.admin.v1.GetRoleRequest;
 import com.google.iam.admin.v1.GetServiceAccountKeyRequest;
@@ -97,9 +99,9 @@ import javax.annotation.Generated;
  *   &lt;li&gt;&amp;#42;&amp;#42;Service account keys&amp;#42;&amp;#42;, which service accounts use to authenticate with
  *       Google APIs
  *   &lt;li&gt;&amp;#42;&amp;#42;IAM policies for service accounts&amp;#42;&amp;#42;, which specify the roles that a
- *       member has for the service account
+ *       principal has for the service account
  *   &lt;li&gt;&amp;#42;&amp;#42;IAM custom roles&amp;#42;&amp;#42;, which help you limit the number of permissions that
- *       you grant to members
+ *       you grant to principals
  * &lt;/ul&gt;
  *
  * &lt;p&gt;In addition, you can use this service to complete the following tasks, among others:
@@ -109,6 +111,14 @@ import javax.annotation.Generated;
  *   &lt;li&gt;Check which roles you can grant for a specific resource
  *   &lt;li&gt;Lint, or validate, condition expressions in an IAM policy
  * &lt;/ul&gt;
+ *
+ * &lt;p&gt;When you read data from the IAM API, each read is eventually consistent. In other words, if
+ * you write data with the IAM API, then immediately read that data, the read operation might return
+ * an older version of the data. To deal with this behavior, your application can retry the request
+ * with truncated exponential backoff.
+ *
+ * &lt;p&gt;In contrast, writing data to the IAM API is sequentially consistent. In other words, write
+ * operations are always processed in the order in which they were received.
  *
  * &lt;p&gt;This class provides the ability to make remote calls to the backing service through method
  * calls that map to API methods. Sample code to get started:
@@ -187,7 +197,7 @@ public class IAMClient implements BackgroundResource {
 
   /** Constructs an instance of IAMClient with default settings. */
   public static final IAMClient create() throws IOException {
-<span class="nc" id="L190">    return create(IAMSettings.newBuilder().build());</span>
+<span class="nc" id="L200">    return create(IAMSettings.newBuilder().build());</span>
   }
 
   /**
@@ -195,7 +205,7 @@ public class IAMClient implements BackgroundResource {
    * on the settings passed in, or defaults for any settings that are not set.
    */
   public static final IAMClient create(IAMSettings settings) throws IOException {
-<span class="fc" id="L198">    return new IAMClient(settings);</span>
+<span class="fc" id="L208">    return new IAMClient(settings);</span>
   }
 
   /**
@@ -203,29 +213,29 @@ public class IAMClient implements BackgroundResource {
    * advanced usage - prefer using create(IAMSettings).
    */
   public static final IAMClient create(IAMStub stub) {
-<span class="nc" id="L206">    return new IAMClient(stub);</span>
+<span class="nc" id="L216">    return new IAMClient(stub);</span>
   }
 
   /**
    * Constructs an instance of IAMClient, using the given settings. This is protected so that it is
    * easy to make a subclass, but otherwise, the static factory methods should be preferred.
    */
-<span class="fc" id="L213">  protected IAMClient(IAMSettings settings) throws IOException {</span>
-<span class="fc" id="L214">    this.settings = settings;</span>
-<span class="fc" id="L215">    this.stub = ((IAMStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L216">  }</span>
+<span class="fc" id="L223">  protected IAMClient(IAMSettings settings) throws IOException {</span>
+<span class="fc" id="L224">    this.settings = settings;</span>
+<span class="fc" id="L225">    this.stub = ((IAMStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L226">  }</span>
 
-<span class="nc" id="L218">  protected IAMClient(IAMStub stub) {</span>
-<span class="nc" id="L219">    this.settings = null;</span>
-<span class="nc" id="L220">    this.stub = stub;</span>
-<span class="nc" id="L221">  }</span>
+<span class="nc" id="L228">  protected IAMClient(IAMStub stub) {</span>
+<span class="nc" id="L229">    this.settings = null;</span>
+<span class="nc" id="L230">    this.stub = stub;</span>
+<span class="nc" id="L231">  }</span>
 
   public final IAMSettings getSettings() {
-<span class="nc" id="L224">    return settings;</span>
+<span class="nc" id="L234">    return settings;</span>
   }
 
   public IAMStub getStub() {
-<span class="nc" id="L228">    return stub;</span>
+<span class="nc" id="L238">    return stub;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -255,10 +265,10 @@ public class IAMClient implements BackgroundResource {
    */
   public final ListServiceAccountsPagedResponse listServiceAccounts(ProjectName name) {
     ListServiceAccountsRequest request =
-<span class="fc" id="L258">        ListServiceAccountsRequest.newBuilder()</span>
-<span class="pc bpc" id="L259" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L260">            .build();</span>
-<span class="fc" id="L261">    return listServiceAccounts(request);</span>
+<span class="fc" id="L268">        ListServiceAccountsRequest.newBuilder()</span>
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L270">            .build();</span>
+<span class="fc" id="L271">    return listServiceAccounts(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -288,8 +298,8 @@ public class IAMClient implements BackgroundResource {
    */
   public final ListServiceAccountsPagedResponse listServiceAccounts(String name) {
     ListServiceAccountsRequest request =
-<span class="fc" id="L291">        ListServiceAccountsRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L292">    return listServiceAccounts(request);</span>
+<span class="fc" id="L301">        ListServiceAccountsRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L302">    return listServiceAccounts(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -323,7 +333,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final ListServiceAccountsPagedResponse listServiceAccounts(
       ListServiceAccountsRequest request) {
-<span class="fc" id="L326">    return listServiceAccountsPagedCallable().call(request);</span>
+<span class="fc" id="L336">    return listServiceAccountsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -357,7 +367,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListServiceAccountsRequest, ListServiceAccountsPagedResponse&gt;
       listServiceAccountsPagedCallable() {
-<span class="fc" id="L360">    return stub.listServiceAccountsPagedCallable();</span>
+<span class="fc" id="L370">    return stub.listServiceAccountsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -398,7 +408,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListServiceAccountsRequest, ListServiceAccountsResponse&gt;
       listServiceAccountsCallable() {
-<span class="nc" id="L401">    return stub.listServiceAccountsCallable();</span>
+<span class="nc" id="L411">    return stub.listServiceAccountsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -427,10 +437,10 @@ public class IAMClient implements BackgroundResource {
    */
   public final ServiceAccount getServiceAccount(ServiceAccountName name) {
     GetServiceAccountRequest request =
-<span class="fc" id="L430">        GetServiceAccountRequest.newBuilder()</span>
-<span class="pc bpc" id="L431" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L432">            .build();</span>
-<span class="fc" id="L433">    return getServiceAccount(request);</span>
+<span class="fc" id="L440">        GetServiceAccountRequest.newBuilder()</span>
+<span class="pc bpc" id="L441" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L442">            .build();</span>
+<span class="fc" id="L443">    return getServiceAccount(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -458,8 +468,8 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount getServiceAccount(String name) {
-<span class="fc" id="L461">    GetServiceAccountRequest request = GetServiceAccountRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L462">    return getServiceAccount(request);</span>
+<span class="fc" id="L471">    GetServiceAccountRequest request = GetServiceAccountRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L472">    return getServiceAccount(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -487,7 +497,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount getServiceAccount(GetServiceAccountRequest request) {
-<span class="fc" id="L490">    return getServiceAccountCallable().call(request);</span>
+<span class="fc" id="L500">    return getServiceAccountCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -514,7 +524,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetServiceAccountRequest, ServiceAccount&gt; getServiceAccountCallable() {
-<span class="fc" id="L517">    return stub.getServiceAccountCallable();</span>
+<span class="fc" id="L527">    return stub.getServiceAccountCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -551,12 +561,12 @@ public class IAMClient implements BackgroundResource {
   public final ServiceAccount createServiceAccount(
       ProjectName name, String accountId, ServiceAccount serviceAccount) {
     CreateServiceAccountRequest request =
-<span class="fc" id="L554">        CreateServiceAccountRequest.newBuilder()</span>
-<span class="pc bpc" id="L555" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L556">            .setAccountId(accountId)</span>
-<span class="fc" id="L557">            .setServiceAccount(serviceAccount)</span>
-<span class="fc" id="L558">            .build();</span>
-<span class="fc" id="L559">    return createServiceAccount(request);</span>
+<span class="fc" id="L564">        CreateServiceAccountRequest.newBuilder()</span>
+<span class="pc bpc" id="L565" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L566">            .setAccountId(accountId)</span>
+<span class="fc" id="L567">            .setServiceAccount(serviceAccount)</span>
+<span class="fc" id="L568">            .build();</span>
+<span class="fc" id="L569">    return createServiceAccount(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -593,12 +603,12 @@ public class IAMClient implements BackgroundResource {
   public final ServiceAccount createServiceAccount(
       String name, String accountId, ServiceAccount serviceAccount) {
     CreateServiceAccountRequest request =
-<span class="fc" id="L596">        CreateServiceAccountRequest.newBuilder()</span>
-<span class="fc" id="L597">            .setName(name)</span>
-<span class="fc" id="L598">            .setAccountId(accountId)</span>
-<span class="fc" id="L599">            .setServiceAccount(serviceAccount)</span>
-<span class="fc" id="L600">            .build();</span>
-<span class="fc" id="L601">    return createServiceAccount(request);</span>
+<span class="fc" id="L606">        CreateServiceAccountRequest.newBuilder()</span>
+<span class="fc" id="L607">            .setName(name)</span>
+<span class="fc" id="L608">            .setAccountId(accountId)</span>
+<span class="fc" id="L609">            .setServiceAccount(serviceAccount)</span>
+<span class="fc" id="L610">            .build();</span>
+<span class="fc" id="L611">    return createServiceAccount(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -628,7 +638,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount createServiceAccount(CreateServiceAccountRequest request) {
-<span class="fc" id="L631">    return createServiceAccountCallable().call(request);</span>
+<span class="fc" id="L641">    return createServiceAccountCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -659,7 +669,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateServiceAccountRequest, ServiceAccount&gt;
       createServiceAccountCallable() {
-<span class="fc" id="L662">    return stub.createServiceAccountCallable();</span>
+<span class="fc" id="L672">    return stub.createServiceAccountCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -669,7 +679,7 @@ public class IAMClient implements BackgroundResource {
    *
    * &lt;p&gt;Updates a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
    *
-   * &lt;p&gt;You can update only the `display_name` and `description` fields.
+   * &lt;p&gt;You can update only the `display_name` field.
    *
    * &lt;p&gt;Sample code:
    *
@@ -700,7 +710,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount updateServiceAccount(ServiceAccount request) {
-<span class="fc" id="L703">    return updateServiceAccountCallable().call(request);</span>
+<span class="fc" id="L713">    return updateServiceAccountCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -710,7 +720,7 @@ public class IAMClient implements BackgroundResource {
    *
    * &lt;p&gt;Updates a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
    *
-   * &lt;p&gt;You can update only the `display_name` and `description` fields.
+   * &lt;p&gt;You can update only the `display_name` field.
    *
    * &lt;p&gt;Sample code:
    *
@@ -741,7 +751,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ServiceAccount, ServiceAccount&gt; updateServiceAccountCallable() {
-<span class="fc" id="L744">    return stub.updateServiceAccountCallable();</span>
+<span class="fc" id="L754">    return stub.updateServiceAccountCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -770,7 +780,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount patchServiceAccount(PatchServiceAccountRequest request) {
-<span class="fc" id="L773">    return patchServiceAccountCallable().call(request);</span>
+<span class="fc" id="L783">    return patchServiceAccountCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -800,7 +810,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;PatchServiceAccountRequest, ServiceAccount&gt;
       patchServiceAccountCallable() {
-<span class="fc" id="L803">    return stub.patchServiceAccountCallable();</span>
+<span class="fc" id="L813">    return stub.patchServiceAccountCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -842,11 +852,11 @@ public class IAMClient implements BackgroundResource {
    */
   public final void deleteServiceAccount(ServiceAccountName name) {
     DeleteServiceAccountRequest request =
-<span class="fc" id="L845">        DeleteServiceAccountRequest.newBuilder()</span>
-<span class="pc bpc" id="L846" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L847">            .build();</span>
-<span class="fc" id="L848">    deleteServiceAccount(request);</span>
-<span class="fc" id="L849">  }</span>
+<span class="fc" id="L855">        DeleteServiceAccountRequest.newBuilder()</span>
+<span class="pc bpc" id="L856" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L857">            .build();</span>
+<span class="fc" id="L858">    deleteServiceAccount(request);</span>
+<span class="fc" id="L859">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -887,9 +897,9 @@ public class IAMClient implements BackgroundResource {
    */
   public final void deleteServiceAccount(String name) {
     DeleteServiceAccountRequest request =
-<span class="fc" id="L890">        DeleteServiceAccountRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L891">    deleteServiceAccount(request);</span>
-<span class="fc" id="L892">  }</span>
+<span class="fc" id="L900">        DeleteServiceAccountRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L901">    deleteServiceAccount(request);</span>
+<span class="fc" id="L902">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -929,8 +939,8 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteServiceAccount(DeleteServiceAccountRequest request) {
-<span class="fc" id="L932">    deleteServiceAccountCallable().call(request);</span>
-<span class="fc" id="L933">  }</span>
+<span class="fc" id="L942">    deleteServiceAccountCallable().call(request);</span>
+<span class="fc" id="L943">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -969,7 +979,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteServiceAccountRequest, Empty&gt; deleteServiceAccountCallable() {
-<span class="fc" id="L972">    return stub.deleteServiceAccountCallable();</span>
+<span class="fc" id="L982">    return stub.deleteServiceAccountCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1002,7 +1012,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UndeleteServiceAccountResponse undeleteServiceAccount(
       UndeleteServiceAccountRequest request) {
-<span class="fc" id="L1005">    return undeleteServiceAccountCallable().call(request);</span>
+<span class="fc" id="L1015">    return undeleteServiceAccountCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1035,7 +1045,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UndeleteServiceAccountRequest, UndeleteServiceAccountResponse&gt;
       undeleteServiceAccountCallable() {
-<span class="fc" id="L1038">    return stub.undeleteServiceAccountCallable();</span>
+<span class="fc" id="L1048">    return stub.undeleteServiceAccountCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1068,8 +1078,8 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void enableServiceAccount(EnableServiceAccountRequest request) {
-<span class="fc" id="L1071">    enableServiceAccountCallable().call(request);</span>
-<span class="fc" id="L1072">  }</span>
+<span class="fc" id="L1081">    enableServiceAccountCallable().call(request);</span>
+<span class="fc" id="L1082">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1100,7 +1110,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;EnableServiceAccountRequest, Empty&gt; enableServiceAccountCallable() {
-<span class="fc" id="L1103">    return stub.enableServiceAccountCallable();</span>
+<span class="fc" id="L1113">    return stub.enableServiceAccountCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1140,8 +1150,8 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void disableServiceAccount(DisableServiceAccountRequest request) {
-<span class="fc" id="L1143">    disableServiceAccountCallable().call(request);</span>
-<span class="fc" id="L1144">  }</span>
+<span class="fc" id="L1153">    disableServiceAccountCallable().call(request);</span>
+<span class="fc" id="L1154">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1179,7 +1189,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DisableServiceAccountRequest, Empty&gt; disableServiceAccountCallable() {
-<span class="fc" id="L1182">    return stub.disableServiceAccountCallable();</span>
+<span class="fc" id="L1192">    return stub.disableServiceAccountCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1212,11 +1222,11 @@ public class IAMClient implements BackgroundResource {
   public final ListServiceAccountKeysResponse listServiceAccountKeys(
       ServiceAccountName name, List&lt;ListServiceAccountKeysRequest.KeyType&gt; keyTypes) {
     ListServiceAccountKeysRequest request =
-<span class="fc" id="L1215">        ListServiceAccountKeysRequest.newBuilder()</span>
-<span class="pc bpc" id="L1216" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1217">            .addAllKeyTypes(keyTypes)</span>
-<span class="fc" id="L1218">            .build();</span>
-<span class="fc" id="L1219">    return listServiceAccountKeys(request);</span>
+<span class="fc" id="L1225">        ListServiceAccountKeysRequest.newBuilder()</span>
+<span class="pc bpc" id="L1226" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1227">            .addAllKeyTypes(keyTypes)</span>
+<span class="fc" id="L1228">            .build();</span>
+<span class="fc" id="L1229">    return listServiceAccountKeys(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1249,8 +1259,8 @@ public class IAMClient implements BackgroundResource {
   public final ListServiceAccountKeysResponse listServiceAccountKeys(
       String name, List&lt;ListServiceAccountKeysRequest.KeyType&gt; keyTypes) {
     ListServiceAccountKeysRequest request =
-<span class="fc" id="L1252">        ListServiceAccountKeysRequest.newBuilder().setName(name).addAllKeyTypes(keyTypes).build();</span>
-<span class="fc" id="L1253">    return listServiceAccountKeys(request);</span>
+<span class="fc" id="L1262">        ListServiceAccountKeysRequest.newBuilder().setName(name).addAllKeyTypes(keyTypes).build();</span>
+<span class="fc" id="L1263">    return listServiceAccountKeys(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1280,7 +1290,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final ListServiceAccountKeysResponse listServiceAccountKeys(
       ListServiceAccountKeysRequest request) {
-<span class="fc" id="L1283">    return listServiceAccountKeysCallable().call(request);</span>
+<span class="fc" id="L1293">    return listServiceAccountKeysCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1310,7 +1320,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListServiceAccountKeysRequest, ListServiceAccountKeysResponse&gt;
       listServiceAccountKeysCallable() {
-<span class="fc" id="L1313">    return stub.listServiceAccountKeysCallable();</span>
+<span class="fc" id="L1323">    return stub.listServiceAccountKeysCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1336,18 +1346,18 @@ public class IAMClient implements BackgroundResource {
    *     `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.
    *     &lt;p&gt;Using `-` as a wildcard for the `PROJECT_ID` will infer the project from the account.
    *     The `ACCOUNT` value can be the `email` address or the `unique_id` of the service account.
-   * @param publicKeyType The output format of the public key requested. X509_PEM is the default
-   *     output format.
+   * @param publicKeyType Optional. The output format of the public key. The default is `TYPE_NONE`,
+   *     which means that the public key is not returned.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccountKey getServiceAccountKey(
       KeyName name, ServiceAccountPublicKeyType publicKeyType) {
     GetServiceAccountKeyRequest request =
-<span class="fc" id="L1346">        GetServiceAccountKeyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1347" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1348">            .setPublicKeyType(publicKeyType)</span>
-<span class="fc" id="L1349">            .build();</span>
-<span class="fc" id="L1350">    return getServiceAccountKey(request);</span>
+<span class="fc" id="L1356">        GetServiceAccountKeyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1357" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1358">            .setPublicKeyType(publicKeyType)</span>
+<span class="fc" id="L1359">            .build();</span>
+<span class="fc" id="L1360">    return getServiceAccountKey(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1373,18 +1383,18 @@ public class IAMClient implements BackgroundResource {
    *     `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.
    *     &lt;p&gt;Using `-` as a wildcard for the `PROJECT_ID` will infer the project from the account.
    *     The `ACCOUNT` value can be the `email` address or the `unique_id` of the service account.
-   * @param publicKeyType The output format of the public key requested. X509_PEM is the default
-   *     output format.
+   * @param publicKeyType Optional. The output format of the public key. The default is `TYPE_NONE`,
+   *     which means that the public key is not returned.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccountKey getServiceAccountKey(
       String name, ServiceAccountPublicKeyType publicKeyType) {
     GetServiceAccountKeyRequest request =
-<span class="fc" id="L1383">        GetServiceAccountKeyRequest.newBuilder()</span>
-<span class="fc" id="L1384">            .setName(name)</span>
-<span class="fc" id="L1385">            .setPublicKeyType(publicKeyType)</span>
-<span class="fc" id="L1386">            .build();</span>
-<span class="fc" id="L1387">    return getServiceAccountKey(request);</span>
+<span class="fc" id="L1393">        GetServiceAccountKeyRequest.newBuilder()</span>
+<span class="fc" id="L1394">            .setName(name)</span>
+<span class="fc" id="L1395">            .setPublicKeyType(publicKeyType)</span>
+<span class="fc" id="L1396">            .build();</span>
+<span class="fc" id="L1397">    return getServiceAccountKey(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1413,7 +1423,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccountKey getServiceAccountKey(GetServiceAccountKeyRequest request) {
-<span class="fc" id="L1416">    return getServiceAccountKeyCallable().call(request);</span>
+<span class="fc" id="L1426">    return getServiceAccountKeyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1443,7 +1453,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetServiceAccountKeyRequest, ServiceAccountKey&gt;
       getServiceAccountKeyCallable() {
-<span class="fc" id="L1446">    return stub.getServiceAccountKeyCallable();</span>
+<span class="fc" id="L1456">    return stub.getServiceAccountKeyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1482,12 +1492,12 @@ public class IAMClient implements BackgroundResource {
       ServiceAccountPrivateKeyType privateKeyType,
       ServiceAccountKeyAlgorithm keyAlgorithm) {
     CreateServiceAccountKeyRequest request =
-<span class="fc" id="L1485">        CreateServiceAccountKeyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1486" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1487">            .setPrivateKeyType(privateKeyType)</span>
-<span class="fc" id="L1488">            .setKeyAlgorithm(keyAlgorithm)</span>
-<span class="fc" id="L1489">            .build();</span>
-<span class="fc" id="L1490">    return createServiceAccountKey(request);</span>
+<span class="fc" id="L1495">        CreateServiceAccountKeyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1496" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1497">            .setPrivateKeyType(privateKeyType)</span>
+<span class="fc" id="L1498">            .setKeyAlgorithm(keyAlgorithm)</span>
+<span class="fc" id="L1499">            .build();</span>
+<span class="fc" id="L1500">    return createServiceAccountKey(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1526,12 +1536,12 @@ public class IAMClient implements BackgroundResource {
       ServiceAccountPrivateKeyType privateKeyType,
       ServiceAccountKeyAlgorithm keyAlgorithm) {
     CreateServiceAccountKeyRequest request =
-<span class="fc" id="L1529">        CreateServiceAccountKeyRequest.newBuilder()</span>
-<span class="fc" id="L1530">            .setName(name)</span>
-<span class="fc" id="L1531">            .setPrivateKeyType(privateKeyType)</span>
-<span class="fc" id="L1532">            .setKeyAlgorithm(keyAlgorithm)</span>
-<span class="fc" id="L1533">            .build();</span>
-<span class="fc" id="L1534">    return createServiceAccountKey(request);</span>
+<span class="fc" id="L1539">        CreateServiceAccountKeyRequest.newBuilder()</span>
+<span class="fc" id="L1540">            .setName(name)</span>
+<span class="fc" id="L1541">            .setPrivateKeyType(privateKeyType)</span>
+<span class="fc" id="L1542">            .setKeyAlgorithm(keyAlgorithm)</span>
+<span class="fc" id="L1543">            .build();</span>
+<span class="fc" id="L1544">    return createServiceAccountKey(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1561,7 +1571,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccountKey createServiceAccountKey(CreateServiceAccountKeyRequest request) {
-<span class="fc" id="L1564">    return createServiceAccountKeyCallable().call(request);</span>
+<span class="fc" id="L1574">    return createServiceAccountKeyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1592,13 +1602,16 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateServiceAccountKeyRequest, ServiceAccountKey&gt;
       createServiceAccountKeyCallable() {
-<span class="fc" id="L1595">    return stub.createServiceAccountKeyCallable();</span>
+<span class="fc" id="L1605">    return stub.createServiceAccountKeyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey], using a public key that
-   * you provide.
+   * Uploads the public key portion of a key pair that you manage, and associates the public key
+   * with a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
+   *
+   * &lt;p&gt;After you upload the public key, you can use the private key from the key pair as a service
+   * account key.
    *
    * &lt;p&gt;Sample code:
    *
@@ -1622,13 +1635,16 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccountKey uploadServiceAccountKey(UploadServiceAccountKeyRequest request) {
-<span class="fc" id="L1625">    return uploadServiceAccountKeyCallable().call(request);</span>
+<span class="fc" id="L1638">    return uploadServiceAccountKeyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey], using a public key that
-   * you provide.
+   * Uploads the public key portion of a key pair that you manage, and associates the public key
+   * with a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
+   *
+   * &lt;p&gt;After you upload the public key, you can use the private key from the key pair as a service
+   * account key.
    *
    * &lt;p&gt;Sample code:
    *
@@ -1653,7 +1669,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UploadServiceAccountKeyRequest, ServiceAccountKey&gt;
       uploadServiceAccountKeyCallable() {
-<span class="fc" id="L1656">    return stub.uploadServiceAccountKeyCallable();</span>
+<span class="fc" id="L1672">    return stub.uploadServiceAccountKeyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1684,11 +1700,11 @@ public class IAMClient implements BackgroundResource {
    */
   public final void deleteServiceAccountKey(KeyName name) {
     DeleteServiceAccountKeyRequest request =
-<span class="fc" id="L1687">        DeleteServiceAccountKeyRequest.newBuilder()</span>
-<span class="pc bpc" id="L1688" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1689">            .build();</span>
-<span class="fc" id="L1690">    deleteServiceAccountKey(request);</span>
-<span class="fc" id="L1691">  }</span>
+<span class="fc" id="L1703">        DeleteServiceAccountKeyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1704" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1705">            .build();</span>
+<span class="fc" id="L1706">    deleteServiceAccountKey(request);</span>
+<span class="fc" id="L1707">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1718,9 +1734,9 @@ public class IAMClient implements BackgroundResource {
    */
   public final void deleteServiceAccountKey(String name) {
     DeleteServiceAccountKeyRequest request =
-<span class="fc" id="L1721">        DeleteServiceAccountKeyRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1722">    deleteServiceAccountKey(request);</span>
-<span class="fc" id="L1723">  }</span>
+<span class="fc" id="L1737">        DeleteServiceAccountKeyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1738">    deleteServiceAccountKey(request);</span>
+<span class="fc" id="L1739">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1749,8 +1765,8 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteServiceAccountKey(DeleteServiceAccountKeyRequest request) {
-<span class="fc" id="L1752">    deleteServiceAccountKeyCallable().call(request);</span>
-<span class="fc" id="L1753">  }</span>
+<span class="fc" id="L1768">    deleteServiceAccountKeyCallable().call(request);</span>
+<span class="fc" id="L1769">  }</span>
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
@@ -1779,7 +1795,251 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteServiceAccountKeyRequest, Empty&gt;
       deleteServiceAccountKeyCallable() {
-<span class="fc" id="L1782">    return stub.deleteServiceAccountKeyCallable();</span>
+<span class="fc" id="L1798">    return stub.deleteServiceAccountKeyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Disable a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey]. A disabled service
+   * account key can be re-enabled with
+   * [EnableServiceAccountKey][google.iam.admin.v1.IAM.EnableServiceAccountKey].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (IAMClient iAMClient = IAMClient.create()) {
+   *   KeyName name = KeyName.of(&quot;[PROJECT]&quot;, &quot;[SERVICE_ACCOUNT]&quot;, &quot;[KEY]&quot;);
+   *   iAMClient.disableServiceAccountKey(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The resource name of the service account key in the following format:
+   *     `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.
+   *     &lt;p&gt;Using `-` as a wildcard for the `PROJECT_ID` will infer the project from the account.
+   *     The `ACCOUNT` value can be the `email` address or the `unique_id` of the service account.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void disableServiceAccountKey(KeyName name) {
+    DisableServiceAccountKeyRequest request =
+<span class="fc" id="L1829">        DisableServiceAccountKeyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1830" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1831">            .build();</span>
+<span class="fc" id="L1832">    disableServiceAccountKey(request);</span>
+<span class="fc" id="L1833">  }</span>
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Disable a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey]. A disabled service
+   * account key can be re-enabled with
+   * [EnableServiceAccountKey][google.iam.admin.v1.IAM.EnableServiceAccountKey].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (IAMClient iAMClient = IAMClient.create()) {
+   *   String name = KeyName.of(&quot;[PROJECT]&quot;, &quot;[SERVICE_ACCOUNT]&quot;, &quot;[KEY]&quot;).toString();
+   *   iAMClient.disableServiceAccountKey(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The resource name of the service account key in the following format:
+   *     `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.
+   *     &lt;p&gt;Using `-` as a wildcard for the `PROJECT_ID` will infer the project from the account.
+   *     The `ACCOUNT` value can be the `email` address or the `unique_id` of the service account.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void disableServiceAccountKey(String name) {
+    DisableServiceAccountKeyRequest request =
+<span class="fc" id="L1863">        DisableServiceAccountKeyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1864">    disableServiceAccountKey(request);</span>
+<span class="fc" id="L1865">  }</span>
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Disable a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey]. A disabled service
+   * account key can be re-enabled with
+   * [EnableServiceAccountKey][google.iam.admin.v1.IAM.EnableServiceAccountKey].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (IAMClient iAMClient = IAMClient.create()) {
+   *   DisableServiceAccountKeyRequest request =
+   *       DisableServiceAccountKeyRequest.newBuilder()
+   *           .setName(KeyName.of(&quot;[PROJECT]&quot;, &quot;[SERVICE_ACCOUNT]&quot;, &quot;[KEY]&quot;).toString())
+   *           .build();
+   *   iAMClient.disableServiceAccountKey(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void disableServiceAccountKey(DisableServiceAccountKeyRequest request) {
+<span class="fc" id="L1894">    disableServiceAccountKeyCallable().call(request);</span>
+<span class="fc" id="L1895">  }</span>
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Disable a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey]. A disabled service
+   * account key can be re-enabled with
+   * [EnableServiceAccountKey][google.iam.admin.v1.IAM.EnableServiceAccountKey].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (IAMClient iAMClient = IAMClient.create()) {
+   *   DisableServiceAccountKeyRequest request =
+   *       DisableServiceAccountKeyRequest.newBuilder()
+   *           .setName(KeyName.of(&quot;[PROJECT]&quot;, &quot;[SERVICE_ACCOUNT]&quot;, &quot;[KEY]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Empty&gt; future = iAMClient.disableServiceAccountKeyCallable().futureCall(request);
+   *   // Do something.
+   *   future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;DisableServiceAccountKeyRequest, Empty&gt;
+      disableServiceAccountKeyCallable() {
+<span class="fc" id="L1924">    return stub.disableServiceAccountKeyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Enable a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (IAMClient iAMClient = IAMClient.create()) {
+   *   KeyName name = KeyName.of(&quot;[PROJECT]&quot;, &quot;[SERVICE_ACCOUNT]&quot;, &quot;[KEY]&quot;);
+   *   iAMClient.enableServiceAccountKey(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The resource name of the service account key in the following format:
+   *     `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.
+   *     &lt;p&gt;Using `-` as a wildcard for the `PROJECT_ID` will infer the project from the account.
+   *     The `ACCOUNT` value can be the `email` address or the `unique_id` of the service account.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void enableServiceAccountKey(KeyName name) {
+    EnableServiceAccountKeyRequest request =
+<span class="fc" id="L1953">        EnableServiceAccountKeyRequest.newBuilder()</span>
+<span class="pc bpc" id="L1954" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L1955">            .build();</span>
+<span class="fc" id="L1956">    enableServiceAccountKey(request);</span>
+<span class="fc" id="L1957">  }</span>
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Enable a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (IAMClient iAMClient = IAMClient.create()) {
+   *   String name = KeyName.of(&quot;[PROJECT]&quot;, &quot;[SERVICE_ACCOUNT]&quot;, &quot;[KEY]&quot;).toString();
+   *   iAMClient.enableServiceAccountKey(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The resource name of the service account key in the following format:
+   *     `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT}/keys/{key}`.
+   *     &lt;p&gt;Using `-` as a wildcard for the `PROJECT_ID` will infer the project from the account.
+   *     The `ACCOUNT` value can be the `email` address or the `unique_id` of the service account.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void enableServiceAccountKey(String name) {
+    EnableServiceAccountKeyRequest request =
+<span class="fc" id="L1985">        EnableServiceAccountKeyRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1986">    enableServiceAccountKey(request);</span>
+<span class="fc" id="L1987">  }</span>
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Enable a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (IAMClient iAMClient = IAMClient.create()) {
+   *   EnableServiceAccountKeyRequest request =
+   *       EnableServiceAccountKeyRequest.newBuilder()
+   *           .setName(KeyName.of(&quot;[PROJECT]&quot;, &quot;[SERVICE_ACCOUNT]&quot;, &quot;[KEY]&quot;).toString())
+   *           .build();
+   *   iAMClient.enableServiceAccountKey(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void enableServiceAccountKey(EnableServiceAccountKeyRequest request) {
+<span class="fc" id="L2014">    enableServiceAccountKeyCallable().call(request);</span>
+<span class="fc" id="L2015">  }</span>
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Enable a [ServiceAccountKey][google.iam.admin.v1.ServiceAccountKey].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (IAMClient iAMClient = IAMClient.create()) {
+   *   EnableServiceAccountKeyRequest request =
+   *       EnableServiceAccountKeyRequest.newBuilder()
+   *           .setName(KeyName.of(&quot;[PROJECT]&quot;, &quot;[SERVICE_ACCOUNT]&quot;, &quot;[KEY]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Empty&gt; future = iAMClient.enableServiceAccountKeyCallable().futureCall(request);
+   *   // Do something.
+   *   future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;EnableServiceAccountKeyRequest, Empty&gt;
+      enableServiceAccountKeyCallable() {
+<span class="fc" id="L2042">    return stub.enableServiceAccountKeyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1823,11 +2083,11 @@ public class IAMClient implements BackgroundResource {
   @Deprecated
   public final SignBlobResponse signBlob(ServiceAccountName name, ByteString bytesToSign) {
     SignBlobRequest request =
-<span class="fc" id="L1826">        SignBlobRequest.newBuilder()</span>
-<span class="pc bpc" id="L1827" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L1828">            .setBytesToSign(bytesToSign)</span>
-<span class="fc" id="L1829">            .build();</span>
-<span class="fc" id="L1830">    return signBlob(request);</span>
+<span class="fc" id="L2086">        SignBlobRequest.newBuilder()</span>
+<span class="pc bpc" id="L2087" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2088">            .setBytesToSign(bytesToSign)</span>
+<span class="fc" id="L2089">            .build();</span>
+<span class="fc" id="L2090">    return signBlob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1871,8 +2131,8 @@ public class IAMClient implements BackgroundResource {
   @Deprecated
   public final SignBlobResponse signBlob(String name, ByteString bytesToSign) {
     SignBlobRequest request =
-<span class="fc" id="L1874">        SignBlobRequest.newBuilder().setName(name).setBytesToSign(bytesToSign).build();</span>
-<span class="fc" id="L1875">    return signBlob(request);</span>
+<span class="fc" id="L2134">        SignBlobRequest.newBuilder().setName(name).setBytesToSign(bytesToSign).build();</span>
+<span class="fc" id="L2135">    return signBlob(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1910,7 +2170,7 @@ public class IAMClient implements BackgroundResource {
    */
   @Deprecated
   public final SignBlobResponse signBlob(SignBlobRequest request) {
-<span class="fc" id="L1913">    return signBlobCallable().call(request);</span>
+<span class="fc" id="L2173">    return signBlobCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1948,7 +2208,7 @@ public class IAMClient implements BackgroundResource {
    */
   @Deprecated
   public final UnaryCallable&lt;SignBlobRequest, SignBlobResponse&gt; signBlobCallable() {
-<span class="fc" id="L1951">    return stub.signBlobCallable();</span>
+<span class="fc" id="L2211">    return stub.signBlobCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1988,7 +2248,7 @@ public class IAMClient implements BackgroundResource {
    *     &lt;p&gt;The JWT payload to sign. Must be a serialized JSON object that contains a JWT Claims
    *     Set. For example: `{&quot;sub&quot;: &quot;user{@literal @}example.com&quot;, &quot;iat&quot;: 313435}`
    *     &lt;p&gt;If the JWT Claims Set contains an expiration time (`exp`) claim, it must be an integer
-   *     timestamp that is not in the past and no more than 1 hour in the future.
+   *     timestamp that is not in the past and no more than 12 hours in the future.
    *     &lt;p&gt;If the JWT Claims Set does not contain an expiration time (`exp`) claim, this claim is
    *     added automatically, with a timestamp that is 1 hour in the future.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
@@ -1997,11 +2257,11 @@ public class IAMClient implements BackgroundResource {
   @Deprecated
   public final SignJwtResponse signJwt(ServiceAccountName name, String payload) {
     SignJwtRequest request =
-<span class="fc" id="L2000">        SignJwtRequest.newBuilder()</span>
-<span class="pc bpc" id="L2001" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L2002">            .setPayload(payload)</span>
-<span class="fc" id="L2003">            .build();</span>
-<span class="fc" id="L2004">    return signJwt(request);</span>
+<span class="fc" id="L2260">        SignJwtRequest.newBuilder()</span>
+<span class="pc bpc" id="L2261" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2262">            .setPayload(payload)</span>
+<span class="fc" id="L2263">            .build();</span>
+<span class="fc" id="L2264">    return signJwt(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2041,7 +2301,7 @@ public class IAMClient implements BackgroundResource {
    *     &lt;p&gt;The JWT payload to sign. Must be a serialized JSON object that contains a JWT Claims
    *     Set. For example: `{&quot;sub&quot;: &quot;user{@literal @}example.com&quot;, &quot;iat&quot;: 313435}`
    *     &lt;p&gt;If the JWT Claims Set contains an expiration time (`exp`) claim, it must be an integer
-   *     timestamp that is not in the past and no more than 1 hour in the future.
+   *     timestamp that is not in the past and no more than 12 hours in the future.
    *     &lt;p&gt;If the JWT Claims Set does not contain an expiration time (`exp`) claim, this claim is
    *     added automatically, with a timestamp that is 1 hour in the future.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
@@ -2049,8 +2309,8 @@ public class IAMClient implements BackgroundResource {
    */
   @Deprecated
   public final SignJwtResponse signJwt(String name, String payload) {
-<span class="fc" id="L2052">    SignJwtRequest request = SignJwtRequest.newBuilder().setName(name).setPayload(payload).build();</span>
-<span class="fc" id="L2053">    return signJwt(request);</span>
+<span class="fc" id="L2312">    SignJwtRequest request = SignJwtRequest.newBuilder().setName(name).setPayload(payload).build();</span>
+<span class="fc" id="L2313">    return signJwt(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2088,7 +2348,7 @@ public class IAMClient implements BackgroundResource {
    */
   @Deprecated
   public final SignJwtResponse signJwt(SignJwtRequest request) {
-<span class="fc" id="L2091">    return signJwtCallable().call(request);</span>
+<span class="fc" id="L2351">    return signJwtCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2126,13 +2386,13 @@ public class IAMClient implements BackgroundResource {
    */
   @Deprecated
   public final UnaryCallable&lt;SignJwtRequest, SignJwtResponse&gt; signJwtCallable() {
-<span class="fc" id="L2129">    return stub.signJwtCallable();</span>
+<span class="fc" id="L2389">    return stub.signJwtCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy that is attached to a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
-   * This IAM policy specifies which members have access to the service account.
+   * This IAM policy specifies which principals have access to the service account.
    *
    * &lt;p&gt;This method does not tell you whether the service account has been granted any roles on
    * other resources. To check whether a service account has role grants on a resource, use the
@@ -2161,16 +2421,16 @@ public class IAMClient implements BackgroundResource {
    */
   public final Policy getIamPolicy(ResourceName resource) {
     GetIamPolicyRequest request =
-<span class="fc" id="L2164">        GetIamPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L2165" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
-<span class="fc" id="L2166">            .build();</span>
-<span class="fc" id="L2167">    return getIamPolicy(request);</span>
+<span class="fc" id="L2424">        GetIamPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L2425" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
+<span class="fc" id="L2426">            .build();</span>
+<span class="fc" id="L2427">    return getIamPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy that is attached to a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
-   * This IAM policy specifies which members have access to the service account.
+   * This IAM policy specifies which principals have access to the service account.
    *
    * &lt;p&gt;This method does not tell you whether the service account has been granted any roles on
    * other resources. To check whether a service account has role grants on a resource, use the
@@ -2198,14 +2458,14 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Policy getIamPolicy(String resource) {
-<span class="fc" id="L2201">    GetIamPolicyRequest request = GetIamPolicyRequest.newBuilder().setResource(resource).build();</span>
-<span class="fc" id="L2202">    return getIamPolicy(request);</span>
+<span class="fc" id="L2461">    GetIamPolicyRequest request = GetIamPolicyRequest.newBuilder().setResource(resource).build();</span>
+<span class="fc" id="L2462">    return getIamPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy that is attached to a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
-   * This IAM policy specifies which members have access to the service account.
+   * This IAM policy specifies which principals have access to the service account.
    *
    * &lt;p&gt;This method does not tell you whether the service account has been granted any roles on
    * other resources. To check whether a service account has role grants on a resource, use the
@@ -2236,13 +2496,13 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Policy getIamPolicy(GetIamPolicyRequest request) {
-<span class="fc" id="L2239">    return getIamPolicyCallable().call(request);</span>
+<span class="fc" id="L2499">    return getIamPolicyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy that is attached to a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
-   * This IAM policy specifies which members have access to the service account.
+   * This IAM policy specifies which principals have access to the service account.
    *
    * &lt;p&gt;This method does not tell you whether the service account has been granted any roles on
    * other resources. To check whether a service account has role grants on a resource, use the
@@ -2272,7 +2532,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
-<span class="fc" id="L2275">    return stub.getIamPolicyCallable();</span>
+<span class="fc" id="L2535">    return stub.getIamPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2280,7 +2540,7 @@ public class IAMClient implements BackgroundResource {
    * Sets the IAM policy that is attached to a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
    *
    * &lt;p&gt;Use this method to grant or revoke access to the service account. For example, you could
-   * grant a member the ability to impersonate the service account.
+   * grant a principal the ability to impersonate the service account.
    *
    * &lt;p&gt;This method does not enable the service account to access other resources. To grant roles to
    * a service account on a resource, follow these steps:
@@ -2289,8 +2549,10 @@ public class IAMClient implements BackgroundResource {
    * policy so that it binds the service account to an IAM role for the resource. 3. Call the
    * resource's `setIamPolicy` method to update its IAM policy.
    *
-   * &lt;p&gt;For detailed instructions, see [Granting roles to a service account for specific
-   * resources](https://cloud.google.com/iam/help/service-accounts/granting-access-to-service-accounts).
+   * &lt;p&gt;For detailed instructions, see [Manage access to project, folders, and
+   * organizations](https://cloud.google.com/iam/help/service-accounts/granting-access-to-service-accounts)
+   * or [Manage access to other
+   * resources](https://cloud.google.com/iam/help/access/manage-other-resources).
    *
    * &lt;p&gt;Sample code:
    *
@@ -2316,11 +2578,11 @@ public class IAMClient implements BackgroundResource {
    */
   public final Policy setIamPolicy(ResourceName resource, Policy policy) {
     SetIamPolicyRequest request =
-<span class="fc" id="L2319">        SetIamPolicyRequest.newBuilder()</span>
-<span class="pc bpc" id="L2320" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
-<span class="fc" id="L2321">            .setPolicy(policy)</span>
-<span class="fc" id="L2322">            .build();</span>
-<span class="fc" id="L2323">    return setIamPolicy(request);</span>
+<span class="fc" id="L2581">        SetIamPolicyRequest.newBuilder()</span>
+<span class="pc bpc" id="L2582" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
+<span class="fc" id="L2583">            .setPolicy(policy)</span>
+<span class="fc" id="L2584">            .build();</span>
+<span class="fc" id="L2585">    return setIamPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2328,7 +2590,7 @@ public class IAMClient implements BackgroundResource {
    * Sets the IAM policy that is attached to a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
    *
    * &lt;p&gt;Use this method to grant or revoke access to the service account. For example, you could
-   * grant a member the ability to impersonate the service account.
+   * grant a principal the ability to impersonate the service account.
    *
    * &lt;p&gt;This method does not enable the service account to access other resources. To grant roles to
    * a service account on a resource, follow these steps:
@@ -2337,8 +2599,10 @@ public class IAMClient implements BackgroundResource {
    * policy so that it binds the service account to an IAM role for the resource. 3. Call the
    * resource's `setIamPolicy` method to update its IAM policy.
    *
-   * &lt;p&gt;For detailed instructions, see [Granting roles to a service account for specific
-   * resources](https://cloud.google.com/iam/help/service-accounts/granting-access-to-service-accounts).
+   * &lt;p&gt;For detailed instructions, see [Manage access to project, folders, and
+   * organizations](https://cloud.google.com/iam/help/service-accounts/granting-access-to-service-accounts)
+   * or [Manage access to other
+   * resources](https://cloud.google.com/iam/help/access/manage-other-resources).
    *
    * &lt;p&gt;Sample code:
    *
@@ -2364,8 +2628,8 @@ public class IAMClient implements BackgroundResource {
    */
   public final Policy setIamPolicy(String resource, Policy policy) {
     SetIamPolicyRequest request =
-<span class="fc" id="L2367">        SetIamPolicyRequest.newBuilder().setResource(resource).setPolicy(policy).build();</span>
-<span class="fc" id="L2368">    return setIamPolicy(request);</span>
+<span class="fc" id="L2631">        SetIamPolicyRequest.newBuilder().setResource(resource).setPolicy(policy).build();</span>
+<span class="fc" id="L2632">    return setIamPolicy(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2373,7 +2637,7 @@ public class IAMClient implements BackgroundResource {
    * Sets the IAM policy that is attached to a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
    *
    * &lt;p&gt;Use this method to grant or revoke access to the service account. For example, you could
-   * grant a member the ability to impersonate the service account.
+   * grant a principal the ability to impersonate the service account.
    *
    * &lt;p&gt;This method does not enable the service account to access other resources. To grant roles to
    * a service account on a resource, follow these steps:
@@ -2382,8 +2646,10 @@ public class IAMClient implements BackgroundResource {
    * policy so that it binds the service account to an IAM role for the resource. 3. Call the
    * resource's `setIamPolicy` method to update its IAM policy.
    *
-   * &lt;p&gt;For detailed instructions, see [Granting roles to a service account for specific
-   * resources](https://cloud.google.com/iam/help/service-accounts/granting-access-to-service-accounts).
+   * &lt;p&gt;For detailed instructions, see [Manage access to project, folders, and
+   * organizations](https://cloud.google.com/iam/help/service-accounts/granting-access-to-service-accounts)
+   * or [Manage access to other
+   * resources](https://cloud.google.com/iam/help/access/manage-other-resources).
    *
    * &lt;p&gt;Sample code:
    *
@@ -2408,7 +2674,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Policy setIamPolicy(SetIamPolicyRequest request) {
-<span class="fc" id="L2411">    return setIamPolicyCallable().call(request);</span>
+<span class="fc" id="L2677">    return setIamPolicyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2416,7 +2682,7 @@ public class IAMClient implements BackgroundResource {
    * Sets the IAM policy that is attached to a [ServiceAccount][google.iam.admin.v1.ServiceAccount].
    *
    * &lt;p&gt;Use this method to grant or revoke access to the service account. For example, you could
-   * grant a member the ability to impersonate the service account.
+   * grant a principal the ability to impersonate the service account.
    *
    * &lt;p&gt;This method does not enable the service account to access other resources. To grant roles to
    * a service account on a resource, follow these steps:
@@ -2425,8 +2691,10 @@ public class IAMClient implements BackgroundResource {
    * policy so that it binds the service account to an IAM role for the resource. 3. Call the
    * resource's `setIamPolicy` method to update its IAM policy.
    *
-   * &lt;p&gt;For detailed instructions, see [Granting roles to a service account for specific
-   * resources](https://cloud.google.com/iam/help/service-accounts/granting-access-to-service-accounts).
+   * &lt;p&gt;For detailed instructions, see [Manage access to project, folders, and
+   * organizations](https://cloud.google.com/iam/help/service-accounts/granting-access-to-service-accounts)
+   * or [Manage access to other
+   * resources](https://cloud.google.com/iam/help/access/manage-other-resources).
    *
    * &lt;p&gt;Sample code:
    *
@@ -2450,7 +2718,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
-<span class="fc" id="L2453">    return stub.setIamPolicyCallable();</span>
+<span class="fc" id="L2721">    return stub.setIamPolicyCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2483,11 +2751,11 @@ public class IAMClient implements BackgroundResource {
   public final TestIamPermissionsResponse testIamPermissions(
       ResourceName resource, List&lt;String&gt; permissions) {
     TestIamPermissionsRequest request =
-<span class="fc" id="L2486">        TestIamPermissionsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2487" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
-<span class="fc" id="L2488">            .addAllPermissions(permissions)</span>
-<span class="fc" id="L2489">            .build();</span>
-<span class="fc" id="L2490">    return testIamPermissions(request);</span>
+<span class="fc" id="L2754">        TestIamPermissionsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2755" title="1 of 2 branches missed.">            .setResource(resource == null ? null : resource.toString())</span>
+<span class="fc" id="L2756">            .addAllPermissions(permissions)</span>
+<span class="fc" id="L2757">            .build();</span>
+<span class="fc" id="L2758">    return testIamPermissions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2520,11 +2788,11 @@ public class IAMClient implements BackgroundResource {
   public final TestIamPermissionsResponse testIamPermissions(
       String resource, List&lt;String&gt; permissions) {
     TestIamPermissionsRequest request =
-<span class="fc" id="L2523">        TestIamPermissionsRequest.newBuilder()</span>
-<span class="fc" id="L2524">            .setResource(resource)</span>
-<span class="fc" id="L2525">            .addAllPermissions(permissions)</span>
-<span class="fc" id="L2526">            .build();</span>
-<span class="fc" id="L2527">    return testIamPermissions(request);</span>
+<span class="fc" id="L2791">        TestIamPermissionsRequest.newBuilder()</span>
+<span class="fc" id="L2792">            .setResource(resource)</span>
+<span class="fc" id="L2793">            .addAllPermissions(permissions)</span>
+<span class="fc" id="L2794">            .build();</span>
+<span class="fc" id="L2795">    return testIamPermissions(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2554,7 +2822,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
-<span class="fc" id="L2557">    return testIamPermissionsCallable().call(request);</span>
+<span class="fc" id="L2825">    return testIamPermissionsCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2585,7 +2853,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
       testIamPermissionsCallable() {
-<span class="fc" id="L2588">    return stub.testIamPermissionsCallable();</span>
+<span class="fc" id="L2856">    return stub.testIamPermissionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2618,8 +2886,8 @@ public class IAMClient implements BackgroundResource {
    */
   public final QueryGrantableRolesPagedResponse queryGrantableRoles(String fullResourceName) {
     QueryGrantableRolesRequest request =
-<span class="fc" id="L2621">        QueryGrantableRolesRequest.newBuilder().setFullResourceName(fullResourceName).build();</span>
-<span class="fc" id="L2622">    return queryGrantableRoles(request);</span>
+<span class="fc" id="L2889">        QueryGrantableRolesRequest.newBuilder().setFullResourceName(fullResourceName).build();</span>
+<span class="fc" id="L2890">    return queryGrantableRoles(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2654,7 +2922,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final QueryGrantableRolesPagedResponse queryGrantableRoles(
       QueryGrantableRolesRequest request) {
-<span class="fc" id="L2657">    return queryGrantableRolesPagedCallable().call(request);</span>
+<span class="fc" id="L2925">    return queryGrantableRolesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2688,7 +2956,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;QueryGrantableRolesRequest, QueryGrantableRolesPagedResponse&gt;
       queryGrantableRolesPagedCallable() {
-<span class="fc" id="L2691">    return stub.queryGrantableRolesPagedCallable();</span>
+<span class="fc" id="L2959">    return stub.queryGrantableRolesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2730,7 +2998,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;QueryGrantableRolesRequest, QueryGrantableRolesResponse&gt;
       queryGrantableRolesCallable() {
-<span class="nc" id="L2733">    return stub.queryGrantableRolesCallable();</span>
+<span class="nc" id="L3001">    return stub.queryGrantableRolesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2765,7 +3033,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListRolesPagedResponse listRoles(ListRolesRequest request) {
-<span class="fc" id="L2768">    return listRolesPagedCallable().call(request);</span>
+<span class="fc" id="L3036">    return listRolesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2799,7 +3067,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListRolesRequest, ListRolesPagedResponse&gt; listRolesPagedCallable() {
-<span class="fc" id="L2802">    return stub.listRolesPagedCallable();</span>
+<span class="fc" id="L3070">    return stub.listRolesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2840,7 +3108,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListRolesRequest, ListRolesResponse&gt; listRolesCallable() {
-<span class="nc" id="L2843">    return stub.listRolesCallable();</span>
+<span class="nc" id="L3111">    return stub.listRolesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2866,7 +3134,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Role getRole(GetRoleRequest request) {
-<span class="fc" id="L2869">    return getRoleCallable().call(request);</span>
+<span class="fc" id="L3137">    return getRoleCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2891,7 +3159,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetRoleRequest, Role&gt; getRoleCallable() {
-<span class="fc" id="L2894">    return stub.getRoleCallable();</span>
+<span class="fc" id="L3162">    return stub.getRoleCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2921,7 +3189,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Role createRole(CreateRoleRequest request) {
-<span class="fc" id="L2924">    return createRoleCallable().call(request);</span>
+<span class="fc" id="L3192">    return createRoleCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2950,7 +3218,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateRoleRequest, Role&gt; createRoleCallable() {
-<span class="fc" id="L2953">    return stub.createRoleCallable();</span>
+<span class="fc" id="L3221">    return stub.createRoleCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2980,7 +3248,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Role updateRole(UpdateRoleRequest request) {
-<span class="fc" id="L2983">    return updateRoleCallable().call(request);</span>
+<span class="fc" id="L3251">    return updateRoleCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3009,7 +3277,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateRoleRequest, Role&gt; updateRoleCallable() {
-<span class="fc" id="L3012">    return stub.updateRoleCallable();</span>
+<span class="fc" id="L3280">    return stub.updateRoleCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3019,7 +3287,7 @@ public class IAMClient implements BackgroundResource {
    * &lt;p&gt;When you delete a custom role, the following changes occur immediately:
    *
    * &lt;ul&gt;
-   *   &lt;li&gt;You cannot bind a member to the custom role in an IAM [Policy][google.iam.v1.Policy].
+   *   &lt;li&gt;You cannot bind a principal to the custom role in an IAM [Policy][google.iam.v1.Policy].
    *   &lt;li&gt;Existing bindings to the custom role are not changed, but they have no effect.
    *   &lt;li&gt;By default, the response from [ListRoles][google.iam.admin.v1.IAM.ListRoles] does not
    *       include the custom role.
@@ -3055,7 +3323,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Role deleteRole(DeleteRoleRequest request) {
-<span class="fc" id="L3058">    return deleteRoleCallable().call(request);</span>
+<span class="fc" id="L3326">    return deleteRoleCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3065,7 +3333,7 @@ public class IAMClient implements BackgroundResource {
    * &lt;p&gt;When you delete a custom role, the following changes occur immediately:
    *
    * &lt;ul&gt;
-   *   &lt;li&gt;You cannot bind a member to the custom role in an IAM [Policy][google.iam.v1.Policy].
+   *   &lt;li&gt;You cannot bind a principal to the custom role in an IAM [Policy][google.iam.v1.Policy].
    *   &lt;li&gt;Existing bindings to the custom role are not changed, but they have no effect.
    *   &lt;li&gt;By default, the response from [ListRoles][google.iam.admin.v1.IAM.ListRoles] does not
    *       include the custom role.
@@ -3100,7 +3368,7 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteRoleRequest, Role&gt; deleteRoleCallable() {
-<span class="fc" id="L3103">    return stub.deleteRoleCallable();</span>
+<span class="fc" id="L3371">    return stub.deleteRoleCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3129,7 +3397,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Role undeleteRole(UndeleteRoleRequest request) {
-<span class="fc" id="L3132">    return undeleteRoleCallable().call(request);</span>
+<span class="fc" id="L3400">    return undeleteRoleCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3157,13 +3425,13 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UndeleteRoleRequest, Role&gt; undeleteRoleCallable() {
-<span class="fc" id="L3160">    return stub.undeleteRoleCallable();</span>
+<span class="fc" id="L3428">    return stub.undeleteRoleCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Lists every permission that you can test on a resource. A permission is testable if you can
-   * check whether a member has that permission on the resource.
+   * check whether a principal has that permission on the resource.
    *
    * &lt;p&gt;Sample code:
    *
@@ -3191,13 +3459,13 @@ public class IAMClient implements BackgroundResource {
    */
   public final QueryTestablePermissionsPagedResponse queryTestablePermissions(
       QueryTestablePermissionsRequest request) {
-<span class="fc" id="L3194">    return queryTestablePermissionsPagedCallable().call(request);</span>
+<span class="fc" id="L3462">    return queryTestablePermissionsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Lists every permission that you can test on a resource. A permission is testable if you can
-   * check whether a member has that permission on the resource.
+   * check whether a principal has that permission on the resource.
    *
    * &lt;p&gt;Sample code:
    *
@@ -3225,13 +3493,13 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;QueryTestablePermissionsRequest, QueryTestablePermissionsPagedResponse&gt;
       queryTestablePermissionsPagedCallable() {
-<span class="fc" id="L3228">    return stub.queryTestablePermissionsPagedCallable();</span>
+<span class="fc" id="L3496">    return stub.queryTestablePermissionsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Lists every permission that you can test on a resource. A permission is testable if you can
-   * check whether a member has that permission on the resource.
+   * check whether a principal has that permission on the resource.
    *
    * &lt;p&gt;Sample code:
    *
@@ -3266,7 +3534,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;QueryTestablePermissionsRequest, QueryTestablePermissionsResponse&gt;
       queryTestablePermissionsCallable() {
-<span class="nc" id="L3269">    return stub.queryTestablePermissionsCallable();</span>
+<span class="nc" id="L3537">    return stub.queryTestablePermissionsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3299,7 +3567,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final QueryAuditableServicesResponse queryAuditableServices(
       QueryAuditableServicesRequest request) {
-<span class="fc" id="L3302">    return queryAuditableServicesCallable().call(request);</span>
+<span class="fc" id="L3570">    return queryAuditableServicesCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3332,7 +3600,7 @@ public class IAMClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;QueryAuditableServicesRequest, QueryAuditableServicesResponse&gt;
       queryAuditableServicesCallable() {
-<span class="fc" id="L3335">    return stub.queryAuditableServicesCallable();</span>
+<span class="fc" id="L3603">    return stub.queryAuditableServicesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3363,7 +3631,7 @@ public class IAMClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final LintPolicyResponse lintPolicy(LintPolicyRequest request) {
-<span class="fc" id="L3366">    return lintPolicyCallable().call(request);</span>
+<span class="fc" id="L3634">    return lintPolicyCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -3393,37 +3661,37 @@ public class IAMClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;LintPolicyRequest, LintPolicyResponse&gt; lintPolicyCallable() {
-<span class="fc" id="L3396">    return stub.lintPolicyCallable();</span>
+<span class="fc" id="L3664">    return stub.lintPolicyCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L3401">    stub.close();</span>
-<span class="fc" id="L3402">  }</span>
+<span class="fc" id="L3669">    stub.close();</span>
+<span class="fc" id="L3670">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L3406">    stub.shutdown();</span>
-<span class="nc" id="L3407">  }</span>
+<span class="nc" id="L3674">    stub.shutdown();</span>
+<span class="nc" id="L3675">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L3411">    return stub.isShutdown();</span>
+<span class="nc" id="L3679">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L3416">    return stub.isTerminated();</span>
+<span class="nc" id="L3684">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L3421">    stub.shutdownNow();</span>
-<span class="nc" id="L3422">  }</span>
+<span class="nc" id="L3689">    stub.shutdownNow();</span>
+<span class="nc" id="L3690">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L3426">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L3694">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListServiceAccountsPagedResponse
@@ -3439,16 +3707,16 @@ public class IAMClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListServiceAccountsResponse&gt; futureResponse) {
       ApiFuture&lt;ListServiceAccountsPage&gt; futurePage =
-<span class="fc" id="L3442">          ListServiceAccountsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3443">      return ApiFutures.transform(</span>
+<span class="fc" id="L3710">          ListServiceAccountsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3711">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3445">          input -&gt; new ListServiceAccountsPagedResponse(input),</span>
-<span class="fc" id="L3446">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3713">          input -&gt; new ListServiceAccountsPagedResponse(input),</span>
+<span class="fc" id="L3714">          MoreExecutors.directExecutor());</span>
     }
 
     private ListServiceAccountsPagedResponse(ListServiceAccountsPage page) {
-<span class="fc" id="L3450">      super(page, ListServiceAccountsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3451">    }</span>
+<span class="fc" id="L3718">      super(page, ListServiceAccountsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3719">    }</span>
   }
 
   public static class ListServiceAccountsPage
@@ -3462,11 +3730,11 @@ public class IAMClient implements BackgroundResource {
         PageContext&lt;ListServiceAccountsRequest, ListServiceAccountsResponse, ServiceAccount&gt;
             context,
         ListServiceAccountsResponse response) {
-<span class="fc" id="L3465">      super(context, response);</span>
-<span class="fc" id="L3466">    }</span>
+<span class="fc" id="L3733">      super(context, response);</span>
+<span class="fc" id="L3734">    }</span>
 
     private static ListServiceAccountsPage createEmptyPage() {
-<span class="fc" id="L3469">      return new ListServiceAccountsPage(null, null);</span>
+<span class="fc" id="L3737">      return new ListServiceAccountsPage(null, null);</span>
     }
 
     @Override
@@ -3474,7 +3742,7 @@ public class IAMClient implements BackgroundResource {
         PageContext&lt;ListServiceAccountsRequest, ListServiceAccountsResponse, ServiceAccount&gt;
             context,
         ListServiceAccountsResponse response) {
-<span class="fc" id="L3477">      return new ListServiceAccountsPage(context, response);</span>
+<span class="fc" id="L3745">      return new ListServiceAccountsPage(context, response);</span>
     }
 
     @Override
@@ -3482,7 +3750,7 @@ public class IAMClient implements BackgroundResource {
         PageContext&lt;ListServiceAccountsRequest, ListServiceAccountsResponse, ServiceAccount&gt;
             context,
         ApiFuture&lt;ListServiceAccountsResponse&gt; futureResponse) {
-<span class="fc" id="L3485">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3753">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3496,17 +3764,17 @@ public class IAMClient implements BackgroundResource {
 
     private ListServiceAccountsFixedSizeCollection(
         List&lt;ListServiceAccountsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3499">      super(pages, collectionSize);</span>
-<span class="fc" id="L3500">    }</span>
+<span class="fc" id="L3767">      super(pages, collectionSize);</span>
+<span class="fc" id="L3768">    }</span>
 
     private static ListServiceAccountsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3503">      return new ListServiceAccountsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3771">      return new ListServiceAccountsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListServiceAccountsFixedSizeCollection createCollection(
         List&lt;ListServiceAccountsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3509">      return new ListServiceAccountsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L3777">      return new ListServiceAccountsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3522,16 +3790,16 @@ public class IAMClient implements BackgroundResource {
         PageContext&lt;QueryGrantableRolesRequest, QueryGrantableRolesResponse, Role&gt; context,
         ApiFuture&lt;QueryGrantableRolesResponse&gt; futureResponse) {
       ApiFuture&lt;QueryGrantableRolesPage&gt; futurePage =
-<span class="fc" id="L3525">          QueryGrantableRolesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3526">      return ApiFutures.transform(</span>
+<span class="fc" id="L3793">          QueryGrantableRolesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3794">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3528">          input -&gt; new QueryGrantableRolesPagedResponse(input),</span>
-<span class="fc" id="L3529">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3796">          input -&gt; new QueryGrantableRolesPagedResponse(input),</span>
+<span class="fc" id="L3797">          MoreExecutors.directExecutor());</span>
     }
 
     private QueryGrantableRolesPagedResponse(QueryGrantableRolesPage page) {
-<span class="fc" id="L3533">      super(page, QueryGrantableRolesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3534">    }</span>
+<span class="fc" id="L3801">      super(page, QueryGrantableRolesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3802">    }</span>
   }
 
   public static class QueryGrantableRolesPage
@@ -3541,25 +3809,25 @@ public class IAMClient implements BackgroundResource {
     private QueryGrantableRolesPage(
         PageContext&lt;QueryGrantableRolesRequest, QueryGrantableRolesResponse, Role&gt; context,
         QueryGrantableRolesResponse response) {
-<span class="fc" id="L3544">      super(context, response);</span>
-<span class="fc" id="L3545">    }</span>
+<span class="fc" id="L3812">      super(context, response);</span>
+<span class="fc" id="L3813">    }</span>
 
     private static QueryGrantableRolesPage createEmptyPage() {
-<span class="fc" id="L3548">      return new QueryGrantableRolesPage(null, null);</span>
+<span class="fc" id="L3816">      return new QueryGrantableRolesPage(null, null);</span>
     }
 
     @Override
     protected QueryGrantableRolesPage createPage(
         PageContext&lt;QueryGrantableRolesRequest, QueryGrantableRolesResponse, Role&gt; context,
         QueryGrantableRolesResponse response) {
-<span class="fc" id="L3555">      return new QueryGrantableRolesPage(context, response);</span>
+<span class="fc" id="L3823">      return new QueryGrantableRolesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;QueryGrantableRolesPage&gt; createPageAsync(
         PageContext&lt;QueryGrantableRolesRequest, QueryGrantableRolesResponse, Role&gt; context,
         ApiFuture&lt;QueryGrantableRolesResponse&gt; futureResponse) {
-<span class="fc" id="L3562">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3830">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3573,17 +3841,17 @@ public class IAMClient implements BackgroundResource {
 
     private QueryGrantableRolesFixedSizeCollection(
         List&lt;QueryGrantableRolesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3576">      super(pages, collectionSize);</span>
-<span class="fc" id="L3577">    }</span>
+<span class="fc" id="L3844">      super(pages, collectionSize);</span>
+<span class="fc" id="L3845">    }</span>
 
     private static QueryGrantableRolesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3580">      return new QueryGrantableRolesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3848">      return new QueryGrantableRolesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected QueryGrantableRolesFixedSizeCollection createCollection(
         List&lt;QueryGrantableRolesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3586">      return new QueryGrantableRolesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L3854">      return new QueryGrantableRolesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3595,14 +3863,14 @@ public class IAMClient implements BackgroundResource {
         PageContext&lt;ListRolesRequest, ListRolesResponse, Role&gt; context,
         ApiFuture&lt;ListRolesResponse&gt; futureResponse) {
       ApiFuture&lt;ListRolesPage&gt; futurePage =
-<span class="fc" id="L3598">          ListRolesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3599">      return ApiFutures.transform(</span>
-<span class="fc" id="L3600">          futurePage, input -&gt; new ListRolesPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3866">          ListRolesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3867">      return ApiFutures.transform(</span>
+<span class="fc" id="L3868">          futurePage, input -&gt; new ListRolesPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListRolesPagedResponse(ListRolesPage page) {
-<span class="fc" id="L3604">      super(page, ListRolesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3605">    }</span>
+<span class="fc" id="L3872">      super(page, ListRolesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3873">    }</span>
   }
 
   public static class ListRolesPage
@@ -3611,25 +3879,25 @@ public class IAMClient implements BackgroundResource {
     private ListRolesPage(
         PageContext&lt;ListRolesRequest, ListRolesResponse, Role&gt; context,
         ListRolesResponse response) {
-<span class="fc" id="L3614">      super(context, response);</span>
-<span class="fc" id="L3615">    }</span>
+<span class="fc" id="L3882">      super(context, response);</span>
+<span class="fc" id="L3883">    }</span>
 
     private static ListRolesPage createEmptyPage() {
-<span class="fc" id="L3618">      return new ListRolesPage(null, null);</span>
+<span class="fc" id="L3886">      return new ListRolesPage(null, null);</span>
     }
 
     @Override
     protected ListRolesPage createPage(
         PageContext&lt;ListRolesRequest, ListRolesResponse, Role&gt; context,
         ListRolesResponse response) {
-<span class="fc" id="L3625">      return new ListRolesPage(context, response);</span>
+<span class="fc" id="L3893">      return new ListRolesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListRolesPage&gt; createPageAsync(
         PageContext&lt;ListRolesRequest, ListRolesResponse, Role&gt; context,
         ApiFuture&lt;ListRolesResponse&gt; futureResponse) {
-<span class="fc" id="L3632">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3900">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3638,17 +3906,17 @@ public class IAMClient implements BackgroundResource {
           ListRolesRequest, ListRolesResponse, Role, ListRolesPage, ListRolesFixedSizeCollection&gt; {
 
     private ListRolesFixedSizeCollection(List&lt;ListRolesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3641">      super(pages, collectionSize);</span>
-<span class="fc" id="L3642">    }</span>
+<span class="fc" id="L3909">      super(pages, collectionSize);</span>
+<span class="fc" id="L3910">    }</span>
 
     private static ListRolesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3645">      return new ListRolesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3913">      return new ListRolesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListRolesFixedSizeCollection createCollection(
         List&lt;ListRolesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3651">      return new ListRolesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L3919">      return new ListRolesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3665,16 +3933,16 @@ public class IAMClient implements BackgroundResource {
             context,
         ApiFuture&lt;QueryTestablePermissionsResponse&gt; futureResponse) {
       ApiFuture&lt;QueryTestablePermissionsPage&gt; futurePage =
-<span class="fc" id="L3668">          QueryTestablePermissionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3669">      return ApiFutures.transform(</span>
+<span class="fc" id="L3936">          QueryTestablePermissionsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3937">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3671">          input -&gt; new QueryTestablePermissionsPagedResponse(input),</span>
-<span class="fc" id="L3672">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3939">          input -&gt; new QueryTestablePermissionsPagedResponse(input),</span>
+<span class="fc" id="L3940">          MoreExecutors.directExecutor());</span>
     }
 
     private QueryTestablePermissionsPagedResponse(QueryTestablePermissionsPage page) {
-<span class="fc" id="L3676">      super(page, QueryTestablePermissionsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3677">    }</span>
+<span class="fc" id="L3944">      super(page, QueryTestablePermissionsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3945">    }</span>
   }
 
   public static class QueryTestablePermissionsPage
@@ -3688,11 +3956,11 @@ public class IAMClient implements BackgroundResource {
         PageContext&lt;QueryTestablePermissionsRequest, QueryTestablePermissionsResponse, Permission&gt;
             context,
         QueryTestablePermissionsResponse response) {
-<span class="fc" id="L3691">      super(context, response);</span>
-<span class="fc" id="L3692">    }</span>
+<span class="fc" id="L3959">      super(context, response);</span>
+<span class="fc" id="L3960">    }</span>
 
     private static QueryTestablePermissionsPage createEmptyPage() {
-<span class="fc" id="L3695">      return new QueryTestablePermissionsPage(null, null);</span>
+<span class="fc" id="L3963">      return new QueryTestablePermissionsPage(null, null);</span>
     }
 
     @Override
@@ -3700,7 +3968,7 @@ public class IAMClient implements BackgroundResource {
         PageContext&lt;QueryTestablePermissionsRequest, QueryTestablePermissionsResponse, Permission&gt;
             context,
         QueryTestablePermissionsResponse response) {
-<span class="fc" id="L3703">      return new QueryTestablePermissionsPage(context, response);</span>
+<span class="fc" id="L3971">      return new QueryTestablePermissionsPage(context, response);</span>
     }
 
     @Override
@@ -3708,7 +3976,7 @@ public class IAMClient implements BackgroundResource {
         PageContext&lt;QueryTestablePermissionsRequest, QueryTestablePermissionsResponse, Permission&gt;
             context,
         ApiFuture&lt;QueryTestablePermissionsResponse&gt; futureResponse) {
-<span class="fc" id="L3711">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3979">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3722,17 +3990,17 @@ public class IAMClient implements BackgroundResource {
 
     private QueryTestablePermissionsFixedSizeCollection(
         List&lt;QueryTestablePermissionsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3725">      super(pages, collectionSize);</span>
-<span class="fc" id="L3726">    }</span>
+<span class="fc" id="L3993">      super(pages, collectionSize);</span>
+<span class="fc" id="L3994">    }</span>
 
     private static QueryTestablePermissionsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3729">      return new QueryTestablePermissionsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3997">      return new QueryTestablePermissionsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected QueryTestablePermissionsFixedSizeCollection createCollection(
         List&lt;QueryTestablePermissionsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3735">      return new QueryTestablePermissionsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4003">      return new QueryTestablePermissionsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
