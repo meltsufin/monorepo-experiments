@@ -16,6 +16,7 @@
 
 package com.google.cloud.assuredworkloads.v1.stub;
 
+import static com.google.cloud.assuredworkloads.v1.AssuredWorkloadsServiceClient.ListViolationsPagedResponse;
 import static com.google.cloud.assuredworkloads.v1.AssuredWorkloadsServiceClient.ListWorkloadsPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -47,13 +48,21 @@ import com.google.api.gax.rpc.StubSettings;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.api.gax.rpc.UnaryCallSettings;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.assuredworkloads.v1.AcknowledgeViolationRequest;
+import com.google.cloud.assuredworkloads.v1.AcknowledgeViolationResponse;
 import com.google.cloud.assuredworkloads.v1.CreateWorkloadOperationMetadata;
 import com.google.cloud.assuredworkloads.v1.CreateWorkloadRequest;
 import com.google.cloud.assuredworkloads.v1.DeleteWorkloadRequest;
+import com.google.cloud.assuredworkloads.v1.GetViolationRequest;
 import com.google.cloud.assuredworkloads.v1.GetWorkloadRequest;
+import com.google.cloud.assuredworkloads.v1.ListViolationsRequest;
+import com.google.cloud.assuredworkloads.v1.ListViolationsResponse;
 import com.google.cloud.assuredworkloads.v1.ListWorkloadsRequest;
 import com.google.cloud.assuredworkloads.v1.ListWorkloadsResponse;
+import com.google.cloud.assuredworkloads.v1.RestrictAllowedResourcesRequest;
+import com.google.cloud.assuredworkloads.v1.RestrictAllowedResourcesResponse;
 import com.google.cloud.assuredworkloads.v1.UpdateWorkloadRequest;
+import com.google.cloud.assuredworkloads.v1.Violation;
 import com.google.cloud.assuredworkloads.v1.Workload;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -110,217 +119,307 @@ public class AssuredWorkloadsServiceStubSettings
     extends StubSettings&lt;AssuredWorkloadsServiceStubSettings&gt; {
   /** The default scopes of the service. */
   private static final ImmutableList&lt;String&gt; DEFAULT_SERVICE_SCOPES =
-<span class="fc" id="L113">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
+<span class="fc" id="L122">      ImmutableList.&lt;String&gt;builder().add(&quot;https://www.googleapis.com/auth/cloud-platform&quot;).build();</span>
 
   private final UnaryCallSettings&lt;CreateWorkloadRequest, Operation&gt; createWorkloadSettings;
   private final OperationCallSettings&lt;
           CreateWorkloadRequest, Workload, CreateWorkloadOperationMetadata&gt;
       createWorkloadOperationSettings;
   private final UnaryCallSettings&lt;UpdateWorkloadRequest, Workload&gt; updateWorkloadSettings;
+  private final UnaryCallSettings&lt;RestrictAllowedResourcesRequest, RestrictAllowedResourcesResponse&gt;
+      restrictAllowedResourcesSettings;
   private final UnaryCallSettings&lt;DeleteWorkloadRequest, Empty&gt; deleteWorkloadSettings;
   private final UnaryCallSettings&lt;GetWorkloadRequest, Workload&gt; getWorkloadSettings;
   private final PagedCallSettings&lt;
           ListWorkloadsRequest, ListWorkloadsResponse, ListWorkloadsPagedResponse&gt;
       listWorkloadsSettings;
+  private final PagedCallSettings&lt;
+          ListViolationsRequest, ListViolationsResponse, ListViolationsPagedResponse&gt;
+      listViolationsSettings;
+  private final UnaryCallSettings&lt;GetViolationRequest, Violation&gt; getViolationSettings;
+  private final UnaryCallSettings&lt;AcknowledgeViolationRequest, AcknowledgeViolationResponse&gt;
+      acknowledgeViolationSettings;
 
   private static final PagedListDescriptor&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt;
-<span class="fc" id="L127">      LIST_WORKLOADS_PAGE_STR_DESC =</span>
-<span class="fc" id="L128">          new PagedListDescriptor&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt;() {</span>
+<span class="fc" id="L144">      LIST_WORKLOADS_PAGE_STR_DESC =</span>
+<span class="fc" id="L145">          new PagedListDescriptor&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt;() {</span>
             @Override
             public String emptyToken() {
-<span class="fc" id="L131">              return &quot;&quot;;</span>
+<span class="fc" id="L148">              return &quot;&quot;;</span>
             }
 
             @Override
             public ListWorkloadsRequest injectToken(ListWorkloadsRequest payload, String token) {
-<span class="nc" id="L136">              return ListWorkloadsRequest.newBuilder(payload).setPageToken(token).build();</span>
+<span class="nc" id="L153">              return ListWorkloadsRequest.newBuilder(payload).setPageToken(token).build();</span>
             }
 
             @Override
             public ListWorkloadsRequest injectPageSize(ListWorkloadsRequest payload, int pageSize) {
-<span class="nc" id="L141">              return ListWorkloadsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+<span class="nc" id="L158">              return ListWorkloadsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
             }
 
             @Override
             public Integer extractPageSize(ListWorkloadsRequest payload) {
-<span class="nc" id="L146">              return payload.getPageSize();</span>
+<span class="nc" id="L163">              return payload.getPageSize();</span>
             }
 
             @Override
             public String extractNextToken(ListWorkloadsResponse payload) {
-<span class="fc" id="L151">              return payload.getNextPageToken();</span>
+<span class="fc" id="L168">              return payload.getNextPageToken();</span>
             }
 
             @Override
             public Iterable&lt;Workload&gt; extractResources(ListWorkloadsResponse payload) {
-<span class="pc bpc" id="L156" title="1 of 2 branches missed.">              return payload.getWorkloadsList() == null</span>
-<span class="nc" id="L157">                  ? ImmutableList.&lt;Workload&gt;of()</span>
-<span class="fc" id="L158">                  : payload.getWorkloadsList();</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">              return payload.getWorkloadsList() == null</span>
+<span class="nc" id="L174">                  ? ImmutableList.&lt;Workload&gt;of()</span>
+<span class="fc" id="L175">                  : payload.getWorkloadsList();</span>
+            }
+          };
+
+  private static final PagedListDescriptor&lt;ListViolationsRequest, ListViolationsResponse, Violation&gt;
+<span class="fc" id="L180">      LIST_VIOLATIONS_PAGE_STR_DESC =</span>
+<span class="fc" id="L181">          new PagedListDescriptor&lt;ListViolationsRequest, ListViolationsResponse, Violation&gt;() {</span>
+            @Override
+            public String emptyToken() {
+<span class="fc" id="L184">              return &quot;&quot;;</span>
+            }
+
+            @Override
+            public ListViolationsRequest injectToken(ListViolationsRequest payload, String token) {
+<span class="nc" id="L189">              return ListViolationsRequest.newBuilder(payload).setPageToken(token).build();</span>
+            }
+
+            @Override
+            public ListViolationsRequest injectPageSize(
+                ListViolationsRequest payload, int pageSize) {
+<span class="nc" id="L195">              return ListViolationsRequest.newBuilder(payload).setPageSize(pageSize).build();</span>
+            }
+
+            @Override
+            public Integer extractPageSize(ListViolationsRequest payload) {
+<span class="nc" id="L200">              return payload.getPageSize();</span>
+            }
+
+            @Override
+            public String extractNextToken(ListViolationsResponse payload) {
+<span class="fc" id="L205">              return payload.getNextPageToken();</span>
+            }
+
+            @Override
+            public Iterable&lt;Violation&gt; extractResources(ListViolationsResponse payload) {
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">              return payload.getViolationsList() == null</span>
+<span class="nc" id="L211">                  ? ImmutableList.&lt;Violation&gt;of()</span>
+<span class="fc" id="L212">                  : payload.getViolationsList();</span>
             }
           };
 
   private static final PagedListResponseFactory&lt;
           ListWorkloadsRequest, ListWorkloadsResponse, ListWorkloadsPagedResponse&gt;
-<span class="fc" id="L164">      LIST_WORKLOADS_PAGE_STR_FACT =</span>
+<span class="fc" id="L218">      LIST_WORKLOADS_PAGE_STR_FACT =</span>
           new PagedListResponseFactory&lt;
-<span class="fc" id="L166">              ListWorkloadsRequest, ListWorkloadsResponse, ListWorkloadsPagedResponse&gt;() {</span>
+<span class="fc" id="L220">              ListWorkloadsRequest, ListWorkloadsResponse, ListWorkloadsPagedResponse&gt;() {</span>
             @Override
             public ApiFuture&lt;ListWorkloadsPagedResponse&gt; getFuturePagedResponse(
                 UnaryCallable&lt;ListWorkloadsRequest, ListWorkloadsResponse&gt; callable,
                 ListWorkloadsRequest request,
                 ApiCallContext context,
                 ApiFuture&lt;ListWorkloadsResponse&gt; futureResponse) {
-<span class="fc" id="L173">              PageContext&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt; pageContext =</span>
-<span class="fc" id="L174">                  PageContext.create(callable, LIST_WORKLOADS_PAGE_STR_DESC, request, context);</span>
-<span class="fc" id="L175">              return ListWorkloadsPagedResponse.createAsync(pageContext, futureResponse);</span>
+<span class="fc" id="L227">              PageContext&lt;ListWorkloadsRequest, ListWorkloadsResponse, Workload&gt; pageContext =</span>
+<span class="fc" id="L228">                  PageContext.create(callable, LIST_WORKLOADS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L229">              return ListWorkloadsPagedResponse.createAsync(pageContext, futureResponse);</span>
+            }
+          };
+
+  private static final PagedListResponseFactory&lt;
+          ListViolationsRequest, ListViolationsResponse, ListViolationsPagedResponse&gt;
+<span class="fc" id="L235">      LIST_VIOLATIONS_PAGE_STR_FACT =</span>
+          new PagedListResponseFactory&lt;
+<span class="fc" id="L237">              ListViolationsRequest, ListViolationsResponse, ListViolationsPagedResponse&gt;() {</span>
+            @Override
+            public ApiFuture&lt;ListViolationsPagedResponse&gt; getFuturePagedResponse(
+                UnaryCallable&lt;ListViolationsRequest, ListViolationsResponse&gt; callable,
+                ListViolationsRequest request,
+                ApiCallContext context,
+                ApiFuture&lt;ListViolationsResponse&gt; futureResponse) {
+<span class="fc" id="L244">              PageContext&lt;ListViolationsRequest, ListViolationsResponse, Violation&gt; pageContext =</span>
+<span class="fc" id="L245">                  PageContext.create(callable, LIST_VIOLATIONS_PAGE_STR_DESC, request, context);</span>
+<span class="fc" id="L246">              return ListViolationsPagedResponse.createAsync(pageContext, futureResponse);</span>
             }
           };
 
   /** Returns the object with the settings used for calls to createWorkload. */
   public UnaryCallSettings&lt;CreateWorkloadRequest, Operation&gt; createWorkloadSettings() {
-<span class="fc" id="L181">    return createWorkloadSettings;</span>
+<span class="fc" id="L252">    return createWorkloadSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to createWorkload. */
   public OperationCallSettings&lt;CreateWorkloadRequest, Workload, CreateWorkloadOperationMetadata&gt;
       createWorkloadOperationSettings() {
-<span class="fc" id="L187">    return createWorkloadOperationSettings;</span>
+<span class="fc" id="L258">    return createWorkloadOperationSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to updateWorkload. */
   public UnaryCallSettings&lt;UpdateWorkloadRequest, Workload&gt; updateWorkloadSettings() {
-<span class="fc" id="L192">    return updateWorkloadSettings;</span>
+<span class="fc" id="L263">    return updateWorkloadSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to restrictAllowedResources. */
+  public UnaryCallSettings&lt;RestrictAllowedResourcesRequest, RestrictAllowedResourcesResponse&gt;
+      restrictAllowedResourcesSettings() {
+<span class="fc" id="L269">    return restrictAllowedResourcesSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to deleteWorkload. */
   public UnaryCallSettings&lt;DeleteWorkloadRequest, Empty&gt; deleteWorkloadSettings() {
-<span class="fc" id="L197">    return deleteWorkloadSettings;</span>
+<span class="fc" id="L274">    return deleteWorkloadSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to getWorkload. */
   public UnaryCallSettings&lt;GetWorkloadRequest, Workload&gt; getWorkloadSettings() {
-<span class="fc" id="L202">    return getWorkloadSettings;</span>
+<span class="fc" id="L279">    return getWorkloadSettings;</span>
   }
 
   /** Returns the object with the settings used for calls to listWorkloads. */
   public PagedCallSettings&lt;ListWorkloadsRequest, ListWorkloadsResponse, ListWorkloadsPagedResponse&gt;
       listWorkloadsSettings() {
-<span class="fc" id="L208">    return listWorkloadsSettings;</span>
+<span class="fc" id="L285">    return listWorkloadsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to listViolations. */
+  public PagedCallSettings&lt;
+          ListViolationsRequest, ListViolationsResponse, ListViolationsPagedResponse&gt;
+      listViolationsSettings() {
+<span class="fc" id="L292">    return listViolationsSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to getViolation. */
+  public UnaryCallSettings&lt;GetViolationRequest, Violation&gt; getViolationSettings() {
+<span class="fc" id="L297">    return getViolationSettings;</span>
+  }
+
+  /** Returns the object with the settings used for calls to acknowledgeViolation. */
+  public UnaryCallSettings&lt;AcknowledgeViolationRequest, AcknowledgeViolationResponse&gt;
+      acknowledgeViolationSettings() {
+<span class="fc" id="L303">    return acknowledgeViolationSettings;</span>
   }
 
   public AssuredWorkloadsServiceStub createStub() throws IOException {
-<span class="fc" id="L212">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L213">        .getTransportName()</span>
-<span class="fc bfc" id="L214" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
-<span class="fc" id="L215">      return GrpcAssuredWorkloadsServiceStub.create(this);</span>
+<span class="fc" id="L307">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L308">        .getTransportName()</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        .equals(GrpcTransportChannel.getGrpcTransportName())) {</span>
+<span class="fc" id="L310">      return GrpcAssuredWorkloadsServiceStub.create(this);</span>
     }
-<span class="fc" id="L217">    if (getTransportChannelProvider()</span>
-<span class="fc" id="L218">        .getTransportName()</span>
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
-<span class="fc" id="L220">      return HttpJsonAssuredWorkloadsServiceStub.create(this);</span>
+<span class="fc" id="L312">    if (getTransportChannelProvider()</span>
+<span class="fc" id="L313">        .getTransportName()</span>
+<span class="pc bpc" id="L314" title="1 of 2 branches missed.">        .equals(HttpJsonTransportChannel.getHttpJsonTransportName())) {</span>
+<span class="fc" id="L315">      return HttpJsonAssuredWorkloadsServiceStub.create(this);</span>
     }
-<span class="nc" id="L222">    throw new UnsupportedOperationException(</span>
-<span class="nc" id="L223">        String.format(</span>
-<span class="nc" id="L224">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
+<span class="nc" id="L317">    throw new UnsupportedOperationException(</span>
+<span class="nc" id="L318">        String.format(</span>
+<span class="nc" id="L319">            &quot;Transport not supported: %s&quot;, getTransportChannelProvider().getTransportName()));</span>
   }
 
   /** Returns a builder for the default ExecutorProvider for this service. */
   public static InstantiatingExecutorProvider.Builder defaultExecutorProviderBuilder() {
-<span class="nc" id="L229">    return InstantiatingExecutorProvider.newBuilder();</span>
+<span class="nc" id="L324">    return InstantiatingExecutorProvider.newBuilder();</span>
   }
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-<span class="fc" id="L234">    return &quot;assuredworkloads.googleapis.com:443&quot;;</span>
+<span class="fc" id="L329">    return &quot;assuredworkloads.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default mTLS service endpoint. */
   public static String getDefaultMtlsEndpoint() {
-<span class="fc" id="L239">    return &quot;assuredworkloads.mtls.googleapis.com:443&quot;;</span>
+<span class="fc" id="L334">    return &quot;assuredworkloads.mtls.googleapis.com:443&quot;;</span>
   }
 
   /** Returns the default service scopes. */
   public static List&lt;String&gt; getDefaultServiceScopes() {
-<span class="nc" id="L244">    return DEFAULT_SERVICE_SCOPES;</span>
+<span class="nc" id="L339">    return DEFAULT_SERVICE_SCOPES;</span>
   }
 
   /** Returns a builder for the default credentials for this service. */
   public static GoogleCredentialsProvider.Builder defaultCredentialsProviderBuilder() {
-<span class="fc" id="L249">    return GoogleCredentialsProvider.newBuilder()</span>
-<span class="fc" id="L250">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
-<span class="fc" id="L251">        .setUseJwtAccessWithScope(true);</span>
+<span class="fc" id="L344">    return GoogleCredentialsProvider.newBuilder()</span>
+<span class="fc" id="L345">        .setScopesToApply(DEFAULT_SERVICE_SCOPES)</span>
+<span class="fc" id="L346">        .setUseJwtAccessWithScope(true);</span>
   }
 
   /** Returns a builder for the default gRPC ChannelProvider for this service. */
   public static InstantiatingGrpcChannelProvider.Builder defaultGrpcTransportProviderBuilder() {
-<span class="fc" id="L256">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
-<span class="fc" id="L257">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
+<span class="fc" id="L351">    return InstantiatingGrpcChannelProvider.newBuilder()</span>
+<span class="fc" id="L352">        .setMaxInboundMessageSize(Integer.MAX_VALUE);</span>
   }
 
   /** Returns a builder for the default REST ChannelProvider for this service. */
   @BetaApi
   public static InstantiatingHttpJsonChannelProvider.Builder
       defaultHttpJsonTransportProviderBuilder() {
-<span class="fc" id="L264">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
+<span class="fc" id="L359">    return InstantiatingHttpJsonChannelProvider.newBuilder();</span>
   }
 
   public static TransportChannelProvider defaultTransportChannelProvider() {
-<span class="fc" id="L268">    return defaultGrpcTransportProviderBuilder().build();</span>
+<span class="fc" id="L363">    return defaultGrpcTransportProviderBuilder().build();</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
   public static ApiClientHeaderProvider.Builder defaultGrpcApiClientHeaderProviderBuilder() {
-<span class="fc" id="L273">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L274">        .setGeneratedLibToken(</span>
-<span class="fc" id="L275">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(AssuredWorkloadsServiceStubSettings.class))</span>
-<span class="fc" id="L276">        .setTransportToken(</span>
-<span class="fc" id="L277">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
+<span class="fc" id="L368">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L369">        .setGeneratedLibToken(</span>
+<span class="fc" id="L370">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(AssuredWorkloadsServiceStubSettings.class))</span>
+<span class="fc" id="L371">        .setTransportToken(</span>
+<span class="fc" id="L372">            GaxGrpcProperties.getGrpcTokenName(), GaxGrpcProperties.getGrpcVersion());</span>
   }
 
   @BetaApi(&quot;The surface for customizing headers is not stable yet and may change in the future.&quot;)
   public static ApiClientHeaderProvider.Builder defaultHttpJsonApiClientHeaderProviderBuilder() {
-<span class="fc" id="L282">    return ApiClientHeaderProvider.newBuilder()</span>
-<span class="fc" id="L283">        .setGeneratedLibToken(</span>
-<span class="fc" id="L284">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(AssuredWorkloadsServiceStubSettings.class))</span>
-<span class="fc" id="L285">        .setTransportToken(</span>
-<span class="fc" id="L286">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
-<span class="fc" id="L287">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
+<span class="fc" id="L377">    return ApiClientHeaderProvider.newBuilder()</span>
+<span class="fc" id="L378">        .setGeneratedLibToken(</span>
+<span class="fc" id="L379">            &quot;gapic&quot;, GaxProperties.getLibraryVersion(AssuredWorkloadsServiceStubSettings.class))</span>
+<span class="fc" id="L380">        .setTransportToken(</span>
+<span class="fc" id="L381">            GaxHttpJsonProperties.getHttpJsonTokenName(),</span>
+<span class="fc" id="L382">            GaxHttpJsonProperties.getHttpJsonVersion());</span>
   }
 
   public static ApiClientHeaderProvider.Builder defaultApiClientHeaderProviderBuilder() {
-<span class="fc" id="L291">    return AssuredWorkloadsServiceStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
+<span class="fc" id="L386">    return AssuredWorkloadsServiceStubSettings.defaultGrpcApiClientHeaderProviderBuilder();</span>
   }
 
   /** Returns a new gRPC builder for this class. */
   public static Builder newBuilder() {
-<span class="fc" id="L296">    return Builder.createDefault();</span>
+<span class="fc" id="L391">    return Builder.createDefault();</span>
   }
 
   /** Returns a new REST builder for this class. */
   public static Builder newHttpJsonBuilder() {
-<span class="fc" id="L301">    return Builder.createHttpJsonDefault();</span>
+<span class="fc" id="L396">    return Builder.createHttpJsonDefault();</span>
   }
 
   /** Returns a new builder for this class. */
   public static Builder newBuilder(ClientContext clientContext) {
-<span class="nc" id="L306">    return new Builder(clientContext);</span>
+<span class="nc" id="L401">    return new Builder(clientContext);</span>
   }
 
   /** Returns a builder containing all the values of this settings class. */
   public Builder toBuilder() {
-<span class="nc" id="L311">    return new Builder(this);</span>
+<span class="nc" id="L406">    return new Builder(this);</span>
   }
 
   protected AssuredWorkloadsServiceStubSettings(Builder settingsBuilder) throws IOException {
-<span class="fc" id="L315">    super(settingsBuilder);</span>
+<span class="fc" id="L410">    super(settingsBuilder);</span>
 
-<span class="fc" id="L317">    createWorkloadSettings = settingsBuilder.createWorkloadSettings().build();</span>
-<span class="fc" id="L318">    createWorkloadOperationSettings = settingsBuilder.createWorkloadOperationSettings().build();</span>
-<span class="fc" id="L319">    updateWorkloadSettings = settingsBuilder.updateWorkloadSettings().build();</span>
-<span class="fc" id="L320">    deleteWorkloadSettings = settingsBuilder.deleteWorkloadSettings().build();</span>
-<span class="fc" id="L321">    getWorkloadSettings = settingsBuilder.getWorkloadSettings().build();</span>
-<span class="fc" id="L322">    listWorkloadsSettings = settingsBuilder.listWorkloadsSettings().build();</span>
-<span class="fc" id="L323">  }</span>
+<span class="fc" id="L412">    createWorkloadSettings = settingsBuilder.createWorkloadSettings().build();</span>
+<span class="fc" id="L413">    createWorkloadOperationSettings = settingsBuilder.createWorkloadOperationSettings().build();</span>
+<span class="fc" id="L414">    updateWorkloadSettings = settingsBuilder.updateWorkloadSettings().build();</span>
+<span class="fc" id="L415">    restrictAllowedResourcesSettings = settingsBuilder.restrictAllowedResourcesSettings().build();</span>
+<span class="fc" id="L416">    deleteWorkloadSettings = settingsBuilder.deleteWorkloadSettings().build();</span>
+<span class="fc" id="L417">    getWorkloadSettings = settingsBuilder.getWorkloadSettings().build();</span>
+<span class="fc" id="L418">    listWorkloadsSettings = settingsBuilder.listWorkloadsSettings().build();</span>
+<span class="fc" id="L419">    listViolationsSettings = settingsBuilder.listViolationsSettings().build();</span>
+<span class="fc" id="L420">    getViolationSettings = settingsBuilder.getViolationSettings().build();</span>
+<span class="fc" id="L421">    acknowledgeViolationSettings = settingsBuilder.acknowledgeViolationSettings().build();</span>
+<span class="fc" id="L422">  }</span>
 
   /** Builder for AssuredWorkloadsServiceStubSettings. */
   public static class Builder
@@ -332,159 +431,205 @@ public class AssuredWorkloadsServiceStubSettings
             CreateWorkloadRequest, Workload, CreateWorkloadOperationMetadata&gt;
         createWorkloadOperationSettings;
     private final UnaryCallSettings.Builder&lt;UpdateWorkloadRequest, Workload&gt; updateWorkloadSettings;
+    private final UnaryCallSettings.Builder&lt;
+            RestrictAllowedResourcesRequest, RestrictAllowedResourcesResponse&gt;
+        restrictAllowedResourcesSettings;
     private final UnaryCallSettings.Builder&lt;DeleteWorkloadRequest, Empty&gt; deleteWorkloadSettings;
     private final UnaryCallSettings.Builder&lt;GetWorkloadRequest, Workload&gt; getWorkloadSettings;
     private final PagedCallSettings.Builder&lt;
             ListWorkloadsRequest, ListWorkloadsResponse, ListWorkloadsPagedResponse&gt;
         listWorkloadsSettings;
+    private final PagedCallSettings.Builder&lt;
+            ListViolationsRequest, ListViolationsResponse, ListViolationsPagedResponse&gt;
+        listViolationsSettings;
+    private final UnaryCallSettings.Builder&lt;GetViolationRequest, Violation&gt; getViolationSettings;
+    private final UnaryCallSettings.Builder&lt;
+            AcknowledgeViolationRequest, AcknowledgeViolationResponse&gt;
+        acknowledgeViolationSettings;
     private static final ImmutableMap&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt;
         RETRYABLE_CODE_DEFINITIONS;
 
     static {
       ImmutableMap.Builder&lt;String, ImmutableSet&lt;StatusCode.Code&gt;&gt; definitions =
-<span class="fc" id="L345">          ImmutableMap.builder();</span>
-<span class="fc" id="L346">      definitions.put(</span>
-<span class="fc" id="L347">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
-<span class="fc" id="L348">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L454">          ImmutableMap.builder();</span>
+<span class="fc" id="L455">      definitions.put(</span>
+<span class="fc" id="L456">          &quot;no_retry_0_codes&quot;, ImmutableSet.copyOf(Lists.&lt;StatusCode.Code&gt;newArrayList()));</span>
+<span class="fc" id="L457">      RETRYABLE_CODE_DEFINITIONS = definitions.build();</span>
     }
 
     private static final ImmutableMap&lt;String, RetrySettings&gt; RETRY_PARAM_DEFINITIONS;
 
     static {
-<span class="fc" id="L354">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
-<span class="fc" id="L355">      RetrySettings settings = null;</span>
+<span class="fc" id="L463">      ImmutableMap.Builder&lt;String, RetrySettings&gt; definitions = ImmutableMap.builder();</span>
+<span class="fc" id="L464">      RetrySettings settings = null;</span>
       settings =
-<span class="fc" id="L357">          RetrySettings.newBuilder()</span>
-<span class="fc" id="L358">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L359">              .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L360">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L361">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
-<span class="fc" id="L362">              .build();</span>
-<span class="fc" id="L363">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
-<span class="fc" id="L364">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
-<span class="fc" id="L365">    }</span>
+<span class="fc" id="L466">          RetrySettings.newBuilder()</span>
+<span class="fc" id="L467">              .setInitialRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L468">              .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L469">              .setMaxRpcTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L470">              .setTotalTimeout(Duration.ofMillis(60000L))</span>
+<span class="fc" id="L471">              .build();</span>
+<span class="fc" id="L472">      definitions.put(&quot;no_retry_0_params&quot;, settings);</span>
+<span class="fc" id="L473">      RETRY_PARAM_DEFINITIONS = definitions.build();</span>
+<span class="fc" id="L474">    }</span>
 
     protected Builder() {
-<span class="nc" id="L368">      this(((ClientContext) null));</span>
-<span class="nc" id="L369">    }</span>
+<span class="nc" id="L477">      this(((ClientContext) null));</span>
+<span class="nc" id="L478">    }</span>
 
     protected Builder(ClientContext clientContext) {
-<span class="fc" id="L372">      super(clientContext);</span>
+<span class="fc" id="L481">      super(clientContext);</span>
 
-<span class="fc" id="L374">      createWorkloadSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L375">      createWorkloadOperationSettings = OperationCallSettings.newBuilder();</span>
-<span class="fc" id="L376">      updateWorkloadSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L377">      deleteWorkloadSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L378">      getWorkloadSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
-<span class="fc" id="L379">      listWorkloadsSettings = PagedCallSettings.newBuilder(LIST_WORKLOADS_PAGE_STR_FACT);</span>
+<span class="fc" id="L483">      createWorkloadSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L484">      createWorkloadOperationSettings = OperationCallSettings.newBuilder();</span>
+<span class="fc" id="L485">      updateWorkloadSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L486">      restrictAllowedResourcesSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L487">      deleteWorkloadSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L488">      getWorkloadSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L489">      listWorkloadsSettings = PagedCallSettings.newBuilder(LIST_WORKLOADS_PAGE_STR_FACT);</span>
+<span class="fc" id="L490">      listViolationsSettings = PagedCallSettings.newBuilder(LIST_VIOLATIONS_PAGE_STR_FACT);</span>
+<span class="fc" id="L491">      getViolationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
+<span class="fc" id="L492">      acknowledgeViolationSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();</span>
 
-<span class="fc" id="L381">      unaryMethodSettingsBuilders =</span>
-<span class="fc" id="L382">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="fc" id="L494">      unaryMethodSettingsBuilders =</span>
+<span class="fc" id="L495">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createWorkloadSettings,
               updateWorkloadSettings,
+              restrictAllowedResourcesSettings,
               deleteWorkloadSettings,
               getWorkloadSettings,
-              listWorkloadsSettings);
-<span class="fc" id="L388">      initDefaults(this);</span>
-<span class="fc" id="L389">    }</span>
+              listWorkloadsSettings,
+              listViolationsSettings,
+              getViolationSettings,
+              acknowledgeViolationSettings);
+<span class="fc" id="L505">      initDefaults(this);</span>
+<span class="fc" id="L506">    }</span>
 
     protected Builder(AssuredWorkloadsServiceStubSettings settings) {
-<span class="nc" id="L392">      super(settings);</span>
+<span class="nc" id="L509">      super(settings);</span>
 
-<span class="nc" id="L394">      createWorkloadSettings = settings.createWorkloadSettings.toBuilder();</span>
-<span class="nc" id="L395">      createWorkloadOperationSettings = settings.createWorkloadOperationSettings.toBuilder();</span>
-<span class="nc" id="L396">      updateWorkloadSettings = settings.updateWorkloadSettings.toBuilder();</span>
-<span class="nc" id="L397">      deleteWorkloadSettings = settings.deleteWorkloadSettings.toBuilder();</span>
-<span class="nc" id="L398">      getWorkloadSettings = settings.getWorkloadSettings.toBuilder();</span>
-<span class="nc" id="L399">      listWorkloadsSettings = settings.listWorkloadsSettings.toBuilder();</span>
+<span class="nc" id="L511">      createWorkloadSettings = settings.createWorkloadSettings.toBuilder();</span>
+<span class="nc" id="L512">      createWorkloadOperationSettings = settings.createWorkloadOperationSettings.toBuilder();</span>
+<span class="nc" id="L513">      updateWorkloadSettings = settings.updateWorkloadSettings.toBuilder();</span>
+<span class="nc" id="L514">      restrictAllowedResourcesSettings = settings.restrictAllowedResourcesSettings.toBuilder();</span>
+<span class="nc" id="L515">      deleteWorkloadSettings = settings.deleteWorkloadSettings.toBuilder();</span>
+<span class="nc" id="L516">      getWorkloadSettings = settings.getWorkloadSettings.toBuilder();</span>
+<span class="nc" id="L517">      listWorkloadsSettings = settings.listWorkloadsSettings.toBuilder();</span>
+<span class="nc" id="L518">      listViolationsSettings = settings.listViolationsSettings.toBuilder();</span>
+<span class="nc" id="L519">      getViolationSettings = settings.getViolationSettings.toBuilder();</span>
+<span class="nc" id="L520">      acknowledgeViolationSettings = settings.acknowledgeViolationSettings.toBuilder();</span>
 
-<span class="nc" id="L401">      unaryMethodSettingsBuilders =</span>
-<span class="nc" id="L402">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
+<span class="nc" id="L522">      unaryMethodSettingsBuilders =</span>
+<span class="nc" id="L523">          ImmutableList.&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt;of(</span>
               createWorkloadSettings,
               updateWorkloadSettings,
+              restrictAllowedResourcesSettings,
               deleteWorkloadSettings,
               getWorkloadSettings,
-              listWorkloadsSettings);
-<span class="nc" id="L408">    }</span>
+              listWorkloadsSettings,
+              listViolationsSettings,
+              getViolationSettings,
+              acknowledgeViolationSettings);
+<span class="nc" id="L533">    }</span>
 
     private static Builder createDefault() {
-<span class="fc" id="L411">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L536">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L413">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
-<span class="fc" id="L414">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L415">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L416">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L417">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L418">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L538">      builder.setTransportChannelProvider(defaultTransportChannelProvider());</span>
+<span class="fc" id="L539">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L540">      builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L541">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L542">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L543">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L420">      return initDefaults(builder);</span>
+<span class="fc" id="L545">      return initDefaults(builder);</span>
     }
 
     private static Builder createHttpJsonDefault() {
-<span class="fc" id="L424">      Builder builder = new Builder(((ClientContext) null));</span>
+<span class="fc" id="L549">      Builder builder = new Builder(((ClientContext) null));</span>
 
-<span class="fc" id="L426">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
-<span class="fc" id="L427">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
-<span class="fc" id="L428">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
-<span class="fc" id="L429">      builder.setEndpoint(getDefaultEndpoint());</span>
-<span class="fc" id="L430">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
-<span class="fc" id="L431">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
+<span class="fc" id="L551">      builder.setTransportChannelProvider(defaultHttpJsonTransportProviderBuilder().build());</span>
+<span class="fc" id="L552">      builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());</span>
+<span class="fc" id="L553">      builder.setInternalHeaderProvider(defaultHttpJsonApiClientHeaderProviderBuilder().build());</span>
+<span class="fc" id="L554">      builder.setEndpoint(getDefaultEndpoint());</span>
+<span class="fc" id="L555">      builder.setMtlsEndpoint(getDefaultMtlsEndpoint());</span>
+<span class="fc" id="L556">      builder.setSwitchToMtlsEndpointAllowed(true);</span>
 
-<span class="fc" id="L433">      return initDefaults(builder);</span>
+<span class="fc" id="L558">      return initDefaults(builder);</span>
     }
 
     private static Builder initDefaults(Builder builder) {
-<span class="fc" id="L437">      builder</span>
-<span class="fc" id="L438">          .createWorkloadSettings()</span>
-<span class="fc" id="L439">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L440">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L562">      builder</span>
+<span class="fc" id="L563">          .createWorkloadSettings()</span>
+<span class="fc" id="L564">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L565">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L442">      builder</span>
-<span class="fc" id="L443">          .updateWorkloadSettings()</span>
-<span class="fc" id="L444">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L445">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L567">      builder</span>
+<span class="fc" id="L568">          .updateWorkloadSettings()</span>
+<span class="fc" id="L569">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L570">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L447">      builder</span>
-<span class="fc" id="L448">          .deleteWorkloadSettings()</span>
-<span class="fc" id="L449">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L450">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L572">      builder</span>
+<span class="fc" id="L573">          .restrictAllowedResourcesSettings()</span>
+<span class="fc" id="L574">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L575">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L452">      builder</span>
-<span class="fc" id="L453">          .getWorkloadSettings()</span>
-<span class="fc" id="L454">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L455">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L577">      builder</span>
+<span class="fc" id="L578">          .deleteWorkloadSettings()</span>
+<span class="fc" id="L579">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L580">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L457">      builder</span>
-<span class="fc" id="L458">          .listWorkloadsSettings()</span>
-<span class="fc" id="L459">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L460">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+<span class="fc" id="L582">      builder</span>
+<span class="fc" id="L583">          .getWorkloadSettings()</span>
+<span class="fc" id="L584">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L585">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
 
-<span class="fc" id="L462">      builder</span>
-<span class="fc" id="L463">          .createWorkloadOperationSettings()</span>
-<span class="fc" id="L464">          .setInitialCallSettings(</span>
+<span class="fc" id="L587">      builder</span>
+<span class="fc" id="L588">          .listWorkloadsSettings()</span>
+<span class="fc" id="L589">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L590">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L592">      builder</span>
+<span class="fc" id="L593">          .listViolationsSettings()</span>
+<span class="fc" id="L594">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L595">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L597">      builder</span>
+<span class="fc" id="L598">          .getViolationSettings()</span>
+<span class="fc" id="L599">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L600">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L602">      builder</span>
+<span class="fc" id="L603">          .acknowledgeViolationSettings()</span>
+<span class="fc" id="L604">          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L605">          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;));</span>
+
+<span class="fc" id="L607">      builder</span>
+<span class="fc" id="L608">          .createWorkloadOperationSettings()</span>
+<span class="fc" id="L609">          .setInitialCallSettings(</span>
               UnaryCallSettings
-<span class="fc" id="L466">                  .&lt;CreateWorkloadRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
-<span class="fc" id="L467">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
-<span class="fc" id="L468">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
-<span class="fc" id="L469">                  .build())</span>
-<span class="fc" id="L470">          .setResponseTransformer(</span>
-<span class="fc" id="L471">              ProtoOperationTransformers.ResponseTransformer.create(Workload.class))</span>
-<span class="fc" id="L472">          .setMetadataTransformer(</span>
-<span class="fc" id="L473">              ProtoOperationTransformers.MetadataTransformer.create(</span>
+<span class="fc" id="L611">                  .&lt;CreateWorkloadRequest, OperationSnapshot&gt;newUnaryCallSettingsBuilder()</span>
+<span class="fc" id="L612">                  .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get(&quot;no_retry_0_codes&quot;))</span>
+<span class="fc" id="L613">                  .setRetrySettings(RETRY_PARAM_DEFINITIONS.get(&quot;no_retry_0_params&quot;))</span>
+<span class="fc" id="L614">                  .build())</span>
+<span class="fc" id="L615">          .setResponseTransformer(</span>
+<span class="fc" id="L616">              ProtoOperationTransformers.ResponseTransformer.create(Workload.class))</span>
+<span class="fc" id="L617">          .setMetadataTransformer(</span>
+<span class="fc" id="L618">              ProtoOperationTransformers.MetadataTransformer.create(</span>
                   CreateWorkloadOperationMetadata.class))
-<span class="fc" id="L475">          .setPollingAlgorithm(</span>
-<span class="fc" id="L476">              OperationTimedPollAlgorithm.create(</span>
-<span class="fc" id="L477">                  RetrySettings.newBuilder()</span>
-<span class="fc" id="L478">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
-<span class="fc" id="L479">                      .setRetryDelayMultiplier(1.5)</span>
-<span class="fc" id="L480">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
-<span class="fc" id="L481">                      .setInitialRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L482">                      .setRpcTimeoutMultiplier(1.0)</span>
-<span class="fc" id="L483">                      .setMaxRpcTimeout(Duration.ZERO)</span>
-<span class="fc" id="L484">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
-<span class="fc" id="L485">                      .build()));</span>
+<span class="fc" id="L620">          .setPollingAlgorithm(</span>
+<span class="fc" id="L621">              OperationTimedPollAlgorithm.create(</span>
+<span class="fc" id="L622">                  RetrySettings.newBuilder()</span>
+<span class="fc" id="L623">                      .setInitialRetryDelay(Duration.ofMillis(5000L))</span>
+<span class="fc" id="L624">                      .setRetryDelayMultiplier(1.5)</span>
+<span class="fc" id="L625">                      .setMaxRetryDelay(Duration.ofMillis(45000L))</span>
+<span class="fc" id="L626">                      .setInitialRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L627">                      .setRpcTimeoutMultiplier(1.0)</span>
+<span class="fc" id="L628">                      .setMaxRpcTimeout(Duration.ZERO)</span>
+<span class="fc" id="L629">                      .setTotalTimeout(Duration.ofMillis(300000L))</span>
+<span class="fc" id="L630">                      .build()));</span>
 
-<span class="fc" id="L487">      return builder;</span>
+<span class="fc" id="L632">      return builder;</span>
     }
 
     /**
@@ -494,17 +639,17 @@ public class AssuredWorkloadsServiceStubSettings
      */
     public Builder applyToAllUnaryMethods(
         ApiFunction&lt;UnaryCallSettings.Builder&lt;?, ?&gt;, Void&gt; settingsUpdater) {
-<span class="nc" id="L497">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
-<span class="nc" id="L498">      return this;</span>
+<span class="nc" id="L642">      super.applyToAllUnaryMethods(unaryMethodSettingsBuilders, settingsUpdater);</span>
+<span class="nc" id="L643">      return this;</span>
     }
 
     public ImmutableList&lt;UnaryCallSettings.Builder&lt;?, ?&gt;&gt; unaryMethodSettingsBuilders() {
-<span class="nc" id="L502">      return unaryMethodSettingsBuilders;</span>
+<span class="nc" id="L647">      return unaryMethodSettingsBuilders;</span>
     }
 
     /** Returns the builder for the settings used for calls to createWorkload. */
     public UnaryCallSettings.Builder&lt;CreateWorkloadRequest, Operation&gt; createWorkloadSettings() {
-<span class="fc" id="L507">      return createWorkloadSettings;</span>
+<span class="fc" id="L652">      return createWorkloadSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to createWorkload. */
@@ -513,34 +658,59 @@ public class AssuredWorkloadsServiceStubSettings
     public OperationCallSettings.Builder&lt;
             CreateWorkloadRequest, Workload, CreateWorkloadOperationMetadata&gt;
         createWorkloadOperationSettings() {
-<span class="fc" id="L516">      return createWorkloadOperationSettings;</span>
+<span class="fc" id="L661">      return createWorkloadOperationSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to updateWorkload. */
     public UnaryCallSettings.Builder&lt;UpdateWorkloadRequest, Workload&gt; updateWorkloadSettings() {
-<span class="fc" id="L521">      return updateWorkloadSettings;</span>
+<span class="fc" id="L666">      return updateWorkloadSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to restrictAllowedResources. */
+    public UnaryCallSettings.Builder&lt;
+            RestrictAllowedResourcesRequest, RestrictAllowedResourcesResponse&gt;
+        restrictAllowedResourcesSettings() {
+<span class="fc" id="L673">      return restrictAllowedResourcesSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to deleteWorkload. */
     public UnaryCallSettings.Builder&lt;DeleteWorkloadRequest, Empty&gt; deleteWorkloadSettings() {
-<span class="fc" id="L526">      return deleteWorkloadSettings;</span>
+<span class="fc" id="L678">      return deleteWorkloadSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to getWorkload. */
     public UnaryCallSettings.Builder&lt;GetWorkloadRequest, Workload&gt; getWorkloadSettings() {
-<span class="fc" id="L531">      return getWorkloadSettings;</span>
+<span class="fc" id="L683">      return getWorkloadSettings;</span>
     }
 
     /** Returns the builder for the settings used for calls to listWorkloads. */
     public PagedCallSettings.Builder&lt;
             ListWorkloadsRequest, ListWorkloadsResponse, ListWorkloadsPagedResponse&gt;
         listWorkloadsSettings() {
-<span class="fc" id="L538">      return listWorkloadsSettings;</span>
+<span class="fc" id="L690">      return listWorkloadsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to listViolations. */
+    public PagedCallSettings.Builder&lt;
+            ListViolationsRequest, ListViolationsResponse, ListViolationsPagedResponse&gt;
+        listViolationsSettings() {
+<span class="fc" id="L697">      return listViolationsSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to getViolation. */
+    public UnaryCallSettings.Builder&lt;GetViolationRequest, Violation&gt; getViolationSettings() {
+<span class="fc" id="L702">      return getViolationSettings;</span>
+    }
+
+    /** Returns the builder for the settings used for calls to acknowledgeViolation. */
+    public UnaryCallSettings.Builder&lt;AcknowledgeViolationRequest, AcknowledgeViolationResponse&gt;
+        acknowledgeViolationSettings() {
+<span class="fc" id="L708">      return acknowledgeViolationSettings;</span>
     }
 
     @Override
     public AssuredWorkloadsServiceStubSettings build() throws IOException {
-<span class="fc" id="L543">      return new AssuredWorkloadsServiceStubSettings(this);</span>
+<span class="fc" id="L713">      return new AssuredWorkloadsServiceStubSettings(this);</span>
     }
   }
 }
