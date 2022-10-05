@@ -1,0 +1,3859 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SpeechClient.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">CoverageAggregator</a> &gt; <a href="../index.html" class="el_bundle">google-cloud-speech</a> &gt; <a href="index.source.html" class="el_package">com.google.cloud.speech.v2</a> &gt; <span class="el_source">SpeechClient.java</span></div><h1>SpeechClient.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.cloud.speech.v2;
+
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
+import com.google.api.core.BetaApi;
+import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.httpjson.longrunning.OperationsClient;
+import com.google.api.gax.longrunning.OperationFuture;
+import com.google.api.gax.paging.AbstractFixedSizeCollection;
+import com.google.api.gax.paging.AbstractPage;
+import com.google.api.gax.paging.AbstractPagedListResponse;
+import com.google.api.gax.rpc.BidiStreamingCallable;
+import com.google.api.gax.rpc.OperationCallable;
+import com.google.api.gax.rpc.PageContext;
+import com.google.api.gax.rpc.UnaryCallable;
+import com.google.cloud.speech.v2.stub.SpeechStub;
+import com.google.cloud.speech.v2.stub.SpeechStubSettings;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.longrunning.Operation;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.FieldMask;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.Generated;
+
+// AUTO-GENERATED DOCUMENTATION AND CLASS.
+/**
+ * Service Description: Enables speech transcription and resource management.
+ *
+ * &lt;p&gt;This class provides the ability to make remote calls to the backing service through method
+ * calls that map to API methods. Sample code to get started:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated and should be regarded as a code template only.
+ * // It will require modifications to work:
+ * // - It may require correct/in-range values for request initialization.
+ * // - It may require specifying regional endpoints when creating the service client as shown in
+ * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+ * try (SpeechClient speechClient = SpeechClient.create()) {
+ *   RecognizerName name = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;);
+ *   Recognizer response = speechClient.getRecognizer(name);
+ * }
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;Note: close() needs to be called on the SpeechClient object to clean up resources such as
+ * threads. In the example above, try-with-resources is used, which automatically calls close().
+ *
+ * &lt;p&gt;The surface of this class includes several types of Java methods for each of the API's
+ * methods:
+ *
+ * &lt;ol&gt;
+ *   &lt;li&gt;A &quot;flattened&quot; method. With this type of method, the fields of the request type have been
+ *       converted into function parameters. It may be the case that not all fields are available as
+ *       parameters, and not every API method will have a flattened method entry point.
+ *   &lt;li&gt;A &quot;request object&quot; method. This type of method only takes one parameter, a request object,
+ *       which must be constructed before the call. Not every API method will have a request object
+ *       method.
+ *   &lt;li&gt;A &quot;callable&quot; method. This type of method takes no parameters and returns an immutable API
+ *       callable object, which can be used to initiate calls to the service.
+ * &lt;/ol&gt;
+ *
+ * &lt;p&gt;See the individual methods for example code.
+ *
+ * &lt;p&gt;Many parameters require resource names to be formatted in a particular way. To assist with
+ * these names, this class includes a format method for each type of name, and additionally a parse
+ * method to extract the individual identifiers contained within names that are returned.
+ *
+ * &lt;p&gt;This class can be customized by passing in a custom instance of SpeechSettings to create().
+ * For example:
+ *
+ * &lt;p&gt;To customize credentials:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated and should be regarded as a code template only.
+ * // It will require modifications to work:
+ * // - It may require correct/in-range values for request initialization.
+ * // - It may require specifying regional endpoints when creating the service client as shown in
+ * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+ * SpeechSettings speechSettings =
+ *     SpeechSettings.newBuilder()
+ *         .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials))
+ *         .build();
+ * SpeechClient speechClient = SpeechClient.create(speechSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;To customize the endpoint:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated and should be regarded as a code template only.
+ * // It will require modifications to work:
+ * // - It may require correct/in-range values for request initialization.
+ * // - It may require specifying regional endpoints when creating the service client as shown in
+ * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+ * SpeechSettings speechSettings = SpeechSettings.newBuilder().setEndpoint(myEndpoint).build();
+ * SpeechClient speechClient = SpeechClient.create(speechSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * &lt;pre&gt;{@code
+ * // This snippet has been automatically generated and should be regarded as a code template only.
+ * // It will require modifications to work:
+ * // - It may require correct/in-range values for request initialization.
+ * // - It may require specifying regional endpoints when creating the service client as shown in
+ * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+ * SpeechSettings speechSettings =
+ *     SpeechSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             SpeechSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * SpeechClient speechClient = SpeechClient.create(speechSettings);
+ * }&lt;/pre&gt;
+ *
+ * &lt;p&gt;Please refer to the GitHub repository's samples for more quickstart code snippets.
+ */
+@Generated(&quot;by gapic-generator-java&quot;)
+public class SpeechClient implements BackgroundResource {
+  private final SpeechSettings settings;
+  private final SpeechStub stub;
+  private final OperationsClient httpJsonOperationsClient;
+  private final com.google.longrunning.OperationsClient operationsClient;
+
+  /** Constructs an instance of SpeechClient with default settings. */
+  public static final SpeechClient create() throws IOException {
+<span class="nc" id="L143">    return create(SpeechSettings.newBuilder().build());</span>
+  }
+
+  /**
+   * Constructs an instance of SpeechClient, using the given settings. The channels are created
+   * based on the settings passed in, or defaults for any settings that are not set.
+   */
+  public static final SpeechClient create(SpeechSettings settings) throws IOException {
+<span class="fc" id="L151">    return new SpeechClient(settings);</span>
+  }
+
+  /**
+   * Constructs an instance of SpeechClient, using the given stub for making calls. This is for
+   * advanced usage - prefer using create(SpeechSettings).
+   */
+  public static final SpeechClient create(SpeechStub stub) {
+<span class="nc" id="L159">    return new SpeechClient(stub);</span>
+  }
+
+  /**
+   * Constructs an instance of SpeechClient, using the given settings. This is protected so that it
+   * is easy to make a subclass, but otherwise, the static factory methods should be preferred.
+   */
+<span class="fc" id="L166">  protected SpeechClient(SpeechSettings settings) throws IOException {</span>
+<span class="fc" id="L167">    this.settings = settings;</span>
+<span class="fc" id="L168">    this.stub = ((SpeechStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L169">    this.operationsClient =</span>
+<span class="fc" id="L170">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L171">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L172">  }</span>
+
+<span class="nc" id="L174">  protected SpeechClient(SpeechStub stub) {</span>
+<span class="nc" id="L175">    this.settings = null;</span>
+<span class="nc" id="L176">    this.stub = stub;</span>
+<span class="nc" id="L177">    this.operationsClient =</span>
+<span class="nc" id="L178">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L179">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L180">  }</span>
+
+  public final SpeechSettings getSettings() {
+<span class="nc" id="L183">    return settings;</span>
+  }
+
+  public SpeechStub getStub() {
+<span class="nc" id="L187">    return stub;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  public final com.google.longrunning.OperationsClient getOperationsClient() {
+<span class="nc" id="L195">    return operationsClient;</span>
+  }
+
+  /**
+   * Returns the OperationsClient that can be used to query the status of a long-running operation
+   * returned by another API method call.
+   */
+  @BetaApi
+  public final OperationsClient getHttpJsonOperationsClient() {
+<span class="nc" id="L204">    return httpJsonOperationsClient;</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   Recognizer recognizer = Recognizer.newBuilder().build();
+   *   String recognizerId = &quot;recognizerId771963359&quot;;
+   *   Recognizer response =
+   *       speechClient.createRecognizerAsync(parent, recognizer, recognizerId).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location where this Recognizer will be created. The
+   *     expected format is `projects/{project}/locations/{location}`.
+   * @param recognizer Required. The Recognizer to create.
+   * @param recognizerId The ID to use for the Recognizer, which will become the final component of
+   *     the Recognizer's resource name.
+   *     &lt;p&gt;This value should be 4-63 characters, and valid characters are /[a-z][0-9]-/.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; createRecognizerAsync(
+      LocationName parent, Recognizer recognizer, String recognizerId) {
+    CreateRecognizerRequest request =
+<span class="fc" id="L239">        CreateRecognizerRequest.newBuilder()</span>
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L241">            .setRecognizer(recognizer)</span>
+<span class="fc" id="L242">            .setRecognizerId(recognizerId)</span>
+<span class="fc" id="L243">            .build();</span>
+<span class="fc" id="L244">    return createRecognizerAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   Recognizer recognizer = Recognizer.newBuilder().build();
+   *   String recognizerId = &quot;recognizerId771963359&quot;;
+   *   Recognizer response =
+   *       speechClient.createRecognizerAsync(parent, recognizer, recognizerId).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location where this Recognizer will be created. The
+   *     expected format is `projects/{project}/locations/{location}`.
+   * @param recognizer Required. The Recognizer to create.
+   * @param recognizerId The ID to use for the Recognizer, which will become the final component of
+   *     the Recognizer's resource name.
+   *     &lt;p&gt;This value should be 4-63 characters, and valid characters are /[a-z][0-9]-/.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; createRecognizerAsync(
+      String parent, Recognizer recognizer, String recognizerId) {
+    CreateRecognizerRequest request =
+<span class="fc" id="L279">        CreateRecognizerRequest.newBuilder()</span>
+<span class="fc" id="L280">            .setParent(parent)</span>
+<span class="fc" id="L281">            .setRecognizer(recognizer)</span>
+<span class="fc" id="L282">            .setRecognizerId(recognizerId)</span>
+<span class="fc" id="L283">            .build();</span>
+<span class="fc" id="L284">    return createRecognizerAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreateRecognizerRequest request =
+   *       CreateRecognizerRequest.newBuilder()
+   *           .setRecognizer(Recognizer.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setRecognizerId(&quot;recognizerId771963359&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   Recognizer response = speechClient.createRecognizerAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; createRecognizerAsync(
+      CreateRecognizerRequest request) {
+<span class="fc" id="L316">    return createRecognizerOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreateRecognizerRequest request =
+   *       CreateRecognizerRequest.newBuilder()
+   *           .setRecognizer(Recognizer.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setRecognizerId(&quot;recognizerId771963359&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   OperationFuture&lt;Recognizer, OperationMetadata&gt; future =
+   *       speechClient.createRecognizerOperationCallable().futureCall(request);
+   *   // Do something.
+   *   Recognizer response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;CreateRecognizerRequest, Recognizer, OperationMetadata&gt;
+      createRecognizerOperationCallable() {
+<span class="fc" id="L348">    return stub.createRecognizerOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreateRecognizerRequest request =
+   *       CreateRecognizerRequest.newBuilder()
+   *           .setRecognizer(Recognizer.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setRecognizerId(&quot;recognizerId771963359&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.createRecognizerCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;CreateRecognizerRequest, Operation&gt; createRecognizerCallable() {
+<span class="nc" id="L378">    return stub.createRecognizerCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Recognizers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   for (Recognizer element : speechClient.listRecognizers(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location of Recognizers to list. The expected format is
+   *     `projects/{project}/locations/{location}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListRecognizersPagedResponse listRecognizers(LocationName parent) {
+    ListRecognizersRequest request =
+<span class="fc" id="L407">        ListRecognizersRequest.newBuilder()</span>
+<span class="pc bpc" id="L408" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L409">            .build();</span>
+<span class="fc" id="L410">    return listRecognizers(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Recognizers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   for (Recognizer element : speechClient.listRecognizers(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location of Recognizers to list. The expected format is
+   *     `projects/{project}/locations/{location}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListRecognizersPagedResponse listRecognizers(String parent) {
+<span class="fc" id="L438">    ListRecognizersRequest request = ListRecognizersRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L439">    return listRecognizers(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Recognizers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListRecognizersRequest request =
+   *       ListRecognizersRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   for (Recognizer element : speechClient.listRecognizers(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListRecognizersPagedResponse listRecognizers(ListRecognizersRequest request) {
+<span class="fc" id="L472">    return listRecognizersPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Recognizers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListRecognizersRequest request =
+   *       ListRecognizersRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   ApiFuture&lt;Recognizer&gt; future =
+   *       speechClient.listRecognizersPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Recognizer element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListRecognizersRequest, ListRecognizersPagedResponse&gt;
+      listRecognizersPagedCallable() {
+<span class="fc" id="L506">    return stub.listRecognizersPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists Recognizers.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListRecognizersRequest request =
+   *       ListRecognizersRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   while (true) {
+   *     ListRecognizersResponse response = speechClient.listRecognizersCallable().call(request);
+   *     for (Recognizer element : response.getRecognizersList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListRecognizersRequest, ListRecognizersResponse&gt;
+      listRecognizersCallable() {
+<span class="nc" id="L546">    return stub.listRecognizersCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [Recognizer][google.cloud.speech.v2.Recognizer]. Fails with
+   * [NOT_FOUND][google.rpc.Code.NOT_FOUND] if the requested recognizer doesn't exist.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   RecognizerName name = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;);
+   *   Recognizer response = speechClient.getRecognizer(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the Recognizer to retrieve. The expected format is
+   *     `projects/{project}/locations/{location}/recognizers/{recognizer}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Recognizer getRecognizer(RecognizerName name) {
+    GetRecognizerRequest request =
+<span class="pc bpc" id="L574" title="1 of 2 branches missed.">        GetRecognizerRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L575">    return getRecognizer(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [Recognizer][google.cloud.speech.v2.Recognizer]. Fails with
+   * [NOT_FOUND][google.rpc.Code.NOT_FOUND] if the requested recognizer doesn't exist.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString();
+   *   Recognizer response = speechClient.getRecognizer(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the Recognizer to retrieve. The expected format is
+   *     `projects/{project}/locations/{location}/recognizers/{recognizer}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Recognizer getRecognizer(String name) {
+<span class="fc" id="L602">    GetRecognizerRequest request = GetRecognizerRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L603">    return getRecognizer(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [Recognizer][google.cloud.speech.v2.Recognizer]. Fails with
+   * [NOT_FOUND][google.rpc.Code.NOT_FOUND] if the requested recognizer doesn't exist.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   GetRecognizerRequest request =
+   *       GetRecognizerRequest.newBuilder()
+   *           .setName(RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .build();
+   *   Recognizer response = speechClient.getRecognizer(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Recognizer getRecognizer(GetRecognizerRequest request) {
+<span class="fc" id="L632">    return getRecognizerCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [Recognizer][google.cloud.speech.v2.Recognizer]. Fails with
+   * [NOT_FOUND][google.rpc.Code.NOT_FOUND] if the requested recognizer doesn't exist.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   GetRecognizerRequest request =
+   *       GetRecognizerRequest.newBuilder()
+   *           .setName(RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Recognizer&gt; future = speechClient.getRecognizerCallable().futureCall(request);
+   *   // Do something.
+   *   Recognizer response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetRecognizerRequest, Recognizer&gt; getRecognizerCallable() {
+<span class="fc" id="L660">    return stub.getRecognizerCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   Recognizer recognizer = Recognizer.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   Recognizer response = speechClient.updateRecognizerAsync(recognizer, updateMask).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param recognizer Required. The Recognizer to update.
+   *     &lt;p&gt;The Recognizer's `name` field is used to identify the Recognizer to update. Format:
+   *     `projects/{project}/locations/{location}/recognizers/{recognizer}`.
+   * @param updateMask The list of fields to update. If empty, all non-default valued fields are
+   *     considered for update. Use `&amp;#42;` to update the entire Recognizer resource.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; updateRecognizerAsync(
+      Recognizer recognizer, FieldMask updateMask) {
+    UpdateRecognizerRequest request =
+<span class="fc" id="L692">        UpdateRecognizerRequest.newBuilder()</span>
+<span class="fc" id="L693">            .setRecognizer(recognizer)</span>
+<span class="fc" id="L694">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L695">            .build();</span>
+<span class="fc" id="L696">    return updateRecognizerAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdateRecognizerRequest request =
+   *       UpdateRecognizerRequest.newBuilder()
+   *           .setRecognizer(Recognizer.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   Recognizer response = speechClient.updateRecognizerAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; updateRecognizerAsync(
+      UpdateRecognizerRequest request) {
+<span class="fc" id="L727">    return updateRecognizerOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdateRecognizerRequest request =
+   *       UpdateRecognizerRequest.newBuilder()
+   *           .setRecognizer(Recognizer.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   OperationFuture&lt;Recognizer, OperationMetadata&gt; future =
+   *       speechClient.updateRecognizerOperationCallable().futureCall(request);
+   *   // Do something.
+   *   Recognizer response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;UpdateRecognizerRequest, Recognizer, OperationMetadata&gt;
+      updateRecognizerOperationCallable() {
+<span class="fc" id="L758">    return stub.updateRecognizerOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdateRecognizerRequest request =
+   *       UpdateRecognizerRequest.newBuilder()
+   *           .setRecognizer(Recognizer.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.updateRecognizerCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;UpdateRecognizerRequest, Operation&gt; updateRecognizerCallable() {
+<span class="nc" id="L787">    return stub.updateRecognizerCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   RecognizerName name = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;);
+   *   Recognizer response = speechClient.deleteRecognizerAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the Recognizer to delete. Format:
+   *     `projects/{project}/locations/{location}/recognizers/{recognizer}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; deleteRecognizerAsync(
+      RecognizerName name) {
+    DeleteRecognizerRequest request =
+<span class="pc bpc" id="L815" title="1 of 2 branches missed.">        DeleteRecognizerRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L816">    return deleteRecognizerAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString();
+   *   Recognizer response = speechClient.deleteRecognizerAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the Recognizer to delete. Format:
+   *     `projects/{project}/locations/{location}/recognizers/{recognizer}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; deleteRecognizerAsync(String name) {
+<span class="fc" id="L842">    DeleteRecognizerRequest request = DeleteRecognizerRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L843">    return deleteRecognizerAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeleteRecognizerRequest request =
+   *       DeleteRecognizerRequest.newBuilder()
+   *           .setName(RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   Recognizer response = speechClient.deleteRecognizerAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; deleteRecognizerAsync(
+      DeleteRecognizerRequest request) {
+<span class="fc" id="L875">    return deleteRecognizerOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeleteRecognizerRequest request =
+   *       DeleteRecognizerRequest.newBuilder()
+   *           .setName(RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   OperationFuture&lt;Recognizer, OperationMetadata&gt; future =
+   *       speechClient.deleteRecognizerOperationCallable().futureCall(request);
+   *   // Do something.
+   *   Recognizer response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;DeleteRecognizerRequest, Recognizer, OperationMetadata&gt;
+      deleteRecognizerOperationCallable() {
+<span class="fc" id="L907">    return stub.deleteRecognizerOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeleteRecognizerRequest request =
+   *       DeleteRecognizerRequest.newBuilder()
+   *           .setName(RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.deleteRecognizerCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;DeleteRecognizerRequest, Operation&gt; deleteRecognizerCallable() {
+<span class="nc" id="L937">    return stub.deleteRecognizerCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   RecognizerName name = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;);
+   *   Recognizer response = speechClient.undeleteRecognizerAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the Recognizer to undelete. Format:
+   *     `projects/{project}/locations/{location}/recognizers/{recognizer}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; undeleteRecognizerAsync(
+      RecognizerName name) {
+    UndeleteRecognizerRequest request =
+<span class="fc" id="L965">        UndeleteRecognizerRequest.newBuilder()</span>
+<span class="pc bpc" id="L966" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L967">            .build();</span>
+<span class="fc" id="L968">    return undeleteRecognizerAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString();
+   *   Recognizer response = speechClient.undeleteRecognizerAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the Recognizer to undelete. Format:
+   *     `projects/{project}/locations/{location}/recognizers/{recognizer}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; undeleteRecognizerAsync(String name) {
+    UndeleteRecognizerRequest request =
+<span class="fc" id="L995">        UndeleteRecognizerRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L996">    return undeleteRecognizerAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeleteRecognizerRequest request =
+   *       UndeleteRecognizerRequest.newBuilder()
+   *           .setName(RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   Recognizer response = speechClient.undeleteRecognizerAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;Recognizer, OperationMetadata&gt; undeleteRecognizerAsync(
+      UndeleteRecognizerRequest request) {
+<span class="fc" id="L1027">    return undeleteRecognizerOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeleteRecognizerRequest request =
+   *       UndeleteRecognizerRequest.newBuilder()
+   *           .setName(RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   OperationFuture&lt;Recognizer, OperationMetadata&gt; future =
+   *       speechClient.undeleteRecognizerOperationCallable().futureCall(request);
+   *   // Do something.
+   *   Recognizer response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;UndeleteRecognizerRequest, Recognizer, OperationMetadata&gt;
+      undeleteRecognizerOperationCallable() {
+<span class="fc" id="L1058">    return stub.undeleteRecognizerOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [Recognizer][google.cloud.speech.v2.Recognizer].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeleteRecognizerRequest request =
+   *       UndeleteRecognizerRequest.newBuilder()
+   *           .setName(RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.undeleteRecognizerCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;UndeleteRecognizerRequest, Operation&gt; undeleteRecognizerCallable() {
+<span class="nc" id="L1087">    return stub.undeleteRecognizerCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs synchronous Speech recognition: receive results after all audio has been sent and
+   * processed.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   RecognizerName recognizer = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;);
+   *   RecognitionConfig config = RecognitionConfig.newBuilder().build();
+   *   FieldMask configMask = FieldMask.newBuilder().build();
+   *   ByteString content = ByteString.EMPTY;
+   *   RecognizeResponse response = speechClient.recognize(recognizer, config, configMask, content);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param recognizer Required. The name of the Recognizer to use during recognition. The expected
+   *     format is `projects/{project}/locations/{location}/recognizers/{recognizer}`.
+   * @param config Features and audio metadata to use for the Automatic Speech Recognition. This
+   *     field in combination with the
+   *     [config_mask][google.cloud.speech.v2.RecognizeRequest.config_mask] field can be used to
+   *     override parts of the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the Recognizer resource.
+   * @param configMask The list of fields in
+   *     [config][google.cloud.speech.v2.RecognizeRequest.config] that override the values in the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the recognizer during this recognition request. If no mask is provided, all non-default
+   *     valued fields in [config][google.cloud.speech.v2.RecognizeRequest.config] override the
+   *     values in the recognizer for this recognition request. If a mask is provided, only the
+   *     fields listed in the mask override the config in the recognizer for this recognition
+   *     request. If a wildcard (`&amp;#42;`) is provided,
+   *     [config][google.cloud.speech.v2.RecognizeRequest.config] completely overrides and replaces
+   *     the config in the recognizer for this recognition request.
+   * @param content The audio data bytes encoded as specified in
+   *     [RecognitionConfig][google.cloud.speech.v2.RecognitionConfig]. As with all bytes fields,
+   *     proto buffers use a pure binary representation, whereas JSON representations use base64.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final RecognizeResponse recognize(
+      RecognizerName recognizer,
+      RecognitionConfig config,
+      FieldMask configMask,
+      ByteString content) {
+    RecognizeRequest request =
+<span class="fc" id="L1141">        RecognizeRequest.newBuilder()</span>
+<span class="pc bpc" id="L1142" title="1 of 2 branches missed.">            .setRecognizer(recognizer == null ? null : recognizer.toString())</span>
+<span class="fc" id="L1143">            .setConfig(config)</span>
+<span class="fc" id="L1144">            .setConfigMask(configMask)</span>
+<span class="fc" id="L1145">            .setContent(content)</span>
+<span class="fc" id="L1146">            .build();</span>
+<span class="fc" id="L1147">    return recognize(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs synchronous Speech recognition: receive results after all audio has been sent and
+   * processed.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   RecognizerName recognizer = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;);
+   *   RecognitionConfig config = RecognitionConfig.newBuilder().build();
+   *   FieldMask configMask = FieldMask.newBuilder().build();
+   *   String uri = &quot;uri116076&quot;;
+   *   RecognizeResponse response = speechClient.recognize(recognizer, config, configMask, uri);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param recognizer Required. The name of the Recognizer to use during recognition. The expected
+   *     format is `projects/{project}/locations/{location}/recognizers/{recognizer}`.
+   * @param config Features and audio metadata to use for the Automatic Speech Recognition. This
+   *     field in combination with the
+   *     [config_mask][google.cloud.speech.v2.RecognizeRequest.config_mask] field can be used to
+   *     override parts of the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the Recognizer resource.
+   * @param configMask The list of fields in
+   *     [config][google.cloud.speech.v2.RecognizeRequest.config] that override the values in the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the recognizer during this recognition request. If no mask is provided, all non-default
+   *     valued fields in [config][google.cloud.speech.v2.RecognizeRequest.config] override the
+   *     values in the recognizer for this recognition request. If a mask is provided, only the
+   *     fields listed in the mask override the config in the recognizer for this recognition
+   *     request. If a wildcard (`&amp;#42;`) is provided,
+   *     [config][google.cloud.speech.v2.RecognizeRequest.config] completely overrides and replaces
+   *     the config in the recognizer for this recognition request.
+   * @param uri URI that points to a file that contains audio data bytes as specified in
+   *     [RecognitionConfig][google.cloud.speech.v2.RecognitionConfig]. The file must not be
+   *     compressed (for example, gzip). Currently, only Google Cloud Storage URIs are supported,
+   *     which must be specified in the following format: `gs://bucket_name/object_name` (other URI
+   *     formats return [INVALID_ARGUMENT][google.rpc.Code.INVALID_ARGUMENT]). For more information,
+   *     see [Request URIs](https://cloud.google.com/storage/docs/reference-uris).
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final RecognizeResponse recognize(
+      RecognizerName recognizer, RecognitionConfig config, FieldMask configMask, String uri) {
+    RecognizeRequest request =
+<span class="fc" id="L1201">        RecognizeRequest.newBuilder()</span>
+<span class="pc bpc" id="L1202" title="1 of 2 branches missed.">            .setRecognizer(recognizer == null ? null : recognizer.toString())</span>
+<span class="fc" id="L1203">            .setConfig(config)</span>
+<span class="fc" id="L1204">            .setConfigMask(configMask)</span>
+<span class="fc" id="L1205">            .setUri(uri)</span>
+<span class="fc" id="L1206">            .build();</span>
+<span class="fc" id="L1207">    return recognize(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs synchronous Speech recognition: receive results after all audio has been sent and
+   * processed.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String recognizer = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString();
+   *   RecognitionConfig config = RecognitionConfig.newBuilder().build();
+   *   FieldMask configMask = FieldMask.newBuilder().build();
+   *   ByteString content = ByteString.EMPTY;
+   *   RecognizeResponse response = speechClient.recognize(recognizer, config, configMask, content);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param recognizer Required. The name of the Recognizer to use during recognition. The expected
+   *     format is `projects/{project}/locations/{location}/recognizers/{recognizer}`.
+   * @param config Features and audio metadata to use for the Automatic Speech Recognition. This
+   *     field in combination with the
+   *     [config_mask][google.cloud.speech.v2.RecognizeRequest.config_mask] field can be used to
+   *     override parts of the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the Recognizer resource.
+   * @param configMask The list of fields in
+   *     [config][google.cloud.speech.v2.RecognizeRequest.config] that override the values in the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the recognizer during this recognition request. If no mask is provided, all non-default
+   *     valued fields in [config][google.cloud.speech.v2.RecognizeRequest.config] override the
+   *     values in the recognizer for this recognition request. If a mask is provided, only the
+   *     fields listed in the mask override the config in the recognizer for this recognition
+   *     request. If a wildcard (`&amp;#42;`) is provided,
+   *     [config][google.cloud.speech.v2.RecognizeRequest.config] completely overrides and replaces
+   *     the config in the recognizer for this recognition request.
+   * @param content The audio data bytes encoded as specified in
+   *     [RecognitionConfig][google.cloud.speech.v2.RecognitionConfig]. As with all bytes fields,
+   *     proto buffers use a pure binary representation, whereas JSON representations use base64.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final RecognizeResponse recognize(
+      String recognizer, RecognitionConfig config, FieldMask configMask, ByteString content) {
+    RecognizeRequest request =
+<span class="fc" id="L1258">        RecognizeRequest.newBuilder()</span>
+<span class="fc" id="L1259">            .setRecognizer(recognizer)</span>
+<span class="fc" id="L1260">            .setConfig(config)</span>
+<span class="fc" id="L1261">            .setConfigMask(configMask)</span>
+<span class="fc" id="L1262">            .setContent(content)</span>
+<span class="fc" id="L1263">            .build();</span>
+<span class="fc" id="L1264">    return recognize(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs synchronous Speech recognition: receive results after all audio has been sent and
+   * processed.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String recognizer = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString();
+   *   RecognitionConfig config = RecognitionConfig.newBuilder().build();
+   *   FieldMask configMask = FieldMask.newBuilder().build();
+   *   String uri = &quot;uri116076&quot;;
+   *   RecognizeResponse response = speechClient.recognize(recognizer, config, configMask, uri);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param recognizer Required. The name of the Recognizer to use during recognition. The expected
+   *     format is `projects/{project}/locations/{location}/recognizers/{recognizer}`.
+   * @param config Features and audio metadata to use for the Automatic Speech Recognition. This
+   *     field in combination with the
+   *     [config_mask][google.cloud.speech.v2.RecognizeRequest.config_mask] field can be used to
+   *     override parts of the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the Recognizer resource.
+   * @param configMask The list of fields in
+   *     [config][google.cloud.speech.v2.RecognizeRequest.config] that override the values in the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the recognizer during this recognition request. If no mask is provided, all non-default
+   *     valued fields in [config][google.cloud.speech.v2.RecognizeRequest.config] override the
+   *     values in the recognizer for this recognition request. If a mask is provided, only the
+   *     fields listed in the mask override the config in the recognizer for this recognition
+   *     request. If a wildcard (`&amp;#42;`) is provided,
+   *     [config][google.cloud.speech.v2.RecognizeRequest.config] completely overrides and replaces
+   *     the config in the recognizer for this recognition request.
+   * @param uri URI that points to a file that contains audio data bytes as specified in
+   *     [RecognitionConfig][google.cloud.speech.v2.RecognitionConfig]. The file must not be
+   *     compressed (for example, gzip). Currently, only Google Cloud Storage URIs are supported,
+   *     which must be specified in the following format: `gs://bucket_name/object_name` (other URI
+   *     formats return [INVALID_ARGUMENT][google.rpc.Code.INVALID_ARGUMENT]). For more information,
+   *     see [Request URIs](https://cloud.google.com/storage/docs/reference-uris).
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final RecognizeResponse recognize(
+      String recognizer, RecognitionConfig config, FieldMask configMask, String uri) {
+    RecognizeRequest request =
+<span class="fc" id="L1318">        RecognizeRequest.newBuilder()</span>
+<span class="fc" id="L1319">            .setRecognizer(recognizer)</span>
+<span class="fc" id="L1320">            .setConfig(config)</span>
+<span class="fc" id="L1321">            .setConfigMask(configMask)</span>
+<span class="fc" id="L1322">            .setUri(uri)</span>
+<span class="fc" id="L1323">            .build();</span>
+<span class="fc" id="L1324">    return recognize(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs synchronous Speech recognition: receive results after all audio has been sent and
+   * processed.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   RecognizeRequest request =
+   *       RecognizeRequest.newBuilder()
+   *           .setRecognizer(
+   *               RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setConfig(RecognitionConfig.newBuilder().build())
+   *           .setConfigMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   RecognizeResponse response = speechClient.recognize(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final RecognizeResponse recognize(RecognizeRequest request) {
+<span class="fc" id="L1356">    return recognizeCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs synchronous Speech recognition: receive results after all audio has been sent and
+   * processed.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   RecognizeRequest request =
+   *       RecognizeRequest.newBuilder()
+   *           .setRecognizer(
+   *               RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setConfig(RecognitionConfig.newBuilder().build())
+   *           .setConfigMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;RecognizeResponse&gt; future = speechClient.recognizeCallable().futureCall(request);
+   *   // Do something.
+   *   RecognizeResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;RecognizeRequest, RecognizeResponse&gt; recognizeCallable() {
+<span class="fc" id="L1387">    return stub.recognizeCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs bidirectional streaming speech recognition: receive results while sending audio. This
+   * method is only available via the gRPC API (not REST).
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   BidiStream&lt;StreamingRecognizeRequest, StreamingRecognizeResponse&gt; bidiStream =
+   *       speechClient.streamingRecognizeCallable().call();
+   *   StreamingRecognizeRequest request =
+   *       StreamingRecognizeRequest.newBuilder()
+   *           .setRecognizer(
+   *               RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .build();
+   *   bidiStream.send(request);
+   *   for (StreamingRecognizeResponse response : bidiStream) {
+   *     // Do something when a response is received.
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final BidiStreamingCallable&lt;StreamingRecognizeRequest, StreamingRecognizeResponse&gt;
+      streamingRecognizeCallable() {
+<span class="fc" id="L1420">    return stub.streamingRecognizeCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs batch asynchronous speech recognition: send a request with N audio files and receive a
+   * long running operation that can be polled to see when the transcriptions are finished.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   RecognizerName recognizer = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;);
+   *   RecognitionConfig config = RecognitionConfig.newBuilder().build();
+   *   FieldMask configMask = FieldMask.newBuilder().build();
+   *   List&lt;BatchRecognizeFileMetadata&gt; files = new ArrayList&lt;&gt;();
+   *   BatchRecognizeResponse response =
+   *       speechClient.batchRecognizeAsync(recognizer, config, configMask, files).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param recognizer Required. Resource name of the recognizer to be used for ASR.
+   * @param config Features and audio metadata to use for the Automatic Speech Recognition. This
+   *     field in combination with the
+   *     [config_mask][google.cloud.speech.v2.BatchRecognizeRequest.config_mask] field can be used
+   *     to override parts of the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the Recognizer resource.
+   * @param configMask The list of fields in
+   *     [config][google.cloud.speech.v2.BatchRecognizeRequest.config] that override the values in
+   *     the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the recognizer during this recognition request. If no mask is provided, all given fields
+   *     in [config][google.cloud.speech.v2.BatchRecognizeRequest.config] override the values in the
+   *     recognizer for this recognition request. If a mask is provided, only the fields listed in
+   *     the mask override the config in the recognizer for this recognition request. If a wildcard
+   *     (`&amp;#42;`) is provided, [config][google.cloud.speech.v2.BatchRecognizeRequest.config]
+   *     completely overrides and replaces the config in the recognizer for this recognition
+   *     request.
+   * @param files Audio files with file metadata for ASR.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;BatchRecognizeResponse, OperationMetadata&gt; batchRecognizeAsync(
+      RecognizerName recognizer,
+      RecognitionConfig config,
+      FieldMask configMask,
+      List&lt;BatchRecognizeFileMetadata&gt; files) {
+    BatchRecognizeRequest request =
+<span class="fc" id="L1473">        BatchRecognizeRequest.newBuilder()</span>
+<span class="pc bpc" id="L1474" title="1 of 2 branches missed.">            .setRecognizer(recognizer == null ? null : recognizer.toString())</span>
+<span class="fc" id="L1475">            .setConfig(config)</span>
+<span class="fc" id="L1476">            .setConfigMask(configMask)</span>
+<span class="fc" id="L1477">            .addAllFiles(files)</span>
+<span class="fc" id="L1478">            .build();</span>
+<span class="fc" id="L1479">    return batchRecognizeAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs batch asynchronous speech recognition: send a request with N audio files and receive a
+   * long running operation that can be polled to see when the transcriptions are finished.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String recognizer = RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString();
+   *   RecognitionConfig config = RecognitionConfig.newBuilder().build();
+   *   FieldMask configMask = FieldMask.newBuilder().build();
+   *   List&lt;BatchRecognizeFileMetadata&gt; files = new ArrayList&lt;&gt;();
+   *   BatchRecognizeResponse response =
+   *       speechClient.batchRecognizeAsync(recognizer, config, configMask, files).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param recognizer Required. Resource name of the recognizer to be used for ASR.
+   * @param config Features and audio metadata to use for the Automatic Speech Recognition. This
+   *     field in combination with the
+   *     [config_mask][google.cloud.speech.v2.BatchRecognizeRequest.config_mask] field can be used
+   *     to override parts of the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the Recognizer resource.
+   * @param configMask The list of fields in
+   *     [config][google.cloud.speech.v2.BatchRecognizeRequest.config] that override the values in
+   *     the
+   *     [default_recognition_config][google.cloud.speech.v2.Recognizer.default_recognition_config]
+   *     of the recognizer during this recognition request. If no mask is provided, all given fields
+   *     in [config][google.cloud.speech.v2.BatchRecognizeRequest.config] override the values in the
+   *     recognizer for this recognition request. If a mask is provided, only the fields listed in
+   *     the mask override the config in the recognizer for this recognition request. If a wildcard
+   *     (`&amp;#42;`) is provided, [config][google.cloud.speech.v2.BatchRecognizeRequest.config]
+   *     completely overrides and replaces the config in the recognizer for this recognition
+   *     request.
+   * @param files Audio files with file metadata for ASR.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;BatchRecognizeResponse, OperationMetadata&gt; batchRecognizeAsync(
+      String recognizer,
+      RecognitionConfig config,
+      FieldMask configMask,
+      List&lt;BatchRecognizeFileMetadata&gt; files) {
+    BatchRecognizeRequest request =
+<span class="fc" id="L1532">        BatchRecognizeRequest.newBuilder()</span>
+<span class="fc" id="L1533">            .setRecognizer(recognizer)</span>
+<span class="fc" id="L1534">            .setConfig(config)</span>
+<span class="fc" id="L1535">            .setConfigMask(configMask)</span>
+<span class="fc" id="L1536">            .addAllFiles(files)</span>
+<span class="fc" id="L1537">            .build();</span>
+<span class="fc" id="L1538">    return batchRecognizeAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs batch asynchronous speech recognition: send a request with N audio files and receive a
+   * long running operation that can be polled to see when the transcriptions are finished.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   BatchRecognizeRequest request =
+   *       BatchRecognizeRequest.newBuilder()
+   *           .setRecognizer(
+   *               RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setConfig(RecognitionConfig.newBuilder().build())
+   *           .setConfigMask(FieldMask.newBuilder().build())
+   *           .addAllFiles(new ArrayList&lt;BatchRecognizeFileMetadata&gt;())
+   *           .build();
+   *   BatchRecognizeResponse response = speechClient.batchRecognizeAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;BatchRecognizeResponse, OperationMetadata&gt; batchRecognizeAsync(
+      BatchRecognizeRequest request) {
+<span class="fc" id="L1572">    return batchRecognizeOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs batch asynchronous speech recognition: send a request with N audio files and receive a
+   * long running operation that can be polled to see when the transcriptions are finished.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   BatchRecognizeRequest request =
+   *       BatchRecognizeRequest.newBuilder()
+   *           .setRecognizer(
+   *               RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setConfig(RecognitionConfig.newBuilder().build())
+   *           .setConfigMask(FieldMask.newBuilder().build())
+   *           .addAllFiles(new ArrayList&lt;BatchRecognizeFileMetadata&gt;())
+   *           .build();
+   *   OperationFuture&lt;BatchRecognizeResponse, OperationMetadata&gt; future =
+   *       speechClient.batchRecognizeOperationCallable().futureCall(request);
+   *   // Do something.
+   *   BatchRecognizeResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;BatchRecognizeRequest, BatchRecognizeResponse, OperationMetadata&gt;
+      batchRecognizeOperationCallable() {
+<span class="fc" id="L1606">    return stub.batchRecognizeOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Performs batch asynchronous speech recognition: send a request with N audio files and receive a
+   * long running operation that can be polled to see when the transcriptions are finished.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   BatchRecognizeRequest request =
+   *       BatchRecognizeRequest.newBuilder()
+   *           .setRecognizer(
+   *               RecognizerName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[RECOGNIZER]&quot;).toString())
+   *           .setConfig(RecognitionConfig.newBuilder().build())
+   *           .setConfigMask(FieldMask.newBuilder().build())
+   *           .addAllFiles(new ArrayList&lt;BatchRecognizeFileMetadata&gt;())
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.batchRecognizeCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;BatchRecognizeRequest, Operation&gt; batchRecognizeCallable() {
+<span class="nc" id="L1638">    return stub.batchRecognizeCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [Config][google.cloud.speech.v2.Config].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ConfigName name = ConfigName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   Config response = speechClient.getConfig(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the config to retrieve. There is exactly one config resource
+   *     per project per location. The expected format is
+   *     `projects/{project}/locations/{location}/config`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Config getConfig(ConfigName name) {
+    GetConfigRequest request =
+<span class="pc bpc" id="L1666" title="1 of 2 branches missed.">        GetConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1667">    return getConfig(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [Config][google.cloud.speech.v2.Config].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = ConfigName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   Config response = speechClient.getConfig(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the config to retrieve. There is exactly one config resource
+   *     per project per location. The expected format is
+   *     `projects/{project}/locations/{location}/config`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Config getConfig(String name) {
+<span class="fc" id="L1694">    GetConfigRequest request = GetConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1695">    return getConfig(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [Config][google.cloud.speech.v2.Config].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   GetConfigRequest request =
+   *       GetConfigRequest.newBuilder()
+   *           .setName(ConfigName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   Config response = speechClient.getConfig(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Config getConfig(GetConfigRequest request) {
+<span class="fc" id="L1723">    return getConfigCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [Config][google.cloud.speech.v2.Config].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   GetConfigRequest request =
+   *       GetConfigRequest.newBuilder()
+   *           .setName(ConfigName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Config&gt; future = speechClient.getConfigCallable().futureCall(request);
+   *   // Do something.
+   *   Config response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetConfigRequest, Config&gt; getConfigCallable() {
+<span class="fc" id="L1750">    return stub.getConfigCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [Config][google.cloud.speech.v2.Config].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   Config config = Config.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   Config response = speechClient.updateConfig(config, updateMask);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param config Required. The config to update.
+   *     &lt;p&gt;The config's `name` field is used to identify the config to be updated. The expected
+   *     format is `projects/{project}/locations/{location}/config`.
+   * @param updateMask The list of fields to be updated.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Config updateConfig(Config config, FieldMask updateMask) {
+    UpdateConfigRequest request =
+<span class="fc" id="L1780">        UpdateConfigRequest.newBuilder().setConfig(config).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L1781">    return updateConfig(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [Config][google.cloud.speech.v2.Config].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdateConfigRequest request =
+   *       UpdateConfigRequest.newBuilder()
+   *           .setConfig(Config.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Config response = speechClient.updateConfig(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Config updateConfig(UpdateConfigRequest request) {
+<span class="fc" id="L1810">    return updateConfigCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [Config][google.cloud.speech.v2.Config].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdateConfigRequest request =
+   *       UpdateConfigRequest.newBuilder()
+   *           .setConfig(Config.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Config&gt; future = speechClient.updateConfigCallable().futureCall(request);
+   *   // Do something.
+   *   Config response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;UpdateConfigRequest, Config&gt; updateConfigCallable() {
+<span class="fc" id="L1838">    return stub.updateConfigCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   CustomClass customClass = CustomClass.newBuilder().build();
+   *   String customClassId = &quot;customClassId1871032322&quot;;
+   *   CustomClass response =
+   *       speechClient.createCustomClassAsync(parent, customClass, customClassId).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location where this CustomClass will be created. The
+   *     expected format is `projects/{project}/locations/{location}`.
+   * @param customClass Required. The CustomClass to create.
+   * @param customClassId The ID to use for the CustomClass, which will become the final component
+   *     of the CustomClass's resource name.
+   *     &lt;p&gt;This value should be 4-63 characters, and valid characters are /[a-z][0-9]-/.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; createCustomClassAsync(
+      LocationName parent, CustomClass customClass, String customClassId) {
+    CreateCustomClassRequest request =
+<span class="fc" id="L1873">        CreateCustomClassRequest.newBuilder()</span>
+<span class="pc bpc" id="L1874" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1875">            .setCustomClass(customClass)</span>
+<span class="fc" id="L1876">            .setCustomClassId(customClassId)</span>
+<span class="fc" id="L1877">            .build();</span>
+<span class="fc" id="L1878">    return createCustomClassAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   CustomClass customClass = CustomClass.newBuilder().build();
+   *   String customClassId = &quot;customClassId1871032322&quot;;
+   *   CustomClass response =
+   *       speechClient.createCustomClassAsync(parent, customClass, customClassId).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location where this CustomClass will be created. The
+   *     expected format is `projects/{project}/locations/{location}`.
+   * @param customClass Required. The CustomClass to create.
+   * @param customClassId The ID to use for the CustomClass, which will become the final component
+   *     of the CustomClass's resource name.
+   *     &lt;p&gt;This value should be 4-63 characters, and valid characters are /[a-z][0-9]-/.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; createCustomClassAsync(
+      String parent, CustomClass customClass, String customClassId) {
+    CreateCustomClassRequest request =
+<span class="fc" id="L1913">        CreateCustomClassRequest.newBuilder()</span>
+<span class="fc" id="L1914">            .setParent(parent)</span>
+<span class="fc" id="L1915">            .setCustomClass(customClass)</span>
+<span class="fc" id="L1916">            .setCustomClassId(customClassId)</span>
+<span class="fc" id="L1917">            .build();</span>
+<span class="fc" id="L1918">    return createCustomClassAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreateCustomClassRequest request =
+   *       CreateCustomClassRequest.newBuilder()
+   *           .setCustomClass(CustomClass.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setCustomClassId(&quot;customClassId1871032322&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   CustomClass response = speechClient.createCustomClassAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; createCustomClassAsync(
+      CreateCustomClassRequest request) {
+<span class="fc" id="L1950">    return createCustomClassOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreateCustomClassRequest request =
+   *       CreateCustomClassRequest.newBuilder()
+   *           .setCustomClass(CustomClass.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setCustomClassId(&quot;customClassId1871032322&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   OperationFuture&lt;CustomClass, OperationMetadata&gt; future =
+   *       speechClient.createCustomClassOperationCallable().futureCall(request);
+   *   // Do something.
+   *   CustomClass response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;CreateCustomClassRequest, CustomClass, OperationMetadata&gt;
+      createCustomClassOperationCallable() {
+<span class="fc" id="L1982">    return stub.createCustomClassOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreateCustomClassRequest request =
+   *       CreateCustomClassRequest.newBuilder()
+   *           .setCustomClass(CustomClass.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setCustomClassId(&quot;customClassId1871032322&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.createCustomClassCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;CreateCustomClassRequest, Operation&gt; createCustomClassCallable() {
+<span class="nc" id="L2012">    return stub.createCustomClassCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists CustomClasses.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   for (CustomClass element : speechClient.listCustomClasses(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location of CustomClass resources to list. The expected
+   *     format is `projects/{project}/locations/{location}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListCustomClassesPagedResponse listCustomClasses(LocationName parent) {
+    ListCustomClassesRequest request =
+<span class="fc" id="L2041">        ListCustomClassesRequest.newBuilder()</span>
+<span class="pc bpc" id="L2042" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2043">            .build();</span>
+<span class="fc" id="L2044">    return listCustomClasses(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists CustomClasses.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   for (CustomClass element : speechClient.listCustomClasses(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location of CustomClass resources to list. The expected
+   *     format is `projects/{project}/locations/{location}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListCustomClassesPagedResponse listCustomClasses(String parent) {
+    ListCustomClassesRequest request =
+<span class="fc" id="L2073">        ListCustomClassesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2074">    return listCustomClasses(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists CustomClasses.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListCustomClassesRequest request =
+   *       ListCustomClassesRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   for (CustomClass element : speechClient.listCustomClasses(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListCustomClassesPagedResponse listCustomClasses(ListCustomClassesRequest request) {
+<span class="fc" id="L2107">    return listCustomClassesPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists CustomClasses.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListCustomClassesRequest request =
+   *       ListCustomClassesRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   ApiFuture&lt;CustomClass&gt; future =
+   *       speechClient.listCustomClassesPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (CustomClass element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListCustomClassesRequest, ListCustomClassesPagedResponse&gt;
+      listCustomClassesPagedCallable() {
+<span class="fc" id="L2141">    return stub.listCustomClassesPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists CustomClasses.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListCustomClassesRequest request =
+   *       ListCustomClassesRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   while (true) {
+   *     ListCustomClassesResponse response = speechClient.listCustomClassesCallable().call(request);
+   *     for (CustomClass element : response.getCustomClassesList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListCustomClassesRequest, ListCustomClassesResponse&gt;
+      listCustomClassesCallable() {
+<span class="nc" id="L2181">    return stub.listCustomClassesCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CustomClassName name = CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;);
+   *   CustomClass response = speechClient.getCustomClass(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the CustomClass to retrieve. The expected format is
+   *     `projects/{project}/locations/{location}/customClasses/{custom_class}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final CustomClass getCustomClass(CustomClassName name) {
+    GetCustomClassRequest request =
+<span class="pc bpc" id="L2208" title="1 of 2 branches missed.">        GetCustomClassRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2209">    return getCustomClass(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString();
+   *   CustomClass response = speechClient.getCustomClass(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the CustomClass to retrieve. The expected format is
+   *     `projects/{project}/locations/{location}/customClasses/{custom_class}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final CustomClass getCustomClass(String name) {
+<span class="fc" id="L2235">    GetCustomClassRequest request = GetCustomClassRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2236">    return getCustomClass(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   GetCustomClassRequest request =
+   *       GetCustomClassRequest.newBuilder()
+   *           .setName(CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString())
+   *           .build();
+   *   CustomClass response = speechClient.getCustomClass(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final CustomClass getCustomClass(GetCustomClassRequest request) {
+<span class="fc" id="L2264">    return getCustomClassCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   GetCustomClassRequest request =
+   *       GetCustomClassRequest.newBuilder()
+   *           .setName(CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;CustomClass&gt; future = speechClient.getCustomClassCallable().futureCall(request);
+   *   // Do something.
+   *   CustomClass response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetCustomClassRequest, CustomClass&gt; getCustomClassCallable() {
+<span class="fc" id="L2291">    return stub.getCustomClassCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CustomClass customClass = CustomClass.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   CustomClass response = speechClient.updateCustomClassAsync(customClass, updateMask).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param customClass Required. The CustomClass to update.
+   *     &lt;p&gt;The CustomClass's `name` field is used to identify the CustomClass to update. Format:
+   *     `projects/{project}/locations/{location}/customClasses/{custom_class}`.
+   * @param updateMask The list of fields to be updated. If empty, all fields are considered for
+   *     update.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; updateCustomClassAsync(
+      CustomClass customClass, FieldMask updateMask) {
+    UpdateCustomClassRequest request =
+<span class="fc" id="L2323">        UpdateCustomClassRequest.newBuilder()</span>
+<span class="fc" id="L2324">            .setCustomClass(customClass)</span>
+<span class="fc" id="L2325">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L2326">            .build();</span>
+<span class="fc" id="L2327">    return updateCustomClassAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdateCustomClassRequest request =
+   *       UpdateCustomClassRequest.newBuilder()
+   *           .setCustomClass(CustomClass.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   CustomClass response = speechClient.updateCustomClassAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; updateCustomClassAsync(
+      UpdateCustomClassRequest request) {
+<span class="fc" id="L2358">    return updateCustomClassOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdateCustomClassRequest request =
+   *       UpdateCustomClassRequest.newBuilder()
+   *           .setCustomClass(CustomClass.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   OperationFuture&lt;CustomClass, OperationMetadata&gt; future =
+   *       speechClient.updateCustomClassOperationCallable().futureCall(request);
+   *   // Do something.
+   *   CustomClass response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;UpdateCustomClassRequest, CustomClass, OperationMetadata&gt;
+      updateCustomClassOperationCallable() {
+<span class="fc" id="L2389">    return stub.updateCustomClassOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdateCustomClassRequest request =
+   *       UpdateCustomClassRequest.newBuilder()
+   *           .setCustomClass(CustomClass.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.updateCustomClassCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;UpdateCustomClassRequest, Operation&gt; updateCustomClassCallable() {
+<span class="nc" id="L2418">    return stub.updateCustomClassCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CustomClassName name = CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;);
+   *   CustomClass response = speechClient.deleteCustomClassAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the CustomClass to delete. Format:
+   *     `projects/{project}/locations/{location}/customClasses/{custom_class}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; deleteCustomClassAsync(
+      CustomClassName name) {
+    DeleteCustomClassRequest request =
+<span class="fc" id="L2446">        DeleteCustomClassRequest.newBuilder()</span>
+<span class="pc bpc" id="L2447" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2448">            .build();</span>
+<span class="fc" id="L2449">    return deleteCustomClassAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString();
+   *   CustomClass response = speechClient.deleteCustomClassAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the CustomClass to delete. Format:
+   *     `projects/{project}/locations/{location}/customClasses/{custom_class}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; deleteCustomClassAsync(String name) {
+<span class="fc" id="L2475">    DeleteCustomClassRequest request = DeleteCustomClassRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2476">    return deleteCustomClassAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeleteCustomClassRequest request =
+   *       DeleteCustomClassRequest.newBuilder()
+   *           .setName(CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   CustomClass response = speechClient.deleteCustomClassAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; deleteCustomClassAsync(
+      DeleteCustomClassRequest request) {
+<span class="fc" id="L2508">    return deleteCustomClassOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeleteCustomClassRequest request =
+   *       DeleteCustomClassRequest.newBuilder()
+   *           .setName(CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   OperationFuture&lt;CustomClass, OperationMetadata&gt; future =
+   *       speechClient.deleteCustomClassOperationCallable().futureCall(request);
+   *   // Do something.
+   *   CustomClass response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;DeleteCustomClassRequest, CustomClass, OperationMetadata&gt;
+      deleteCustomClassOperationCallable() {
+<span class="fc" id="L2540">    return stub.deleteCustomClassOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeleteCustomClassRequest request =
+   *       DeleteCustomClassRequest.newBuilder()
+   *           .setName(CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.deleteCustomClassCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;DeleteCustomClassRequest, Operation&gt; deleteCustomClassCallable() {
+<span class="nc" id="L2570">    return stub.deleteCustomClassCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CustomClassName name = CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;);
+   *   CustomClass response = speechClient.undeleteCustomClassAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the CustomClass to undelete. Format:
+   *     `projects/{project}/locations/{location}/customClasses/{custom_class}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; undeleteCustomClassAsync(
+      CustomClassName name) {
+    UndeleteCustomClassRequest request =
+<span class="fc" id="L2598">        UndeleteCustomClassRequest.newBuilder()</span>
+<span class="pc bpc" id="L2599" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L2600">            .build();</span>
+<span class="fc" id="L2601">    return undeleteCustomClassAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString();
+   *   CustomClass response = speechClient.undeleteCustomClassAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the CustomClass to undelete. Format:
+   *     `projects/{project}/locations/{location}/customClasses/{custom_class}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; undeleteCustomClassAsync(
+      String name) {
+    UndeleteCustomClassRequest request =
+<span class="fc" id="L2629">        UndeleteCustomClassRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2630">    return undeleteCustomClassAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeleteCustomClassRequest request =
+   *       UndeleteCustomClassRequest.newBuilder()
+   *           .setName(CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   CustomClass response = speechClient.undeleteCustomClassAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;CustomClass, OperationMetadata&gt; undeleteCustomClassAsync(
+      UndeleteCustomClassRequest request) {
+<span class="fc" id="L2661">    return undeleteCustomClassOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeleteCustomClassRequest request =
+   *       UndeleteCustomClassRequest.newBuilder()
+   *           .setName(CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   OperationFuture&lt;CustomClass, OperationMetadata&gt; future =
+   *       speechClient.undeleteCustomClassOperationCallable().futureCall(request);
+   *   // Do something.
+   *   CustomClass response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;UndeleteCustomClassRequest, CustomClass, OperationMetadata&gt;
+      undeleteCustomClassOperationCallable() {
+<span class="fc" id="L2692">    return stub.undeleteCustomClassOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [CustomClass][google.cloud.speech.v2.CustomClass].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeleteCustomClassRequest request =
+   *       UndeleteCustomClassRequest.newBuilder()
+   *           .setName(CustomClassName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[CUSTOM_CLASS]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.undeleteCustomClassCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;UndeleteCustomClassRequest, Operation&gt; undeleteCustomClassCallable() {
+<span class="nc" id="L2721">    return stub.undeleteCustomClassCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   PhraseSet phraseSet = PhraseSet.newBuilder().build();
+   *   String phraseSetId = &quot;phraseSetId959902180&quot;;
+   *   PhraseSet response = speechClient.createPhraseSetAsync(parent, phraseSet, phraseSetId).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location where this PhraseSet will be created. The
+   *     expected format is `projects/{project}/locations/{location}`.
+   * @param phraseSet Required. The PhraseSet to create.
+   * @param phraseSetId The ID to use for the PhraseSet, which will become the final component of
+   *     the PhraseSet's resource name.
+   *     &lt;p&gt;This value should be 4-63 characters, and valid characters are /[a-z][0-9]-/.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; createPhraseSetAsync(
+      LocationName parent, PhraseSet phraseSet, String phraseSetId) {
+    CreatePhraseSetRequest request =
+<span class="fc" id="L2755">        CreatePhraseSetRequest.newBuilder()</span>
+<span class="pc bpc" id="L2756" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2757">            .setPhraseSet(phraseSet)</span>
+<span class="fc" id="L2758">            .setPhraseSetId(phraseSetId)</span>
+<span class="fc" id="L2759">            .build();</span>
+<span class="fc" id="L2760">    return createPhraseSetAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   PhraseSet phraseSet = PhraseSet.newBuilder().build();
+   *   String phraseSetId = &quot;phraseSetId959902180&quot;;
+   *   PhraseSet response = speechClient.createPhraseSetAsync(parent, phraseSet, phraseSetId).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location where this PhraseSet will be created. The
+   *     expected format is `projects/{project}/locations/{location}`.
+   * @param phraseSet Required. The PhraseSet to create.
+   * @param phraseSetId The ID to use for the PhraseSet, which will become the final component of
+   *     the PhraseSet's resource name.
+   *     &lt;p&gt;This value should be 4-63 characters, and valid characters are /[a-z][0-9]-/.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; createPhraseSetAsync(
+      String parent, PhraseSet phraseSet, String phraseSetId) {
+    CreatePhraseSetRequest request =
+<span class="fc" id="L2794">        CreatePhraseSetRequest.newBuilder()</span>
+<span class="fc" id="L2795">            .setParent(parent)</span>
+<span class="fc" id="L2796">            .setPhraseSet(phraseSet)</span>
+<span class="fc" id="L2797">            .setPhraseSetId(phraseSetId)</span>
+<span class="fc" id="L2798">            .build();</span>
+<span class="fc" id="L2799">    return createPhraseSetAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreatePhraseSetRequest request =
+   *       CreatePhraseSetRequest.newBuilder()
+   *           .setPhraseSet(PhraseSet.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setPhraseSetId(&quot;phraseSetId959902180&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   PhraseSet response = speechClient.createPhraseSetAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; createPhraseSetAsync(
+      CreatePhraseSetRequest request) {
+<span class="fc" id="L2831">    return createPhraseSetOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreatePhraseSetRequest request =
+   *       CreatePhraseSetRequest.newBuilder()
+   *           .setPhraseSet(PhraseSet.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setPhraseSetId(&quot;phraseSetId959902180&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   OperationFuture&lt;PhraseSet, OperationMetadata&gt; future =
+   *       speechClient.createPhraseSetOperationCallable().futureCall(request);
+   *   // Do something.
+   *   PhraseSet response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;CreatePhraseSetRequest, PhraseSet, OperationMetadata&gt;
+      createPhraseSetOperationCallable() {
+<span class="fc" id="L2863">    return stub.createPhraseSetOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Creates a [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   CreatePhraseSetRequest request =
+   *       CreatePhraseSetRequest.newBuilder()
+   *           .setPhraseSet(PhraseSet.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .setPhraseSetId(&quot;phraseSetId959902180&quot;)
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.createPhraseSetCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;CreatePhraseSetRequest, Operation&gt; createPhraseSetCallable() {
+<span class="nc" id="L2893">    return stub.createPhraseSetCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists PhraseSets.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   LocationName parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;);
+   *   for (PhraseSet element : speechClient.listPhraseSets(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location of PhraseSet resources to list. The expected
+   *     format is `projects/{project}/locations/{location}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListPhraseSetsPagedResponse listPhraseSets(LocationName parent) {
+    ListPhraseSetsRequest request =
+<span class="fc" id="L2922">        ListPhraseSetsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2923" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2924">            .build();</span>
+<span class="fc" id="L2925">    return listPhraseSets(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists PhraseSets.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String parent = LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString();
+   *   for (PhraseSet element : speechClient.listPhraseSets(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The project and location of PhraseSet resources to list. The expected
+   *     format is `projects/{project}/locations/{location}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListPhraseSetsPagedResponse listPhraseSets(String parent) {
+<span class="fc" id="L2953">    ListPhraseSetsRequest request = ListPhraseSetsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2954">    return listPhraseSets(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists PhraseSets.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListPhraseSetsRequest request =
+   *       ListPhraseSetsRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   for (PhraseSet element : speechClient.listPhraseSets(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListPhraseSetsPagedResponse listPhraseSets(ListPhraseSetsRequest request) {
+<span class="fc" id="L2987">    return listPhraseSetsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists PhraseSets.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListPhraseSetsRequest request =
+   *       ListPhraseSetsRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   ApiFuture&lt;PhraseSet&gt; future = speechClient.listPhraseSetsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (PhraseSet element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListPhraseSetsRequest, ListPhraseSetsPagedResponse&gt;
+      listPhraseSetsPagedCallable() {
+<span class="fc" id="L3020">    return stub.listPhraseSetsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists PhraseSets.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   ListPhraseSetsRequest request =
+   *       ListPhraseSetsRequest.newBuilder()
+   *           .setParent(LocationName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;).toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setShowDeleted(true)
+   *           .build();
+   *   while (true) {
+   *     ListPhraseSetsResponse response = speechClient.listPhraseSetsCallable().call(request);
+   *     for (PhraseSet element : response.getPhraseSetsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListPhraseSetsRequest, ListPhraseSetsResponse&gt;
+      listPhraseSetsCallable() {
+<span class="nc" id="L3060">    return stub.listPhraseSetsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   PhraseSetName name = PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;);
+   *   PhraseSet response = speechClient.getPhraseSet(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the PhraseSet to retrieve. The expected format is
+   *     `projects/{project}/locations/{location}/phraseSets/{phrase_set}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final PhraseSet getPhraseSet(PhraseSetName name) {
+    GetPhraseSetRequest request =
+<span class="pc bpc" id="L3087" title="1 of 2 branches missed.">        GetPhraseSetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3088">    return getPhraseSet(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString();
+   *   PhraseSet response = speechClient.getPhraseSet(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the PhraseSet to retrieve. The expected format is
+   *     `projects/{project}/locations/{location}/phraseSets/{phrase_set}`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final PhraseSet getPhraseSet(String name) {
+<span class="fc" id="L3114">    GetPhraseSetRequest request = GetPhraseSetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3115">    return getPhraseSet(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   GetPhraseSetRequest request =
+   *       GetPhraseSetRequest.newBuilder()
+   *           .setName(PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString())
+   *           .build();
+   *   PhraseSet response = speechClient.getPhraseSet(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final PhraseSet getPhraseSet(GetPhraseSetRequest request) {
+<span class="fc" id="L3143">    return getPhraseSetCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns the requested [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   GetPhraseSetRequest request =
+   *       GetPhraseSetRequest.newBuilder()
+   *           .setName(PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString())
+   *           .build();
+   *   ApiFuture&lt;PhraseSet&gt; future = speechClient.getPhraseSetCallable().futureCall(request);
+   *   // Do something.
+   *   PhraseSet response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetPhraseSetRequest, PhraseSet&gt; getPhraseSetCallable() {
+<span class="fc" id="L3170">    return stub.getPhraseSetCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   PhraseSet phraseSet = PhraseSet.newBuilder().build();
+   *   FieldMask updateMask = FieldMask.newBuilder().build();
+   *   PhraseSet response = speechClient.updatePhraseSetAsync(phraseSet, updateMask).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param phraseSet Required. The PhraseSet to update.
+   *     &lt;p&gt;The PhraseSet's `name` field is used to identify the PhraseSet to update. Format:
+   *     `projects/{project}/locations/{location}/phraseSets/{phrase_set}`.
+   * @param updateMask The list of fields to update. If empty, all non-default valued fields are
+   *     considered for update. Use `&amp;#42;` to update the entire PhraseSet resource.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; updatePhraseSetAsync(
+      PhraseSet phraseSet, FieldMask updateMask) {
+    UpdatePhraseSetRequest request =
+<span class="fc" id="L3202">        UpdatePhraseSetRequest.newBuilder()</span>
+<span class="fc" id="L3203">            .setPhraseSet(phraseSet)</span>
+<span class="fc" id="L3204">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L3205">            .build();</span>
+<span class="fc" id="L3206">    return updatePhraseSetAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdatePhraseSetRequest request =
+   *       UpdatePhraseSetRequest.newBuilder()
+   *           .setPhraseSet(PhraseSet.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   PhraseSet response = speechClient.updatePhraseSetAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; updatePhraseSetAsync(
+      UpdatePhraseSetRequest request) {
+<span class="fc" id="L3237">    return updatePhraseSetOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdatePhraseSetRequest request =
+   *       UpdatePhraseSetRequest.newBuilder()
+   *           .setPhraseSet(PhraseSet.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   OperationFuture&lt;PhraseSet, OperationMetadata&gt; future =
+   *       speechClient.updatePhraseSetOperationCallable().futureCall(request);
+   *   // Do something.
+   *   PhraseSet response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;UpdatePhraseSetRequest, PhraseSet, OperationMetadata&gt;
+      updatePhraseSetOperationCallable() {
+<span class="fc" id="L3268">    return stub.updatePhraseSetOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Updates the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UpdatePhraseSetRequest request =
+   *       UpdatePhraseSetRequest.newBuilder()
+   *           .setPhraseSet(PhraseSet.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .setValidateOnly(true)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.updatePhraseSetCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;UpdatePhraseSetRequest, Operation&gt; updatePhraseSetCallable() {
+<span class="nc" id="L3297">    return stub.updatePhraseSetCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   PhraseSetName name = PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;);
+   *   PhraseSet response = speechClient.deletePhraseSetAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the PhraseSet to delete. Format:
+   *     `projects/{project}/locations/{location}/phraseSets/{phrase_set}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; deletePhraseSetAsync(
+      PhraseSetName name) {
+    DeletePhraseSetRequest request =
+<span class="pc bpc" id="L3325" title="1 of 2 branches missed.">        DeletePhraseSetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3326">    return deletePhraseSetAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString();
+   *   PhraseSet response = speechClient.deletePhraseSetAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the PhraseSet to delete. Format:
+   *     `projects/{project}/locations/{location}/phraseSets/{phrase_set}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; deletePhraseSetAsync(String name) {
+<span class="fc" id="L3352">    DeletePhraseSetRequest request = DeletePhraseSetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3353">    return deletePhraseSetAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeletePhraseSetRequest request =
+   *       DeletePhraseSetRequest.newBuilder()
+   *           .setName(PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   PhraseSet response = speechClient.deletePhraseSetAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; deletePhraseSetAsync(
+      DeletePhraseSetRequest request) {
+<span class="fc" id="L3385">    return deletePhraseSetOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeletePhraseSetRequest request =
+   *       DeletePhraseSetRequest.newBuilder()
+   *           .setName(PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   OperationFuture&lt;PhraseSet, OperationMetadata&gt; future =
+   *       speechClient.deletePhraseSetOperationCallable().futureCall(request);
+   *   // Do something.
+   *   PhraseSet response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;DeletePhraseSetRequest, PhraseSet, OperationMetadata&gt;
+      deletePhraseSetOperationCallable() {
+<span class="fc" id="L3417">    return stub.deletePhraseSetOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   DeletePhraseSetRequest request =
+   *       DeletePhraseSetRequest.newBuilder()
+   *           .setName(PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setAllowMissing(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.deletePhraseSetCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;DeletePhraseSetRequest, Operation&gt; deletePhraseSetCallable() {
+<span class="nc" id="L3447">    return stub.deletePhraseSetCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   PhraseSetName name = PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;);
+   *   PhraseSet response = speechClient.undeletePhraseSetAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the PhraseSet to undelete. Format:
+   *     `projects/{project}/locations/{location}/phraseSets/{phrase_set}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; undeletePhraseSetAsync(
+      PhraseSetName name) {
+    UndeletePhraseSetRequest request =
+<span class="fc" id="L3475">        UndeletePhraseSetRequest.newBuilder()</span>
+<span class="pc bpc" id="L3476" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L3477">            .build();</span>
+<span class="fc" id="L3478">    return undeletePhraseSetAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   String name = PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString();
+   *   PhraseSet response = speechClient.undeletePhraseSetAsync(name).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. The name of the PhraseSet to undelete. Format:
+   *     `projects/{project}/locations/{location}/phraseSets/{phrase_set}`
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; undeletePhraseSetAsync(String name) {
+<span class="fc" id="L3504">    UndeletePhraseSetRequest request = UndeletePhraseSetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3505">    return undeletePhraseSetAsync(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeletePhraseSetRequest request =
+   *       UndeletePhraseSetRequest.newBuilder()
+   *           .setName(PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   PhraseSet response = speechClient.undeletePhraseSetAsync(request).get();
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final OperationFuture&lt;PhraseSet, OperationMetadata&gt; undeletePhraseSetAsync(
+      UndeletePhraseSetRequest request) {
+<span class="fc" id="L3536">    return undeletePhraseSetOperationCallable().futureCall(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeletePhraseSetRequest request =
+   *       UndeletePhraseSetRequest.newBuilder()
+   *           .setName(PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   OperationFuture&lt;PhraseSet, OperationMetadata&gt; future =
+   *       speechClient.undeletePhraseSetOperationCallable().futureCall(request);
+   *   // Do something.
+   *   PhraseSet response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final OperationCallable&lt;UndeletePhraseSetRequest, PhraseSet, OperationMetadata&gt;
+      undeletePhraseSetOperationCallable() {
+<span class="fc" id="L3567">    return stub.undeletePhraseSetOperationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Undeletes the [PhraseSet][google.cloud.speech.v2.PhraseSet].
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (SpeechClient speechClient = SpeechClient.create()) {
+   *   UndeletePhraseSetRequest request =
+   *       UndeletePhraseSetRequest.newBuilder()
+   *           .setName(PhraseSetName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[PHRASE_SET]&quot;).toString())
+   *           .setValidateOnly(true)
+   *           .setEtag(&quot;etag3123477&quot;)
+   *           .build();
+   *   ApiFuture&lt;Operation&gt; future = speechClient.undeletePhraseSetCallable().futureCall(request);
+   *   // Do something.
+   *   Operation response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;UndeletePhraseSetRequest, Operation&gt; undeletePhraseSetCallable() {
+<span class="nc" id="L3596">    return stub.undeletePhraseSetCallable();</span>
+  }
+
+  @Override
+  public final void close() {
+<span class="fc" id="L3601">    stub.close();</span>
+<span class="fc" id="L3602">  }</span>
+
+  @Override
+  public void shutdown() {
+<span class="nc" id="L3606">    stub.shutdown();</span>
+<span class="nc" id="L3607">  }</span>
+
+  @Override
+  public boolean isShutdown() {
+<span class="nc" id="L3611">    return stub.isShutdown();</span>
+  }
+
+  @Override
+  public boolean isTerminated() {
+<span class="nc" id="L3616">    return stub.isTerminated();</span>
+  }
+
+  @Override
+  public void shutdownNow() {
+<span class="nc" id="L3621">    stub.shutdownNow();</span>
+<span class="nc" id="L3622">  }</span>
+
+  @Override
+  public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
+<span class="nc" id="L3626">    return stub.awaitTermination(duration, unit);</span>
+  }
+
+  public static class ListRecognizersPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListRecognizersRequest,
+          ListRecognizersResponse,
+          Recognizer,
+          ListRecognizersPage,
+          ListRecognizersFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListRecognizersPagedResponse&gt; createAsync(
+        PageContext&lt;ListRecognizersRequest, ListRecognizersResponse, Recognizer&gt; context,
+        ApiFuture&lt;ListRecognizersResponse&gt; futureResponse) {
+      ApiFuture&lt;ListRecognizersPage&gt; futurePage =
+<span class="fc" id="L3641">          ListRecognizersPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3642">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L3644">          input -&gt; new ListRecognizersPagedResponse(input),</span>
+<span class="fc" id="L3645">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListRecognizersPagedResponse(ListRecognizersPage page) {
+<span class="fc" id="L3649">      super(page, ListRecognizersFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3650">    }</span>
+  }
+
+  public static class ListRecognizersPage
+      extends AbstractPage&lt;
+          ListRecognizersRequest, ListRecognizersResponse, Recognizer, ListRecognizersPage&gt; {
+
+    private ListRecognizersPage(
+        PageContext&lt;ListRecognizersRequest, ListRecognizersResponse, Recognizer&gt; context,
+        ListRecognizersResponse response) {
+<span class="fc" id="L3660">      super(context, response);</span>
+<span class="fc" id="L3661">    }</span>
+
+    private static ListRecognizersPage createEmptyPage() {
+<span class="fc" id="L3664">      return new ListRecognizersPage(null, null);</span>
+    }
+
+    @Override
+    protected ListRecognizersPage createPage(
+        PageContext&lt;ListRecognizersRequest, ListRecognizersResponse, Recognizer&gt; context,
+        ListRecognizersResponse response) {
+<span class="fc" id="L3671">      return new ListRecognizersPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListRecognizersPage&gt; createPageAsync(
+        PageContext&lt;ListRecognizersRequest, ListRecognizersResponse, Recognizer&gt; context,
+        ApiFuture&lt;ListRecognizersResponse&gt; futureResponse) {
+<span class="fc" id="L3678">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListRecognizersFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListRecognizersRequest,
+          ListRecognizersResponse,
+          Recognizer,
+          ListRecognizersPage,
+          ListRecognizersFixedSizeCollection&gt; {
+
+    private ListRecognizersFixedSizeCollection(
+        List&lt;ListRecognizersPage&gt; pages, int collectionSize) {
+<span class="fc" id="L3692">      super(pages, collectionSize);</span>
+<span class="fc" id="L3693">    }</span>
+
+    private static ListRecognizersFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L3696">      return new ListRecognizersFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListRecognizersFixedSizeCollection createCollection(
+        List&lt;ListRecognizersPage&gt; pages, int collectionSize) {
+<span class="nc" id="L3702">      return new ListRecognizersFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListCustomClassesPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListCustomClassesRequest,
+          ListCustomClassesResponse,
+          CustomClass,
+          ListCustomClassesPage,
+          ListCustomClassesFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListCustomClassesPagedResponse&gt; createAsync(
+        PageContext&lt;ListCustomClassesRequest, ListCustomClassesResponse, CustomClass&gt; context,
+        ApiFuture&lt;ListCustomClassesResponse&gt; futureResponse) {
+      ApiFuture&lt;ListCustomClassesPage&gt; futurePage =
+<span class="fc" id="L3718">          ListCustomClassesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3719">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L3721">          input -&gt; new ListCustomClassesPagedResponse(input),</span>
+<span class="fc" id="L3722">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListCustomClassesPagedResponse(ListCustomClassesPage page) {
+<span class="fc" id="L3726">      super(page, ListCustomClassesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3727">    }</span>
+  }
+
+  public static class ListCustomClassesPage
+      extends AbstractPage&lt;
+          ListCustomClassesRequest, ListCustomClassesResponse, CustomClass, ListCustomClassesPage&gt; {
+
+    private ListCustomClassesPage(
+        PageContext&lt;ListCustomClassesRequest, ListCustomClassesResponse, CustomClass&gt; context,
+        ListCustomClassesResponse response) {
+<span class="fc" id="L3737">      super(context, response);</span>
+<span class="fc" id="L3738">    }</span>
+
+    private static ListCustomClassesPage createEmptyPage() {
+<span class="fc" id="L3741">      return new ListCustomClassesPage(null, null);</span>
+    }
+
+    @Override
+    protected ListCustomClassesPage createPage(
+        PageContext&lt;ListCustomClassesRequest, ListCustomClassesResponse, CustomClass&gt; context,
+        ListCustomClassesResponse response) {
+<span class="fc" id="L3748">      return new ListCustomClassesPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListCustomClassesPage&gt; createPageAsync(
+        PageContext&lt;ListCustomClassesRequest, ListCustomClassesResponse, CustomClass&gt; context,
+        ApiFuture&lt;ListCustomClassesResponse&gt; futureResponse) {
+<span class="fc" id="L3755">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListCustomClassesFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListCustomClassesRequest,
+          ListCustomClassesResponse,
+          CustomClass,
+          ListCustomClassesPage,
+          ListCustomClassesFixedSizeCollection&gt; {
+
+    private ListCustomClassesFixedSizeCollection(
+        List&lt;ListCustomClassesPage&gt; pages, int collectionSize) {
+<span class="fc" id="L3769">      super(pages, collectionSize);</span>
+<span class="fc" id="L3770">    }</span>
+
+    private static ListCustomClassesFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L3773">      return new ListCustomClassesFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListCustomClassesFixedSizeCollection createCollection(
+        List&lt;ListCustomClassesPage&gt; pages, int collectionSize) {
+<span class="nc" id="L3779">      return new ListCustomClassesFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListPhraseSetsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListPhraseSetsRequest,
+          ListPhraseSetsResponse,
+          PhraseSet,
+          ListPhraseSetsPage,
+          ListPhraseSetsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListPhraseSetsPagedResponse&gt; createAsync(
+        PageContext&lt;ListPhraseSetsRequest, ListPhraseSetsResponse, PhraseSet&gt; context,
+        ApiFuture&lt;ListPhraseSetsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListPhraseSetsPage&gt; futurePage =
+<span class="fc" id="L3795">          ListPhraseSetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3796">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L3798">          input -&gt; new ListPhraseSetsPagedResponse(input),</span>
+<span class="fc" id="L3799">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListPhraseSetsPagedResponse(ListPhraseSetsPage page) {
+<span class="fc" id="L3803">      super(page, ListPhraseSetsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3804">    }</span>
+  }
+
+  public static class ListPhraseSetsPage
+      extends AbstractPage&lt;
+          ListPhraseSetsRequest, ListPhraseSetsResponse, PhraseSet, ListPhraseSetsPage&gt; {
+
+    private ListPhraseSetsPage(
+        PageContext&lt;ListPhraseSetsRequest, ListPhraseSetsResponse, PhraseSet&gt; context,
+        ListPhraseSetsResponse response) {
+<span class="fc" id="L3814">      super(context, response);</span>
+<span class="fc" id="L3815">    }</span>
+
+    private static ListPhraseSetsPage createEmptyPage() {
+<span class="fc" id="L3818">      return new ListPhraseSetsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListPhraseSetsPage createPage(
+        PageContext&lt;ListPhraseSetsRequest, ListPhraseSetsResponse, PhraseSet&gt; context,
+        ListPhraseSetsResponse response) {
+<span class="fc" id="L3825">      return new ListPhraseSetsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListPhraseSetsPage&gt; createPageAsync(
+        PageContext&lt;ListPhraseSetsRequest, ListPhraseSetsResponse, PhraseSet&gt; context,
+        ApiFuture&lt;ListPhraseSetsResponse&gt; futureResponse) {
+<span class="fc" id="L3832">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListPhraseSetsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListPhraseSetsRequest,
+          ListPhraseSetsResponse,
+          PhraseSet,
+          ListPhraseSetsPage,
+          ListPhraseSetsFixedSizeCollection&gt; {
+
+    private ListPhraseSetsFixedSizeCollection(List&lt;ListPhraseSetsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L3845">      super(pages, collectionSize);</span>
+<span class="fc" id="L3846">    }</span>
+
+    private static ListPhraseSetsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L3849">      return new ListPhraseSetsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListPhraseSetsFixedSizeCollection createCollection(
+        List&lt;ListPhraseSetsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L3855">      return new ListPhraseSetsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -30,7 +30,16 @@ import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.deploy.v1.stub.CloudDeployStub;
 import com.google.cloud.deploy.v1.stub.CloudDeployStubSettings;
+import com.google.cloud.location.GetLocationRequest;
+import com.google.cloud.location.ListLocationsRequest;
+import com.google.cloud.location.ListLocationsResponse;
+import com.google.cloud.location.Location;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.Policy;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
+import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.Operation;
 import com.google.protobuf.Empty;
 import com.google.protobuf.FieldMask;
@@ -142,7 +151,7 @@ public class CloudDeployClient implements BackgroundResource {
 
   /** Constructs an instance of CloudDeployClient with default settings. */
   public static final CloudDeployClient create() throws IOException {
-<span class="nc" id="L145">    return create(CloudDeploySettings.newBuilder().build());</span>
+<span class="nc" id="L154">    return create(CloudDeploySettings.newBuilder().build());</span>
   }
 
   /**
@@ -150,7 +159,7 @@ public class CloudDeployClient implements BackgroundResource {
    * based on the settings passed in, or defaults for any settings that are not set.
    */
   public static final CloudDeployClient create(CloudDeploySettings settings) throws IOException {
-<span class="fc" id="L153">    return new CloudDeployClient(settings);</span>
+<span class="fc" id="L162">    return new CloudDeployClient(settings);</span>
   }
 
   /**
@@ -158,7 +167,7 @@ public class CloudDeployClient implements BackgroundResource {
    * advanced usage - prefer using create(CloudDeploySettings).
    */
   public static final CloudDeployClient create(CloudDeployStub stub) {
-<span class="nc" id="L161">    return new CloudDeployClient(stub);</span>
+<span class="nc" id="L170">    return new CloudDeployClient(stub);</span>
   }
 
   /**
@@ -166,28 +175,28 @@ public class CloudDeployClient implements BackgroundResource {
    * that it is easy to make a subclass, but otherwise, the static factory methods should be
    * preferred.
    */
-<span class="fc" id="L169">  protected CloudDeployClient(CloudDeploySettings settings) throws IOException {</span>
-<span class="fc" id="L170">    this.settings = settings;</span>
-<span class="fc" id="L171">    this.stub = ((CloudDeployStubSettings) settings.getStubSettings()).createStub();</span>
-<span class="fc" id="L172">    this.operationsClient =</span>
-<span class="fc" id="L173">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="fc" id="L174">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
-<span class="fc" id="L175">  }</span>
+<span class="fc" id="L178">  protected CloudDeployClient(CloudDeploySettings settings) throws IOException {</span>
+<span class="fc" id="L179">    this.settings = settings;</span>
+<span class="fc" id="L180">    this.stub = ((CloudDeployStubSettings) settings.getStubSettings()).createStub();</span>
+<span class="fc" id="L181">    this.operationsClient =</span>
+<span class="fc" id="L182">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="fc" id="L183">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="fc" id="L184">  }</span>
 
-<span class="nc" id="L177">  protected CloudDeployClient(CloudDeployStub stub) {</span>
-<span class="nc" id="L178">    this.settings = null;</span>
-<span class="nc" id="L179">    this.stub = stub;</span>
-<span class="nc" id="L180">    this.operationsClient =</span>
-<span class="nc" id="L181">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
-<span class="nc" id="L182">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
-<span class="nc" id="L183">  }</span>
+<span class="nc" id="L186">  protected CloudDeployClient(CloudDeployStub stub) {</span>
+<span class="nc" id="L187">    this.settings = null;</span>
+<span class="nc" id="L188">    this.stub = stub;</span>
+<span class="nc" id="L189">    this.operationsClient =</span>
+<span class="nc" id="L190">        com.google.longrunning.OperationsClient.create(this.stub.getOperationsStub());</span>
+<span class="nc" id="L191">    this.httpJsonOperationsClient = OperationsClient.create(this.stub.getHttpJsonOperationsStub());</span>
+<span class="nc" id="L192">  }</span>
 
   public final CloudDeploySettings getSettings() {
-<span class="nc" id="L186">    return settings;</span>
+<span class="nc" id="L195">    return settings;</span>
   }
 
   public CloudDeployStub getStub() {
-<span class="nc" id="L190">    return stub;</span>
+<span class="nc" id="L199">    return stub;</span>
   }
 
   /**
@@ -195,7 +204,7 @@ public class CloudDeployClient implements BackgroundResource {
    * returned by another API method call.
    */
   public final com.google.longrunning.OperationsClient getOperationsClient() {
-<span class="nc" id="L198">    return operationsClient;</span>
+<span class="nc" id="L207">    return operationsClient;</span>
   }
 
   /**
@@ -204,7 +213,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   @BetaApi
   public final OperationsClient getHttpJsonOperationsClient() {
-<span class="nc" id="L207">    return httpJsonOperationsClient;</span>
+<span class="nc" id="L216">    return httpJsonOperationsClient;</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -234,10 +243,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListDeliveryPipelinesPagedResponse listDeliveryPipelines(LocationName parent) {
     ListDeliveryPipelinesRequest request =
-<span class="fc" id="L237">        ListDeliveryPipelinesRequest.newBuilder()</span>
-<span class="pc bpc" id="L238" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L239">            .build();</span>
-<span class="fc" id="L240">    return listDeliveryPipelines(request);</span>
+<span class="fc" id="L246">        ListDeliveryPipelinesRequest.newBuilder()</span>
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L248">            .build();</span>
+<span class="fc" id="L249">    return listDeliveryPipelines(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -267,8 +276,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListDeliveryPipelinesPagedResponse listDeliveryPipelines(String parent) {
     ListDeliveryPipelinesRequest request =
-<span class="fc" id="L270">        ListDeliveryPipelinesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L271">    return listDeliveryPipelines(request);</span>
+<span class="fc" id="L279">        ListDeliveryPipelinesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L280">    return listDeliveryPipelines(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -304,7 +313,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListDeliveryPipelinesPagedResponse listDeliveryPipelines(
       ListDeliveryPipelinesRequest request) {
-<span class="fc" id="L307">    return listDeliveryPipelinesPagedCallable().call(request);</span>
+<span class="fc" id="L316">    return listDeliveryPipelinesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -339,7 +348,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesPagedResponse&gt;
       listDeliveryPipelinesPagedCallable() {
-<span class="fc" id="L342">    return stub.listDeliveryPipelinesPagedCallable();</span>
+<span class="fc" id="L351">    return stub.listDeliveryPipelinesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -381,7 +390,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesResponse&gt;
       listDeliveryPipelinesCallable() {
-<span class="nc" id="L384">    return stub.listDeliveryPipelinesCallable();</span>
+<span class="nc" id="L393">    return stub.listDeliveryPipelinesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -409,10 +418,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final DeliveryPipeline getDeliveryPipeline(DeliveryPipelineName name) {
     GetDeliveryPipelineRequest request =
-<span class="fc" id="L412">        GetDeliveryPipelineRequest.newBuilder()</span>
-<span class="pc bpc" id="L413" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L414">            .build();</span>
-<span class="fc" id="L415">    return getDeliveryPipeline(request);</span>
+<span class="fc" id="L421">        GetDeliveryPipelineRequest.newBuilder()</span>
+<span class="pc bpc" id="L422" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L423">            .build();</span>
+<span class="fc" id="L424">    return getDeliveryPipeline(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -440,8 +449,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final DeliveryPipeline getDeliveryPipeline(String name) {
     GetDeliveryPipelineRequest request =
-<span class="fc" id="L443">        GetDeliveryPipelineRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L444">    return getDeliveryPipeline(request);</span>
+<span class="fc" id="L452">        GetDeliveryPipelineRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L453">    return getDeliveryPipeline(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -471,7 +480,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final DeliveryPipeline getDeliveryPipeline(GetDeliveryPipelineRequest request) {
-<span class="fc" id="L474">    return getDeliveryPipelineCallable().call(request);</span>
+<span class="fc" id="L483">    return getDeliveryPipelineCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -502,7 +511,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;GetDeliveryPipelineRequest, DeliveryPipeline&gt;
       getDeliveryPipelineCallable() {
-<span class="fc" id="L505">    return stub.getDeliveryPipelineCallable();</span>
+<span class="fc" id="L514">    return stub.getDeliveryPipelineCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -537,12 +546,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; createDeliveryPipelineAsync(
       LocationName parent, DeliveryPipeline deliveryPipeline, String deliveryPipelineId) {
     CreateDeliveryPipelineRequest request =
-<span class="fc" id="L540">        CreateDeliveryPipelineRequest.newBuilder()</span>
-<span class="pc bpc" id="L541" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L542">            .setDeliveryPipeline(deliveryPipeline)</span>
-<span class="fc" id="L543">            .setDeliveryPipelineId(deliveryPipelineId)</span>
-<span class="fc" id="L544">            .build();</span>
-<span class="fc" id="L545">    return createDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L549">        CreateDeliveryPipelineRequest.newBuilder()</span>
+<span class="pc bpc" id="L550" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L551">            .setDeliveryPipeline(deliveryPipeline)</span>
+<span class="fc" id="L552">            .setDeliveryPipelineId(deliveryPipelineId)</span>
+<span class="fc" id="L553">            .build();</span>
+<span class="fc" id="L554">    return createDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -577,12 +586,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; createDeliveryPipelineAsync(
       String parent, DeliveryPipeline deliveryPipeline, String deliveryPipelineId) {
     CreateDeliveryPipelineRequest request =
-<span class="fc" id="L580">        CreateDeliveryPipelineRequest.newBuilder()</span>
-<span class="fc" id="L581">            .setParent(parent)</span>
-<span class="fc" id="L582">            .setDeliveryPipeline(deliveryPipeline)</span>
-<span class="fc" id="L583">            .setDeliveryPipelineId(deliveryPipelineId)</span>
-<span class="fc" id="L584">            .build();</span>
-<span class="fc" id="L585">    return createDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L589">        CreateDeliveryPipelineRequest.newBuilder()</span>
+<span class="fc" id="L590">            .setParent(parent)</span>
+<span class="fc" id="L591">            .setDeliveryPipeline(deliveryPipeline)</span>
+<span class="fc" id="L592">            .setDeliveryPipelineId(deliveryPipelineId)</span>
+<span class="fc" id="L593">            .build();</span>
+<span class="fc" id="L594">    return createDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -615,7 +624,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; createDeliveryPipelineAsync(
       CreateDeliveryPipelineRequest request) {
-<span class="fc" id="L618">    return createDeliveryPipelineOperationCallable().futureCall(request);</span>
+<span class="fc" id="L627">    return createDeliveryPipelineOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -648,7 +657,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateDeliveryPipelineRequest, DeliveryPipeline, OperationMetadata&gt;
       createDeliveryPipelineOperationCallable() {
-<span class="fc" id="L651">    return stub.createDeliveryPipelineOperationCallable();</span>
+<span class="fc" id="L660">    return stub.createDeliveryPipelineOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -681,7 +690,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;CreateDeliveryPipelineRequest, Operation&gt;
       createDeliveryPipelineCallable() {
-<span class="nc" id="L684">    return stub.createDeliveryPipelineCallable();</span>
+<span class="nc" id="L693">    return stub.createDeliveryPipelineCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -714,11 +723,11 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; updateDeliveryPipelineAsync(
       DeliveryPipeline deliveryPipeline, FieldMask updateMask) {
     UpdateDeliveryPipelineRequest request =
-<span class="fc" id="L717">        UpdateDeliveryPipelineRequest.newBuilder()</span>
-<span class="fc" id="L718">            .setDeliveryPipeline(deliveryPipeline)</span>
-<span class="fc" id="L719">            .setUpdateMask(updateMask)</span>
-<span class="fc" id="L720">            .build();</span>
-<span class="fc" id="L721">    return updateDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L726">        UpdateDeliveryPipelineRequest.newBuilder()</span>
+<span class="fc" id="L727">            .setDeliveryPipeline(deliveryPipeline)</span>
+<span class="fc" id="L728">            .setUpdateMask(updateMask)</span>
+<span class="fc" id="L729">            .build();</span>
+<span class="fc" id="L730">    return updateDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -751,7 +760,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;DeliveryPipeline, OperationMetadata&gt; updateDeliveryPipelineAsync(
       UpdateDeliveryPipelineRequest request) {
-<span class="fc" id="L754">    return updateDeliveryPipelineOperationCallable().futureCall(request);</span>
+<span class="fc" id="L763">    return updateDeliveryPipelineOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -784,7 +793,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateDeliveryPipelineRequest, DeliveryPipeline, OperationMetadata&gt;
       updateDeliveryPipelineOperationCallable() {
-<span class="fc" id="L787">    return stub.updateDeliveryPipelineOperationCallable();</span>
+<span class="fc" id="L796">    return stub.updateDeliveryPipelineOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -817,7 +826,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;UpdateDeliveryPipelineRequest, Operation&gt;
       updateDeliveryPipelineCallable() {
-<span class="nc" id="L820">    return stub.updateDeliveryPipelineCallable();</span>
+<span class="nc" id="L829">    return stub.updateDeliveryPipelineCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -846,10 +855,10 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDeliveryPipelineAsync(
       DeliveryPipelineName name) {
     DeleteDeliveryPipelineRequest request =
-<span class="fc" id="L849">        DeleteDeliveryPipelineRequest.newBuilder()</span>
-<span class="pc bpc" id="L850" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
-<span class="fc" id="L851">            .build();</span>
-<span class="fc" id="L852">    return deleteDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L858">        DeleteDeliveryPipelineRequest.newBuilder()</span>
+<span class="pc bpc" id="L859" title="1 of 2 branches missed.">            .setName(name == null ? null : name.toString())</span>
+<span class="fc" id="L860">            .build();</span>
+<span class="fc" id="L861">    return deleteDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -877,8 +886,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDeliveryPipelineAsync(String name) {
     DeleteDeliveryPipelineRequest request =
-<span class="fc" id="L880">        DeleteDeliveryPipelineRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L881">    return deleteDeliveryPipelineAsync(request);</span>
+<span class="fc" id="L889">        DeleteDeliveryPipelineRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L890">    return deleteDeliveryPipelineAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -914,7 +923,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteDeliveryPipelineAsync(
       DeleteDeliveryPipelineRequest request) {
-<span class="fc" id="L917">    return deleteDeliveryPipelineOperationCallable().futureCall(request);</span>
+<span class="fc" id="L926">    return deleteDeliveryPipelineOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -950,7 +959,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteDeliveryPipelineRequest, Empty, OperationMetadata&gt;
       deleteDeliveryPipelineOperationCallable() {
-<span class="fc" id="L953">    return stub.deleteDeliveryPipelineOperationCallable();</span>
+<span class="fc" id="L962">    return stub.deleteDeliveryPipelineOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -986,7 +995,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;DeleteDeliveryPipelineRequest, Operation&gt;
       deleteDeliveryPipelineCallable() {
-<span class="nc" id="L989">    return stub.deleteDeliveryPipelineCallable();</span>
+<span class="nc" id="L998">    return stub.deleteDeliveryPipelineCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1015,10 +1024,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListTargetsPagedResponse listTargets(LocationName parent) {
     ListTargetsRequest request =
-<span class="fc" id="L1018">        ListTargetsRequest.newBuilder()</span>
-<span class="pc bpc" id="L1019" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1020">            .build();</span>
-<span class="fc" id="L1021">    return listTargets(request);</span>
+<span class="fc" id="L1027">        ListTargetsRequest.newBuilder()</span>
+<span class="pc bpc" id="L1028" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1029">            .build();</span>
+<span class="fc" id="L1030">    return listTargets(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1046,8 +1055,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTargetsPagedResponse listTargets(String parent) {
-<span class="fc" id="L1049">    ListTargetsRequest request = ListTargetsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1050">    return listTargets(request);</span>
+<span class="fc" id="L1058">    ListTargetsRequest request = ListTargetsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1059">    return listTargets(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1081,7 +1090,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListTargetsPagedResponse listTargets(ListTargetsRequest request) {
-<span class="fc" id="L1084">    return listTargetsPagedCallable().call(request);</span>
+<span class="fc" id="L1093">    return listTargetsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1115,7 +1124,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListTargetsRequest, ListTargetsPagedResponse&gt;
       listTargetsPagedCallable() {
-<span class="fc" id="L1118">    return stub.listTargetsPagedCallable();</span>
+<span class="fc" id="L1127">    return stub.listTargetsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1155,7 +1164,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListTargetsRequest, ListTargetsResponse&gt; listTargetsCallable() {
-<span class="nc" id="L1158">    return stub.listTargetsCallable();</span>
+<span class="nc" id="L1167">    return stub.listTargetsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1182,8 +1191,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final Target getTarget(TargetName name) {
     GetTargetRequest request =
-<span class="pc bpc" id="L1185" title="1 of 2 branches missed.">        GetTargetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1186">    return getTarget(request);</span>
+<span class="pc bpc" id="L1194" title="1 of 2 branches missed.">        GetTargetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1195">    return getTarget(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1209,8 +1218,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Target getTarget(String name) {
-<span class="fc" id="L1212">    GetTargetRequest request = GetTargetRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1213">    return getTarget(request);</span>
+<span class="fc" id="L1221">    GetTargetRequest request = GetTargetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1222">    return getTarget(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1238,7 +1247,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Target getTarget(GetTargetRequest request) {
-<span class="fc" id="L1241">    return getTargetCallable().call(request);</span>
+<span class="fc" id="L1250">    return getTargetCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1265,7 +1274,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetTargetRequest, Target&gt; getTargetCallable() {
-<span class="fc" id="L1268">    return stub.getTargetCallable();</span>
+<span class="fc" id="L1277">    return stub.getTargetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1297,12 +1306,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Target, OperationMetadata&gt; createTargetAsync(
       LocationName parent, Target target, String targetId) {
     CreateTargetRequest request =
-<span class="fc" id="L1300">        CreateTargetRequest.newBuilder()</span>
-<span class="pc bpc" id="L1301" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1302">            .setTarget(target)</span>
-<span class="fc" id="L1303">            .setTargetId(targetId)</span>
-<span class="fc" id="L1304">            .build();</span>
-<span class="fc" id="L1305">    return createTargetAsync(request);</span>
+<span class="fc" id="L1309">        CreateTargetRequest.newBuilder()</span>
+<span class="pc bpc" id="L1310" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1311">            .setTarget(target)</span>
+<span class="fc" id="L1312">            .setTargetId(targetId)</span>
+<span class="fc" id="L1313">            .build();</span>
+<span class="fc" id="L1314">    return createTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1334,12 +1343,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Target, OperationMetadata&gt; createTargetAsync(
       String parent, Target target, String targetId) {
     CreateTargetRequest request =
-<span class="fc" id="L1337">        CreateTargetRequest.newBuilder()</span>
-<span class="fc" id="L1338">            .setParent(parent)</span>
-<span class="fc" id="L1339">            .setTarget(target)</span>
-<span class="fc" id="L1340">            .setTargetId(targetId)</span>
-<span class="fc" id="L1341">            .build();</span>
-<span class="fc" id="L1342">    return createTargetAsync(request);</span>
+<span class="fc" id="L1346">        CreateTargetRequest.newBuilder()</span>
+<span class="fc" id="L1347">            .setParent(parent)</span>
+<span class="fc" id="L1348">            .setTarget(target)</span>
+<span class="fc" id="L1349">            .setTargetId(targetId)</span>
+<span class="fc" id="L1350">            .build();</span>
+<span class="fc" id="L1351">    return createTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1372,7 +1381,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Target, OperationMetadata&gt; createTargetAsync(
       CreateTargetRequest request) {
-<span class="fc" id="L1375">    return createTargetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1384">    return createTargetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1405,7 +1414,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateTargetRequest, Target, OperationMetadata&gt;
       createTargetOperationCallable() {
-<span class="fc" id="L1408">    return stub.createTargetOperationCallable();</span>
+<span class="fc" id="L1417">    return stub.createTargetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1436,7 +1445,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateTargetRequest, Operation&gt; createTargetCallable() {
-<span class="nc" id="L1439">    return stub.createTargetCallable();</span>
+<span class="nc" id="L1448">    return stub.createTargetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1468,8 +1477,8 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Target, OperationMetadata&gt; updateTargetAsync(
       Target target, FieldMask updateMask) {
     UpdateTargetRequest request =
-<span class="fc" id="L1471">        UpdateTargetRequest.newBuilder().setTarget(target).setUpdateMask(updateMask).build();</span>
-<span class="fc" id="L1472">    return updateTargetAsync(request);</span>
+<span class="fc" id="L1480">        UpdateTargetRequest.newBuilder().setTarget(target).setUpdateMask(updateMask).build();</span>
+<span class="fc" id="L1481">    return updateTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1502,7 +1511,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Target, OperationMetadata&gt; updateTargetAsync(
       UpdateTargetRequest request) {
-<span class="fc" id="L1505">    return updateTargetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1514">    return updateTargetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1535,7 +1544,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;UpdateTargetRequest, Target, OperationMetadata&gt;
       updateTargetOperationCallable() {
-<span class="fc" id="L1538">    return stub.updateTargetOperationCallable();</span>
+<span class="fc" id="L1547">    return stub.updateTargetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1566,7 +1575,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;UpdateTargetRequest, Operation&gt; updateTargetCallable() {
-<span class="nc" id="L1569">    return stub.updateTargetCallable();</span>
+<span class="nc" id="L1578">    return stub.updateTargetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1593,8 +1602,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetAsync(TargetName name) {
     DeleteTargetRequest request =
-<span class="pc bpc" id="L1596" title="1 of 2 branches missed.">        DeleteTargetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1597">    return deleteTargetAsync(request);</span>
+<span class="pc bpc" id="L1605" title="1 of 2 branches missed.">        DeleteTargetRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1606">    return deleteTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1620,8 +1629,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetAsync(String name) {
-<span class="fc" id="L1623">    DeleteTargetRequest request = DeleteTargetRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1624">    return deleteTargetAsync(request);</span>
+<span class="fc" id="L1632">    DeleteTargetRequest request = DeleteTargetRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1633">    return deleteTargetAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1654,7 +1663,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Empty, OperationMetadata&gt; deleteTargetAsync(
       DeleteTargetRequest request) {
-<span class="fc" id="L1657">    return deleteTargetOperationCallable().futureCall(request);</span>
+<span class="fc" id="L1666">    return deleteTargetOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1687,7 +1696,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;DeleteTargetRequest, Empty, OperationMetadata&gt;
       deleteTargetOperationCallable() {
-<span class="fc" id="L1690">    return stub.deleteTargetOperationCallable();</span>
+<span class="fc" id="L1699">    return stub.deleteTargetOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1718,7 +1727,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;DeleteTargetRequest, Operation&gt; deleteTargetCallable() {
-<span class="nc" id="L1721">    return stub.deleteTargetCallable();</span>
+<span class="nc" id="L1730">    return stub.deleteTargetCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1747,10 +1756,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListReleasesPagedResponse listReleases(DeliveryPipelineName parent) {
     ListReleasesRequest request =
-<span class="fc" id="L1750">        ListReleasesRequest.newBuilder()</span>
-<span class="pc bpc" id="L1751" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L1752">            .build();</span>
-<span class="fc" id="L1753">    return listReleases(request);</span>
+<span class="fc" id="L1759">        ListReleasesRequest.newBuilder()</span>
+<span class="pc bpc" id="L1760" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L1761">            .build();</span>
+<span class="fc" id="L1762">    return listReleases(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1778,8 +1787,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListReleasesPagedResponse listReleases(String parent) {
-<span class="fc" id="L1781">    ListReleasesRequest request = ListReleasesRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L1782">    return listReleases(request);</span>
+<span class="fc" id="L1790">    ListReleasesRequest request = ListReleasesRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L1791">    return listReleases(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1815,7 +1824,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListReleasesPagedResponse listReleases(ListReleasesRequest request) {
-<span class="fc" id="L1818">    return listReleasesPagedCallable().call(request);</span>
+<span class="fc" id="L1827">    return listReleasesPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1851,7 +1860,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListReleasesRequest, ListReleasesPagedResponse&gt;
       listReleasesPagedCallable() {
-<span class="fc" id="L1854">    return stub.listReleasesPagedCallable();</span>
+<span class="fc" id="L1863">    return stub.listReleasesPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1893,7 +1902,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListReleasesRequest, ListReleasesResponse&gt; listReleasesCallable() {
-<span class="nc" id="L1896">    return stub.listReleasesCallable();</span>
+<span class="nc" id="L1905">    return stub.listReleasesCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1921,8 +1930,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final Release getRelease(ReleaseName name) {
     GetReleaseRequest request =
-<span class="pc bpc" id="L1924" title="1 of 2 branches missed.">        GetReleaseRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L1925">    return getRelease(request);</span>
+<span class="pc bpc" id="L1933" title="1 of 2 branches missed.">        GetReleaseRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L1934">    return getRelease(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1949,8 +1958,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Release getRelease(String name) {
-<span class="fc" id="L1952">    GetReleaseRequest request = GetReleaseRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L1953">    return getRelease(request);</span>
+<span class="fc" id="L1961">    GetReleaseRequest request = GetReleaseRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L1962">    return getRelease(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -1980,7 +1989,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Release getRelease(GetReleaseRequest request) {
-<span class="fc" id="L1983">    return getReleaseCallable().call(request);</span>
+<span class="fc" id="L1992">    return getReleaseCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2009,7 +2018,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetReleaseRequest, Release&gt; getReleaseCallable() {
-<span class="fc" id="L2012">    return stub.getReleaseCallable();</span>
+<span class="fc" id="L2021">    return stub.getReleaseCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2043,12 +2052,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Release, OperationMetadata&gt; createReleaseAsync(
       DeliveryPipelineName parent, Release release, String releaseId) {
     CreateReleaseRequest request =
-<span class="fc" id="L2046">        CreateReleaseRequest.newBuilder()</span>
-<span class="pc bpc" id="L2047" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2048">            .setRelease(release)</span>
-<span class="fc" id="L2049">            .setReleaseId(releaseId)</span>
-<span class="fc" id="L2050">            .build();</span>
-<span class="fc" id="L2051">    return createReleaseAsync(request);</span>
+<span class="fc" id="L2055">        CreateReleaseRequest.newBuilder()</span>
+<span class="pc bpc" id="L2056" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2057">            .setRelease(release)</span>
+<span class="fc" id="L2058">            .setReleaseId(releaseId)</span>
+<span class="fc" id="L2059">            .build();</span>
+<span class="fc" id="L2060">    return createReleaseAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2082,12 +2091,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Release, OperationMetadata&gt; createReleaseAsync(
       String parent, Release release, String releaseId) {
     CreateReleaseRequest request =
-<span class="fc" id="L2085">        CreateReleaseRequest.newBuilder()</span>
-<span class="fc" id="L2086">            .setParent(parent)</span>
-<span class="fc" id="L2087">            .setRelease(release)</span>
-<span class="fc" id="L2088">            .setReleaseId(releaseId)</span>
-<span class="fc" id="L2089">            .build();</span>
-<span class="fc" id="L2090">    return createReleaseAsync(request);</span>
+<span class="fc" id="L2094">        CreateReleaseRequest.newBuilder()</span>
+<span class="fc" id="L2095">            .setParent(parent)</span>
+<span class="fc" id="L2096">            .setRelease(release)</span>
+<span class="fc" id="L2097">            .setReleaseId(releaseId)</span>
+<span class="fc" id="L2098">            .build();</span>
+<span class="fc" id="L2099">    return createReleaseAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2122,7 +2131,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Release, OperationMetadata&gt; createReleaseAsync(
       CreateReleaseRequest request) {
-<span class="fc" id="L2125">    return createReleaseOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2134">    return createReleaseOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2157,7 +2166,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateReleaseRequest, Release, OperationMetadata&gt;
       createReleaseOperationCallable() {
-<span class="fc" id="L2160">    return stub.createReleaseOperationCallable();</span>
+<span class="fc" id="L2169">    return stub.createReleaseOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2190,7 +2199,127 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateReleaseRequest, Operation&gt; createReleaseCallable() {
-<span class="nc" id="L2193">    return stub.createReleaseCallable();</span>
+<span class="nc" id="L2202">    return stub.createReleaseCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Abandons a Release in the Delivery Pipeline.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   ReleaseName name =
+   *       ReleaseName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;, &quot;[RELEASE]&quot;);
+   *   AbandonReleaseResponse response = cloudDeployClient.abandonRelease(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. Name of the Release. Format is
+   *     projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/
+   *     releases/{release}.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AbandonReleaseResponse abandonRelease(ReleaseName name) {
+    AbandonReleaseRequest request =
+<span class="pc bpc" id="L2231" title="1 of 2 branches missed.">        AbandonReleaseRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2232">    return abandonRelease(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Abandons a Release in the Delivery Pipeline.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   String name =
+   *       ReleaseName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;, &quot;[RELEASE]&quot;).toString();
+   *   AbandonReleaseResponse response = cloudDeployClient.abandonRelease(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. Name of the Release. Format is
+   *     projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/
+   *     releases/{release}.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AbandonReleaseResponse abandonRelease(String name) {
+<span class="fc" id="L2260">    AbandonReleaseRequest request = AbandonReleaseRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2261">    return abandonRelease(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Abandons a Release in the Delivery Pipeline.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   AbandonReleaseRequest request =
+   *       AbandonReleaseRequest.newBuilder()
+   *           .setName(
+   *               ReleaseName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;, &quot;[RELEASE]&quot;)
+   *                   .toString())
+   *           .build();
+   *   AbandonReleaseResponse response = cloudDeployClient.abandonRelease(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final AbandonReleaseResponse abandonRelease(AbandonReleaseRequest request) {
+<span class="fc" id="L2291">    return abandonReleaseCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Abandons a Release in the Delivery Pipeline.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   AbandonReleaseRequest request =
+   *       AbandonReleaseRequest.newBuilder()
+   *           .setName(
+   *               ReleaseName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;, &quot;[RELEASE]&quot;)
+   *                   .toString())
+   *           .build();
+   *   ApiFuture&lt;AbandonReleaseResponse&gt; future =
+   *       cloudDeployClient.abandonReleaseCallable().futureCall(request);
+   *   // Do something.
+   *   AbandonReleaseResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;AbandonReleaseRequest, AbandonReleaseResponse&gt;
+      abandonReleaseCallable() {
+<span class="fc" id="L2322">    return stub.abandonReleaseCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2220,8 +2349,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ApproveRolloutResponse approveRollout(RolloutName name) {
     ApproveRolloutRequest request =
-<span class="pc bpc" id="L2223" title="1 of 2 branches missed.">        ApproveRolloutRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2224">    return approveRollout(request);</span>
+<span class="pc bpc" id="L2352" title="1 of 2 branches missed.">        ApproveRolloutRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2353">    return approveRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2250,8 +2379,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ApproveRolloutResponse approveRollout(String name) {
-<span class="fc" id="L2253">    ApproveRolloutRequest request = ApproveRolloutRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2254">    return approveRollout(request);</span>
+<span class="fc" id="L2382">    ApproveRolloutRequest request = ApproveRolloutRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2383">    return approveRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2287,7 +2416,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ApproveRolloutResponse approveRollout(ApproveRolloutRequest request) {
-<span class="fc" id="L2290">    return approveRolloutCallable().call(request);</span>
+<span class="fc" id="L2419">    return approveRolloutCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2324,7 +2453,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ApproveRolloutRequest, ApproveRolloutResponse&gt;
       approveRolloutCallable() {
-<span class="fc" id="L2327">    return stub.approveRolloutCallable();</span>
+<span class="fc" id="L2456">    return stub.approveRolloutCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2353,10 +2482,10 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final ListRolloutsPagedResponse listRollouts(ReleaseName parent) {
     ListRolloutsRequest request =
-<span class="fc" id="L2356">        ListRolloutsRequest.newBuilder()</span>
-<span class="pc bpc" id="L2357" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2358">            .build();</span>
-<span class="fc" id="L2359">    return listRollouts(request);</span>
+<span class="fc" id="L2485">        ListRolloutsRequest.newBuilder()</span>
+<span class="pc bpc" id="L2486" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2487">            .build();</span>
+<span class="fc" id="L2488">    return listRollouts(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2384,8 +2513,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListRolloutsPagedResponse listRollouts(String parent) {
-<span class="fc" id="L2387">    ListRolloutsRequest request = ListRolloutsRequest.newBuilder().setParent(parent).build();</span>
-<span class="fc" id="L2388">    return listRollouts(request);</span>
+<span class="fc" id="L2516">    ListRolloutsRequest request = ListRolloutsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L2517">    return listRollouts(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2421,7 +2550,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListRolloutsPagedResponse listRollouts(ListRolloutsRequest request) {
-<span class="fc" id="L2424">    return listRolloutsPagedCallable().call(request);</span>
+<span class="fc" id="L2553">    return listRolloutsPagedCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2457,7 +2586,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final UnaryCallable&lt;ListRolloutsRequest, ListRolloutsPagedResponse&gt;
       listRolloutsPagedCallable() {
-<span class="fc" id="L2460">    return stub.listRolloutsPagedCallable();</span>
+<span class="fc" id="L2589">    return stub.listRolloutsPagedCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2499,7 +2628,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;ListRolloutsRequest, ListRolloutsResponse&gt; listRolloutsCallable() {
-<span class="nc" id="L2502">    return stub.listRolloutsCallable();</span>
+<span class="nc" id="L2631">    return stub.listRolloutsCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2528,8 +2657,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final Rollout getRollout(RolloutName name) {
     GetRolloutRequest request =
-<span class="pc bpc" id="L2531" title="1 of 2 branches missed.">        GetRolloutRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2532">    return getRollout(request);</span>
+<span class="pc bpc" id="L2660" title="1 of 2 branches missed.">        GetRolloutRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L2661">    return getRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2557,8 +2686,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Rollout getRollout(String name) {
-<span class="fc" id="L2560">    GetRolloutRequest request = GetRolloutRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2561">    return getRollout(request);</span>
+<span class="fc" id="L2689">    GetRolloutRequest request = GetRolloutRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L2690">    return getRollout(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2593,7 +2722,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Rollout getRollout(GetRolloutRequest request) {
-<span class="fc" id="L2596">    return getRolloutCallable().call(request);</span>
+<span class="fc" id="L2725">    return getRolloutCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2627,7 +2756,7 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetRolloutRequest, Rollout&gt; getRolloutCallable() {
-<span class="fc" id="L2630">    return stub.getRolloutCallable();</span>
+<span class="fc" id="L2759">    return stub.getRolloutCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2661,12 +2790,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Rollout, OperationMetadata&gt; createRolloutAsync(
       ReleaseName parent, Rollout rollout, String rolloutId) {
     CreateRolloutRequest request =
-<span class="fc" id="L2664">        CreateRolloutRequest.newBuilder()</span>
-<span class="pc bpc" id="L2665" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
-<span class="fc" id="L2666">            .setRollout(rollout)</span>
-<span class="fc" id="L2667">            .setRolloutId(rolloutId)</span>
-<span class="fc" id="L2668">            .build();</span>
-<span class="fc" id="L2669">    return createRolloutAsync(request);</span>
+<span class="fc" id="L2793">        CreateRolloutRequest.newBuilder()</span>
+<span class="pc bpc" id="L2794" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L2795">            .setRollout(rollout)</span>
+<span class="fc" id="L2796">            .setRolloutId(rolloutId)</span>
+<span class="fc" id="L2797">            .build();</span>
+<span class="fc" id="L2798">    return createRolloutAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2700,12 +2829,12 @@ public class CloudDeployClient implements BackgroundResource {
   public final OperationFuture&lt;Rollout, OperationMetadata&gt; createRolloutAsync(
       String parent, Rollout rollout, String rolloutId) {
     CreateRolloutRequest request =
-<span class="fc" id="L2703">        CreateRolloutRequest.newBuilder()</span>
-<span class="fc" id="L2704">            .setParent(parent)</span>
-<span class="fc" id="L2705">            .setRollout(rollout)</span>
-<span class="fc" id="L2706">            .setRolloutId(rolloutId)</span>
-<span class="fc" id="L2707">            .build();</span>
-<span class="fc" id="L2708">    return createRolloutAsync(request);</span>
+<span class="fc" id="L2832">        CreateRolloutRequest.newBuilder()</span>
+<span class="fc" id="L2833">            .setParent(parent)</span>
+<span class="fc" id="L2834">            .setRollout(rollout)</span>
+<span class="fc" id="L2835">            .setRolloutId(rolloutId)</span>
+<span class="fc" id="L2836">            .build();</span>
+<span class="fc" id="L2837">    return createRolloutAsync(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2740,7 +2869,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationFuture&lt;Rollout, OperationMetadata&gt; createRolloutAsync(
       CreateRolloutRequest request) {
-<span class="fc" id="L2743">    return createRolloutOperationCallable().futureCall(request);</span>
+<span class="fc" id="L2872">    return createRolloutOperationCallable().futureCall(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2775,7 +2904,7 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final OperationCallable&lt;CreateRolloutRequest, Rollout, OperationMetadata&gt;
       createRolloutOperationCallable() {
-<span class="fc" id="L2778">    return stub.createRolloutOperationCallable();</span>
+<span class="fc" id="L2907">    return stub.createRolloutOperationCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2808,7 +2937,491 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;CreateRolloutRequest, Operation&gt; createRolloutCallable() {
-<span class="nc" id="L2811">    return stub.createRolloutCallable();</span>
+<span class="nc" id="L2940">    return stub.createRolloutCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retries the specified Job in a Rollout.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   RolloutName rollout =
+   *       RolloutName.of(
+   *           &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;, &quot;[RELEASE]&quot;, &quot;[ROLLOUT]&quot;);
+   *   String phaseId = &quot;phaseId-608264202&quot;;
+   *   String jobId = &quot;jobId101296568&quot;;
+   *   RetryJobResponse response = cloudDeployClient.retryJob(rollout, phaseId, jobId);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param rollout Required. Name of the Rollout. Format is
+   *     projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/
+   *     releases/{release}/rollouts/{rollout}.
+   * @param phaseId Required. The phase ID the Job to retry belongs to.
+   * @param jobId Required. The job ID for the Job to retry.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final RetryJobResponse retryJob(RolloutName rollout, String phaseId, String jobId) {
+    RetryJobRequest request =
+<span class="fc" id="L2974">        RetryJobRequest.newBuilder()</span>
+<span class="pc bpc" id="L2975" title="1 of 2 branches missed.">            .setRollout(rollout == null ? null : rollout.toString())</span>
+<span class="fc" id="L2976">            .setPhaseId(phaseId)</span>
+<span class="fc" id="L2977">            .setJobId(jobId)</span>
+<span class="fc" id="L2978">            .build();</span>
+<span class="fc" id="L2979">    return retryJob(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retries the specified Job in a Rollout.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   String rollout =
+   *       RolloutName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;, &quot;[RELEASE]&quot;, &quot;[ROLLOUT]&quot;)
+   *           .toString();
+   *   String phaseId = &quot;phaseId-608264202&quot;;
+   *   String jobId = &quot;jobId101296568&quot;;
+   *   RetryJobResponse response = cloudDeployClient.retryJob(rollout, phaseId, jobId);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param rollout Required. Name of the Rollout. Format is
+   *     projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/
+   *     releases/{release}/rollouts/{rollout}.
+   * @param phaseId Required. The phase ID the Job to retry belongs to.
+   * @param jobId Required. The job ID for the Job to retry.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final RetryJobResponse retryJob(String rollout, String phaseId, String jobId) {
+    RetryJobRequest request =
+<span class="fc" id="L3013">        RetryJobRequest.newBuilder()</span>
+<span class="fc" id="L3014">            .setRollout(rollout)</span>
+<span class="fc" id="L3015">            .setPhaseId(phaseId)</span>
+<span class="fc" id="L3016">            .setJobId(jobId)</span>
+<span class="fc" id="L3017">            .build();</span>
+<span class="fc" id="L3018">    return retryJob(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retries the specified Job in a Rollout.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   RetryJobRequest request =
+   *       RetryJobRequest.newBuilder()
+   *           .setRollout(
+   *               RolloutName.of(
+   *                       &quot;[PROJECT]&quot;,
+   *                       &quot;[LOCATION]&quot;,
+   *                       &quot;[DELIVERY_PIPELINE]&quot;,
+   *                       &quot;[RELEASE]&quot;,
+   *                       &quot;[ROLLOUT]&quot;)
+   *                   .toString())
+   *           .setPhaseId(&quot;phaseId-608264202&quot;)
+   *           .setJobId(&quot;jobId101296568&quot;)
+   *           .build();
+   *   RetryJobResponse response = cloudDeployClient.retryJob(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final RetryJobResponse retryJob(RetryJobRequest request) {
+<span class="fc" id="L3055">    return retryJobCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retries the specified Job in a Rollout.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   RetryJobRequest request =
+   *       RetryJobRequest.newBuilder()
+   *           .setRollout(
+   *               RolloutName.of(
+   *                       &quot;[PROJECT]&quot;,
+   *                       &quot;[LOCATION]&quot;,
+   *                       &quot;[DELIVERY_PIPELINE]&quot;,
+   *                       &quot;[RELEASE]&quot;,
+   *                       &quot;[ROLLOUT]&quot;)
+   *                   .toString())
+   *           .setPhaseId(&quot;phaseId-608264202&quot;)
+   *           .setJobId(&quot;jobId101296568&quot;)
+   *           .build();
+   *   ApiFuture&lt;RetryJobResponse&gt; future = cloudDeployClient.retryJobCallable().futureCall(request);
+   *   // Do something.
+   *   RetryJobResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;RetryJobRequest, RetryJobResponse&gt; retryJobCallable() {
+<span class="fc" id="L3091">    return stub.retryJobCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists JobRuns in a given project and location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   RolloutName parent =
+   *       RolloutName.of(
+   *           &quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;, &quot;[RELEASE]&quot;, &quot;[ROLLOUT]&quot;);
+   *   for (JobRun element : cloudDeployClient.listJobRuns(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The `Rollout` which owns this collection of `JobRun` objects.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListJobRunsPagedResponse listJobRuns(RolloutName parent) {
+    ListJobRunsRequest request =
+<span class="fc" id="L3121">        ListJobRunsRequest.newBuilder()</span>
+<span class="pc bpc" id="L3122" title="1 of 2 branches missed.">            .setParent(parent == null ? null : parent.toString())</span>
+<span class="fc" id="L3123">            .build();</span>
+<span class="fc" id="L3124">    return listJobRuns(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists JobRuns in a given project and location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   String parent =
+   *       RolloutName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;, &quot;[RELEASE]&quot;, &quot;[ROLLOUT]&quot;)
+   *           .toString();
+   *   for (JobRun element : cloudDeployClient.listJobRuns(parent).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param parent Required. The `Rollout` which owns this collection of `JobRun` objects.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListJobRunsPagedResponse listJobRuns(String parent) {
+<span class="fc" id="L3153">    ListJobRunsRequest request = ListJobRunsRequest.newBuilder().setParent(parent).build();</span>
+<span class="fc" id="L3154">    return listJobRuns(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists JobRuns in a given project and location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   ListJobRunsRequest request =
+   *       ListJobRunsRequest.newBuilder()
+   *           .setParent(
+   *               RolloutName.of(
+   *                       &quot;[PROJECT]&quot;,
+   *                       &quot;[LOCATION]&quot;,
+   *                       &quot;[DELIVERY_PIPELINE]&quot;,
+   *                       &quot;[RELEASE]&quot;,
+   *                       &quot;[ROLLOUT]&quot;)
+   *                   .toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .build();
+   *   for (JobRun element : cloudDeployClient.listJobRuns(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListJobRunsPagedResponse listJobRuns(ListJobRunsRequest request) {
+<span class="fc" id="L3195">    return listJobRunsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists JobRuns in a given project and location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   ListJobRunsRequest request =
+   *       ListJobRunsRequest.newBuilder()
+   *           .setParent(
+   *               RolloutName.of(
+   *                       &quot;[PROJECT]&quot;,
+   *                       &quot;[LOCATION]&quot;,
+   *                       &quot;[DELIVERY_PIPELINE]&quot;,
+   *                       &quot;[RELEASE]&quot;,
+   *                       &quot;[ROLLOUT]&quot;)
+   *                   .toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .build();
+   *   ApiFuture&lt;JobRun&gt; future = cloudDeployClient.listJobRunsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (JobRun element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListJobRunsRequest, ListJobRunsPagedResponse&gt;
+      listJobRunsPagedCallable() {
+<span class="fc" id="L3236">    return stub.listJobRunsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists JobRuns in a given project and location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   ListJobRunsRequest request =
+   *       ListJobRunsRequest.newBuilder()
+   *           .setParent(
+   *               RolloutName.of(
+   *                       &quot;[PROJECT]&quot;,
+   *                       &quot;[LOCATION]&quot;,
+   *                       &quot;[DELIVERY_PIPELINE]&quot;,
+   *                       &quot;[RELEASE]&quot;,
+   *                       &quot;[ROLLOUT]&quot;)
+   *                   .toString())
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setOrderBy(&quot;orderBy-1207110587&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListJobRunsResponse response = cloudDeployClient.listJobRunsCallable().call(request);
+   *     for (JobRun element : response.getJobRunsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListJobRunsRequest, ListJobRunsResponse&gt; listJobRunsCallable() {
+<span class="nc" id="L3283">    return stub.listJobRunsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets details of a single JobRun.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   JobRunName name =
+   *       JobRunName.of(
+   *           &quot;[PROJECT]&quot;,
+   *           &quot;[LOCATION]&quot;,
+   *           &quot;[DELIVERY_PIPELINE]&quot;,
+   *           &quot;[RELEASE]&quot;,
+   *           &quot;[ROLLOUT]&quot;,
+   *           &quot;[JOB_RUN]&quot;);
+   *   JobRun response = cloudDeployClient.getJobRun(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. Name of the `JobRun`. Format must be
+   *     projects/{project_id}/locations/{location_name}/deliveryPipelines/{pipeline_name}/releases/{release_name}/rollouts/{rollout_name}/jobRuns/{job_run_name}.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final JobRun getJobRun(JobRunName name) {
+    GetJobRunRequest request =
+<span class="pc bpc" id="L3317" title="1 of 2 branches missed.">        GetJobRunRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3318">    return getJobRun(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets details of a single JobRun.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   String name =
+   *       JobRunName.of(
+   *               &quot;[PROJECT]&quot;,
+   *               &quot;[LOCATION]&quot;,
+   *               &quot;[DELIVERY_PIPELINE]&quot;,
+   *               &quot;[RELEASE]&quot;,
+   *               &quot;[ROLLOUT]&quot;,
+   *               &quot;[JOB_RUN]&quot;)
+   *           .toString();
+   *   JobRun response = cloudDeployClient.getJobRun(name);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param name Required. Name of the `JobRun`. Format must be
+   *     projects/{project_id}/locations/{location_name}/deliveryPipelines/{pipeline_name}/releases/{release_name}/rollouts/{rollout_name}/jobRuns/{job_run_name}.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final JobRun getJobRun(String name) {
+<span class="fc" id="L3352">    GetJobRunRequest request = GetJobRunRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3353">    return getJobRun(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets details of a single JobRun.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   GetJobRunRequest request =
+   *       GetJobRunRequest.newBuilder()
+   *           .setName(
+   *               JobRunName.of(
+   *                       &quot;[PROJECT]&quot;,
+   *                       &quot;[LOCATION]&quot;,
+   *                       &quot;[DELIVERY_PIPELINE]&quot;,
+   *                       &quot;[RELEASE]&quot;,
+   *                       &quot;[ROLLOUT]&quot;,
+   *                       &quot;[JOB_RUN]&quot;)
+   *                   .toString())
+   *           .build();
+   *   JobRun response = cloudDeployClient.getJobRun(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final JobRun getJobRun(GetJobRunRequest request) {
+<span class="fc" id="L3389">    return getJobRunCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets details of a single JobRun.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   GetJobRunRequest request =
+   *       GetJobRunRequest.newBuilder()
+   *           .setName(
+   *               JobRunName.of(
+   *                       &quot;[PROJECT]&quot;,
+   *                       &quot;[LOCATION]&quot;,
+   *                       &quot;[DELIVERY_PIPELINE]&quot;,
+   *                       &quot;[RELEASE]&quot;,
+   *                       &quot;[ROLLOUT]&quot;,
+   *                       &quot;[JOB_RUN]&quot;)
+   *                   .toString())
+   *           .build();
+   *   ApiFuture&lt;JobRun&gt; future = cloudDeployClient.getJobRunCallable().futureCall(request);
+   *   // Do something.
+   *   JobRun response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetJobRunRequest, JobRun&gt; getJobRunCallable() {
+<span class="fc" id="L3424">    return stub.getJobRunCallable();</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2834,8 +3447,8 @@ public class CloudDeployClient implements BackgroundResource {
    */
   public final Config getConfig(ConfigName name) {
     GetConfigRequest request =
-<span class="pc bpc" id="L2837" title="1 of 2 branches missed.">        GetConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
-<span class="fc" id="L2838">    return getConfig(request);</span>
+<span class="pc bpc" id="L3450" title="1 of 2 branches missed.">        GetConfigRequest.newBuilder().setName(name == null ? null : name.toString()).build();</span>
+<span class="fc" id="L3451">    return getConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2860,8 +3473,8 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Config getConfig(String name) {
-<span class="fc" id="L2863">    GetConfigRequest request = GetConfigRequest.newBuilder().setName(name).build();</span>
-<span class="fc" id="L2864">    return getConfig(request);</span>
+<span class="fc" id="L3476">    GetConfigRequest request = GetConfigRequest.newBuilder().setName(name).build();</span>
+<span class="fc" id="L3477">    return getConfig(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2889,7 +3502,7 @@ public class CloudDeployClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Config getConfig(GetConfigRequest request) {
-<span class="fc" id="L2892">    return getConfigCallable().call(request);</span>
+<span class="fc" id="L3505">    return getConfigCallable().call(request);</span>
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2916,37 +3529,395 @@ public class CloudDeployClient implements BackgroundResource {
    * }&lt;/pre&gt;
    */
   public final UnaryCallable&lt;GetConfigRequest, Config&gt; getConfigCallable() {
-<span class="fc" id="L2919">    return stub.getConfigCallable();</span>
+<span class="fc" id="L3532">    return stub.getConfigCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   for (Location element : cloudDeployClient.listLocations(request).iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final ListLocationsPagedResponse listLocations(ListLocationsRequest request) {
+<span class="fc" id="L3565">    return listLocationsPagedCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   ApiFuture&lt;Location&gt; future =
+   *       cloudDeployClient.listLocationsPagedCallable().futureCall(request);
+   *   // Do something.
+   *   for (Location element : future.get().iterateAll()) {
+   *     // doThingsWith(element);
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsPagedResponse&gt;
+      listLocationsPagedCallable() {
+<span class="fc" id="L3599">    return stub.listLocationsPagedCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Lists information about the supported locations for this service.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   ListLocationsRequest request =
+   *       ListLocationsRequest.newBuilder()
+   *           .setName(&quot;name3373707&quot;)
+   *           .setFilter(&quot;filter-1274492040&quot;)
+   *           .setPageSize(883849137)
+   *           .setPageToken(&quot;pageToken873572522&quot;)
+   *           .build();
+   *   while (true) {
+   *     ListLocationsResponse response = cloudDeployClient.listLocationsCallable().call(request);
+   *     for (Location element : response.getLocationsList()) {
+   *       // doThingsWith(element);
+   *     }
+   *     String nextPageToken = response.getNextPageToken();
+   *     if (!Strings.isNullOrEmpty(nextPageToken)) {
+   *       request = request.toBuilder().setPageToken(nextPageToken).build();
+   *     } else {
+   *       break;
+   *     }
+   *   }
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;ListLocationsRequest, ListLocationsResponse&gt; listLocationsCallable() {
+<span class="nc" id="L3638">    return stub.listLocationsCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   Location response = cloudDeployClient.getLocation(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Location getLocation(GetLocationRequest request) {
+<span class="fc" id="L3663">    return getLocationCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets information about a location.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   GetLocationRequest request = GetLocationRequest.newBuilder().setName(&quot;name3373707&quot;).build();
+   *   ApiFuture&lt;Location&gt; future = cloudDeployClient.getLocationCallable().futureCall(request);
+   *   // Do something.
+   *   Location response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetLocationRequest, Location&gt; getLocationCallable() {
+<span class="fc" id="L3687">    return stub.getLocationCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               DeliveryPipelineName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   Policy response = cloudDeployClient.setIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy setIamPolicy(SetIamPolicyRequest request) {
+<span class="fc" id="L3721">    return setIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Sets the access control policy on the specified resource. Replacesany existing policy.
+   *
+   * &lt;p&gt;Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`errors.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   SetIamPolicyRequest request =
+   *       SetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               DeliveryPipelineName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;)
+   *                   .toString())
+   *           .setPolicy(Policy.newBuilder().build())
+   *           .setUpdateMask(FieldMask.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = cloudDeployClient.setIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;SetIamPolicyRequest, Policy&gt; setIamPolicyCallable() {
+<span class="fc" id="L3754">    return stub.setIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               DeliveryPipelineName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   Policy response = cloudDeployClient.getIamPolicy(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Policy getIamPolicy(GetIamPolicyRequest request) {
+<span class="fc" id="L3786">    return getIamPolicyCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Gets the access control policy for a resource. Returns an empty policyif the resource exists
+   * and does not have a policy set.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   GetIamPolicyRequest request =
+   *       GetIamPolicyRequest.newBuilder()
+   *           .setResource(
+   *               DeliveryPipelineName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;)
+   *                   .toString())
+   *           .setOptions(GetPolicyOptions.newBuilder().build())
+   *           .build();
+   *   ApiFuture&lt;Policy&gt; future = cloudDeployClient.getIamPolicyCallable().futureCall(request);
+   *   // Do something.
+   *   Policy response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;GetIamPolicyRequest, Policy&gt; getIamPolicyCallable() {
+<span class="fc" id="L3817">    return stub.getIamPolicyCallable();</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               DeliveryPipelineName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   TestIamPermissionsResponse response = cloudDeployClient.testIamPermissions(request);
+   * }
+   * }&lt;/pre&gt;
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final TestIamPermissionsResponse testIamPermissions(TestIamPermissionsRequest request) {
+<span class="fc" id="L3853">    return testIamPermissionsCallable().call(request);</span>
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Returns permissions that a caller has on the specified resource. If theresource does not exist,
+   * this will return an empty set ofpermissions, not a `NOT_FOUND` error.
+   *
+   * &lt;p&gt;Note: This operation is designed to be used for buildingpermission-aware UIs and
+   * command-line tools, not for authorizationchecking. This operation may &quot;fail open&quot; without
+   * warning.
+   *
+   * &lt;p&gt;Sample code:
+   *
+   * &lt;pre&gt;{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (CloudDeployClient cloudDeployClient = CloudDeployClient.create()) {
+   *   TestIamPermissionsRequest request =
+   *       TestIamPermissionsRequest.newBuilder()
+   *           .setResource(
+   *               DeliveryPipelineName.of(&quot;[PROJECT]&quot;, &quot;[LOCATION]&quot;, &quot;[DELIVERY_PIPELINE]&quot;)
+   *                   .toString())
+   *           .addAllPermissions(new ArrayList&lt;String&gt;())
+   *           .build();
+   *   ApiFuture&lt;TestIamPermissionsResponse&gt; future =
+   *       cloudDeployClient.testIamPermissionsCallable().futureCall(request);
+   *   // Do something.
+   *   TestIamPermissionsResponse response = future.get();
+   * }
+   * }&lt;/pre&gt;
+   */
+  public final UnaryCallable&lt;TestIamPermissionsRequest, TestIamPermissionsResponse&gt;
+      testIamPermissionsCallable() {
+<span class="fc" id="L3890">    return stub.testIamPermissionsCallable();</span>
   }
 
   @Override
   public final void close() {
-<span class="fc" id="L2924">    stub.close();</span>
-<span class="fc" id="L2925">  }</span>
+<span class="fc" id="L3895">    stub.close();</span>
+<span class="fc" id="L3896">  }</span>
 
   @Override
   public void shutdown() {
-<span class="nc" id="L2929">    stub.shutdown();</span>
-<span class="nc" id="L2930">  }</span>
+<span class="nc" id="L3900">    stub.shutdown();</span>
+<span class="nc" id="L3901">  }</span>
 
   @Override
   public boolean isShutdown() {
-<span class="nc" id="L2934">    return stub.isShutdown();</span>
+<span class="nc" id="L3905">    return stub.isShutdown();</span>
   }
 
   @Override
   public boolean isTerminated() {
-<span class="nc" id="L2939">    return stub.isTerminated();</span>
+<span class="nc" id="L3910">    return stub.isTerminated();</span>
   }
 
   @Override
   public void shutdownNow() {
-<span class="nc" id="L2944">    stub.shutdownNow();</span>
-<span class="nc" id="L2945">  }</span>
+<span class="nc" id="L3915">    stub.shutdownNow();</span>
+<span class="nc" id="L3916">  }</span>
 
   @Override
   public boolean awaitTermination(long duration, TimeUnit unit) throws InterruptedException {
-<span class="nc" id="L2949">    return stub.awaitTermination(duration, unit);</span>
+<span class="nc" id="L3920">    return stub.awaitTermination(duration, unit);</span>
   }
 
   public static class ListDeliveryPipelinesPagedResponse
@@ -2962,16 +3933,16 @@ public class CloudDeployClient implements BackgroundResource {
             context,
         ApiFuture&lt;ListDeliveryPipelinesResponse&gt; futureResponse) {
       ApiFuture&lt;ListDeliveryPipelinesPage&gt; futurePage =
-<span class="fc" id="L2965">          ListDeliveryPipelinesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L2966">      return ApiFutures.transform(</span>
+<span class="fc" id="L3936">          ListDeliveryPipelinesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3937">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L2968">          input -&gt; new ListDeliveryPipelinesPagedResponse(input),</span>
-<span class="fc" id="L2969">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L3939">          input -&gt; new ListDeliveryPipelinesPagedResponse(input),</span>
+<span class="fc" id="L3940">          MoreExecutors.directExecutor());</span>
     }
 
     private ListDeliveryPipelinesPagedResponse(ListDeliveryPipelinesPage page) {
-<span class="fc" id="L2973">      super(page, ListDeliveryPipelinesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L2974">    }</span>
+<span class="fc" id="L3944">      super(page, ListDeliveryPipelinesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L3945">    }</span>
   }
 
   public static class ListDeliveryPipelinesPage
@@ -2985,11 +3956,11 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesResponse, DeliveryPipeline&gt;
             context,
         ListDeliveryPipelinesResponse response) {
-<span class="fc" id="L2988">      super(context, response);</span>
-<span class="fc" id="L2989">    }</span>
+<span class="fc" id="L3959">      super(context, response);</span>
+<span class="fc" id="L3960">    }</span>
 
     private static ListDeliveryPipelinesPage createEmptyPage() {
-<span class="fc" id="L2992">      return new ListDeliveryPipelinesPage(null, null);</span>
+<span class="fc" id="L3963">      return new ListDeliveryPipelinesPage(null, null);</span>
     }
 
     @Override
@@ -2997,7 +3968,7 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesResponse, DeliveryPipeline&gt;
             context,
         ListDeliveryPipelinesResponse response) {
-<span class="fc" id="L3000">      return new ListDeliveryPipelinesPage(context, response);</span>
+<span class="fc" id="L3971">      return new ListDeliveryPipelinesPage(context, response);</span>
     }
 
     @Override
@@ -3005,7 +3976,7 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListDeliveryPipelinesRequest, ListDeliveryPipelinesResponse, DeliveryPipeline&gt;
             context,
         ApiFuture&lt;ListDeliveryPipelinesResponse&gt; futureResponse) {
-<span class="fc" id="L3008">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L3979">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3019,17 +3990,17 @@ public class CloudDeployClient implements BackgroundResource {
 
     private ListDeliveryPipelinesFixedSizeCollection(
         List&lt;ListDeliveryPipelinesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3022">      super(pages, collectionSize);</span>
-<span class="fc" id="L3023">    }</span>
+<span class="fc" id="L3993">      super(pages, collectionSize);</span>
+<span class="fc" id="L3994">    }</span>
 
     private static ListDeliveryPipelinesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3026">      return new ListDeliveryPipelinesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L3997">      return new ListDeliveryPipelinesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListDeliveryPipelinesFixedSizeCollection createCollection(
         List&lt;ListDeliveryPipelinesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3032">      return new ListDeliveryPipelinesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4003">      return new ListDeliveryPipelinesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3045,14 +4016,14 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListTargetsRequest, ListTargetsResponse, Target&gt; context,
         ApiFuture&lt;ListTargetsResponse&gt; futureResponse) {
       ApiFuture&lt;ListTargetsPage&gt; futurePage =
-<span class="fc" id="L3048">          ListTargetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3049">      return ApiFutures.transform(</span>
-<span class="fc" id="L3050">          futurePage, input -&gt; new ListTargetsPagedResponse(input), MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4019">          ListTargetsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4020">      return ApiFutures.transform(</span>
+<span class="fc" id="L4021">          futurePage, input -&gt; new ListTargetsPagedResponse(input), MoreExecutors.directExecutor());</span>
     }
 
     private ListTargetsPagedResponse(ListTargetsPage page) {
-<span class="fc" id="L3054">      super(page, ListTargetsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3055">    }</span>
+<span class="fc" id="L4025">      super(page, ListTargetsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4026">    }</span>
   }
 
   public static class ListTargetsPage
@@ -3061,25 +4032,25 @@ public class CloudDeployClient implements BackgroundResource {
     private ListTargetsPage(
         PageContext&lt;ListTargetsRequest, ListTargetsResponse, Target&gt; context,
         ListTargetsResponse response) {
-<span class="fc" id="L3064">      super(context, response);</span>
-<span class="fc" id="L3065">    }</span>
+<span class="fc" id="L4035">      super(context, response);</span>
+<span class="fc" id="L4036">    }</span>
 
     private static ListTargetsPage createEmptyPage() {
-<span class="fc" id="L3068">      return new ListTargetsPage(null, null);</span>
+<span class="fc" id="L4039">      return new ListTargetsPage(null, null);</span>
     }
 
     @Override
     protected ListTargetsPage createPage(
         PageContext&lt;ListTargetsRequest, ListTargetsResponse, Target&gt; context,
         ListTargetsResponse response) {
-<span class="fc" id="L3075">      return new ListTargetsPage(context, response);</span>
+<span class="fc" id="L4046">      return new ListTargetsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListTargetsPage&gt; createPageAsync(
         PageContext&lt;ListTargetsRequest, ListTargetsResponse, Target&gt; context,
         ApiFuture&lt;ListTargetsResponse&gt; futureResponse) {
-<span class="fc" id="L3082">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4053">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3092,17 +4063,17 @@ public class CloudDeployClient implements BackgroundResource {
           ListTargetsFixedSizeCollection&gt; {
 
     private ListTargetsFixedSizeCollection(List&lt;ListTargetsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3095">      super(pages, collectionSize);</span>
-<span class="fc" id="L3096">    }</span>
+<span class="fc" id="L4066">      super(pages, collectionSize);</span>
+<span class="fc" id="L4067">    }</span>
 
     private static ListTargetsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3099">      return new ListTargetsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4070">      return new ListTargetsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListTargetsFixedSizeCollection createCollection(
         List&lt;ListTargetsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3105">      return new ListTargetsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4076">      return new ListTargetsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3118,16 +4089,16 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListReleasesRequest, ListReleasesResponse, Release&gt; context,
         ApiFuture&lt;ListReleasesResponse&gt; futureResponse) {
       ApiFuture&lt;ListReleasesPage&gt; futurePage =
-<span class="fc" id="L3121">          ListReleasesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3122">      return ApiFutures.transform(</span>
+<span class="fc" id="L4092">          ListReleasesPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4093">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3124">          input -&gt; new ListReleasesPagedResponse(input),</span>
-<span class="fc" id="L3125">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4095">          input -&gt; new ListReleasesPagedResponse(input),</span>
+<span class="fc" id="L4096">          MoreExecutors.directExecutor());</span>
     }
 
     private ListReleasesPagedResponse(ListReleasesPage page) {
-<span class="fc" id="L3129">      super(page, ListReleasesFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3130">    }</span>
+<span class="fc" id="L4100">      super(page, ListReleasesFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4101">    }</span>
   }
 
   public static class ListReleasesPage
@@ -3136,25 +4107,25 @@ public class CloudDeployClient implements BackgroundResource {
     private ListReleasesPage(
         PageContext&lt;ListReleasesRequest, ListReleasesResponse, Release&gt; context,
         ListReleasesResponse response) {
-<span class="fc" id="L3139">      super(context, response);</span>
-<span class="fc" id="L3140">    }</span>
+<span class="fc" id="L4110">      super(context, response);</span>
+<span class="fc" id="L4111">    }</span>
 
     private static ListReleasesPage createEmptyPage() {
-<span class="fc" id="L3143">      return new ListReleasesPage(null, null);</span>
+<span class="fc" id="L4114">      return new ListReleasesPage(null, null);</span>
     }
 
     @Override
     protected ListReleasesPage createPage(
         PageContext&lt;ListReleasesRequest, ListReleasesResponse, Release&gt; context,
         ListReleasesResponse response) {
-<span class="fc" id="L3150">      return new ListReleasesPage(context, response);</span>
+<span class="fc" id="L4121">      return new ListReleasesPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListReleasesPage&gt; createPageAsync(
         PageContext&lt;ListReleasesRequest, ListReleasesResponse, Release&gt; context,
         ApiFuture&lt;ListReleasesResponse&gt; futureResponse) {
-<span class="fc" id="L3157">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4128">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3167,17 +4138,17 @@ public class CloudDeployClient implements BackgroundResource {
           ListReleasesFixedSizeCollection&gt; {
 
     private ListReleasesFixedSizeCollection(List&lt;ListReleasesPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3170">      super(pages, collectionSize);</span>
-<span class="fc" id="L3171">    }</span>
+<span class="fc" id="L4141">      super(pages, collectionSize);</span>
+<span class="fc" id="L4142">    }</span>
 
     private static ListReleasesFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3174">      return new ListReleasesFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4145">      return new ListReleasesFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListReleasesFixedSizeCollection createCollection(
         List&lt;ListReleasesPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3180">      return new ListReleasesFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4151">      return new ListReleasesFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 
@@ -3193,16 +4164,16 @@ public class CloudDeployClient implements BackgroundResource {
         PageContext&lt;ListRolloutsRequest, ListRolloutsResponse, Rollout&gt; context,
         ApiFuture&lt;ListRolloutsResponse&gt; futureResponse) {
       ApiFuture&lt;ListRolloutsPage&gt; futurePage =
-<span class="fc" id="L3196">          ListRolloutsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
-<span class="fc" id="L3197">      return ApiFutures.transform(</span>
+<span class="fc" id="L4167">          ListRolloutsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4168">      return ApiFutures.transform(</span>
           futurePage,
-<span class="fc" id="L3199">          input -&gt; new ListRolloutsPagedResponse(input),</span>
-<span class="fc" id="L3200">          MoreExecutors.directExecutor());</span>
+<span class="fc" id="L4170">          input -&gt; new ListRolloutsPagedResponse(input),</span>
+<span class="fc" id="L4171">          MoreExecutors.directExecutor());</span>
     }
 
     private ListRolloutsPagedResponse(ListRolloutsPage page) {
-<span class="fc" id="L3204">      super(page, ListRolloutsFixedSizeCollection.createEmptyCollection());</span>
-<span class="fc" id="L3205">    }</span>
+<span class="fc" id="L4175">      super(page, ListRolloutsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4176">    }</span>
   }
 
   public static class ListRolloutsPage
@@ -3211,25 +4182,25 @@ public class CloudDeployClient implements BackgroundResource {
     private ListRolloutsPage(
         PageContext&lt;ListRolloutsRequest, ListRolloutsResponse, Rollout&gt; context,
         ListRolloutsResponse response) {
-<span class="fc" id="L3214">      super(context, response);</span>
-<span class="fc" id="L3215">    }</span>
+<span class="fc" id="L4185">      super(context, response);</span>
+<span class="fc" id="L4186">    }</span>
 
     private static ListRolloutsPage createEmptyPage() {
-<span class="fc" id="L3218">      return new ListRolloutsPage(null, null);</span>
+<span class="fc" id="L4189">      return new ListRolloutsPage(null, null);</span>
     }
 
     @Override
     protected ListRolloutsPage createPage(
         PageContext&lt;ListRolloutsRequest, ListRolloutsResponse, Rollout&gt; context,
         ListRolloutsResponse response) {
-<span class="fc" id="L3225">      return new ListRolloutsPage(context, response);</span>
+<span class="fc" id="L4196">      return new ListRolloutsPage(context, response);</span>
     }
 
     @Override
     public ApiFuture&lt;ListRolloutsPage&gt; createPageAsync(
         PageContext&lt;ListRolloutsRequest, ListRolloutsResponse, Rollout&gt; context,
         ApiFuture&lt;ListRolloutsResponse&gt; futureResponse) {
-<span class="fc" id="L3232">      return super.createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4203">      return super.createPageAsync(context, futureResponse);</span>
     }
   }
 
@@ -3242,17 +4213,166 @@ public class CloudDeployClient implements BackgroundResource {
           ListRolloutsFixedSizeCollection&gt; {
 
     private ListRolloutsFixedSizeCollection(List&lt;ListRolloutsPage&gt; pages, int collectionSize) {
-<span class="fc" id="L3245">      super(pages, collectionSize);</span>
-<span class="fc" id="L3246">    }</span>
+<span class="fc" id="L4216">      super(pages, collectionSize);</span>
+<span class="fc" id="L4217">    }</span>
 
     private static ListRolloutsFixedSizeCollection createEmptyCollection() {
-<span class="fc" id="L3249">      return new ListRolloutsFixedSizeCollection(null, 0);</span>
+<span class="fc" id="L4220">      return new ListRolloutsFixedSizeCollection(null, 0);</span>
     }
 
     @Override
     protected ListRolloutsFixedSizeCollection createCollection(
         List&lt;ListRolloutsPage&gt; pages, int collectionSize) {
-<span class="nc" id="L3255">      return new ListRolloutsFixedSizeCollection(pages, collectionSize);</span>
+<span class="nc" id="L4226">      return new ListRolloutsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListJobRunsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListJobRunsRequest,
+          ListJobRunsResponse,
+          JobRun,
+          ListJobRunsPage,
+          ListJobRunsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListJobRunsPagedResponse&gt; createAsync(
+        PageContext&lt;ListJobRunsRequest, ListJobRunsResponse, JobRun&gt; context,
+        ApiFuture&lt;ListJobRunsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListJobRunsPage&gt; futurePage =
+<span class="fc" id="L4242">          ListJobRunsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4243">      return ApiFutures.transform(</span>
+<span class="fc" id="L4244">          futurePage, input -&gt; new ListJobRunsPagedResponse(input), MoreExecutors.directExecutor());</span>
+    }
+
+    private ListJobRunsPagedResponse(ListJobRunsPage page) {
+<span class="fc" id="L4248">      super(page, ListJobRunsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4249">    }</span>
+  }
+
+  public static class ListJobRunsPage
+      extends AbstractPage&lt;ListJobRunsRequest, ListJobRunsResponse, JobRun, ListJobRunsPage&gt; {
+
+    private ListJobRunsPage(
+        PageContext&lt;ListJobRunsRequest, ListJobRunsResponse, JobRun&gt; context,
+        ListJobRunsResponse response) {
+<span class="fc" id="L4258">      super(context, response);</span>
+<span class="fc" id="L4259">    }</span>
+
+    private static ListJobRunsPage createEmptyPage() {
+<span class="fc" id="L4262">      return new ListJobRunsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListJobRunsPage createPage(
+        PageContext&lt;ListJobRunsRequest, ListJobRunsResponse, JobRun&gt; context,
+        ListJobRunsResponse response) {
+<span class="fc" id="L4269">      return new ListJobRunsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListJobRunsPage&gt; createPageAsync(
+        PageContext&lt;ListJobRunsRequest, ListJobRunsResponse, JobRun&gt; context,
+        ApiFuture&lt;ListJobRunsResponse&gt; futureResponse) {
+<span class="fc" id="L4276">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListJobRunsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListJobRunsRequest,
+          ListJobRunsResponse,
+          JobRun,
+          ListJobRunsPage,
+          ListJobRunsFixedSizeCollection&gt; {
+
+    private ListJobRunsFixedSizeCollection(List&lt;ListJobRunsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L4289">      super(pages, collectionSize);</span>
+<span class="fc" id="L4290">    }</span>
+
+    private static ListJobRunsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L4293">      return new ListJobRunsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListJobRunsFixedSizeCollection createCollection(
+        List&lt;ListJobRunsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L4299">      return new ListJobRunsFixedSizeCollection(pages, collectionSize);</span>
+    }
+  }
+
+  public static class ListLocationsPagedResponse
+      extends AbstractPagedListResponse&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    public static ApiFuture&lt;ListLocationsPagedResponse&gt; createAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+      ApiFuture&lt;ListLocationsPage&gt; futurePage =
+<span class="fc" id="L4315">          ListLocationsPage.createEmptyPage().createPageAsync(context, futureResponse);</span>
+<span class="fc" id="L4316">      return ApiFutures.transform(</span>
+          futurePage,
+<span class="fc" id="L4318">          input -&gt; new ListLocationsPagedResponse(input),</span>
+<span class="fc" id="L4319">          MoreExecutors.directExecutor());</span>
+    }
+
+    private ListLocationsPagedResponse(ListLocationsPage page) {
+<span class="fc" id="L4323">      super(page, ListLocationsFixedSizeCollection.createEmptyCollection());</span>
+<span class="fc" id="L4324">    }</span>
+  }
+
+  public static class ListLocationsPage
+      extends AbstractPage&lt;
+          ListLocationsRequest, ListLocationsResponse, Location, ListLocationsPage&gt; {
+
+    private ListLocationsPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L4334">      super(context, response);</span>
+<span class="fc" id="L4335">    }</span>
+
+    private static ListLocationsPage createEmptyPage() {
+<span class="fc" id="L4338">      return new ListLocationsPage(null, null);</span>
+    }
+
+    @Override
+    protected ListLocationsPage createPage(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ListLocationsResponse response) {
+<span class="fc" id="L4345">      return new ListLocationsPage(context, response);</span>
+    }
+
+    @Override
+    public ApiFuture&lt;ListLocationsPage&gt; createPageAsync(
+        PageContext&lt;ListLocationsRequest, ListLocationsResponse, Location&gt; context,
+        ApiFuture&lt;ListLocationsResponse&gt; futureResponse) {
+<span class="fc" id="L4352">      return super.createPageAsync(context, futureResponse);</span>
+    }
+  }
+
+  public static class ListLocationsFixedSizeCollection
+      extends AbstractFixedSizeCollection&lt;
+          ListLocationsRequest,
+          ListLocationsResponse,
+          Location,
+          ListLocationsPage,
+          ListLocationsFixedSizeCollection&gt; {
+
+    private ListLocationsFixedSizeCollection(List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="fc" id="L4365">      super(pages, collectionSize);</span>
+<span class="fc" id="L4366">    }</span>
+
+    private static ListLocationsFixedSizeCollection createEmptyCollection() {
+<span class="fc" id="L4369">      return new ListLocationsFixedSizeCollection(null, 0);</span>
+    }
+
+    @Override
+    protected ListLocationsFixedSizeCollection createCollection(
+        List&lt;ListLocationsPage&gt; pages, int collectionSize) {
+<span class="nc" id="L4375">      return new ListLocationsFixedSizeCollection(pages, collectionSize);</span>
     }
   }
 }
