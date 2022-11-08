@@ -16,9 +16,11 @@
 
 package com.google.cloud.orgpolicy.v2.samples;
 
-// [START orgpolicy_v2_generated_OrgPolicySettings_GetPolicy_sync]
-import com.google.cloud.orgpolicy.v2.OrgPolicySettings;
-import java.time.Duration;
+// [START orgpolicy_v2_generated_OrgPolicy_GetPolicy_sync]
+import com.google.cloud.orgpolicy.v2.GetPolicyRequest;
+import com.google.cloud.orgpolicy.v2.OrgPolicyClient;
+import com.google.cloud.orgpolicy.v2.Policy;
+import com.google.cloud.orgpolicy.v2.PolicyName;
 
 public class SyncGetPolicy {
 
@@ -32,14 +34,13 @@ public class SyncGetPolicy {
     // - It may require correct/in-range values for request initialization.
     // - It may require specifying regional endpoints when creating the service client as shown in
     // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
-    OrgPolicySettings.Builder orgPolicySettingsBuilder = OrgPolicySettings.newBuilder();
-    orgPolicySettingsBuilder
-        .getPolicySettings()
-        .setRetrySettings(
-            orgPolicySettingsBuilder.getPolicySettings().getRetrySettings().toBuilder()
-                .setTotalTimeout(Duration.ofSeconds(30))
-                .build());
-    OrgPolicySettings orgPolicySettings = orgPolicySettingsBuilder.build();
+    try (OrgPolicyClient orgPolicyClient = OrgPolicyClient.create()) {
+      GetPolicyRequest request =
+          GetPolicyRequest.newBuilder()
+              .setName(PolicyName.ofProjectPolicyName("[PROJECT]", "[POLICY]").toString())
+              .build();
+      Policy response = orgPolicyClient.getPolicy(request);
+    }
   }
 }
-// [END orgpolicy_v2_generated_OrgPolicySettings_GetPolicy_sync]
+// [END orgpolicy_v2_generated_OrgPolicy_GetPolicy_sync]
