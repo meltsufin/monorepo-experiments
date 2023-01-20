@@ -22,5 +22,5 @@ for library in s.get_staging_dirs():
 
 s.remove_staging_dirs()
 java.common_templates(
-    excludes=["README.md", "samples/*", ".github/workflows/samples.yaml"]
+    excludes=["samples/*", ".github/workflows/samples.yaml"]
 )
